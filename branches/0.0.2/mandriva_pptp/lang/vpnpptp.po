@@ -1,0 +1,257 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: TFORM1.BUTTON_CREATE.CAPTION
+msgid "Создать подключение"
+msgstr ""
+
+#: TFORM1.BUTTON_EXIT.CAPTION
+msgid "Выход"
+msgstr ""
+
+#: TFORM1.BUTTON_NEXT.CAPTION
+msgid "Далее"
+msgstr ""
+
+#: TFORM1.CAPTION
+msgid "Настройка VPN PPTP"
+msgstr ""
+
+#: TFORM1.CHECKBOX_DESKTOP.CAPTION
+msgid "Создать ярлык на рабочем столе"
+msgstr ""
+
+#: TFORM1.CHECKBOX_NO40.CAPTION
+msgid "no40"
+msgstr ""
+
+#: TFORM1.CHECKBOX_NO56.CAPTION
+msgid "no56"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RCHAP.CAPTION
+msgid "refuse-chap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_REAP.CAPTION
+msgid "refuse-eap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RMSCHAP.CAPTION
+msgid "refuse-mschap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_SHIFR.CAPTION
+msgid "Включить шифрование"
+msgstr ""
+
+#: TFORM1.CHECKBOX_STATELESS.CAPTION
+msgid "stateless"
+msgstr ""
+
+#: TFORM1.LABEL1.CAPTION
+msgid "I) Введите адрес vpn-сервера..."
+msgstr ""
+
+#: TFORM1.LABEL10.CAPTION
+msgid "/sbin/route add -host [ip] netmask [маска] gw [шлюз] dev [устройство]"
+msgstr ""
+
+#: TFORM1.LABEL11.CAPTION
+msgid "- указывайте IP vpn-сервера, тогда соединение может стать стабильнее в случае падения DNS-сервера"
+msgstr ""
+
+#: TFORM1.LABEL12.CAPTION
+msgctxt "TFORM1.LABEL12.CAPTION"
+msgid "Примечания:"
+msgstr ""
+
+#: TFORM1.LABEL13.CAPTION
+msgid "- желательно вписать"
+msgstr ""
+
+#: TFORM1.LABEL14.CAPTION
+msgid "маршруты для vpn-сервера,"
+msgstr ""
+
+#: TFORM1.LABEL15.CAPTION
+msgid "интерфейсов в системе"
+msgstr ""
+
+#: TFORM1.LABEL16.CAPTION
+msgid "dns-серверов, особенно"
+msgstr ""
+
+#: TFORM1.LABEL17.CAPTION
+msgid "если включенных сетевых"
+msgstr ""
+
+#: TFORM1.LABEL18.CAPTION
+msgid "более одного, а также"
+msgstr ""
+
+#: TFORM1.LABEL19.CAPTION
+msgid "(если задано)"
+msgstr ""
+
+#: TFORM1.LABEL2.CAPTION
+msgid "II) Введите любое название соединения..."
+msgstr ""
+
+#: TFORM1.LABEL20.CAPTION
+msgid "вписать другие маршруты"
+msgstr ""
+
+#: TFORM1.LABEL21.CAPTION
+msgid "и/или шлюз определились"
+msgstr ""
+
+#: TFORM1.LABEL22.CAPTION
+msgid "требующийся сетевой"
+msgstr ""
+
+#: TFORM1.LABEL23.CAPTION
+msgid "интерфейс основным и"
+msgstr ""
+
+#: TFORM1.LABEL24.CAPTION
+msgid "настройте все заново"
+msgstr ""
+
+#: TFORM1.LABEL25.CAPTION
+msgid "Сетевой интерфейс по умолчанию (определяется автоматически):"
+msgstr ""
+
+#: TFORM1.LABEL26.CAPTION
+msgid "неправильно, то сделайте"
+msgstr ""
+
+#: TFORM1.LABEL27.CAPTION
+msgid "или введите эти значения"
+msgstr ""
+
+#: TFORM1.LABEL28.CAPTION
+msgid "вручную"
+msgstr ""
+
+#: TFORM1.LABEL29.CAPTION
+msgid "- без занесения маршрутов"
+msgstr ""
+
+#: TFORM1.LABEL3.CAPTION
+msgid "III) Введите Ваш логин..."
+msgstr ""
+
+#: TFORM1.LABEL30.CAPTION
+msgid "не гарантируется одновре-"
+msgstr ""
+
+#: TFORM1.LABEL31.CAPTION
+msgid "менная работа интернета и"
+msgstr ""
+
+#: TFORM1.LABEL32.CAPTION
+msgid "локальной сети, но интер-"
+msgstr ""
+
+#: TFORM1.LABEL33.CAPTION
+msgid "нет в любом случае будет"
+msgstr ""
+
+#: TFORM1.LABEL34.CAPTION
+msgid "работать"
+msgstr ""
+
+#: TFORM1.LABEL4.CAPTION
+msgid "IV) Введите Ваш пароль..."
+msgstr ""
+
+#: TFORM1.LABEL5.CAPTION
+msgid "/sbin/route add -net [ip] netmask [маска] gw [шлюз] dev [устройство]"
+msgstr ""
+
+#: TFORM1.LABEL6.CAPTION
+msgctxt "TFORM1.LABEL6.CAPTION"
+msgid "Примечания:"
+msgstr ""
+
+#: TFORM1.LABEL7.CAPTION
+msgid "- имя соединения может быть любым (требования к имени соединения как к имени файла)"
+msgstr ""
+
+#: TFORM1.LABEL8.CAPTION
+msgid "- адрес vpn-сервера, логин и пароль уточняйте у провайдера"
+msgstr ""
+
+#: TFORM1.LABEL9.CAPTION
+msgid "- если сетевой интерфейс"
+msgstr ""
+
+#: TFORM1.LABEL_GATE.CAPTION
+msgid "Шлюз локал. сети по умолчанию (определяется автоматически):"
+msgstr ""
+
+#: TFORM1.LABEL_IPS.CAPTION
+msgid "Провайдер (IP или имя):"
+msgstr ""
+
+#: TFORM1.LABEL_IPS2.CAPTION
+msgid "(например, vpn.internet.beeline.ru)"
+msgstr ""
+
+#: TFORM1.LABEL_IP_DOWN.CAPTION
+msgid "/etc/ppp/ip-down.d/ip-down"
+msgstr ""
+
+#: TFORM1.LABEL_IP_UP.CAPTION
+msgid "/etc/ppp/ip-up.d/ip-up"
+msgstr ""
+
+#: TFORM1.LABEL_MTU.CAPTION
+msgid "MTU (если задано):"
+msgstr ""
+
+#: TFORM1.LABEL_PEER.CAPTION
+msgid "Имя соединения:"
+msgstr ""
+
+#: TFORM1.LABEL_PEER1.CAPTION
+msgid "(например, beeline)"
+msgstr ""
+
+#: TFORM1.LABEL_PEERNAME.CAPTION
+msgid "Label_peername"
+msgstr ""
+
+#: TFORM1.LABEL_PSWD.CAPTION
+msgid "Пароль:"
+msgstr ""
+
+#: TFORM1.LABEL_ROUTE.CAPTION
+msgid "Дополнительные маршруты (необязательно, но желательно):"
+msgstr ""
+
+#: TFORM1.LABEL_USER.CAPTION
+msgid "Пользователь:"
+msgstr ""
+
+#: TFORM1.MEMO_ROUTE.HINT
+msgid "Задайте здесь маршруты, которые необходимы для работы локальной сети"
+msgstr ""
+
+#: TFORM1.TABSHEET1.CAPTION
+msgid "Настройки подключения"
+msgstr ""
+
+#: TFORM1.TABSHEET2.CAPTION
+msgid "Доп. настройки"
+msgstr ""
+
+#: TFORM1.TABSHEET3.CAPTION
+msgid "Разное"
+msgstr ""
+
+#: TFORM1.TABSHEET4.CAPTION
+msgid "Окончание"
+msgstr ""
+
