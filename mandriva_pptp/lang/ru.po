@@ -1,0 +1,112 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Если соедине�"
+msgstr ""
+
+#: TFORM1.BUTTON1.CAPTION
+msgid "Создать подключение"
+msgstr ""
+
+#: TFORM1.BUTTON2.CAPTION
+msgid "Выход"
+msgstr ""
+
+#: TFORM1.BUTTON3.CAPTION
+msgid "Далее"
+msgstr ""
+
+#: TFORM1.CAPTION
+msgid "Настройка VPN через PPTP"
+msgstr ""
+
+#: TFORM1.CHECKBOX1.CAPTION
+msgid "Создать ярлык подключения на рабочем столе"
+msgstr ""
+
+#: TFORM1.EDIT1.TEXT
+msgid "vpn.corbina.com"
+msgstr ""
+
+#: TFORM1.EDIT2.TEXT
+msgid "user"
+msgstr ""
+
+#: TFORM1.EDIT3.TEXT
+msgid "none"
+msgstr ""
+
+#: TFORM1.EDIT5.TEXT
+msgid "ppp0"
+msgstr ""
+
+#: TFORM1.EDIT6.TEXT
+msgid "Edit6"
+msgstr ""
+
+#: TFORM1.LABEL1.CAPTION
+msgid "Провайдер (имя или IP)"
+msgstr ""
+
+#: TFORM1.LABEL10.CAPTION
+msgid "Шлюз лок. сети по умолчанию"
+msgstr ""
+
+#: TFORM1.LABEL11.CAPTION
+msgid "Дополнительные маршруты (задание вручную)"
+msgstr ""
+
+#: TFORM1.LABEL2.CAPTION
+msgid "Имя пользователя"
+msgstr ""
+
+#: TFORM1.LABEL3.CAPTION
+msgid "Пароль"
+msgstr ""
+
+#: TFORM1.LABEL4.CAPTION
+msgid "MTU провайдера (если задан)"
+msgstr ""
+
+#: TFORM1.LABEL5.CAPTION
+msgid "Имя подключения"
+msgstr ""
+
+#: TFORM1.LABEL6.CAPTION
+msgid "Label6"
+msgstr ""
+
+#: TFORM1.LABEL7.CAPTION
+msgctxt "TFORM1.LABEL7.CAPTION"
+msgid "/etc/ppp/ip-up.d/ip-up"
+msgstr ""
+
+#: TFORM1.LABEL8.CAPTION
+msgctxt "TFORM1.LABEL8.CAPTION"
+msgid "/etc/ppp/ip-up.d/ip-up"
+msgstr ""
+
+#: TFORM1.LABEL9.CAPTION
+msgid "/etc/ppp/ip-down.d/ip-down"
+msgstr ""
+
+#: TFORM1.STATICTEXT1.CAPTION
+msgid "Подключение создано."
+msgstr ""
+
+#: TFORM1.TABSHEET1.CAPTION
+msgid "Данные провайдера"
+msgstr ""
+
+#: TFORM1.TABSHEET2.CAPTION
+msgid "Доп. данные"
+msgstr ""
+
+#: TFORM1.TABSHEET3.CAPTION
+msgid "Конфигурация"
+msgstr ""
+
+#: TFORM1.TABSHEET4.CAPTION
+msgid "Итог"
+msgstr ""
+
