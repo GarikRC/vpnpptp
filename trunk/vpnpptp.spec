@@ -1,15 +1,16 @@
-%define rel 4
+%define rel 1
 
 %{?dist: %{expand: %%define %dist 1}}
 
 Summary: Tools for setup and control MS VPN via PPTP
+Summary:ru Инструмент для установки и управления соединением MS VPN через PPTP
 Name: vpnpptp
-Version: 0.0.1
+Version: 0.0.2
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
 
-Packager: Alexander Kazancev <kazancas@gmail.com>
+Packager: Alexander Kazancev <kazancas@mandriva.ru>
 Vendor: Mandriva Russia, http://www.mandriva.ru
 
 Source: vpnpptp-src-%{version}.tar.gz
@@ -19,12 +20,14 @@ BuildRequires: fpc-src = 2.2.4, fpc = 2.2.4, gdk-pixbuf, gtk+, glibc, gdb, libgl
 
 %description
 Tools for easy and quick setup and control MS VPN via PPTP
+%description -l ru
+Инструмент для легкого и быстрого подключения и управления соединением MS VPN через PPTP
 
 %prep
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
-%setup -qc
+%setup -n vpnpptp-src-%{version}
 
 %postun
 rm -rf /opt/vpnpptp
@@ -61,30 +64,30 @@ cp -f ./ponoff.png $RPM_BUILD_ROOT/opt/vpnpptp/
 cp -f ./vpnpptp.png $RPM_BUILD_ROOT/opt/vpnpptp/
 
 install -dm 755 %{buildroot}%{_datadir}/applications
-#cat > Подключение VPN PPTP.desktop << EOF
-#[Desktop Entry]
-#Encoding=UTF-8
-#GenericName=VPN PPTP Control
-#GenericName[ru]=Управление соединением VPN PPTP
-#Name=Connect VPN PPT
-#Name[ru]=Подключение VPN PPTP
+cat > ponoff.desktop << EOF
+[Desktop Entry]
+Encoding=UTF-8
+GenericName=VPN PPTP Control
+GenericName[ru]=Управление соединением VPN PPTP
+Name=Connect VPN PPT
+Name[ru]=Подключение VPN PPTP
 #Exec=/usr/bin/ponoff - было
-#стало:
-#Exec=/opt/vpnpptp/ponoff
-#Comment=Control MS VPN via PPTP
-#Icon=/opt/vpnpptp/ponoff.png
-#Type=Application
-#Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop;
+стало:
+Exec=/opt/vpnpptp/ponoff
+Comment=Control MS VPN via PPTP
+Icon=/opt/vpnpptp/ponoff.png
+Type=Application
+Categories=GTK;System;Internet;Monitor;X-MandrivaLinux-CrossDesktop;
 #следующие 2 строки добавлены
-#X-KDE-SubstituteUID=true
-#X-KDE-Username=root
-#StartupNotify=false
-#EOF
+X-KDE-SubstituteUID=true
+X-KDE-Username=root
+StartupNotify=false
+EOF
 install -m 0644 ponoff.desktop \
 %{buildroot}%{_datadir}/applications/ponoff.desktop
 
 install -dm 755 %{buildroot}%{_datadir}/applications
-cat > Настройка соединения VPN PPTP.desktop << EOF
+cat > vpnpptp.desktop << EOF
 [Desktop Entry]
 Encoding=UTF-8
 GenericName=VPN PPTP Setup
@@ -96,7 +99,7 @@ Exec=/opt/vpnpptp/vpnpptp
 Comment=Setup MS VPN via PPTP
 Icon=/opt/vpnpptp/vpnpptp.png
 Type=Application
-Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop;
+Categories=GTK;System;Internet;Monitor;X-MandrivaLinux-CrossDesktop;
 X-KDE-SubstituteUID=true
 X-KDE-Username=root
 StartupNotify=false
@@ -119,6 +122,8 @@ install -m 0644 vpnpptp.desktop \
 
 
 %changelog
+* Fri Nov 27 2009 Alexander Kazancev <kazancas@mandriva.ru> - 0.0.2
+- New release
 
 * Mon May 18 2009 Alexander Kazancev <kazancas@gmail.com> - 0.0.1
 - Initial release
