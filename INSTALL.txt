@@ -1,0 +1,6 @@
+For install from source you need same steps:
+
+1. Setup fpc => 2.2.4 and fpc-src
+2. Untar archive on some directory
+3. Run compile.sh
+4. Run install.sh
