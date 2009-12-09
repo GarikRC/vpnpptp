@@ -1,0 +1,23 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: TFORM1.CAPTION
+msgid "Соединение pptp"
+msgstr ""
+
+#: TFORM1.MENUITEM1.CAPTION
+msgid "Подключить"
+msgstr ""
+
+#: TFORM1.MENUITEM2.CAPTION
+msgid "Отключить"
+msgstr ""
+
+#: TFORM1.MENUITEM3.CAPTION
+msgid "Выход без аварии"
+msgstr ""
+
+#: TFORM1.MENUITEM4.CAPTION
+msgid "Выход при аварии"
+msgstr ""
+
