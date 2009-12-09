@@ -4,7 +4,7 @@
 
 Summary: Tools for setup and control MS VPN via PPTP
 Summary:ru Инструмент для установки и управления соединением MS VPN через PPTP
-Name: vpnpptp-allde
+Name: vpnpptp-kde-one
 Version: 0.0.4
 Release: %mkrel %{rel}
 License: GPL2
@@ -17,7 +17,7 @@ Source: vpnpptp-src-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: fpc-src = 2.2.4, fpc = 2.2.4, gdk-pixbuf, gtk+, glibc, gdb, libglib1.2-devel, libgdk-pixbuf2-devel, lazarus, upx
-Requires: gksu, pptp-linux
+Requires: pptp-linux
 
 %description
 Tools for easy and quick setup and control MS VPN via PPTP
@@ -75,7 +75,7 @@ GenericName=VPN PPTP Control
 GenericName[ru]=Управление соединением VPN PPTP
 Name=Connect VPN PPT
 Name[ru]=Подключение VPN PPTP
-Exec=gksu -u root /opt/vpnpptp/ponoff
+Exec=/opt/vpnpptp/ponoff
 Comment=Control MS VPN via PPTP
 Comment[ru]=Управление соединением MS VPN через PPTP
 Icon=/opt/vpnpptp/ponoff.png
@@ -96,7 +96,7 @@ GenericName=VPN PPTP Setup
 GenericName[ru]=Настройка соединения VPN PPTP
 Name=Setup VPN PPTP
 Name[ru]=Настройка VPN PPTP
-Exec=gksu -u root /opt/vpnpptp/vpnpptp
+Exec=/opt/vpnpptp/vpnpptp
 Comment=Setup MS VPN via PPTP
 Comment[ru]=Настройка соединения VPN PPTP
 Icon=/opt/vpnpptp/vpnpptp.png
