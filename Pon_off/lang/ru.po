@@ -1,0 +1,17 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8X-Language: ru_RU\n"
+
+msgid "Соединение pptp"
+msgstr "Соединение pptp"
+
+msgid "Подключить"
+msgstr "Подключить"
+
+msgid "Отключить"
+msgstr "Отключить"
+
+msgid "Выход без аварии"
+msgstr "Выход без аварии"
+
+msgid "Выход при аварии"
+msgstr "Выход при аварии"
