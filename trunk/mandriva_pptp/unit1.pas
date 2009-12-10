@@ -216,7 +216,6 @@ If Reconnect_pptp.Checked then
  If Pppd_log.Checked then
                      begin
                        Memo_peer.Lines.Add('debug');
-                       Memo_peer.Lines.Add('nodetach');
                      end;
  If Edit_mtu.Text <> '' then Memo_peer.Lines.Add('mtu '+Edit_mtu.Text);
 //Разбираемся с шифрованием
