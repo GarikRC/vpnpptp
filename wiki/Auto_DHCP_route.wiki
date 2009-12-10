@@ -1,0 +1,11 @@
+чтобы получение маршрутов через dhcp вступило в силу необходимо после того как Конфигуратор отработает, одно из трех:
+1) перезагрузиться,
+2) опустить и поднять сетевой интерфейс командами ifdown eth0 и ifup eth0,
+3) перезапустить сервис networking командой /etc/init.d/network restart
+подробнее http://homenet.corbina.net/index.php?showtopic=170180
+
+to obtain routes via dhcp in force is necessary after the configurator run for one of the three:
+1) reboot,
+2) lower and raise the network interface commands ifdown eth0 and ifup eth0,
+3) restart the networking service command /etc/init.d/network restart
+More http://homenet.corbina.net/index.php?showtopic=170180
