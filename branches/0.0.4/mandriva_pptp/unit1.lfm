@@ -1,0 +1,837 @@
+object Form1: TForm1
+  Left = 347
+  Height = 651
+  Top = 149
+  Width = 868
+  ActiveControl = PageControl1
+  Caption = 'Настройка VPN PPTP'
+  ClientHeight = 651
+  ClientWidth = 868
+  OnCreate = FormCreate
+  Position = poDesktopCenter
+  LCLVersion = '0.9.28'
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 608
+    Top = 0
+    Width = 866
+    ActivePage = TabSheet3
+    TabIndex = 2
+    TabOrder = 0
+    OnChange = PageControl1Change
+    object TabSheet1: TTabSheet
+      Caption = 'Этап 1'
+      ClientHeight = 581
+      ClientWidth = 864
+      object Label_IPS: TLabel
+        Left = 17
+        Height = 18
+        Top = 37
+        Width = 167
+        Caption = 'Провайдер (IP или имя):'
+        ParentColor = False
+        OnClick = Label_IPSClick
+      end
+      object Label_user: TLabel
+        Left = 76
+        Height = 18
+        Top = 150
+        Width = 108
+        Caption = 'Пользователь:'
+        ParentColor = False
+        OnClick = Label_userClick
+      end
+      object Label_pswd: TLabel
+        Left = 127
+        Height = 18
+        Top = 206
+        Width = 57
+        Caption = 'Пароль:'
+        ParentColor = False
+        OnClick = Label_pswdClick
+      end
+      object Label_peer: TLabel
+        Left = 65
+        Height = 18
+        Top = 94
+        Width = 119
+        Caption = 'Имя соединения:'
+        ParentColor = False
+      end
+      object Label_IPS2: TLabel
+        Left = 423
+        Height = 18
+        Top = 6
+        Width = 239
+        Caption = '(например, vpn.internet.beeline.ru)'
+        ParentColor = False
+        OnClick = Label_IPSClick
+      end
+      object Label_peer1: TLabel
+        Left = 495
+        Height = 18
+        Top = 62
+        Width = 134
+        Caption = '(например, beeline)'
+        ParentColor = False
+      end
+      object Label1: TLabel
+        Left = 191
+        Height = 18
+        Top = 6
+        Width = 228
+        Caption = 'I) Введите адрес vpn-сервера...'
+        ParentColor = False
+      end
+      object Label2: TLabel
+        Left = 191
+        Height = 18
+        Top = 62
+        Width = 298
+        Caption = 'II) Введите любое название соединения...'
+        ParentColor = False
+      end
+      object Label3: TLabel
+        Left = 191
+        Height = 18
+        Top = 118
+        Width = 174
+        Caption = 'III) Введите Ваш логин...'
+        ParentColor = False
+      end
+      object Label4: TLabel
+        Left = 191
+        Height = 18
+        Top = 174
+        Width = 184
+        Caption = 'IV) Введите Ваш пароль...'
+        ParentColor = False
+      end
+      object Label6: TLabel
+        Left = 5
+        Height = 18
+        Top = 350
+        Width = 88
+        Caption = 'Примечания:'
+        ParentColor = False
+      end
+      object Label7: TLabel
+        Left = 5
+        Height = 18
+        Top = 369
+        Width = 637
+        Caption = '- имя соединения может быть любым (требования к имени соединения как к имени файла)'
+        ParentColor = False
+      end
+      object Label8: TLabel
+        Left = 5
+        Height = 18
+        Top = 414
+        Width = 435
+        Caption = '- адрес vpn-сервера, логин и пароль уточняйте у провайдера'
+        ParentColor = False
+      end
+      object Label11: TLabel
+        Left = 5
+        Height = 18
+        Top = 390
+        Width = 752
+        Caption = '- указывайте IP vpn-сервера, тогда соединение может стать стабильнее в случае падения DNS-сервера'
+        ParentColor = False
+      end
+      object Label35: TLabel
+        Left = 30
+        Height = 18
+        Top = 261
+        Width = 154
+        Caption = 'Время дозвона (сек.):'
+        ParentColor = False
+      end
+      object Label36: TLabel
+        Left = 191
+        Height = 18
+        Top = 230
+        Width = 530
+        Caption = 'V) Введите максимальное время ожидания ответа провайдера на звонок...'
+        ParentColor = False
+      end
+      object Label37: TLabel
+        Left = 5
+        Height = 18
+        Top = 437
+        Width = 754
+        Caption = '- по истечении максимального времени ожидания ответа провайдера на звонок звонок повторяется вновь'
+        ParentColor = False
+      end
+      object Label38: TLabel
+        Left = 191
+        Height = 18
+        Top = 286
+        Width = 659
+        Caption = 'VI) Введите интервал времени для проверки состояния vpn-соединения и сет. интерфейса...'
+        ParentColor = False
+      end
+      object Label39: TLabel
+        Left = 5
+        Height = 18
+        Top = 457
+        Width = 453
+        Caption = '- чем меньше время реконнекта, тем выше нагрузка на систему'
+        ParentColor = False
+      end
+      object Label40: TLabel
+        Left = 5
+        Height = 18
+        Top = 317
+        Width = 179
+        Caption = 'Время реконнекта (сек.):'
+        ParentColor = False
+      end
+      object Label41: TLabel
+        Left = 5
+        Height = 18
+        Top = 478
+        Width = 784
+        Caption = '- по умолчанию предлагаются оптимальные для большинства провайдеров время дозвона и время реконнекта'
+        ParentColor = False
+      end
+      object Label44: TLabel
+        Left = 279
+        Height = 18
+        Top = 317
+        Width = 145
+        Caption = '(0 - без реконнекта)'
+        ParentColor = False
+      end
+      object Edit_IPS: TEdit
+        Left = 191
+        Height = 25
+        Top = 30
+        Width = 664
+        OnChange = Edit_IPSChange
+        TabOrder = 0
+      end
+      object Edit_peer: TEdit
+        Left = 191
+        Height = 25
+        Top = 87
+        Width = 664
+        TabOrder = 1
+      end
+      object Edit_user: TEdit
+        Left = 191
+        Height = 25
+        Top = 143
+        Width = 664
+        TabOrder = 2
+      end
+      object Edit_passwd: TEdit
+        Left = 191
+        Height = 25
+        Top = 198
+        Width = 663
+        OnChange = Edit_passwdChange
+        TabOrder = 3
+      end
+      object Edit_MaxTime: TEdit
+        Left = 191
+        Height = 25
+        Top = 254
+        Width = 80
+        OnChange = Edit_MaxTimeChange
+        TabOrder = 4
+        Text = '20'
+      end
+      object Edit_MinTime: TEdit
+        Left = 191
+        Height = 25
+        Top = 310
+        Width = 80
+        OnChange = Edit_MinTimeChange
+        TabOrder = 5
+        Text = '1'
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Этап 2'
+      ClientHeight = 581
+      ClientWidth = 864
+      object Label_mtu: TLabel
+        Left = 341
+        Height = 18
+        Top = 86
+        Width = 137
+        Caption = 'MTU (если задано):'
+        ParentColor = False
+      end
+      object Label_gate: TLabel
+        Left = 15
+        Height = 18
+        Top = 53
+        Width = 462
+        Caption = 'Шлюз локал. сети по умолчанию (определяется автоматически):'
+        ParentColor = False
+      end
+      object Label_route: TLabel
+        Left = 3
+        Height = 18
+        Top = 110
+        Width = 441
+        Caption = 'Дополнительные маршруты (необязательно, но желательно):'
+        ParentColor = False
+      end
+      object Label5: TLabel
+        Left = 3
+        Height = 18
+        Top = 142
+        Width = 478
+        Caption = '/sbin/route add -net [ip] netmask [маска] gw [шлюз] dev [устройство]'
+        ParentColor = False
+      end
+      object Label10: TLabel
+        Left = 3
+        Height = 18
+        Top = 126
+        Width = 484
+        Caption = '/sbin/route add -host [ip] netmask [маска] gw [шлюз] dev [устройство]'
+        ParentColor = False
+      end
+      object Label12: TLabel
+        Left = 663
+        Height = 18
+        Top = 166
+        Width = 88
+        Caption = 'Примечания:'
+        ParentColor = False
+      end
+      object Label13: TLabel
+        Left = 663
+        Height = 18
+        Top = 182
+        Width = 161
+        Caption = '- желательно вписать'
+        ParentColor = False
+      end
+      object Label14: TLabel
+        Left = 663
+        Height = 18
+        Top = 198
+        Width = 198
+        Caption = 'маршруты для vpn-сервера,'
+        ParentColor = False
+      end
+      object Label16: TLabel
+        Left = 663
+        Height = 18
+        Top = 214
+        Width = 169
+        Caption = 'dns-серверов, особенно'
+        ParentColor = False
+      end
+      object Label17: TLabel
+        Left = 663
+        Height = 18
+        Top = 230
+        Width = 190
+        Caption = 'если включенных сетевых'
+        ParentColor = False
+      end
+      object Label18: TLabel
+        Left = 663
+        Height = 18
+        Top = 262
+        Width = 163
+        Caption = 'более одного, а также'
+        ParentColor = False
+      end
+      object Label19: TLabel
+        Left = 687
+        Height = 18
+        Top = 30
+        Width = 99
+        Caption = '(если задано)'
+        ParentColor = False
+      end
+      object Label15: TLabel
+        Left = 663
+        Height = 18
+        Top = 246
+        Width = 171
+        Caption = 'интерфейсов в системе'
+        ParentColor = False
+      end
+      object Label20: TLabel
+        Left = 663
+        Height = 18
+        Top = 278
+        Width = 187
+        Caption = 'вписать другие маршруты'
+        ParentColor = False
+      end
+      object Label9: TLabel
+        Left = 663
+        Height = 18
+        Top = 294
+        Width = 190
+        Caption = '- если сетевой интерфейс'
+        ParentColor = False
+      end
+      object Label21: TLabel
+        Left = 663
+        Height = 18
+        Top = 310
+        Width = 187
+        Caption = 'и/или шлюз определились'
+        ParentColor = False
+      end
+      object Label22: TLabel
+        Left = 663
+        Height = 18
+        Top = 342
+        Width = 161
+        Caption = 'требующийся сетевой'
+        ParentColor = False
+      end
+      object Label23: TLabel
+        Left = 663
+        Height = 18
+        Top = 358
+        Width = 162
+        Caption = 'интерфейс основным и'
+        ParentColor = False
+      end
+      object Label24: TLabel
+        Left = 663
+        Height = 18
+        Top = 374
+        Width = 157
+        Caption = 'настройте все заново'
+        ParentColor = False
+      end
+      object Label25: TLabel
+        Left = 3
+        Height = 18
+        Top = 17
+        Width = 475
+        Caption = 'Сетевой интерфейс по умолчанию (определяется автоматически):'
+        ParentColor = False
+      end
+      object Label26: TLabel
+        Left = 663
+        Height = 18
+        Top = 326
+        Width = 190
+        Caption = 'неправильно, то сделайте'
+        ParentColor = False
+      end
+      object Label27: TLabel
+        Left = 663
+        Height = 18
+        Top = 390
+        Width = 187
+        Caption = 'или введите эти значения'
+        ParentColor = False
+      end
+      object Label28: TLabel
+        Left = 663
+        Height = 18
+        Top = 406
+        Width = 59
+        Caption = 'вручную'
+        ParentColor = False
+      end
+      object Label29: TLabel
+        Left = 663
+        Height = 18
+        Top = 422
+        Width = 194
+        Caption = '- без занесения маршрутов'
+        ParentColor = False
+      end
+      object Label30: TLabel
+        Left = 663
+        Height = 18
+        Top = 438
+        Width = 196
+        Caption = 'не гарантируется одновре-'
+        ParentColor = False
+      end
+      object Label31: TLabel
+        Left = 663
+        Height = 18
+        Top = 454
+        Width = 195
+        Caption = 'менная работа интернета и'
+        ParentColor = False
+      end
+      object Label32: TLabel
+        Left = 663
+        Height = 18
+        Top = 470
+        Width = 189
+        Caption = 'локальной сети, но интер-'
+        ParentColor = False
+      end
+      object Label33: TLabel
+        Left = 663
+        Height = 18
+        Top = 486
+        Width = 189
+        Caption = 'нет в любом случае будет'
+        ParentColor = False
+      end
+      object Label34: TLabel
+        Left = 663
+        Height = 18
+        Top = 502
+        Width = 67
+        Caption = 'работать'
+        ParentColor = False
+      end
+      object Edit_eth: TEdit
+        Left = 479
+        Height = 25
+        Top = 10
+        Width = 176
+        TabOrder = 0
+      end
+      object Edit_gate: TEdit
+        Left = 479
+        Height = 25
+        Top = 46
+        Width = 176
+        TabOrder = 1
+      end
+      object Edit_mtu: TEdit
+        Left = 479
+        Height = 25
+        Top = 79
+        Width = 176
+        TabOrder = 2
+      end
+      object CheckBox_shifr: TCheckBox
+        Left = 663
+        Height = 21
+        Top = 14
+        Width = 184
+        Caption = 'Включить шифрование'
+        OnChange = CheckBox_shifrChange
+        TabOrder = 3
+      end
+      object CheckBox_rchap: TCheckBox
+        Left = 663
+        Height = 21
+        Top = 46
+        Width = 104
+        Caption = 'refuse-chap'
+        TabOrder = 4
+      end
+      object CheckBox_reap: TCheckBox
+        Left = 663
+        Height = 21
+        Top = 70
+        Width = 97
+        Caption = 'refuse-eap'
+        TabOrder = 5
+      end
+      object CheckBox_rmschap: TCheckBox
+        Left = 663
+        Height = 21
+        Top = 94
+        Width = 124
+        Caption = 'refuse-mschap'
+        TabOrder = 6
+      end
+      object CheckBox_stateless: TCheckBox
+        Left = 663
+        Height = 21
+        Top = 118
+        Width = 87
+        Caption = 'stateless'
+        TabOrder = 7
+      end
+      object CheckBox_no40: TCheckBox
+        Left = 751
+        Height = 21
+        Top = 118
+        Width = 55
+        Caption = 'no40'
+        TabOrder = 8
+      end
+      object CheckBox_no56: TCheckBox
+        Left = 805
+        Height = 21
+        Top = 118
+        Width = 56
+        Caption = 'no56'
+        TabOrder = 9
+      end
+      object Memo_route: TMemo
+        Left = 7
+        Height = 392
+        Top = 166
+        Width = 648
+        Lines.Strings = (
+          ''
+        )
+        TabOrder = 10
+      end
+      object CheckBox_desktop: TCheckBox
+        Left = 3
+        Height = 21
+        Top = 558
+        Width = 258
+        Caption = 'Создать ярлык на рабочем столе'
+        Checked = True
+        State = cbChecked
+        TabOrder = 11
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Этап 3'
+      ClientHeight = 581
+      ClientWidth = 864
+      object Label42: TLabel
+        Left = 111
+        Height = 18
+        Top = 518
+        Width = 648
+        Caption = 'Нажмите на кнопку "Создать подключение" для сохранения сконфигурированных настроек'
+        ParentColor = False
+      end
+      object Label43: TLabel
+        Left = 79
+        Height = 18
+        Top = 542
+        Width = 708
+        Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
+        ParentColor = False
+      end
+      object Label_peername: TLabel
+        Left = 383
+        Height = 18
+        Top = 9
+        Width = 113
+        Caption = 'Label_peername'
+        ParentColor = False
+        Visible = False
+      end
+      object Label_ip_up: TLabel
+        Left = 511
+        Height = 18
+        Top = 9
+        Width = 143
+        Caption = '/etc/ppp/ip-up.d/ip-up'
+        ParentColor = False
+        Visible = False
+      end
+      object Label_ip_down: TLabel
+        Left = 671
+        Height = 18
+        Top = 9
+        Width = 181
+        Caption = '/etc/ppp/ip-down.d/ip-down'
+        ParentColor = False
+        Visible = False
+      end
+      object Label45: TLabel
+        Left = 31
+        Height = 18
+        Top = 30
+        Width = 700
+        Caption = '(используйте эту опцию, если только без нее не работает, или об этом попросит сама программа)'
+        ParentColor = False
+      end
+      object Memo_peer: TMemo
+        Left = 791
+        Height = 39
+        Top = 382
+        Width = 67
+        Lines.Strings = (
+          ''
+        )
+        TabOrder = 0
+        Visible = False
+      end
+      object Memo_ip_up: TMemo
+        Left = 791
+        Height = 39
+        Top = 302
+        Width = 66
+        Lines.Strings = (
+          ''
+        )
+        TabOrder = 1
+        Visible = False
+      end
+      object Memo_ip_down: TMemo
+        Left = 791
+        Height = 39
+        Top = 262
+        Width = 64
+        Lines.Strings = (
+          ''
+        )
+        TabOrder = 2
+        Visible = False
+      end
+      object Memo_users: TMemo
+        Left = 791
+        Height = 39
+        Top = 342
+        Width = 67
+        Lines.Strings = (
+          'Memo7'
+        )
+        TabOrder = 3
+        Visible = False
+      end
+      object Memo_pptp: TMemo
+        Left = 791
+        Height = 39
+        Top = 542
+        Width = 70
+        Lines.Strings = (
+          'Memo5'
+        )
+        OnChange = Memo_gateChange
+        TabOrder = 4
+        Visible = False
+      end
+      object Memo_eth: TMemo
+        Left = 791
+        Height = 39
+        Top = 502
+        Width = 70
+        Lines.Strings = (
+          'Memo5'
+        )
+        OnChange = Memo_gateChange
+        TabOrder = 5
+        Visible = False
+      end
+      object Memo_gate: TMemo
+        Left = 791
+        Height = 39
+        Top = 462
+        Width = 70
+        Lines.Strings = (
+          'Memo5'
+        )
+        OnChange = Memo_gateChange
+        TabOrder = 6
+        Visible = False
+      end
+      object Tmpnostart: TMemo
+        Left = 791
+        Height = 39
+        Top = 422
+        Width = 70
+        Lines.Strings = (
+          'Memo5'
+        )
+        OnChange = Memo_gateChange
+        TabOrder = 7
+        Visible = False
+      end
+      object Mii_tool_no: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 6
+        Width = 326
+        Caption = 'Не контролировать state сетевого кабеля'
+        OnChange = Mii_tool_noChange
+        TabOrder = 8
+      end
+      object Reconnect_pptp: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 54
+        Width = 828
+        Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
+        OnChange = Reconnect_pptpChange
+        TabOrder = 9
+      end
+      object Pppd_log: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 80
+        Width = 252
+        Caption = 'вести лог pppd в /var/log/pppd.log'
+        Checked = True
+        OnChange = Pppd_logChange
+        State = cbChecked
+        TabOrder = 10
+      end
+      object dhcp_route: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 110
+        Width = 252
+        Caption = 'получать маршруты через DHCP'
+        Checked = True
+        OnChange = dhcp_routeChange
+        State = cbChecked
+        TabOrder = 11
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'Этап 4'
+      ClientHeight = 581
+      ClientWidth = 864
+      object Memo_create: TMemo
+        Left = 5
+        Height = 567
+        Top = 7
+        Width = 850
+        Lines.Strings = (
+          ''
+        )
+        TabOrder = 0
+      end
+    end
+  end
+  object Button_exit: TButton
+    Left = 8
+    Height = 31
+    Top = 613
+    Width = 176
+    Anchors = [akLeft, akBottom]
+    Caption = 'Выход'
+    OnClick = Button_exitClick
+    TabOrder = 1
+  end
+  object Button_next1: TButton
+    Left = 344
+    Height = 30
+    Top = 613
+    Width = 176
+    Caption = 'Далее'
+    OnClick = Button_next1Click
+    TabOrder = 2
+  end
+  object Button_next2: TButton
+    AnchorSideLeft.Control = Button_exit
+    AnchorSideLeft.Side = asrBottom
+    Left = 344
+    Height = 31
+    Top = 613
+    Width = 176
+    Anchors = [akBottom]
+    BorderSpacing.Left = 5
+    Caption = 'Далее'
+    OnClick = Button_next2Click
+    TabOrder = 3
+  end
+  object Button_create: TButton
+    AnchorSideRight.Side = asrBottom
+    Left = 688
+    Height = 33
+    Top = 613
+    Width = 174
+    Anchors = [akRight, akBottom]
+    Caption = 'Создать подключение'
+    OnClick = Button_createClick
+    TabOrder = 4
+  end
+end
