@@ -19,14 +19,13 @@
 }
 
 unit Unit1;
-
 {$mode objfpc}{$H+}
 
 interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, unix;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Gettext, Typinfo;
 
 type
 
@@ -160,38 +159,130 @@ type
     { private declarations }
   public
     { public declarations }
-  end; 
+  end;
+
+    { TTranslator }
+TTranslator = class(TAbstractTranslator)
+private
+  FFormClassName : String;
+  FPOFile:TPOFile;
+public
+  constructor Create(POFileName:string);
+  destructor Destroy;override;
+  procedure TranslateStringProperty(Sender:TObject; const Instance: TPersistent; PropInfo: PPropInfo; var Content:string);override;
+end;
 
 var
-  Form1: TForm1; 
+  Form1: TForm1;
+  POFileName : String;
+  Lang,FallbackLang:string;
+resourcestring
+  message0='Внимание!';
+  message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
+  message2='Так как Вы отказались от контроля state сетевого кабеля, то в целях снижения нагрузки на систему время дозвона установлено в 20 сек.';
+  message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd реконнекта проигнорирован.';
+  message4='Так как реконнект будет реализован встроенным в демон pppd методом, то время реконнекта (время отправки LCP эхо-запросов) установлено в 20 сек.';
+  message5='Так как реконнект будет реализован встроенным в демон pppd методом, то время дозвона не используется за ненадобностью.';
+  message6='Так как выбрана опция получения маршрутов через DHCP, то сеть будет перезапущена.';
+  message7='Рабочий стол';//папка (директория) пользователя
+  message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
+
+  message10='В поле "Время реконнекта" можно ввести лишь число в пределах от 0 до 255 сек.';
+  message11='Рекомендуется отключить поднятое VPN PPTP - тогда шлюз локальной сети определится автоматически.';
+  message12='Сетевой интерфейс не определился.';
+  message13='Сетевой кабель для автоматического определения шлюза локальной сети не подключен.';
+  message14='Не удалось автоматически определить шлюз локальной сети.';
+  message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9.';
+  message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
+  message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500]. Рекомендуется MTU=1460.';
+  message18='Запуск этой программы возможен только под администратором и live-пользователем. Нажмите <OK> для отказа от запуска.';
+  message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP. Нажмите <OK> для отказа от двойного запуска.';
+  message20='Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux и невозможностью его автоматической установки.';
+  message21='Установка не удалась';//выхлоп urpmi --auto pptp-linux
 
 implementation
+
+uses
+LCLProc;
+
+{ TTranslator }
+
+constructor TTranslator.Create(POFileName: string);
+begin
+  inherited Create;
+  FPOFile := TPOFile.Create(POFileName);
+end;
+
+destructor TTranslator.Destroy;
+begin
+  FPOFile.Free;
+  inherited Destroy;
+end;
+
+procedure TTranslator.TranslateStringProperty(Sender: TObject;
+  const Instance: TPersistent; PropInfo: PPropInfo; var Content: string);
+begin
+  if Instance.InheritsFrom(TForm) then
+    begin
+      FFormClassName := Instance.ClassName;
+      DebugLn(UpperCase(FFormClassName + '.'+PropInfo^.Name) + '=' + Content);
+      Content := FPOFile.Translate(UpperCase(FFormClassName + '.' + PropInfo^.Name), Content);
+    end
+  else
+    begin
+      DebugLn(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.' + PropInfo^.Name) + '=' + Content);
+      Content := FPOFile.Translate(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.'+ PropInfo^.Name), Content);
+    end;
+  Content := UTF8ToSystemCharSet(Content); // convert UTF8 to current local
+end;
 
 { TForm1 }
 
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i:integer;
+    pchar_message0,pchar_message1:pchar;
 begin
 If Mii_tool_no.Checked then If StrToInt(Edit_MaxTime.Text)<20 then
                         begin
-                          Application.MessageBox('Так как Вы отказались от контроля state сетевого кабеля, то в целях снижения нагрузки на систему время дозвона установлено в 20 сек.','Внимание!', 0);
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message2);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                           Edit_MaxTime.Text:='20';
                         end;
 If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                         begin
-                          Application.MessageBox('Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd реконнекта проигнорирован.','Внимание!', 0);
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message3);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                           Reconnect_pptp.Checked:=False;
                         end;
 If Reconnect_pptp.Checked then If StrToInt(Edit_MinTime.Text)<20 then
                         begin
-                          Application.MessageBox('Так как реконнект будет реализован встроенным в демон pppd методом, то время реконнекта (время отправки LCP эхо-запросов) установлено в 20 сек.','Внимание!', 0);
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message4);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                           Edit_MinTime.Text:='20';
                         end;
 If Reconnect_pptp.Checked then
                         begin
-                          Application.MessageBox('Так как реконнект будет реализован встроенным в демон pppd методом, то время дозвона не используется за ненадобностью.','Внимание!', 0);
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message5);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                         end;
+ If dhcp_route.Checked then
+                       begin
+                          if FileExists('/etc/dhclient.conf') then Shell('cp -f /etc/dhclient.conf'+' '+'/etc/dhclient.conf.old');
+                          Shell('rm -f /etc/dhclient.conf');
+                          if FileExists('/opt/vpnpptp/scripts/dhclient.conf') then Shell('cp -f /opt/vpnpptp/scripts/dhclient.conf'+' '+'/etc/dhclient.conf');
+                          if FileExists('/etc/dhclient-exit-hooks') then Shell('cp -f /etc/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks.old');
+                          Shell('rm -f /etc/dhclient-exit-hooks');
+                          if FileExists('/opt/vpnpptp/scripts/dhclient-exit-hooks') then Shell('cp -f /opt/vpnpptp/scripts/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks');
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message6);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          Shell ('/etc/init.d/network restart');
+                       end;
  if FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
  Shell('rm -f '+ Label_peername.Caption);
@@ -213,10 +304,7 @@ If Reconnect_pptp.Checked then
                                       Memo_peer.Lines.Add('lcp-echo-failure 4');
                                     end;
  Memo_peer.Lines.Add('defaultroute');
- If Pppd_log.Checked then
-                     begin
-                       Memo_peer.Lines.Add('debug');
-                     end;
+ If Pppd_log.Checked then Memo_peer.Lines.Add('debug');
  If Edit_mtu.Text <> '' then Memo_peer.Lines.Add('mtu '+Edit_mtu.Text);
 //Разбираемся с шифрованием
  If CheckBox_shifr.Checked then
@@ -284,7 +372,6 @@ If Reconnect_pptp.Checked then
                                               Shell('printf "mii-tool-yes\n" >> /opt/vpnpptp/config');
  If Reconnect_pptp.Checked then Shell('printf "reconnect-pptp\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "noreconnect-pptp\n" >> /opt/vpnpptp/config');
-
 //Создаем ярлык для подключения
  If CheckBox_desktop.Checked then
   begin
@@ -316,9 +403,9 @@ If Reconnect_pptp.Checked then
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
-     if DirectoryExists('/home/'+Memo_users.Lines[i]+'/Рабочий стол/') then
+      if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+message7+'/') then
       begin
-       Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/Рабочий стол/ponoff.desktop');
+       Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
       end;
       i:=i+1;
     end;
@@ -328,9 +415,9 @@ If Reconnect_pptp.Checked then
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
-     if DirectoryExists('/home/'+Memo_users.Lines[i]+'/Рабочий стол/') then
+     if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+message7+'/') then
       begin
-       Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/Рабочий стол/ponoff.desktop');
+       Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
       end;
       i:=i+1;
     end;
@@ -343,22 +430,12 @@ If Reconnect_pptp.Checked then
               PageControl1.ActivePageIndex:=3;
               Button_next2.Visible:=False;
  Memo_create.Clear;
- Memo_create.Lines.LoadFromFile('/opt/vpnpptp/success');
+ If FallbackLang='ru' then  Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.ru');
+ If FallbackLang<>'ru' then  Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.en');
  Button_create.Visible:=False;
  Shell('rm -f /tmp/users');
  //применяем дополнительные настройки
  If Pppd_log.Checked then Shell ('/opt/vpnpptp/scripts/pppdlog');
- If dhcp_route.Checked then
-                       begin
-                          if FileExists('/etc/dhclient.conf') then Shell('cp -f /etc/dhclient.conf'+' '+'/etc/dhclient.conf.old');
-                          Shell('rm -f /etc/dhclient.conf');
-                          if FileExists('/opt/vpnpptp/scripts/dhclient.conf') then Shell('cp -f /opt/vpnpptp/scripts/dhclient.conf'+' '+'/etc/dhclient.conf');
-                          if FileExists('/etc/dhclient-exit-hooks') then Shell('cp -f /etc/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks.old');
-                          Shell('rm -f /etc/dhclient-exit-hooks');
-                          if FileExists('/opt/vpnpptp/scripts/dhclient-exit-hooks') then Shell('cp -f /opt/vpnpptp/scripts/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks');
-                          Application.MessageBox('Так как выбрана опция получения маршрутов через DHCP, то сеть будет перезапущена.','Внимание!', 0);
-                          Shell ('/etc/init.d/network restart');
-                       end;
 end;
 
 procedure TForm1.Button_addoptionsClick(Sender: TObject);
@@ -408,6 +485,7 @@ procedure TForm1.Button_next1Click(Sender: TObject);
 var
    i:word;
    y:boolean;
+   pchar_message0,pchar_message1:pchar;
 begin
 y:=false;
 //проверка корректности ввода времени дозвона
@@ -416,13 +494,17 @@ y:=false;
         if not (Edit_MaxTime.Text[i] in ['0'..'9']) then y:=true;
     if y or (Edit_MaxTime.Text='') or (Edit_MaxTime.Text='0') or (Length(Edit_MaxTime.Text)>3) then
             begin
-              Application.MessageBox('В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.','Внимание!', 0);
+              pchar_message0:=Pchar(message0);
+              pchar_message1:=Pchar(message8);
+              Application.MessageBox(pchar_message1,pchar_message0, 0);
               Edit_MaxTime.Text:='20';
               exit;
             end;
     if (StrToInt(Edit_MaxTime.Text)<5) or (StrToInt(Edit_MaxTime.Text)>255) then
              begin
-               Application.MessageBox('В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.','Внимание!', 0);
+               pchar_message0:=Pchar(message0);
+               pchar_message1:=Pchar(message8);
+               Application.MessageBox(pchar_message1,pchar_message0, 0);
                Edit_MaxTime.Text:='20';
                exit;
              end;
@@ -433,14 +515,18 @@ y:=false;
         if not (Edit_MinTime.Text[i] in ['0'..'9']) then y:=true;
     if y or (Edit_MinTime.Text='') or (StrToInt(Edit_MinTime.Text)>255) or (Length(Edit_MinTime.Text)>3) then
             begin
-              Application.MessageBox('В поле "Время реконнекта" можно ввести лишь число в пределах от 0 до 255 сек.','Внимание!', 0);
+              pchar_message0:=Pchar(message0);
+              pchar_message1:=Pchar(message10);
+              Application.MessageBox(pchar_message1,pchar_message0, 0);
               Edit_MinTime.Text:='1';
               exit;
             end;
 //проверка корректности ввода иных полей Настроек подключения
 if (Edit_IPS.Text='') or (Edit_peer.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                             begin
-                                Application.MessageBox('Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.','Внимание!', 0);
+                                pchar_message0:=Pchar(message0);
+                                pchar_message1:=Pchar(message1);
+                                Application.MessageBox(pchar_message1,pchar_message0, 0);
                                 exit;
                             end;
 if not y then
@@ -463,7 +549,9 @@ if not y then
   If LeftStr(Memo_gate.Lines[0],3)='ppp' then
                                          begin
                                            Edit_gate.Text:='none';
-                                           Application.MessageBox('Рекомендуется отключить поднятое VPN PPTP - тогда шлюз локальной сети определится автоматически.','Внимание!', 0);
+                                           pchar_message0:=Pchar(message0);
+                                           pchar_message1:=Pchar(message11);
+                                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                                          end;
 //Определяем сетевой интерфейс по умолчанию
   Shell('/sbin/ip r|grep default| awk '+chr(39)+'{ print $5 }'+chr(39)+' > /tmp/eth');
@@ -474,18 +562,24 @@ if not y then
   If Edit_eth.Text='none' then
                            begin
                              Edit_gate.Text:='none';
-                             Application.MessageBox('Сетевой интерфейс не определился.','Внимание!', 0);
+                             pchar_message0:=Pchar(message0);
+                             pchar_message1:=Pchar(message12);
+                             Application.MessageBox(pchar_message1,pchar_message0, 0);
                            end;
   If RightStr(Memo_eth.Lines[0],7)='no link' then
                            begin
                              Edit_eth.Text:='none';
                              Edit_gate.Text:='none';
-                             Application.MessageBox('Сетевой кабель для автоматического определения шлюза локальной сети не подключен.','Внимание!', 0);
+                             pchar_message0:=Pchar(message0);
+                             pchar_message1:=Pchar(message13);
+                             Application.MessageBox(pchar_message1,pchar_message0, 0);
                            end;
   If Edit_gate.Text='none' then
                            begin
                              Edit_eth.Text:='none';
-                             Application.MessageBox('Не удалось автоматически определить шлюз локальной сети.','Внимание!', 0);
+                             pchar_message0:=Pchar(message0);
+                             pchar_message1:=Pchar(message14);
+                             Application.MessageBox(pchar_message1,pchar_message0, 0);
                            end;
   Memo_route.Clear;
   Memo_route.Lines[0]:='';
@@ -503,19 +597,24 @@ var
    j:byte; //точка в написании шлюза
    y:boolean;
    a,b,c,d:string; //a.b.c.d-это шлюз
+   pchar_message0,pchar_message1:pchar;
 begin
 y:=false;
 //проверка корректности ввода сетевого интерфейса
 If (Edit_eth.Text='none') or (Edit_eth.Text='') then
                     begin
-                         Application.MessageBox('Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9.','Внимание!', 0);
+                         pchar_message0:=Pchar(message0);
+                         pchar_message1:=Pchar(message15);
+                         Application.MessageBox(pchar_message1,pchar_message0, 0);
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                          TabSheet2.TabVisible:= True;
                          exit;
                     end;
 if Length(Edit_eth.Text)<>4 then
                     begin
-                         Application.MessageBox('Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9.','Внимание!', 0);
+                         pchar_message0:=Pchar(message0);
+                         pchar_message1:=Pchar(message15);
+                         Application.MessageBox(pchar_message1,pchar_message0, 0);
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                          TabSheet2.TabVisible:= True;
                          exit;
@@ -524,7 +623,9 @@ if not ((Edit_eth.Text[1]='e') and  (Edit_eth.Text[2]='t') and  (Edit_eth.Text[3
 if not (Edit_eth.Text[4] in ['0'..'9']) then y:=true;
 if y then
                     begin
-                          Application.MessageBox('Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9.`','Внимание!', 0);
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message15);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                           Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                           TabSheet2.TabVisible:= True;
                           exit;
@@ -532,7 +633,9 @@ if y then
 //проверка корректности ввода шлюза локальной сети
 If (Edit_gate.Text='none') or (Edit_gate.Text='') or (Length(Edit_gate.Text)>15) then //15-макс.длина шлюза 255.255.255.255
                     begin
-                         Application.MessageBox('Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.','Внимание!', 0);
+                         pchar_message0:=Pchar(message0);
+                         pchar_message1:=Pchar(message16);
+                         Application.MessageBox(pchar_message1,pchar_message0, 0);
                          Edit_gate.Text:=Memo_gate.Lines[0];
                          exit;
                     end;
@@ -561,7 +664,9 @@ Try
   end;
 If y then
          begin
-           Application.MessageBox('Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.','Внимание!', 0);
+           pchar_message0:=Pchar(message0);
+           pchar_message1:=Pchar(message16);
+           Application.MessageBox(pchar_message1,pchar_message0, 0);
            Edit_gate.Text:=Memo_gate.Lines[0];
            exit;
          end;
@@ -572,7 +677,9 @@ If not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
 If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
 If y then
          begin
-           Application.MessageBox('Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.','Внимание!', 0);
+           pchar_message0:=Pchar(message0);
+           pchar_message1:=Pchar(message16);
+           Application.MessageBox(pchar_message1,pchar_message0, 0);
            Edit_gate.Text:=Memo_gate.Lines[0];
            exit;
          end;
@@ -581,13 +688,17 @@ For i:=1 to Length(Edit_mtu.Text) do
 begin
    if not (Edit_mtu.Text[i] in ['0'..'9']) then
                                       begin
-                                        Application.MessageBox('Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500]. Рекомендуется MTU=1460.','Внимание!', 0);
+                                        pchar_message0:=Pchar(message0);
+                                        pchar_message1:=Pchar(message17);
+                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
                                         Edit_mtu.Clear;
                                         exit;
                                       end;
 If (StrToInt(Edit_mtu.Text)>1500) or (StrToInt(Edit_mtu.Text)<576) then
                                       begin
-                                        Application.MessageBox('Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500]. Рекомендуется MTU=1460.','Внимание!', 0);
+                                        pchar_message0:=Pchar(message0);
+                                        pchar_message1:=Pchar(message17);
+                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
                                         Edit_mtu.Clear;
                                         exit;
                                       end;
@@ -639,6 +750,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 var i,j:integer;
     k:boolean; //запуск под root, под live
     m:boolean; //двойной запуск,
+    pchar_message0,pchar_message1:pchar;
 begin
    k:=false;
    m:=false;
@@ -657,18 +769,21 @@ begin
    If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then m:=true;
    If not k then
              begin
-               Application.MessageBox('Запуск этой программы возможен только под администратором и live-пользователем. Нажмите <OK> для отказа от запуска.','Внимание!', 0);
+               pchar_message0:=Pchar(message0);
+               pchar_message1:=Pchar(message18);
+               Application.MessageBox(pchar_message1,pchar_message0, 0);
                Shell('rm -f /tmp/tmpnostart');
                halt;
              end;
    If m then
              begin
-               Application.MessageBox('Другая такая же программа уже пытается сконфигурировать VPN PPTP. Нажмите <OK> для отказа от двойного запуска.','Внимание!', 0);
+               pchar_message0:=Pchar(message0);
+               pchar_message1:=Pchar(message19);
+               Application.MessageBox(pchar_message1,pchar_message0, 0);
                Shell('rm -f /tmp/tmpnostart');
                halt;
              end;
   Shell('rm -f /tmp/tmpnostart');
-  //Application.MessageBox('Запуск конфигуратора VPN PPTP может занять некоторое время, если в системе не установлен пакет pptp-linux.','Внимание!', 0);
   Shell('rm -f /tmp/gate');
   Shell('rm -f /tmp/eth');
   Shell('rm -f /tmp/users');
@@ -681,9 +796,11 @@ begin
   For j:=0 to Memo_pptp.Lines.Count-1 do
   For i:=0 to 255 do
    begin
-     If LeftStr(Memo_pptp.Lines[j],i)='Установка не удалась' then
+     If LeftStr(Memo_pptp.Lines[j],i)=message21 then
       begin
-          Application.MessageBox('Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux и невозможностью его автоматической установки.','Внимание!', 0);
+          pchar_message0:=Pchar(message0);
+          pchar_message1:=Pchar(message20);
+          Application.MessageBox(pchar_message1,pchar_message0, 0);
           Shell('rm -f /tmp/tmpsetup');
           halt;
       end;
@@ -767,7 +884,25 @@ begin
 end;
 
 initialization
+
   {$I unit1.lrs}
+  Gettext.GetLanguageIDs(Lang,FallbackLang);
+  //FallbackLang:='en'; //просто для проверки при отладке
+  If FallbackLang<>'ru' then
+                            begin
+                               POFileName:= '/opt/vpnpptp/lang/vpnpptp.en.po';
+                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                            end;
+  If FallbackLang='ru' then
+                            begin
+                            end;
+//  If FallbackLang='en' then
+//                           begin
+//                              POFileName:= '/opt/vpnpptp/lang/vpnpptp.en.po';
+//                              Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+//                           end;
+If FallbackLang<>'ru' then LRSTranslator := TTranslator.Create(POFileName); //перевод (локализация) всей формы приложения
+end.
 
 end.
 

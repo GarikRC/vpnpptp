@@ -60,10 +60,12 @@ msgid "Получать маршруты через DHCP"
 msgstr ""
 
 #: TFORM1.EDIT_MAXTIME.TEXT
+msgctxt "TFORM1.EDIT_MAXTIME.TEXT"
 msgid "20"
 msgstr ""
 
 #: TFORM1.EDIT_MINTIME.TEXT
+msgctxt "TFORM1.EDIT_MINTIME.TEXT"
 msgid "1"
 msgstr ""
 
@@ -266,6 +268,7 @@ msgid "/etc/ppp/ip-down.d/ip-down"
 msgstr ""
 
 #: TFORM1.LABEL_IP_UP.CAPTION
+msgctxt "TFORM1.LABEL_IP_UP.CAPTION"
 msgid "/etc/ppp/ip-up.d/ip-up"
 msgstr ""
 
@@ -282,6 +285,7 @@ msgid "(например, beeline)"
 msgstr ""
 
 #: TFORM1.LABEL_PEERNAME.CAPTION
+msgctxt "TFORM1.LABEL_PEERNAME.CAPTION"
 msgid "Label_peername"
 msgstr ""
 
@@ -330,6 +334,7 @@ msgid "Внимание!"
 msgstr ""
 
 #: unit1.message1
+msgctxt "unit1.message1"
 msgid "Поля \"П#209�овайде#209� (IP или имя)\", \"Имя соединения\", \"Пользователь\", \"Па#209�оль\" обязательны к заполнению."
 msgstr ""
 
