@@ -42,11 +42,11 @@ object Form1: TForm1
         OnClick = Label_userClick
       end
       object Label_pswd: TLabel
-        Left = 127
+        Left = 119
         Height = 18
         Top = 206
-        Width = 57
-        Caption = 'Пароль:'
+        Width = 65
+        Caption = '  Пароль:'
         ParentColor = False
         OnClick = Label_pswdClick
       end
@@ -756,19 +756,17 @@ object Form1: TForm1
         Left = 7
         Height = 21
         Top = 80
-        Width = 252
-        Caption = 'вести лог pppd в /var/log/pppd.log'
-        Checked = True
+        Width = 254
+        Caption = 'Вести лог pppd в /var/log/pppd.log'
         OnChange = Pppd_logChange
-        State = cbChecked
         TabOrder = 10
       end
       object dhcp_route: TCheckBox
         Left = 7
         Height = 21
         Top = 110
-        Width = 252
-        Caption = 'получать маршруты через DHCP'
+        Width = 254
+        Caption = 'Получать маршруты через DHCP'
         Checked = True
         OnChange = dhcp_routeChange
         State = cbChecked

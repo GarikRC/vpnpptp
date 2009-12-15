@@ -27,7 +27,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Menus, StdCtrls, Unix;
+  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations;
 
 type
 
@@ -68,6 +68,21 @@ type
 
 var
   Form1: TForm1;
+  Lang,FallbackLang:string;
+
+resourcestring
+  message0='Внимание!';
+  message1='Запуск этой программы возможен только под администратором и live-пользователем. Нажмите <OK> для отказа от запуска.';
+  message2='Другая такая же программа уже работает с VPN PPTP. Нажмите <OK> для отказа от двойного запуска.';
+  message3='Сначала сконфигурируйте соединение: Меню, Утилиты, Системные, (или Меню, Интернет), Настройка VPN PPTP (Настройка соединения VPN PPTP).';
+  message4='No ethernet. Cетевой интерфейс для VPN PPTP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
+  message5='No link. Сетевой кабель для VPN PPTP неподключен.';
+  message6='Соединение ';
+  message7=' установлено';
+  message8=' отсутствует';
+  message9='No link. Сетевой кабель для VPN PPTP неподключен. А реконнект не включен.';
+  message10='Выход без аварии';
+  message11='Выход при аварии';
 
 implementation
 
@@ -79,6 +94,7 @@ var
     Code_up_ppp:boolean;
     link:1..4;//1-link ok, 2-no link, 3-none, 4-еще не определено
     str:string;
+    pchar_message0,pchar_message1:pchar;
 begin
   //Проверяем поднялось ли соединение
   Shell('rm -f /tmp/status.ppp');
@@ -111,10 +127,8 @@ If link=4 then
    end;
 If Code_up_ppp then If link<>1 then //когда связи по факту нет, но в NetApplet и в ifconfig ppp0 числится, а pppd продолжает сидеть в процессах
                                begin
-                                 //Sleep(1000);
                                  MenuItem2Click(Self);
                                  TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
-                                 //Application.MessageBox('Приведение индикации NetApplet, ifconfig в чувство, помогая pppd упасть до конца.','Внимание! Отладочная информация!', 0);
                                  exit;
                                end;
 
@@ -123,12 +137,13 @@ If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 
 If not Code_up_ppp then If link=3 then
                                   begin
-                                   //Sleep(1000);
                                    MenuItem2Click(Self);
                                    TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
-                                                                Application.MessageBox('No link. Сетевой кабель для VPN PPTP неподключен. А реконнект не включен.','Внимание!', 0);
+                                                                pchar_message0:=Pchar(message0);
+                                                                pchar_message1:=Pchar(message9);
+                                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
@@ -143,12 +158,13 @@ If not Code_up_ppp then If link=3 then
                                   end;
 If not Code_up_ppp then If link=2 then
                                   begin
-                                   //Sleep(1000);
                                    MenuItem2Click(Self);
                                    TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
-                                                                Application.MessageBox('No link. Сетевой кабель для VPN PPTP неподключен. А реконнект не включен.','Внимание!', 0);
+                                                                pchar_message0:=Pchar(message0);
+                                                                pchar_message1:=Pchar(message9);
+                                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
@@ -164,9 +180,7 @@ If not Code_up_ppp then If link=2 then
 
 If not Code_up_ppp then If link=1 then
                            begin
-                                  //Sleep(1000);
                                   Form1.MenuItem2Click(Self);//эмулируем на всякий случай отключение вдруг созданного ppp
-                                  //Sleep(2000);
                                   Shell('/usr/sbin/pppd call '+Memo_Config.Lines[0]);
                                   //Application.MessageBox('Произведена попытка поднять VPN PPTP. Нажимаем <OK>','Внимание! Отладочная информация!', 0);
                            end;
@@ -177,7 +191,10 @@ var
   link:1..3; //1-link ok, 2-no link, 3-none
   k:boolean; //запуск под root, под live
   m:boolean; //двойной запуск,
+  pchar_message0,pchar_message1:pchar;
 begin
+  MenuItem3.Caption:=message10;
+  MenuItem4.Caption:=message11;
   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
   Memo_Config.Clear;
@@ -200,7 +217,9 @@ begin
              begin
                Timer1.Enabled:=False;
                Timer2.Enabled:=False;
-               Application.MessageBox('Запуск этой программы возможен только под администратором и live-пользователем. Нажмите <OK> для отказа от запуска.','Внимание!', 0);
+               pchar_message0:=Pchar(message0);
+               pchar_message1:=Pchar(message1);
+               Application.MessageBox(pchar_message1,pchar_message0, 0);
                Shell('rm -f /tmp/tmpnostart1');
                halt;
               end;
@@ -208,7 +227,9 @@ begin
              begin
                Timer1.Enabled:=False;
                Timer2.Enabled:=False;
-               Application.MessageBox('Другая такая же программа уже работает с VPN PPTP. Нажмите <OK> для отказа от двойного запуска.','Внимание!', 0);
+               pchar_message0:=Pchar(message0);
+               pchar_message1:=Pchar(message2);
+               Application.MessageBox(pchar_message1,pchar_message0, 0);
                Shell('rm -f /tmp/tmpnostart1');
                halt;
              end;
@@ -217,8 +238,9 @@ begin
   else
    begin
     Timer1.Enabled:=False;
-    Application.MessageBox('Соединение не сконфигурировано. Сначала сконфигурируйте соединение: Меню, Утилиты, Системные, Настройка VPN PPTP (Настройка соединения VPN PPTP).',
-    'Внимание!',0);
+    pchar_message0:=Pchar(message0);
+    pchar_message1:=Pchar(message3);
+    Application.MessageBox(pchar_message1,pchar_message0, 0);
     Timer1.Enabled:=False;
     Timer2.Enabled:=False;
     halt;
@@ -255,13 +277,17 @@ begin
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then
                 begin
-                 Application.MessageBox('No ethernet. Cетевой интерфейс для VPN PPTP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.','Внимание!', 0);
+                 pchar_message0:=Pchar(message0);
+                 pchar_message1:=Pchar(message4);
+                 Application.MessageBox(pchar_message1,pchar_message0, 0);
                  Timer1.Enabled:=False;
                  halt;
                 end;
    if link=2 then
                 begin
-                 Application.MessageBox('No link. Сетевой кабель для VPN PPTP неподключен.','Внимание!', 0);
+                 pchar_message0:=Pchar(message0);
+                 pchar_message1:=Pchar(message5);
+                 Application.MessageBox(pchar_message1,pchar_message0, 0);
                  Timer1.Enabled:=False;
                  halt;
                 end;
@@ -386,13 +412,25 @@ begin
        Code_up_ppp:=True;
       end;
    end;
-  If Code_up_ppp then TrayIcon1.Hint:='Соединение '+Memo_Config.Lines[0]+' установлено'
-                    else TrayIcon1.Hint:='Соединение '+Memo_Config.Lines[0]+' отсутствует';
+  If Code_up_ppp then TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+message7
+                    else TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+message8;
 end;
 
 
 initialization
   {$I unit1.lrs}
-
+  Gettext.GetLanguageIDs(Lang,FallbackLang);
+  //FallbackLang:='en'; //просто для проверки при отладке
+  If FallbackLang<>'ru' then
+                            begin
+                               Translations.TranslateUnitResourceStrings('Unit1','/opt/vpnpptp/lang/ponoff.en.po',lang,Fallbacklang);
+                            end;
+  If FallbackLang='ru' then
+                            begin
+                            end;
+ // If FallbackLang='en' then
+ //                          begin
+ //                             Translations.TranslateUnitResourceStrings('Unit1','/opt/vpnpptp/lang/ponoff.en.po',lang,Fallbacklang);
+ //                          end;
 end.
 
