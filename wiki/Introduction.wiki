@@ -1,0 +1,26 @@
+#summary Введение
+* Конфигуратор ppp соединений (vpnpptp) и интерфейс управления (ponoff) для VPN через PPTP - Корбина, Корбина-Билайн и другие.
+
+Реализация: Lazarus 0.9.26 + FPC 2.2.4
+
+Пакеты для мандривы лежат здесь: ftp://ftp.linuxcenter.ru/pub/Mandriva/EduMandriva/educontrib и здесь http://code.google.com/p/vpnpptp/downloads/list
+
+Пакет входит в дистрибутивы: Edumandriva LXDE ONE и российский Power Pack.
+
+Программа представлена в версиях пакетов:
+
+1) vpnpptp-kde-one - в этой версии нет никаких зависимостей, поэтому она работает прямо так в Mandriva One, Mandriva Free, Mandriva Power Pack, но только для KDE (или в других DE, но с самостоятельным запуском из-под root).
+
+2) vpnpptp-allde - в этой версии имеются дополнительные зависимости, поэтому она работает в Mandriva One, Mandriva Free, Mandriva Power Pack в любых DE, но эти зависимости могут отсутствовать в дистрибутиве, и тогда потребуется интернет, чтобы скачать их.
+
+Авторы:
+
+Логинов Алексей Валерьевич.
+
+loginov_alex@inbox.ru - электронная почта.
+
+Казанцев Александр Сергеевич.
+
+kazancas@mandriva.ru - электронная почта.
+
+http://akdengi.blogspot.com/2009/05/mandriva-vpn-pptp-001.html - блог автора проекта.
