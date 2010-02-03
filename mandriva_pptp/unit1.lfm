@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 347
+  Left = 228
   Height = 651
-  Top = 149
+  Top = 142
   Width = 868
   ActiveControl = PageControl1
   Caption = 'Настройка VPN PPTP'
@@ -9,14 +9,14 @@ object Form1: TForm1
   ClientWidth = 868
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '0.9.28'
+  LCLVersion = '0.9.28.2'
   object PageControl1: TPageControl
     Left = 0
     Height = 608
     Top = 0
     Width = 866
-    ActivePage = TabSheet3
-    TabIndex = 2
+    ActivePage = TabSheet1
+    TabIndex = 0
     TabOrder = 0
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
@@ -771,6 +771,41 @@ object Form1: TForm1
         OnChange = dhcp_routeChange
         State = cbChecked
         TabOrder = 11
+      end
+      object Memo_config: TMemo
+        Left = 791
+        Height = 58
+        Top = 206
+        Width = 62
+        Lines.Strings = (
+          'Memo_config'
+        )
+        OnChange = Memo_configChange
+        TabOrder = 12
+        Visible = False
+      end
+      object CheckBox_shorewall: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 140
+        Width = 515
+        Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
+        Checked = True
+        OnChange = CheckBox_shorewallChange
+        State = cbChecked
+        TabOrder = 13
+      end
+      object Memo_shorewall: TMemo
+        Left = 791
+        Height = 58
+        Top = 150
+        Width = 62
+        Lines.Strings = (
+          'Memo_config'
+        )
+        OnChange = Memo_configChange
+        TabOrder = 14
+        Visible = False
       end
     end
     object TabSheet4: TTabSheet

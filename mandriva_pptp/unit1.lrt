@@ -73,6 +73,7 @@ TFORM1.MII_TOOL_NO.CAPTION=Не контролировать state сетево�
 TFORM1.RECONNECT_PPTP.CAPTION=Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)
 TFORM1.PPPD_LOG.CAPTION=Вести лог pppd в /var/log/pppd.log
 TFORM1.DHCP_ROUTE.CAPTION=Получать маршруты через DHCP
+TFORM1.CHECKBOX_SHOREWALL.CAPTION=Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола
 TFORM1.TABSHEET4.CAPTION=Этап 4
 TFORM1.BUTTON_EXIT.CAPTION=Выход
 TFORM1.BUTTON_NEXT1.CAPTION=Далее
