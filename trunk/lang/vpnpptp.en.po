@@ -160,7 +160,7 @@ msgstr "                                             "
 
 #: TFORM1.LABEL3.CAPTION
 msgid "III) Введите Ваш логин..."
-msgstr "III) Enter you login..."
+msgstr "III) Enter your login..."
 
 #: TFORM1.LABEL30.CAPTION
 msgid "не гарантируется одновре-"
@@ -406,8 +406,8 @@ msgid "Так как #209�еконнект будет #209�еализова�
 msgstr "Dial time is obsolete since reconnect not use internal pppd daemon method."
 
 #: unit1.message6
-msgid "Так как выб#209�ана опция получения ма#209�ш#209�утов че#209�ез DHCP, то сеть будет пе#209�езапущена."
-msgstr "Network is rerun since select DHCP get routes."
+msgid "Так как выб#209�ана/изменена опция получения ма#209�ш#209�утов че#209�ез DHCP, то сеть будет пе#209�езапущена."
+msgstr "Network is rerun since select/change DHCP get routes."
 
 #: unit1.message7
 msgid "Рабочий стол"
@@ -418,3 +418,18 @@ msgctxt "unit1.message8"
 msgid "В поле \"В#209�емя дозвона\" можно ввести лишь число в п#209�еделах от 5 до 255 сек."
 msgstr "Field \"Dial time\" must be a number with limit from 5 to 255 sec."
 
+#: TFORM1.CHECKBOX_SHOREWALL.CAPTION
+msgid "Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола"
+msgstr "Adding network interfaces [ppp0..ppp9] for firewall exclusion rules"
+
+#: unit1.message9
+msgid "Так как выб#209�ана опция добавления инте#209�фейсов [ppp0..ppp9] в исключения файе#209�вола, то файе#209�вол будет пе#209�езапущен."
+msgstr "As firewall exclusion network interface select, firewall will restart."
+
+#: unit1.message22
+msgid "Рекомендуется запускать эту п#209�ог#209�амму под админист#209�ато#209�ом."
+msgstr "You may run this program as root."
+
+#: unit1.message24
+msgid "Файе#209�вол уже наст#209�оен."
+msgstr "Firewall is already configured."
