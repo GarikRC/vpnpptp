@@ -18,7 +18,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <CurrentMinorRevNr Value="1"/>
-      <CurrentBuildNr Value="1054"/>
+      <CurrentBuildNr Value="1055"/>
       <ProjectVersion Value="0.0.1.1"/>
       <Language Value="0419"/>
     </VersionInfo>
@@ -46,7 +46,7 @@
         <UnitName Value="project1"/>
         <CursorPos X="42" Y="16"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="114"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -57,7 +57,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
         <CursorPos X="58" Y="423"/>
-        <TopLine Value="1"/>
+        <TopLine Value="384"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="114"/>
         <Loaded Value="True"/>
@@ -92,18 +92,14 @@
         <UnitName Value="users"/>
         <CursorPos X="11" Y="18"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="2"/>
         <UsageCount Value="42"/>
-        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="../../../usr/lib/lazarus/lcl/textstrings.pas"/>
         <UnitName Value="TextStrings"/>
         <CursorPos X="1" Y="181"/>
         <TopLine Value="165"/>
-        <EditorIndex Value="1"/>
         <UsageCount Value="36"/>
-        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="project1.lrs"/>
