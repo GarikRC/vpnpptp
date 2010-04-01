@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Gettext, Typinfo;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Gettext, Typinfo;
 
 type
 
@@ -36,8 +36,10 @@ type
     Button_exit: TButton;
     Button_next1: TButton;
     Button_next2: TButton;
+    require_mppe_128: TCheckBox;
     CheckBox_shorewall: TCheckBox;
     dhcp_route: TCheckBox;
+    Metka: TLabel;
     Memo_config: TMemo;
     Memo_shorewall: TMemo;
     Pppd_log: TCheckBox;
@@ -107,11 +109,9 @@ type
     Label9: TLabel;
     Label_IPS: TLabel;
     Label_gate: TLabel;
-    Label_IPS2: TLabel;
     Label_ip_down: TLabel;
     Label_ip_up: TLabel;
     Label_peer: TLabel;
-    Label_peer1: TLabel;
     Label_peername: TLabel;
     Label_route: TLabel;
     Label_user: TLabel;
@@ -138,9 +138,17 @@ type
     procedure Button_next1Click(Sender: TObject);
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
+    procedure CheckBox_no40Change(Sender: TObject);
+    procedure CheckBox_no56Change(Sender: TObject);
+    procedure CheckBox_rchapChange(Sender: TObject);
+    procedure CheckBox_reapChange(Sender: TObject);
+    procedure CheckBox_rmschapChange(Sender: TObject);
     procedure CheckBox_shorewallChange(Sender: TObject);
+    procedure CheckBox_statelessChange(Sender: TObject);
     procedure dhcp_routeChange(Sender: TObject);
+    procedure Label38Click(Sender: TObject);
     procedure Memo_configChange(Sender: TObject);
+    procedure Memo_createChange(Sender: TObject);
     procedure Mii_tool_noChange(Sender: TObject);
     procedure CheckBox_shifrChange(Sender: TObject);
     procedure Edit_IPSChange(Sender: TObject);
@@ -160,6 +168,9 @@ type
     procedure On_ethChange(Sender: TObject);
     procedure Pppd_logChange(Sender: TObject);
     procedure Reconnect_pptpChange(Sender: TObject);
+    procedure require_mppe_128Change(Sender: TObject);
+    procedure TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
   private
     { private declarations }
   public
@@ -181,6 +192,9 @@ var
   Form1: TForm1;
   POFileName : String;
   Lang,FallbackLang:string;
+  Translate:boolean; // переведено или еще не переведено
+const
+  Config_n=21;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
@@ -200,12 +214,12 @@ resourcestring
   message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9.';
   message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500]. Рекомендуется MTU=1460.';
-  message18='Запуск этой программы возможен только под администратором и live-пользователем. Нажмите <OK> для отказа от запуска.';
+  message18='Запуск этой программы возможен только под администратором. Нажмите <OK> для отказа от запуска.';
   message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP. Нажмите <OK> для отказа от двойного запуска.';
   message20='Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux и невозможностью его автоматической установки.';
   message21='Установка не удалась';//выхлоп urpmi --auto pptp-linux
-  message22='Рекомендуется запускать эту программу под администратором.';
-
+  message22='Невозможно создать ярлык на рабочем столе, так как используется нестандартный идентификатор пользователя и/или локализация.';
+  message23='Невозможно создать ярлык на рабочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop.';
   message24='Файервол уже настроен.';
 
 implementation
@@ -250,6 +264,7 @@ procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i:integer;
     pchar_message0,pchar_message1:pchar;
+    gksu, link_on_desktop:boolean;
 begin
 If Mii_tool_no.Checked then If StrToInt(Edit_MaxTime.Text)<20 then
                         begin
@@ -310,7 +325,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                  Memo_shorewall.Lines.LoadFromFile('/etc/shorewall/interfaces');
                                    If Memo_shorewall.Lines[0]='# vpnpptp changed this config' then
                                       begin
-                                        CheckBox_shorewall.Checked:=false;
+                                        CheckBox_shorewall.Checked:=true;
                                         pchar_message0:=Pchar(message0);
                                         pchar_message1:=Pchar(message24);
                                         Application.MessageBox(pchar_message1,pchar_message0, 0);
@@ -376,7 +391,8 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
    If CheckBox_rmschap.Checked then Memo_peer.Lines.Add(CheckBox_rmschap.Caption);
    If CheckBox_reap.Checked then Memo_peer.Lines.Add(CheckBox_reap.Caption);
    If CheckBox_rchap.Checked then Memo_peer.Lines.Add(CheckBox_rchap.Caption);
-   Memo_peer.Lines.Add(mppe_string);
+   If require_mppe_128.Checked then Memo_peer.Lines.Add(require_mppe_128.Caption);
+   If mppe_string<>'mppe required' then Memo_peer.Lines.Add(mppe_string);
   end;
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем профиль подключения
 //удаляем временные файлы
@@ -454,20 +470,57 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                               Shell('printf "no56-no\n" >> /opt/vpnpptp/config');
  If CheckBox_shorewall.Checked then Shell('printf "shorewall-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "shorewall-no\n" >> /opt/vpnpptp/config');
+ If CheckBox_desktop.Checked then Shell('printf "link-desktop-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "link-desktop-no\n" >> /opt/vpnpptp/config');
+ If require_mppe_128.Checked then Shell('printf "require-mppe-128-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "require-mppe-128-no\n" >> /opt/vpnpptp/config');
+//обеспечение совместимости старого config с новым
+//If FileExists('/opt/vpnpptp/config') then
+//     begin
+//        Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
+//        If Memo_config.Lines.Count<Config_n then
+//                                            begin
+//                                               for i:=Memo_config.Lines.Count to Config_n do
+//                                                  Shell('printf "none\n" >> /opt/vpnpptp/config');
+//                                            end;
+//     end;
 //Создаем ярлык для подключения
+ gksu:=false;
+ link_on_desktop:=false;
+ If CheckBox_desktop.Checked then If FileExists('/usr/share/applications/ponoff.desktop') then
+                                                        begin
+                                                              Memo_create.Clear;
+                                                              Memo_create.Lines.LoadFromFile('/usr/share/applications/ponoff.desktop');
+                                                              For i:=0 to Memo_create.Lines.Count-1 do
+                                                                begin
+                                                                    If LeftStr(Memo_create.Lines[i],9)='Exec=gksu' then gksu:=true;
+                                                                end;
+                                                        end;
+ If CheckBox_desktop.Checked then  If not FileExists('/usr/share/applications/ponoff.desktop') then
+                                                               begin
+                                                                   //невозможно создать ярлык на рабочем столе
+                                                                   pchar_message0:=Pchar(message0);
+                                                                   pchar_message1:=Pchar(message23);
+                                                                   Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                   CheckBox_desktop.Checked:=false;
+                                                               end;
  If CheckBox_desktop.Checked then
-  begin
+begin
   Memo_create.Clear;
+//  Memo_create.Lines.Add('#!/usr/bin/env xdg-open');
   Memo_create.Lines.Add('[Desktop Entry]');
   Memo_create.Lines.Add('Encoding=UTF-8');
   Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP');
+  Memo_create.Lines.Add('Comment[uk]=Управління з'' єднанням VPN PPTP');
   Memo_create.Lines.Add('Comment=Control MS VPN via PPTP');
-  Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff');
+  If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
   Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP');
+  Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP');
   Memo_create.Lines.Add('GenericName=VPN PPTP Control');
   Memo_create.Lines.Add('Icon=/opt/vpnpptp/ponoff.png');
   Memo_create.Lines.Add('MimeType=');
   Memo_create.Lines.Add('Name[ru]=Подключение '+Edit_peer.Text);
+  Memo_create.Lines.Add('Name[uk]=Підключення '+Edit_peer.Text);
   Memo_create.Lines.Add('Name=Connect '+Edit_peer.Text);
   Memo_create.Lines.Add('Path=');
   Memo_create.Lines.Add('StartupNotify=true');
@@ -479,7 +532,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
   Memo_create.Lines.Add('X-KDE-Username=root');
   Memo_create.Lines.Add('StartupNotify=false');
 //Получаем список пользователей
-  Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users');  //для новых идентификаторов
+  Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users'); //для новых идентификаторов
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile('/tmp/users');
   i:=0;
@@ -488,10 +541,12 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
       if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+message7+'/') then
       begin
        Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
+       Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop'+'"');
+       link_on_desktop:=true;
       end;
       i:=i+1;
     end;
-  Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > /tmp/users');   //для старых идентификаторов
+  Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > /tmp/users'); //для старых идентификаторов
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile('/tmp/users');
   i:=0;
@@ -500,10 +555,18 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
      if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+message7+'/') then
       begin
        Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
+       Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop'+'"');
+       link_on_desktop:=true;
       end;
       i:=i+1;
     end;
-  end;
+end;
+    If CheckBox_desktop.Checked then If not link_on_desktop then If FileExists('/usr/share/applications/ponoff.desktop') then
+                               begin
+                                    pchar_message0:=Pchar(message0);
+                                    pchar_message1:=Pchar(message22);
+                                    Application.MessageBox(pchar_message1,pchar_message0, 0);
+                               end;
               Button_create.Visible:=True;
               TabSheet2.TabVisible:= False;
               TabSheet1.TabVisible:= False;
@@ -512,8 +575,9 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
               PageControl1.ActivePageIndex:=3;
               Button_next2.Visible:=False;
  Memo_create.Clear;
- If FallbackLang='ru' then  Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.ru');
- If FallbackLang<>'ru' then  Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.en');
+ If FallbackLang='ru' then  begin Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.ru'); Translate:=true; end;
+ If FallbackLang='uk' then  begin Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.uk'); Translate:=true; end;
+ If not Translate then  Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.en');
  Button_create.Visible:=False;
  Shell('rm -f /tmp/users');
  //применяем дополнительные настройки
@@ -547,12 +611,42 @@ begin
                 Button_next2.Visible:=False;
 end;
 
+procedure TForm1.CheckBox_no40Change(Sender: TObject);
+begin
+    If CheckBox_no40.Checked then CheckBox_shifr.Checked:=true;
+end;
+
+procedure TForm1.CheckBox_no56Change(Sender: TObject);
+begin
+    If CheckBox_no56.Checked then CheckBox_shifr.Checked:=true;
+end;
+
+procedure TForm1.CheckBox_rchapChange(Sender: TObject);
+begin
+  If CheckBox_rchap.Checked then CheckBox_shifr.Checked:=true;
+end;
+
+procedure TForm1.CheckBox_reapChange(Sender: TObject);
+begin
+    If CheckBox_reap.Checked then CheckBox_shifr.Checked:=true;
+end;
+
+procedure TForm1.CheckBox_rmschapChange(Sender: TObject);
+begin
+    If CheckBox_rmschap.Checked then CheckBox_shifr.Checked:=true;
+end;
+
 procedure TForm1.CheckBox_shorewallChange(Sender: TObject);
 begin
   If CheckBox_shorewall.Checked then
                          CheckBox_shorewall.Checked:=true
                                                    else
                                                        CheckBox_shorewall.Checked:=false;
+end;
+
+procedure TForm1.CheckBox_statelessChange(Sender: TObject);
+begin
+    If CheckBox_stateless.Checked then CheckBox_shifr.Checked:=true;
 end;
 
 procedure TForm1.dhcp_routeChange(Sender: TObject);
@@ -563,7 +657,17 @@ begin
                                                        dhcp_route.Checked:=false;
 end;
 
+procedure TForm1.Label38Click(Sender: TObject);
+begin
+
+end;
+
 procedure TForm1.Memo_configChange(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Memo_createChange(Sender: TObject);
 begin
 
 end;
@@ -645,6 +749,7 @@ if not y then
   If LeftStr(Memo_gate.Lines[0],3)='ppp' then
                                          begin
                                            Edit_gate.Text:='none';
+                                           Edit_eth.Text:='none';
                                            pchar_message0:=Pchar(message0);
                                            pchar_message1:=Pchar(message11);
                                            Application.MessageBox(pchar_message1,pchar_message0, 0);
@@ -703,6 +808,11 @@ If (Edit_eth.Text='none') or (Edit_eth.Text='') then
                          pchar_message1:=Pchar(message15);
                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
+                         If Edit_eth.Text='link' then
+                                                 begin
+                                                      Edit_eth.Text:='none';
+                                                      Edit_gate.Text:='none';
+                                                 end;
                          TabSheet2.TabVisible:= True;
                          exit;
                     end;
@@ -733,6 +843,7 @@ If (Edit_gate.Text='none') or (Edit_gate.Text='') or (Length(Edit_gate.Text)>15)
                          pchar_message1:=Pchar(message16);
                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                          Edit_gate.Text:=Memo_gate.Lines[0];
+                         If LeftStr(Edit_gate.Text,3)='ppp' then Edit_gate.Text:='none';
                          exit;
                     end;
 j:=0;
@@ -811,15 +922,14 @@ procedure TForm1.CheckBox_shifrChange(Sender: TObject);
 var
   b:boolean;
 begin
-  b :=  CheckBox_shifr.Checked;
-
+  b:=CheckBox_shifr.Checked;
   CheckBox_no40.Checked:=b;
   CheckBox_no56.Checked:=b;
   CheckBox_rchap.Checked:=b;
   CheckBox_reap.Checked:=b;
   CheckBox_rmschap.Checked:=b;
   CheckBox_stateless.Checked:=b;
-
+  require_mppe_128.Checked:=b;
 end;
 
 procedure TForm1.Edit_IPSChange(Sender: TObject);
@@ -844,56 +954,137 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var i,j:integer;
-    k:boolean; //запуск под root, под live
-    m:boolean; //двойной запуск,
     pchar_message0,pchar_message1:pchar;
     len:integer;
 begin
-   k:=false;
-   m:=false;
-//проверка vpnpptp в процессах root, live, исключение двойного запуска программы, исключение запуска под иными пользователями
+//масштабирование формы в зависимости от разрешения экрана
+   Form1.Height:=600;
+   Form1.Width:=794;
+   PageControl1.Top:=-26;
+   Form1.Position:=poDefault;
+   Form1.Top:=0;
+   Form1.Left:=0;
+   If Screen.Height<440 then
+                            begin
+                             Form1.Height:=Screen.Height-50;
+                             Form1.Width:=Screen.Width;
+                             Label1.BorderSpacing.Around:=0;
+                             Edit_IPS.BorderSpacing.Around:=0;
+                             Label2.BorderSpacing.Around:=0;
+                             Edit_peer.BorderSpacing.Around:=0;
+                             Label3.BorderSpacing.Around:=0;
+                             Edit_user.BorderSpacing.Around:=0;
+                             Label4.BorderSpacing.Around:=0;
+                             Edit_passwd.BorderSpacing.Around:=0;
+                             Label36.BorderSpacing.Around:=0;
+                             Edit_MaxTime.BorderSpacing.Around:=0;
+                             Label38.BorderSpacing.Around:=0;
+                             Edit_MinTime.BorderSpacing.Around:=0;
+                             Label6.BorderSpacing.Around:=0;
+                             Label8.BorderSpacing.Around:=0;
+                             Label7.BorderSpacing.Around:=0;
+                             Label11.BorderSpacing.Around:=0;
+                             Label37.BorderSpacing.Around:=0;
+                             Label39.BorderSpacing.Around:=0;
+                             Label41.BorderSpacing.Around:=0;
+                             Form1.Constraints.MaxHeight:=Screen.Height-50;
+                             Form1.Constraints.MinHeight:=Screen.Height-50;
+                             Button_create.BorderSpacing.Left:=Screen.Width-182;
+                             PageControl1.Height:=Screen.Height-200;
+                            end;
+   If Screen.Height<=480 then
+                        begin
+                             Form1.Font.Size:=6;
+                             Form1.Height:=Screen.Height-45;
+                             Form1.Width:=Screen.Width;
+                             PageControl1.Width:=Screen.Width-1;
+                             PageControl1.Height:=Screen.Height-50;
+                             Button_create.BorderSpacing.Left:=Screen.Width-182;
+                             Memo_create.Width:=Screen.Width-5;
+                             Form1.Constraints.MaxHeight:=Screen.Height-45;
+                             Form1.Constraints.MinHeight:=Screen.Height-45;
+                             Metka.BorderSpacing.Top:=0;
+                        end;
+   If Screen.Height<550 then If not (Screen.Height<=480) then
+                         begin
+                             Label1.BorderSpacing.Around:=0;
+                             Edit_IPS.BorderSpacing.Around:=0;
+                             Label2.BorderSpacing.Around:=0;
+                             Edit_peer.BorderSpacing.Around:=0;
+                             Label3.BorderSpacing.Around:=0;
+                             Edit_user.BorderSpacing.Around:=0;
+                             Label4.BorderSpacing.Around:=0;
+                             Edit_passwd.BorderSpacing.Around:=0;
+                             Label36.BorderSpacing.Around:=0;
+                             Edit_MaxTime.BorderSpacing.Around:=0;
+                             Label38.BorderSpacing.Around:=0;
+                             Edit_MinTime.BorderSpacing.Around:=0;
+                             Label6.BorderSpacing.Around:=0;
+                             Label8.BorderSpacing.Around:=0;
+                             Label7.BorderSpacing.Around:=0;
+                             Label11.BorderSpacing.Around:=0;
+                             Label37.BorderSpacing.Around:=0;
+                             Label39.BorderSpacing.Around:=0;
+                             Label41.BorderSpacing.Around:=0;
+                             Form1.Constraints.MaxHeight:=Screen.Height;
+                             Form1.Constraints.MinHeight:=Screen.Height;
+                         end;
+If Screen.Height>550 then   //разрешение в основном нетбуков
+                        begin
+                             Form1.Font.Size:=8;
+                             Form1.Height:=550;
+                             Form1.Width:=794;
+                             Memo_create.Width:=788;
+                             Button_create.BorderSpacing.Left:=615;
+                             Form1.Constraints.MaxHeight:=550;
+                             Form1.Constraints.MinHeight:=550;
+                             Form1.Constraints.MaxWidth:=794;
+                             Form1.Constraints.MinWidth:=794;
+                        end;
+If Screen.Height>1000 then
+                        begin
+                             Form1.Position:=poScreenCenter;
+                             Form1.Font.Size:=10;
+                             Form1.Height:=650;
+                             Form1.Width:=884;
+                             Memo_create.Width:=880;
+                             Button_create.BorderSpacing.Left:=705;
+                             Form1.Constraints.MaxHeight:=650;
+                             Form1.Constraints.MinHeight:=650;
+                             Form1.Constraints.MaxWidth:=884;
+                             Form1.Constraints.MinWidth:=884;
+                             PageControl1.Height:=640;
+                         end;
+//проверка vpnpptp в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart');
    Shell('printf "none" >> /tmp/tmpnostart');
    Form1.tmpnostart.Clear;
    If FileExists('/tmp/tmpnostart') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart');
-   If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then k:=true;
-   If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then m:=true;
-   Shell('ps -u live | grep vpnpptp | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart');
-   Shell('printf "none" >> /tmp/tmpnostart');
-   Form1.tmpnostart.Clear;
-   If FileExists('/tmp/tmpnostart') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart');
-   If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then
-                                                   begin
-                                                      k:=true;
-                                                      pchar_message0:=Pchar(message0);
-                                                      pchar_message1:=Pchar(message22);
-                                                      Shell('rm -f /tmp/tmpnostart');
-                                                      Application.MessageBox(pchar_message1,pchar_message0, 0);
-                                                      halt;
-                                                   end;
-   If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then m:=true;
-   If not k then
-             begin
-               pchar_message0:=Pchar(message0);
-               pchar_message1:=Pchar(message18);
-               Application.MessageBox(pchar_message1,pchar_message0, 0);
-               Shell('rm -f /tmp/tmpnostart');
-               halt;
-             end;
-   If m then
-             begin
-               pchar_message0:=Pchar(message0);
-               pchar_message1:=Pchar(message19);
-               Application.MessageBox(pchar_message1,pchar_message0, 0);
-               Shell('rm -f /tmp/tmpnostart');
-               halt;
-             end;
+   If not (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') then
+                                                       begin
+                                                         //запуск не под root
+                                                         pchar_message0:=Pchar(message0);
+                                                         pchar_message1:=Pchar(message18);
+                                                         Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                         Shell('rm -f /tmp/tmpnostart');
+                                                         halt;
+                                                       end;
+   If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then
+                                                                                                    begin
+                                                                                                      //двойной запуск
+                                                                                                      pchar_message0:=Pchar(message0);
+                                                                                                      pchar_message1:=Pchar(message19);
+                                                                                                      Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                                                      Shell('rm -f /tmp/tmpnostart');
+                                                                                                      halt;
+                                                                                                    end;
   Shell('rm -f /tmp/tmpnostart');
   Shell('rm -f /tmp/gate');
   Shell('rm -f /tmp/eth');
   Shell('rm -f /tmp/users');
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
+  Shell ('rm -f /tmp/ip-down');
   Shell('urpmi --auto pptp-linux >> /tmp/tmpsetup');
   Shell('printf "none" >> /tmp/tmpsetup');
   Memo_pptp.Clear;
@@ -912,6 +1103,16 @@ begin
    end;
   Shell('echo "#Clear config file" > /etc/ppp/options');
   Shell('echo "#Clear config file" > /etc/ppp/options.pptp');
+  //обеспечение совместимости старого config с новым
+If FileExists('/opt/vpnpptp/config') then
+     begin
+        Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
+        If Memo_config.Lines.Count<Config_n then
+                                            begin
+                                               for i:=Memo_config.Lines.Count to Config_n do
+                                                  Shell('printf "none\n" >> /opt/vpnpptp/config');
+                                            end;
+     end;
   //восстановление предыдущих введенных данных в конфигураторе
   If FileExists('/opt/vpnpptp/config') then
      begin
@@ -938,6 +1139,8 @@ begin
         If Memo_config.Lines[16]='no40-yes' then CheckBox_no40.Checked:= true else CheckBox_no40.Checked:= false;
         If Memo_config.Lines[17]='no56-yes' then CheckBox_no56.Checked:= true else CheckBox_no56.Checked:= false;
         If Memo_config.Lines[18]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
+        If Memo_config.Lines[19]='link-desktop-yes' then CheckBox_desktop.Checked:=true else CheckBox_desktop.Checked:=false;
+        If Memo_config.Lines[20]='require-mppe-128-yes' then require_mppe_128.Checked:=true else require_mppe_128.Checked:=false;
             If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
@@ -1028,25 +1231,41 @@ begin
                                                        Reconnect_pptp.Checked:=false;
 end;
 
+procedure TForm1.require_mppe_128Change(Sender: TObject);
+begin
+    If require_mppe_128.Checked then CheckBox_shifr.Checked:=true;
+end;
+
+procedure TForm1.TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+
+end;
+
 initialization
 
   {$I unit1.lrs}
   Gettext.GetLanguageIDs(Lang,FallbackLang);
-//  FallbackLang:='en'; //просто для проверки при отладке
-  If FallbackLang<>'ru' then
+  Translate:=false;
+  //FallbackLang:='uk'; //просто для проверки при отладке
+  If FallbackLang='ru' then
+                            begin
+                               POFileName:= '/opt/vpnpptp/lang/vpnpptp.ru.po';
+                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                               Translate:=true;
+                            end;
+  If FallbackLang='uk' then
+                            begin
+                               POFileName:= '/opt/vpnpptp/lang/vpnpptp.uk.po';
+                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                               Translate:=true;
+                            end;
+  If not Translate then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/vpnpptp.en.po';
                                Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
                             end;
-  If FallbackLang='ru' then
-                            begin
-                            end;
-//  If FallbackLang='en' then
-//                           begin
-//                              POFileName:= '/opt/vpnpptp/lang/vpnpptp.en.po';
-//                              Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
-//                           end;
-If FallbackLang<>'ru' then LRSTranslator := TTranslator.Create(POFileName); //перевод (локализация) всей формы приложения
+LRSTranslator := TTranslator.Create(POFileName); //перевод (локализация) всей формы приложения
 end.
 
 end.
