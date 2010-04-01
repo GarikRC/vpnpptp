@@ -69,12 +69,14 @@ type
 var
   Form1: TForm1;
   Lang,FallbackLang:string;
+  Translate:boolean; // переведено или еще не переведено
+  POFileName : String;
 
 resourcestring
   message0='Внимание!';
-  message1='Запуск этой программы возможен только под администратором и live-пользователем. Нажмите <OK> для отказа от запуска.';
+  message1='Запуск этой программы возможен только под администратором. Нажмите <OK> для отказа от запуска.';
   message2='Другая такая же программа уже работает с VPN PPTP. Нажмите <OK> для отказа от двойного запуска.';
-  message3='Сначала сконфигурируйте соединение: Меню, Утилиты, Системные, (или Меню, Интернет), Настройка VPN PPTP (Настройка соединения VPN PPTP).';
+  message3='Сначала сконфигурируйте соединение: Меню, Утилиты, Системные (или Меню, Интернет), Настройка VPN PPTP (Настройка соединения VPN PPTP).';
   message4='No ethernet. Cетевой интерфейс для VPN PPTP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
   message5='No link. Сетевой кабель для VPN PPTP неподключен.';
   message6='Соединение ';
@@ -149,9 +151,13 @@ If not Code_up_ppp then If link=3 then
                                                                    begin
                                                                      Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                                                      Memo_ip_down.Clear;
-                                                                     If FileExists('/tmp/ip-down') then Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
-                                                                     Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
-                                                                     Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                                                     If FileExists('/tmp/ip-down') then
+                                                                                                   begin
+                                                                                                      Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                                      Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
+                                                                                                      Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                                                                                      Shell ('rm -f /tmp/ip-down');
+                                                                                                    end;
                                                                    end;
                                                                 halt;
                                                               end;
@@ -170,9 +176,13 @@ If not Code_up_ppp then If link=2 then
                                                                    begin
                                                                      Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                                                      Memo_ip_down.Clear;
-                                                                     If FileExists('/tmp/ip-down') then Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
-                                                                     Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
-                                                                     Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                                                     If FileExists('/tmp/ip-down') then
+                                                                                                   begin
+                                                                                                       Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                                       Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
+                                                                                                       Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                                                                                       Shell ('rm -f /tmp/ip-down');
+                                                                                                   end;
                                                                    end;
                                                                 halt;
                                                               end;
@@ -189,8 +199,6 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   link:1..3; //1-link ok, 2-no link, 3-none
-  k:boolean; //запуск под root, под live
-  m:boolean; //двойной запуск,
   pchar_message0,pchar_message1:pchar;
 begin
   MenuItem3.Caption:=message10;
@@ -198,43 +206,40 @@ begin
   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
   Memo_Config.Clear;
-   k:=false;
-   m:=false;
-//проверка ponoff в процессах root, live, исключение двойного запуска программы, исключение запуска под иными пользователями
+//проверка ponoff в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep ponoff | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart1');
    Shell('printf "none" >> /tmp/tmpnostart1');
    Form1.tmpnostart.Clear;
    If FileExists('/tmp/tmpnostart1') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
-   If LeftStr(tmpnostart.Lines[0],6)='ponoff' then k:=true;
-   If LeftStr(tmpnostart.Lines[0],6)='ponoff' then if LeftStr(tmpnostart.Lines[1],6)='ponoff' then m:=true;
-   Shell('ps -u live | grep vpnpptp | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart1');
-   Shell('printf "none" >> /tmp/tmpnostart1');
-   Form1.tmpnostart.Clear;
-   If FileExists('/tmp/tmpnostart1') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
-   If LeftStr(tmpnostart.Lines[0],6)='ponoff' then k:=true;
-   If LeftStr(tmpnostart.Lines[0],6)='ponoff' then if LeftStr(tmpnostart.Lines[1],6)='ponoff' then m:=true;
-   If not k then
-             begin
-               Timer1.Enabled:=False;
-               Timer2.Enabled:=False;
-               pchar_message0:=Pchar(message0);
-               pchar_message1:=Pchar(message1);
-               Application.MessageBox(pchar_message1,pchar_message0, 0);
-               Shell('rm -f /tmp/tmpnostart1');
-               halt;
-              end;
-   If m then
-             begin
-               Timer1.Enabled:=False;
-               Timer2.Enabled:=False;
-               pchar_message0:=Pchar(message0);
-               pchar_message1:=Pchar(message2);
-               Application.MessageBox(pchar_message1,pchar_message0, 0);
-               Shell('rm -f /tmp/tmpnostart1');
-               halt;
-             end;
+   If not (LeftStr(tmpnostart.Lines[0],6)='ponoff') then
+                                                        begin
+                                                             //запуск не под root
+                                                             Timer1.Enabled:=False;
+                                                             Timer2.Enabled:=False;
+                                                             pchar_message0:=Pchar(message0);
+                                                             pchar_message1:=Pchar(message1);
+                                                             Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                             Shell('rm -f /tmp/tmpnostart1');
+                                                             halt;
+                                                         end;
+   If LeftStr(tmpnostart.Lines[0],6)='ponoff' then if LeftStr(tmpnostart.Lines[1],6)='ponoff' then
+                                                                                                  begin
+                                                                                                      //двойной запуск
+                                                                                                      Timer1.Enabled:=False;
+                                                                                                      Timer2.Enabled:=False;
+                                                                                                      pchar_message0:=Pchar(message0);
+                                                                                                      pchar_message1:=Pchar(message2);
+                                                                                                      Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                                                      Shell('rm -f /tmp/tmpnostart1');
+                                                                                                      halt;
+                                                                                                  end;
   Shell('rm -f /tmp/tmpnostart1');
-  If FileExists('/opt/vpnpptp/config') then Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config')
+  If FileExists('/opt/vpnpptp/config') then
+                                           begin
+                                               Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config');
+                                               If Memo_Config.Lines[20]='require-mppe-128-yes' then
+                                                                              Shell ('modprobe ppp_mppe');//загрузка модуля ядра для обеспечения шифрования
+                                           end
   else
    begin
     Timer1.Enabled:=False;
@@ -309,12 +314,8 @@ begin
  Shell('printf "none" >> /tmp/tmp_pppd');
  Form1.tmp_pppd.Clear;
  If FileExists('/tmp/tmp_pppd') then tmp_pppd.Lines.LoadFromFile('/tmp/tmp_pppd');
- If LeftStr(tmp_pppd.Lines[0],4)='pppd' then Shell('killall pppd');
- Shell('ps -u live | grep pppd | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmp_pppd');
- Shell('printf "none" >> /tmp/tmp_pppd');
- Form1.tmp_pppd.Clear;
- If FileExists('/tmp/tmp_pppd') then tmp_pppd.Lines.LoadFromFile('/tmp/tmp_pppd');
- If LeftStr(tmp_pppd.Lines[0],4)='pppd' then Shell('killall pppd');
+ If LeftStr(tmp_pppd.Lines[0],4)='pppd' then
+                                        Shell('killall pppd');
  Shell('rm -f /tmp/status.ppp');
  Shell('rm -f /tmp/tmp');
  Shell('rm -f /tmp/gate');
@@ -331,16 +332,19 @@ end;
 procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
  Timer1.Enabled:=False;
- If Memo_Config.Lines[7]='noreconnect-pptp' then Shell ('/tmp/ip-down');
- MenuItem2Click(Self);
  If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                               Memo_ip_down.Clear;
-                                              If FileExists('/tmp/ip-down') then Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
-                                              Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
-                                              Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                              If FileExists('/tmp/ip-down') then
+                                                                            begin
+                                                                                 Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                 Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
+                                                                                 Shell ('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                                                                 Shell ('rm -f /tmp/ip-down');
+                                                                            end;
                                             end;
+ MenuItem2Click(Self);
  halt;
 end;
 
@@ -352,9 +356,14 @@ begin
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                               Memo_ip_down.Clear;
-                                              If FileExists('/tmp/ip-down') then Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
-                                              Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
-                                              Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                              If FileExists('/tmp/ip-down') then
+                                                                            begin
+                                                                                 Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                 Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
+                                                                                 Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
+                                                                                 Shell ('rm -f /tmp/ip-down');
+                                                                             end;
+                                              Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
                                             end;
  halt;
 end;
@@ -420,17 +429,22 @@ end;
 initialization
   {$I unit1.lrs}
   Gettext.GetLanguageIDs(Lang,FallbackLang);
-  //FallbackLang:='en'; //просто для проверки при отладке
-  If FallbackLang<>'ru' then
-                            begin
-                               Translations.TranslateUnitResourceStrings('Unit1','/opt/vpnpptp/lang/ponoff.en.po',lang,Fallbacklang);
-                            end;
+//FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
+                               POFileName:= '/opt/vpnpptp/lang/ponoff.ru.po';
+                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                               Translate:=true;
                             end;
- // If FallbackLang='en' then
- //                          begin
- //                             Translations.TranslateUnitResourceStrings('Unit1','/opt/vpnpptp/lang/ponoff.en.po',lang,Fallbacklang);
- //                          end;
+  If FallbackLang='uk' then
+                            begin
+                               POFileName:= '/opt/vpnpptp/lang/ponoff.uk.po';
+                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                               Translate:=true;
+                            end;
+  If not Translate then
+                            begin
+                               POFileName:= '/opt/vpnpptp/lang/ponoff.en.po';
+                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                            end;
 end.
-
