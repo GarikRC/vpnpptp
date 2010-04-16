@@ -1,13 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 RUN="yes"
 
 
 if [ "$RUN" = "yes" ]; then
-
+echo "EXIT HOOK REACHED"
          if [ x"$new_rfc3442_classless_static_routes" != x"" ]; then
 
-                 if [ x"$reason" == x"BOUND" ]; then
+		if [ x"$reason" == x"BOUND" -o x"$reason" == x"REBOOT" ]; then
+
+#                 if [ x"$reason" == x"BOUND" ]; then
                          rfc_routes=($new_rfc3442_classless_static_routes)
 
                          for(( i=0; i < ${#rfc_routes[@]}; )); do
@@ -41,4 +43,4 @@ if [ "$RUN" = "yes" ]; then
 
                  fi
          fi
-fi 
+fi

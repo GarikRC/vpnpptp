@@ -6,7 +6,7 @@ Summary: Tools for setup and control MS VPN via PPTP
 Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPT
 Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
 Name: vpnpptp-allde
-Version: 0.0.6
+Version: 0.0.7
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -17,7 +17,7 @@ Vendor: Mandriva Russia, http://www.mandriva.ru
 Source: vpnpptp-src-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: fpc-src = 2.2.4, fpc = 2.2.4, gdk-pixbuf, gtk+, glibc, gdb, libglib1.2-devel, libgdk-pixbuf2-devel, lazarus, upx
+BuildRequires: fpc-src = 2.4.0, fpc = 2.4.0, gdk-pixbuf, gtk+, glibc, gdb, libglib1.2-devel, libgdk-pixbuf2-devel, lazarus, upx
 Requires: gksu, pptp-linux
 Obsoletes: vpnpptp-allde < 0.0.6
 Obsoletes: vpnpptp-kde-one < 0.0.6
@@ -133,6 +133,9 @@ install -m 0644 vpnpptp.desktop \
 %{_datadir}/applications/vpnpptp.desktop
 
 %changelog
+* Thu Apr 15 2010 Alex Loginov <loginov_alex@inbox.ru> - 0.0.7
+- New release
+
 * Mon Mar 22 2010 Alex Loginov <loginov_alex@inbox.ru> - 0.0.6
 - New release
 

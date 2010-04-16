@@ -205,7 +205,7 @@ resourcestring
   message6='Так как выбрана/изменена опция получения маршрутов через DHCP, то сеть будет перезапущена.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
-  message9='Так как выбрана опция добавления интерфейсов [ppp0..ppp9] в исключения файервола, то файервол будет перезапущен.';
+  message9='Так как выбрана/изменена опция добавления интерфейсов [ppp0..ppp9] в исключения файервола, то файервол будет перезапущен.';
   message10='В поле "Время реконнекта" можно ввести лишь число в пределах от 0 до 255 сек.';
   message11='Рекомендуется отключить поднятое VPN PPTP - тогда шлюз локальной сети определится автоматически.';
   message12='Сетевой интерфейс не определился.';
@@ -220,7 +220,7 @@ resourcestring
   message21='Установка не удалась';//выхлоп urpmi --auto pptp-linux
   message22='Невозможно создать ярлык на рабочем столе, так как используется нестандартный идентификатор пользователя и/или локализация.';
   message23='Невозможно создать ярлык на рабочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop.';
-  message24='Файервол уже настроен.';
+  //message24='Файервол уже настроен.';
 
 implementation
 
@@ -293,6 +293,11 @@ If Reconnect_pptp.Checked then
                           pchar_message1:=Pchar(message5);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                         end;
+ If dhcp_route.Checked then
+                       begin
+                          If not FileExists('/etc/dhclient-exit-hooks') then Shell('printf "#!/bin/sh\n" >> /etc/dhclient-exit-hooks');
+                          If not FileExists('/etc/dhclient.conf') then Shell('printf "#Clear config file\n" >> /etc/dhclient.conf');
+                        end;
  If dhcp_route.Checked then If not FileExists('/etc/dhclient-exit-hooks.old') then
                        begin
                           if FileExists('/etc/dhclient.conf') then Shell('cp -f /etc/dhclient.conf'+' '+'/etc/dhclient.conf.old');
@@ -304,7 +309,8 @@ If Reconnect_pptp.Checked then
                           pchar_message0:=Pchar(message0);
                           pchar_message1:=Pchar(message6);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
-                          Shell ('/etc/init.d/network restart');
+                          //Shell ('/etc/init.d/network restart');
+                          Shell ('dhclient '+Edit_eth.Text);
                        end;
 If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') then
                        begin
@@ -315,50 +321,52 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                           pchar_message0:=Pchar(message0);
                           pchar_message1:=Pchar(message6);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
-                          Shell ('/etc/init.d/network restart');
+                          //Shell ('/etc/init.d/network restart');
+                          Shell ('ifdown '+Edit_eth.Text);
+                          Shell ('ifup '+Edit_eth.Text);
                        end;
- If CheckBox_shorewall.Checked then
-                        begin
-                          If FileExists('/etc/shorewall/interfaces') then
-                              begin
-                                 Memo_shorewall.Lines.Clear;
-                                 Memo_shorewall.Lines.LoadFromFile('/etc/shorewall/interfaces');
-                                   If Memo_shorewall.Lines[0]='# vpnpptp changed this config' then
-                                      begin
-                                        CheckBox_shorewall.Checked:=true;
-                                        pchar_message0:=Pchar(message0);
-                                        pchar_message1:=Pchar(message24);
-                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
-                                      end;
-                                   If Memo_shorewall.Lines[0]<>'# vpnpptp changed this config' then
-                                      begin
-                                        pchar_message0:=Pchar(message0);
-                                        pchar_message1:=Pchar(message9);
-                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
-                                        i:=0;
-                                        Repeat
-                                        i:=i+1;
-                                        until Memo_shorewall.Lines[i]='#LAST LINE -- DO NOT REMOVE';
-                                        Shell('rm -f /etc/shorewall/interfaces');
-                                        Memo_shorewall.Lines[0]:='# vpnpptp changed this config';
-                                        Memo_shorewall.Lines[i]:='net    ppp0    detect          ';
-                                        Memo_shorewall.Lines.SaveToFile('/etc/shorewall/interfaces');
-                                        Shell('printf "\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp1    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp2    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp3    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp4    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp5    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp6    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp7    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp8    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "net    ppp9    detect\n" >> /etc/shorewall/interfaces');
-                                        Shell('printf "#LAST LINE -- DO NOT REMOVE\n" >> /etc/shorewall/interfaces');
-                                        Shell ('/etc/init.d/shorewall restart');
-                                      end;
-                              end;
+ If CheckBox_shorewall.Checked then If not FileExists('/etc/shorewall/interfaces.old') then
+                       begin
+                          if FileExists('/etc/shorewall/interfaces') then
+                                                                     begin
+                                                                        Shell('cp -f /etc/shorewall/interfaces'+' '+'/etc/shorewall/interfaces.old');
+                                                                        Memo_shorewall.Lines.Clear;
+                                                                        Memo_shorewall.Lines.LoadFromFile('/etc/shorewall/interfaces');
+                                                                        pchar_message0:=Pchar(message0);
+                                                                        pchar_message1:=Pchar(message9);
+                                                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                        i:=0;
+                                                                        Repeat
+                                                                        i:=i+1;
+                                                                        until Memo_shorewall.Lines[i]='#LAST LINE -- DO NOT REMOVE';
+                                                                        Shell('rm -f /etc/shorewall/interfaces');
+                                                                        Memo_shorewall.Lines[0]:='# vpnpptp changed this config';
+                                                                        Memo_shorewall.Lines[i]:='net    ppp0    detect          ';
+                                                                        Memo_shorewall.Lines.SaveToFile('/etc/shorewall/interfaces');
+                                                                        Shell('printf "\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp1    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp2    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp3    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp4    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp5    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp6    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp7    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp8    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "net    ppp9    detect\n" >> /etc/shorewall/interfaces');
+                                                                        Shell('printf "#LAST LINE -- DO NOT REMOVE\n" >> /etc/shorewall/interfaces');
+                                                                        Shell ('/etc/init.d/shorewall restart');
+                                                                     end;
                        end;
- if FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
+If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.old') then
+                                                                  begin
+                                                                        Shell('cp -f /etc/shorewall/interfaces.old'+' '+'/etc/shorewall/interfaces');
+                                                                        pchar_message0:=Pchar(message0);
+                                                                        pchar_message1:=Pchar(message9);
+                                                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                        Shell('rm -f /etc/shorewall/interfaces.old');
+                                                                        Shell ('/etc/init.d/shorewall restart');
+                                                                  end;
+ If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
  Shell('rm -f '+ Label_peername.Caption);
  Memo_peer.Clear;
@@ -395,6 +403,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
    If mppe_string<>'mppe required' then Memo_peer.Lines.Add(mppe_string);
   end;
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем профиль подключения
+ Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные файлы
   Shell('rm -f /tmp/gate');
   Shell('rm -f /tmp/eth');
@@ -402,12 +411,13 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
 //Делаем ссылку из /sbin/ip в /bin/ip
- if not(FileExists('/bin/ip')) then Shell('ln -s /sbin/ip /bin/ip');
+//if not(FileExists('/bin/ip')) then Shell('ln -s /sbin/ip /bin/ip');
 //перезаписываем скрипт поднятия соединения ip-up
  if FileExists(Label_ip_up.Caption) then Shell('cp -f '+ Label_ip_up.Caption+' '+Label_ip_up.Caption+chr(46)+'old');
  Shell('rm -f '+ Label_ip_up.Caption);
  Memo_ip_up.Clear;
  Memo_ip_up.Lines.Add('#!/bin/sh');
+ If Memo_route.Lines.Text <>'' then
  If Memo_route.Lines[0]<>'' then
   begin
    i:=0;
@@ -420,17 +430,35 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_ip_up.Lines.Add('/sbin/route del default');
  Memo_ip_up.Lines.Add('/sbin/route add default dev ppp0');
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
+ if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
+ if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
  Shell('chmod a+x '+ Label_ip_up.Caption);
 //перезаписываем скрипт опускания соединения ip-down
  if FileExists(Label_ip_down.Caption) then Shell('cp -f '+ Label_ip_down.Caption+' '+Label_ip_down.Caption+chr(46)+'old');
  Shell('rm -f '+ Label_ip_down.Caption);
  Memo_ip_down.Clear;
  Memo_ip_down.Lines.Add('#!/bin/sh');
+ //отмена введенных пользователем маршрутов через скрипт ip-down
+ If FileExists ('/opt/vpnpptp/route') then
+ begin
+ Memo_route.Lines.LoadFromFile('/opt/vpnpptp/route');
+ For i:=0 to Memo_route.Lines.Count-1 do
+     begin
+         Memo_route.Lines[i]:=StringReplace(Memo_route.Lines[i],'add','del',[rfReplaceAll]);
+     end;
+ If Memo_route.Lines[0]<>'' then
+  begin
+   i:=0;
+   While Memo_route.Lines.Count > i do
+    begin
+     Memo_ip_down.Lines.Add(Memo_route.Lines[i]);
+     i:=i+1;
+    end;
+  end;
+ end;
  Memo_ip_down.Lines.Add('/sbin/route del default');
  if Edit_gate.Text <> '' then
-  begin
-   Memo_ip_down.Lines.Add('/sbin/route add default gw '+Edit_gate.Text);
-  end;
+                           Memo_ip_down.Lines.Add('/sbin/route add default gw '+Edit_gate.Text);
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 
@@ -474,16 +502,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                               Shell('printf "link-desktop-no\n" >> /opt/vpnpptp/config');
  If require_mppe_128.Checked then Shell('printf "require-mppe-128-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "require-mppe-128-no\n" >> /opt/vpnpptp/config');
-//обеспечение совместимости старого config с новым
-//If FileExists('/opt/vpnpptp/config') then
-//     begin
-//        Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
-//        If Memo_config.Lines.Count<Config_n then
-//                                            begin
-//                                               for i:=Memo_config.Lines.Count to Config_n do
-//                                                  Shell('printf "none\n" >> /opt/vpnpptp/config');
-//                                            end;
-//     end;
+
 //Создаем ярлык для подключения
  gksu:=false;
  link_on_desktop:=false;
@@ -507,7 +526,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  If CheckBox_desktop.Checked then
 begin
   Memo_create.Clear;
-//  Memo_create.Lines.Add('#!/usr/bin/env xdg-open');
   Memo_create.Lines.Add('[Desktop Entry]');
   Memo_create.Lines.Add('Encoding=UTF-8');
   Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP');
@@ -782,8 +800,7 @@ if not y then
                              pchar_message1:=Pchar(message14);
                              Application.MessageBox(pchar_message1,pchar_message0, 0);
                            end;
-  Memo_route.Clear;
-  Memo_route.Lines[0]:='';
+  If not FileExists ('/opt/vpnpptp/route') then Memo_route.Clear;
   Shell('rm -f /tmp/gate');
   Shell('rm -f /tmp/eth');
   Shell('rm -f /tmp/users');
@@ -956,6 +973,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 var i,j:integer;
     pchar_message0,pchar_message1:pchar;
     len:integer;
+//    str:string;
 begin
 //масштабирование формы в зависимости от разрешения экрана
    Form1.Height:=600;
@@ -1098,7 +1116,7 @@ If Screen.Height>1000 then
           pchar_message1:=Pchar(message20);
           Application.MessageBox(pchar_message1,pchar_message0, 0);
           Shell('rm -f /tmp/tmpsetup');
-          halt;
+          //halt;
       end;
    end;
   Shell('echo "#Clear config file" > /etc/ppp/options');
@@ -1155,6 +1173,7 @@ If FileExists('/opt/vpnpptp/config') then
                     Edit_passwd.Text:=LeftStr(Edit_passwd.Text,len-1);
                 end;
      end;
+  If FileExists ('/opt/vpnpptp/route') then Memo_route.Lines.LoadFromFile('/opt/vpnpptp/route'); //восстановление маршрутов
   TabSheet1.TabVisible:= True;
   TabSheet2.TabVisible:= False;
   TabSheet3.TabVisible:= False;

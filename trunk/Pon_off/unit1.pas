@@ -72,6 +72,9 @@ var
   Translate:boolean; // переведено или еще не переведено
   POFileName : String;
 
+const
+  Config_n=21;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+
 resourcestring
   message0='Внимание!';
   message1='Запуск этой программы возможен только под администратором. Нажмите <OK> для отказа от запуска.';
@@ -191,6 +194,7 @@ If not Code_up_ppp then If link=2 then
 If not Code_up_ppp then If link=1 then
                            begin
                                   Form1.MenuItem2Click(Self);//эмулируем на всякий случай отключение вдруг созданного ppp
+                                  If Memo_Config.Lines[9]='dhcp-route-yes' then Shell ('dhclient '+Memo_Config.Lines[3]);
                                   Shell('/usr/sbin/pppd call '+Memo_Config.Lines[0]);
                                   //Application.MessageBox('Произведена попытка поднять VPN PPTP. Нажимаем <OK>','Внимание! Отладочная информация!', 0);
                            end;
@@ -200,6 +204,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   link:1..3; //1-link ok, 2-no link, 3-none
   pchar_message0,pchar_message1:pchar;
+  i:integer;
 begin
   MenuItem3.Caption:=message10;
   MenuItem4.Caption:=message11;
@@ -234,6 +239,16 @@ begin
                                                                                                       halt;
                                                                                                   end;
   Shell('rm -f /tmp/tmpnostart1');
+//обеспечение совместимости старого config с новым
+If FileExists('/opt/vpnpptp/config') then
+     begin
+        Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
+        If Memo_config.Lines.Count<Config_n then
+                                            begin
+                                               for i:=Memo_config.Lines.Count to Config_n do
+                                                  Shell('printf "none\n" >> /opt/vpnpptp/config');
+                                            end;
+     end;
   If FileExists('/opt/vpnpptp/config') then
                                            begin
                                                Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config');
@@ -364,6 +379,7 @@ begin
                                                                                  Shell ('rm -f /tmp/ip-down');
                                                                              end;
                                               Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
+                                              //If Memo_Config.Lines[9]='dhcp-route-yes' then Shell ('dhclient '+Memo_Config.Lines[3]);
                                             end;
  halt;
 end;
