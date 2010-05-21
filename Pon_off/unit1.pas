@@ -1,6 +1,7 @@
 { Control pptp vpn connection
 
-  Copyright (C) 2009 Edumandriva Alexander Kazancev kazancas@gmail.com
+  Copyright (C) 2009 Alexander Kazancev kazancas@gmail.com
+                     Alex Loginov loginov_alex@inbox.ru, loginov.alex.valer@gmail.com
 
   This source is free software; you can redistribute it and/or modify it under
   the terms of the GNU General Public License as published by the Free
@@ -34,6 +35,10 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    Memo_bindutilshost0: TMemo;
+    Memo_bindutilshost1: TMemo;
+    Memo_gate: TMemo;
+    Memo_gatevpn: TMemo;
     tmp_pppd: TMemo;
     Memo_ip_down: TMemo;
     Memo_Config: TMemo;
@@ -58,6 +63,7 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure tmpnostartChange(Sender: TObject);
+    procedure TrayIcon1Click(Sender: TObject);
     procedure TrayIcon1MouseMove(Sender: TObject);
 
   private
@@ -71,9 +77,11 @@ var
   Lang,FallbackLang:string;
   Translate:boolean; // переведено или еще не переведено
   POFileName : String;
+  BindUtils:boolean; //установлен ли пакет bind-utils
+  StartMessage:boolean;
 
 const
-  Config_n=21;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=23;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 
 resourcestring
   message0='Внимание!';
@@ -88,18 +96,27 @@ resourcestring
   message9='No link. Сетевой кабель для VPN PPTP неподключен. А реконнект не включен.';
   message10='Выход без аварии';
   message11='Выход при аварии';
+  message12='Устанавливается соединение ';
 
 implementation
 
 { TForm1 }
 
+Function DeleteSym(d, s: string): string;
+//Удаление любого символа из строки s, где d - символ для удаления
+Begin
+While pos(d, s) <> 0 do
+Delete(s, (pos(d, s)), 1); result := s;
+End;
+
 procedure TForm1.MenuItem1Click(Sender: TObject);
 var
-    j:integer;
+    i,j:integer;
     Code_up_ppp:boolean;
     link:1..4;//1-link ok, 2-no link, 3-none, 4-еще не определено
-    str:string;
     pchar_message0,pchar_message1:pchar;
+    str:string;
+    f,f1:textfile;
 begin
   //Проверяем поднялось ли соединение
   Shell('rm -f /tmp/status.ppp');
@@ -130,6 +147,62 @@ If link=4 then
      If RightStr(Memo_gate1.Lines[0],7)='no link' then link:=2;
      If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
    end;
+  //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
+  //BindUtils:=false; //просто для проверки при отладке метода ping
+  if BindUtils then Str:='host '+Memo_config.Lines[1]+'|grep address|grep '+Memo_config.Lines[1]+'|awk '+ chr(39)+'{print $4}'+chr(39);
+  if not BindUtils then Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39);
+  If not Code_up_ppp then If link=1 then
+               If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
+                            if Memo_config.Lines[21]='IPS-no' then
+                                              begin
+                                                  Shell('rm -f /tmp/hosts');
+                                                  Shell (Str+' > /tmp/hosts');
+                                                  Shell('printf "none\n" >> /tmp/hosts');
+                                                  Memo_bindutilshost0.Lines.LoadFromFile('/opt/vpnpptp/hosts');
+                                                  Memo_bindutilshost1.Lines.LoadFromFile('/tmp/hosts');
+                                                  For i:=0 to Memo_bindutilshost0.Lines.Count-1 do
+                                                  For j:=0 to Memo_bindutilshost1.Lines.Count-1 do
+                                                  begin
+                                                      Memo_bindutilshost1.Lines[j]:=DeleteSym('(',Memo_bindutilshost1.Lines[j]);
+                                                      Memo_bindutilshost1.Lines[j]:=DeleteSym(')',Memo_bindutilshost1.Lines[j]);
+                                                      If Memo_bindutilshost1.Lines[j] <>'none' then If Memo_bindutilshost1.Lines[j] <>'' then
+                                                                                       begin
+                                                                                         If Memo_bindutilshost1.Lines[j]=Memo_bindutilshost0.Lines[i] then Memo_bindutilshost1.Lines[j]:= 'none';
+                                                                                         Shell('rm -f /opt/vpnpptp/hosts');
+                                                                                       end;
+                                                  end;
+                                                  If not FileExists('/opt/vpnpptp/hosts') then
+                                                         begin
+                                                            For i:=0 to Memo_bindutilshost0.Lines.Count-1 do
+                                                               If Memo_bindutilshost0.Lines[i]<>'none' then Shell('printf "'+Memo_bindutilshost0.Lines[i]+'\n'+'" >> /opt/vpnpptp/hosts');
+                                                         end;
+                                                  For j:=0 to Memo_bindutilshost1.Lines.Count-1 do
+                                                  begin
+                                                      If LeftStr(Memo_bindutilshost1.Lines[j],4)<>'none' then
+                                                                                                         begin //определился новый, неизвестный ранее ip-адрес vpn-сервера
+                                                                                                           Shell('printf "'+Memo_bindutilshost1.Lines[j]+'\n'+'" >> /opt/vpnpptp/hosts');
+                                                                                                           begin
+                                                                                                              //проверка на наличие добавляемого маршрута в таблице маршрутизации и его добавление если нету
+                                                                                                              Shell('/sbin/route -n|grep '+Memo_bindutilshost1.Lines[j]+'|grep '+Memo_config.Lines[2]+'|grep '+Memo_config.Lines[3]+'|awk '+ chr(39)+'{print $0}'+chr(39)+' > /tmp/gatevpn');
+                                                                                                              Shell('printf "none" >> /tmp/gatevpn');
+                                                                                                              Memo_gatevpn.Clear;
+                                                                                                              If FileExists('/tmp/gatevpn') then Memo_gatevpn.Lines.LoadFromFile('/tmp/gatevpn');
+                                                                                                              If Memo_gatevpn.Lines[0]='none' then //немедленно добавить маршрут в таблицу маршрутизации
+                                                                                                                                              Shell ('/sbin/route add -host ' + Memo_bindutilshost1.Lines[j] + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]);
+                                                                                                              Shell('rm -f /tmp/gatevpn');
+                                                                                                              //изменение скрипта ip-up
+                                                                                                              If FileExists('/etc/ppp/ip-up.d/ip-up') then
+                                                                                                                                           Shell ('printf "'+'/sbin/route add -host ' + Memo_bindutilshost1.Lines[j] + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
+                                                                                                              //изменение скрипта ip-down
+                                                                                                              If Memo_Config.Lines[7]='reconnect-pptp' then If FileExists('/etc/ppp/ip-down.d/down-up') then
+                                                                                                                                        Shell ('printf "'+'/sbin/route del -host ' + Memo_bindutilshost1.Lines[j] + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                                                                              If Memo_Config.Lines[7]='noreconnect-pptp' then If FileExists('/tmp/ip-down') then
+                                                                                                                                        Shell ('printf "'+'/sbin/route del -host ' + Memo_bindutilshost1.Lines[j] + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                                                                         end;
+                                                                                                       end;
+                                                  Shell('rm -f /tmp/hosts');
+                                              end;
+                                            end;
 If Code_up_ppp then If link<>1 then //когда связи по факту нет, но в NetApplet и в ifconfig ppp0 числится, а pppd продолжает сидеть в процессах
                                begin
                                  MenuItem2Click(Self);
@@ -193,10 +266,12 @@ If not Code_up_ppp then If link=2 then
 
 If not Code_up_ppp then If link=1 then
                            begin
-                                  Form1.MenuItem2Click(Self);//эмулируем на всякий случай отключение вдруг созданного ppp
+                                  Form1.MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then Shell ('dhclient '+Memo_Config.Lines[3]);
+                                  TrayIcon1.BalloonTimeout:=5000;
+                                  TrayIcon1.BalloonHint:=message12+Memo_Config.Lines[0]+'...';
+                                  TrayIcon1.ShowBalloonHint;
                                   Shell('/usr/sbin/pppd call '+Memo_Config.Lines[0]);
-                                  //Application.MessageBox('Произведена попытка поднять VPN PPTP. Нажимаем <OK>','Внимание! Отладочная информация!', 0);
                            end;
 end;
 
@@ -206,9 +281,12 @@ var
   pchar_message0,pchar_message1:pchar;
   i:integer;
 begin
+  If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
   MenuItem3.Caption:=message10;
   MenuItem4.Caption:=message11;
+  TrayIcon1.BalloonTitle:=message0;
   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  StartMessage:=true;
   Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
   Memo_Config.Clear;
 //проверка ponoff в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
@@ -312,13 +390,14 @@ If FileExists('/opt/vpnpptp/config') then
                  halt;
                 end;
   Timer1.Interval:=StrToInt(Memo_Config.Lines[5]);
-  MenuItem2Click(Self);//эмулируем на всякий случай отключение вдруг созданного ppp
-  If Memo_Config.Lines[7]='noreconnect-pptp' then MenuItem1Click(Self); //автозапуск vpn + еще немного погодя оно запустится по таймеру если что само
+  MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
   If Memo_Config.Lines[7]='reconnect-pptp' then
-                                                begin
-                                                  MenuItem1Click(Self);
-                                                  Timer1.Enabled:=False;
-                                                end;
+                                             begin
+                                             Timer1.Enabled:=False;
+                                             MenuItem1Click(Self);
+                                             end
+                                                else
+                                                   Timer1.Interval:=500;
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
@@ -360,7 +439,15 @@ begin
                                                                             end;
                                             end;
  MenuItem2Click(Self);
- halt;
+ //определяем текущий шлюз, и если он не восстановлен скриптом ip-down, то восстанавливаем его сами
+  Shell ('rm -f /tmp/gate');
+  Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
+  Shell('printf "none" >> /tmp/gate');
+  Memo_gate.Clear;
+  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+  If Memo_gate.Lines[0]='none' then Shell ('/etc/ppp/ip-down.d/ip-down');
+  Shell ('rm -f /tmp/gate');
+  halt;
 end;
 
 procedure TForm1.MenuItem4Click(Sender: TObject);
@@ -379,7 +466,6 @@ begin
                                                                                  Shell ('rm -f /tmp/ip-down');
                                                                              end;
                                               Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
-                                              //If Memo_Config.Lines[9]='dhcp-route-yes' then Shell ('dhclient '+Memo_Config.Lines[3]);
                                             end;
  halt;
 end;
@@ -390,7 +476,7 @@ begin
 end;
 
 procedure TForm1.Timer2Timer(Sender: TObject);
-//индикация иконки в трее
+//индикация иконки в трее и балуны
 var
   j:integer;
   Code_up_ppp_timer:boolean;
@@ -409,11 +495,30 @@ begin
        Code_up_ppp_timer:=True;
       end;
    end;
-  If Code_up_ppp_timer then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico')
-                    else TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  If Code_up_ppp_timer then
+                           begin
+                             TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
+                             If StartMessage then TrayIcon1.BalloonTimeout:=8000;
+                             If StartMessage then TrayIcon1.BalloonHint:=message6+Memo_Config.Lines[0]+message7+'...';
+                             If StartMessage then TrayIcon1.ShowBalloonHint;
+                             StartMessage:=false;
+                           end;
+  If not Code_up_ppp_timer then
+                           begin
+                             If not StartMessage then TrayIcon1.BalloonTimeout:=8000;
+                             If not StartMessage then TrayIcon1.BalloonHint:=message6+Memo_Config.Lines[0]+message8+'...';
+                             If not StartMessage then TrayIcon1.ShowBalloonHint;
+                             TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                             StartMessage:=true;
+                           end;
 end;
 
 procedure TForm1.tmpnostartChange(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.TrayIcon1Click(Sender: TObject);
 begin
 
 end;
@@ -445,6 +550,7 @@ end;
 initialization
   {$I unit1.lrs}
   Gettext.GetLanguageIDs(Lang,FallbackLang);
+  Translate:=false;
 //FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
