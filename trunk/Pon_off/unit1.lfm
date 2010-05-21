@@ -1,14 +1,14 @@
 object Form1: TForm1
-  Left = 830
-  Height = 300
-  Top = 239
-  Width = 354
+  Left = 879
+  Height = 317
+  Top = 145
+  Width = 289
   ActiveControl = Memo_Config
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Соединение pptp'
-  ClientHeight = 300
-  ClientWidth = 354
+  ClientHeight = 317
+  ClientWidth = 289
   FormStyle = fsSplash
   OnCreate = FormCreate
   ShowInTaskBar = stNever
@@ -18,7 +18,7 @@ object Form1: TForm1
     Left = 48
     Height = 37
     Top = 0
-    Width = 294
+    Width = 113
     Lines.Strings = (
       'Memo1'
     )
@@ -28,7 +28,7 @@ object Form1: TForm1
     Left = 49
     Height = 37
     Top = 40
-    Width = 293
+    Width = 112
     Lines.Strings = (
       'Memo2'
     )
@@ -37,8 +37,8 @@ object Form1: TForm1
   object Memo3: TMemo
     Left = 48
     Height = 37
-    Top = 80
-    Width = 294
+    Top = 83
+    Width = 113
     Lines.Strings = (
       'Memo3'
     )
@@ -48,7 +48,7 @@ object Form1: TForm1
     Left = 48
     Height = 37
     Top = 128
-    Width = 294
+    Width = 113
     Lines.Strings = (
       'Memo4'
     )
@@ -56,7 +56,7 @@ object Form1: TForm1
   end
   object Memo_gate1: TMemo
     Left = 51
-    Height = 50
+    Height = 42
     Top = 174
     Width = 110
     Lines.Strings = (
@@ -65,10 +65,10 @@ object Form1: TForm1
     TabOrder = 4
   end
   object tmpnostart: TMemo
-    Left = 168
-    Height = 50
+    Left = 169
+    Height = 42
     Top = 174
-    Width = 103
+    Width = 111
     Lines.Strings = (
       'tmp'
     )
@@ -76,10 +76,10 @@ object Form1: TForm1
     TabOrder = 5
   end
   object Memo_ip_down: TMemo
-    Left = 51
-    Height = 56
-    Top = 232
-    Width = 113
+    Left = 169
+    Height = 40
+    Top = 40
+    Width = 110
     Lines.Strings = (
       'Memo_ip_down'
     )
@@ -87,18 +87,59 @@ object Form1: TForm1
   end
   object tmp_pppd: TMemo
     Left = 168
-    Height = 54
-    Top = 232
-    Width = 104
+    Height = 38
+    Top = 0
+    Width = 112
     Lines.Strings = (
       'tmp_pppd'
     )
     TabOrder = 7
   end
+  object Memo_gatevpn: TMemo
+    Left = 167
+    Height = 40
+    Top = 83
+    Width = 112
+    Lines.Strings = (
+      'Memo_gatevpn'
+    )
+    TabOrder = 8
+  end
+  object Memo_gate: TMemo
+    Left = 168
+    Height = 40
+    Top = 128
+    Width = 112
+    Lines.Strings = (
+      'Memo_gate'
+    )
+    TabOrder = 9
+  end
+  object Memo_bindutilshost1: TMemo
+    Left = 51
+    Height = 37
+    Top = 224
+    Width = 228
+    Lines.Strings = (
+      'Memo_bindutilshost1'
+    )
+    TabOrder = 10
+  end
+  object Memo_bindutilshost0: TMemo
+    Left = 51
+    Height = 40
+    Top = 272
+    Width = 228
+    Lines.Strings = (
+      'Memo_bindutilshost0'
+    )
+    TabOrder = 11
+  end
   object TrayIcon1: TTrayIcon
     BalloonTimeout = 0
     PopUpMenu = PopupMenu1
     Visible = True
+    OnClick = TrayIcon1Click
     OnMouseMove = TrayIcon1MouseMove
     left = 8
     top = 8
@@ -127,11 +168,11 @@ object Form1: TForm1
     Interval = 20000
     OnTimer = Timer1Timer
     left = 8
-    top = 160
+    top = 104
   end
   object Timer2: TTimer
     OnTimer = Timer2Timer
-    left = 288
-    top = 184
+    left = 8
+    top = 160
   end
 end
