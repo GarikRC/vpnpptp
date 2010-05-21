@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 461
+  Left = 444
   Height = 576
-  Top = 123
+  Top = 124
   Width = 800
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2143,10 +2143,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 800
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
@@ -2317,9 +2317,9 @@ object Form1: TForm1
         Left = 7
         Height = 14
         Top = 406
-        Width = 592
+        Width = 413
         BorderSpacing.Around = 8
-        Caption = '- указывайте IP vpn-сервера, тогда соединение может стать стабильнее в случае падения DNS-сервера'
+        Caption = '- указывайте IP vpn-сервера, тогда соединение может стать стабильнее'
         ParentColor = False
       end
       object Label35: TLabel
@@ -2454,7 +2454,7 @@ object Form1: TForm1
         Left = 157
         Height = 21
         Top = 35
-        Width = 640
+        Width = 290
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         OnChange = Edit_IPSChange
@@ -2472,7 +2472,7 @@ object Form1: TForm1
         Width = 640
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
-        TabOrder = 1
+        TabOrder = 2
       end
       object Edit_user: TEdit
         AnchorSideLeft.Control = Label40
@@ -2486,7 +2486,7 @@ object Form1: TForm1
         Width = 640
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
-        TabOrder = 2
+        TabOrder = 3
       end
       object Edit_passwd: TEdit
         AnchorSideLeft.Control = Label40
@@ -2501,7 +2501,7 @@ object Form1: TForm1
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         OnChange = Edit_passwdChange
-        TabOrder = 3
+        TabOrder = 4
       end
       object Edit_MaxTime: TEdit
         AnchorSideLeft.Control = Label40
@@ -2515,8 +2515,8 @@ object Form1: TForm1
         Width = 82
         BorderSpacing.Around = 8
         OnChange = Edit_MaxTimeChange
-        TabOrder = 4
-        Text = '20'
+        TabOrder = 5
+        Text = '10'
       end
       object Edit_MinTime: TEdit
         AnchorSideLeft.Control = Label40
@@ -2532,8 +2532,23 @@ object Form1: TForm1
         Width = 82
         BorderSpacing.Around = 8
         OnChange = Edit_MinTimeChange
-        TabOrder = 5
-        Text = '1'
+        TabOrder = 6
+        Text = '3'
+      end
+      object Button1: TButton
+        AnchorSideLeft.Control = Edit_IPS
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = Edit_IPS
+        AnchorSideBottom.Control = Label_IPS
+        AnchorSideBottom.Side = asrCenter
+        Left = 455
+        Height = 19
+        Top = 35
+        Width = 342
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Caption = 'Определить IP, проверить vpn-сервер'
+        OnClick = Button1Click
+        TabOrder = 1
       end
     end
     object TabSheet2: TTabSheet
@@ -3112,6 +3127,7 @@ object Form1: TForm1
         Anchors = [akLeft, akBottom]
         Caption = 'Создать ярлык на рабочем столе'
         Checked = True
+        OnChange = CheckBox_desktopChange
         State = cbChecked
         TabOrder = 11
       end
@@ -3188,14 +3204,6 @@ object Form1: TForm1
         Caption = '/etc/ppp/ip-down.d/ip-down'
         ParentColor = False
         Visible = False
-      end
-      object Label45: TLabel
-        Left = 31
-        Height = 14
-        Top = 30
-        Width = 555
-        Caption = '(используйте эту опцию, если только без нее не работает, или об этом попросит сама программа)'
-        ParentColor = False
       end
       object Memo_peer: TMemo
         Left = 711
@@ -3299,9 +3307,9 @@ object Form1: TForm1
         TabOrder = 8
       end
       object Reconnect_pptp: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
-        Top = 48
+        Top = 30
         Width = 661
         Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
         OnChange = Reconnect_pptpChange
@@ -3310,16 +3318,16 @@ object Form1: TForm1
       object Pppd_log: TCheckBox
         Left = 7
         Height = 21
-        Top = 72
+        Top = 54
         Width = 214
         Caption = 'Вести лог pppd в /var/log/pppd.log'
         OnChange = Pppd_logChange
         TabOrder = 10
       end
       object dhcp_route: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
-        Top = 96
+        Top = 78
         Width = 209
         Caption = 'Получать маршруты через DHCP'
         Checked = True
@@ -3340,9 +3348,9 @@ object Form1: TForm1
         Visible = False
       end
       object CheckBox_shorewall: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
-        Top = 120
+        Top = 102
         Width = 420
         Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
         Checked = True
@@ -3360,6 +3368,37 @@ object Form1: TForm1
         )
         OnChange = Memo_configChange
         TabOrder = 14
+        Visible = False
+      end
+      object Memo_ip_IPS: TMemo
+        Left = 711
+        Height = 48
+        Top = 438
+        Width = 70
+        Lines.Strings = (
+          'Memo_ip_IPS'
+        )
+        TabOrder = 15
+        Visible = False
+      end
+      object routevpnauto: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 126
+        Width = 292
+        Caption = 'Программно добавлять маршрут к vpn-серверу'
+        OnChange = routevpnautoChange
+        TabOrder = 16
+      end
+      object Memo_bindutilshost: TMemo
+        Left = 639
+        Height = 48
+        Top = 86
+        Width = 70
+        Lines.Strings = (
+          'Memo_bindutilshost'
+        )
+        TabOrder = 17
         Visible = False
       end
     end
