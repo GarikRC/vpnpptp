@@ -78,8 +78,8 @@ msgid "/sbin/route add -host [ip] netmask [маска] gw [шлюз] dev [уст
 msgstr "/sbin/route add -host [ip] netmask [mask] gw [gate] dev [device]"
 
 #: TFORM1.LABEL11.CAPTION
-msgid "- указывайте IP vpn-сервера, тогда соединение может стать стабильнее в случае падения DNS-сервера"
-msgstr "- set vpn server IP, so connection may be stable on DNS server fails"
+msgid "- указывайте IP vpn-сервера, тогда соединение может стать стабильнее"
+msgstr "- set vpn server IP, so connection may be stable"
 
 #: TFORM1.LABEL12.CAPTION
 msgctxt "TFORM1.LABEL12.CAPTION"
@@ -353,8 +353,8 @@ msgid "Не удалось автоматически оп#209�еделить 
 msgstr "Automatic define local network gate is failure."
 
 #: unit1.message15
-msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9."
-msgstr "Field \"Network interface\" is wrong. Must be eth0 to eth9."
+msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9 или от wlan0 до wlan9."
+msgstr "Field \"Network interface\" is wrong. Must be eth0 to eth9 or wlan0 to wlan9."
 
 #: unit1.message16
 msgid "Поле \"Шлюз локальной сети\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
@@ -377,8 +377,8 @@ msgid "Так как Вы отказались от конт#209�оля state 
 msgstr "Dial time set to 20 seconds since you has not state network cable and system load is over."
 
 #: unit1.message20
-msgid "Невозможно наст#209�оить VPN PPTP в связи с отсутствием пакета pptp-linux и невозможностью его автоматической установки."
-msgstr "Unable find ppptp-linux packet. Is absent or can not install. VPN PPTP can not configure."
+msgid "Невозможно наст#209�оить VPN PPTP в связи с отсутствием пакета pptp-linux."
+msgstr "Unable find ppptp-linux packet. VPN PPTP can not configure."
 
 #: unit1.message21
 msgid "Установка не удалась"
@@ -428,3 +428,63 @@ msgstr "Firewall is already configured."
 #: unit1.message23
 msgid "Невозможно создать я#209�лык на #209�абочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop."
 msgstr "Unable to create the shortcut on the Desktop, as there is no file /usr/share/applications/ponoff.desktop."
+
+#: TFORM1.BUTTON1.CAPTION
+msgid "Определить IP, проверить vpn-сервер"
+msgstr "Determine IP, check vpn-server"
+
+#: TFORM1.ROUTEVPNAUTO.CAPTION
+msgid "Программно добавлять маршрут к vpn-серверу"
+msgstr "Programm adding vpn-server route"
+
+#: unit1.message25
+msgid "Не установлен и не запущен dhclient (то есть пакет dhcp-client). Возможны п#209�облемы в #209�аботе сети."
+msgstr "Dhclient (packet dhcp-client) not installed and not started. May be trouble for network work."
+
+#: unit1.message26
+msgid "Не удалось оп#209�еделить IP-ад#209�ес VPN-се#209�ве#209�а. VPN-се#209�ве#209� не пингуется. Или он введен неп#209�авильно, или п#209�облема с DNS."
+msgstr "Determine vpn-server IP failure. Not ping to vpn-server. May be IP incorrect or DNS problem."
+
+#: unit1.message27
+msgid "Ма#209�ш#209�уты не могут п#209�иходить че#209�ез dhcp, так как не установлен и не запущен dhclient (то есть пакет dhcp-client)."
+msgstr "Route by dhcp not work, as dhclient (packet dhcp-client) not installed and not started."
+
+#: unit1.message28
+msgid "Нельзя оп#209�еделить IP-ад#209�ес VPN-се#209�ве#209�а, так как ст#209�ока для ввода не заполнена."
+msgstr "Determine vpn-server IP not work, as input string is not filled."
+
+#: unit1.message29
+msgid "Не установлен пакет bind-utils. Его установка необязательна, но она уско#209�ит механизм п#209�ог#209�аммного добавления ма#209�ш#209�ута к vpn-се#209�ве#209�у."
+msgstr "Not installed bind-utils packet. Its installation is optional, but it will accelerate the mechanism of software add route to vpn-server."
+
+#: unit1.message30
+msgid "Используйте опцию отключения конт#209�оля state сетевого кабеля если только по д#209�угому не #209�аботает (об этом поп#209�осит сама п#209�ог#209�амма)."
+msgstr "Use state disable option if other way not works (program say you if needed)."
+
+#: unit1.message31
+msgid "Вст#209�оенный в демон pppd механизм #209�еконнекта не умеет конт#209�оли#209�овать state сетевого кабеля, поэтому он не желателен к использованию."
+msgstr "Built-in pppd daemon's reconnect mechanism can not control the state network cable, so it is not desirable to use."
+
+#: unit1.message32
+msgid "Ведите лог pppd для того, чтобы выяснить ошибки наст#209�ойки соединения, ошибки п#209�и соединении и т.д."
+msgstr "Use a log of pppd in order to clarify the connection setup errors, errors when connecting, etc."
+
+#: unit1.message33
+msgid "Получение ма#209�ш#209�утов че#209�ез dhcp необходимо для однов#209�еменной #209�аботы локальной сети и инте#209�нета, но п#209�овайде#209� не всегда их п#209�исылает."
+msgstr "Get route via dhcp need for simultaneous operation of the local network and Internet, but the provider does not always sends them."
+
+#: unit1.message34
+msgid "Эта опция наст#209�аивает файе#209�вол лишь для инте#209�нета, но не для p2p и не для д#209�угих соединений."
+msgstr "This option configures the firewall only for the Internet, but not for p2p and not for other compounds."
+
+#: unit1.message35
+msgid "Отменив получение ма#209�ш#209�утов че#209�ез dhcp, не будут однов#209�еменно #209�аботать инте#209�нет и локальная сеть, а будет #209�аботать только инте#209�нет."
+msgstr "When receiving routes via dhcp will stop, simultaneously work Internet and LAN not posible, but will work only online."
+
+#: unit1.message36
+msgid "Отменить наст#209�ойку файе#209�вола п#209�ог#209�аммой стоит только если файе#209�вол отключен, или файе#209�вол Вами самостоятельно наст#209�аивается."
+msgstr "Canceling setting firewall by this program is only if the firewall is disabled, or your own firewall is configured."
+
+#: unit1.message37
+msgid "Если инте#209�нет хо#209�ошо #209�аботает без опции п#209�ог#209�аммного добавления ма#209�ш#209�ута к vpn-се#209�ве#209�у, то не стоит наг#209�ужать систему."
+msgstr "If the internet works fine without the software options add a route to vpn-server, then you should not load the system."

@@ -61,3 +61,6 @@ msgstr " not avalible"
 msgid "No link. Сетевой кабель для VPN PPTP неподключен. А #209�еконнект не включен."
 msgstr "No link. Network cable for VPN PPTP not connect. And reconnect is not on."
 
+#: unit1.message12
+msgid "Устанавливается соединение "
+msgstr "Connecting "
