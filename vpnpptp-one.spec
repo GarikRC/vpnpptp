@@ -1,4 +1,5 @@
-%define rel 1
+%define rel 4
+%define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
 
@@ -6,18 +7,30 @@ Summary: Tools for setup and control MS VPN via PPTP
 Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
 Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPTP
 Name: vpnpptp-kde-one
-Version: 0.0.7
+Version: 0.0.8
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
 
-Packager: Alexander Kazancev <kazancas@mandriva.ru>, Alex Loginov <loginov_alex@inbox.ru>
+Packager: Alexander Kazancev <kazancas@mandriva.ru>; Alex Loginov <loginov_alex@inbox.ru>, <loginov.alex.valer@gmail.com>
 Vendor: Mandriva Russia, http://www.mandriva.ru
 
 Source: vpnpptp-src-%{version}.tar.gz
+%ifarch x86_64
+Patch0: ponoff.patch
+Patch1: mandriva_pptp.patch
+Patch2: ponoff_project1.patch
+Patch3: mandriva_pptp_project1.patch
+%endif
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: fpc-src = 2.4.0, fpc = 2.4.0, gdk-pixbuf, gtk+, glibc, gdb, libglib1.2-devel, libgdk-pixbuf2-devel, lazarus, upx
+BuildRequires: fpc-src = 2.4.0, fpc = 2.4.0, gdk-pixbuf, gtk+, glibc, gdb, lazarus, upx
+%ifarch i586
+BuildRequires: libglib1.2-devel, libgdk-pixbuf2-devel
+%endif
+%ifarch x86_64
+BuildRequires: lib64glib1.2-devel, lib64gdk-pixbuf2-devel
+%endif
 Requires: pptp-linux
 Obsoletes: vpnpptp-allde < 0.0.6
 Obsoletes: vpnpptp-kde-one < 0.0.6
@@ -35,6 +48,12 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
 %setup -n vpnpptp-src-%{version}
+%ifarch x86_64
+%patch0 -p0
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
+%endif
 
 %postun
 
@@ -133,20 +152,3 @@ install -m 0644 vpnpptp.desktop \
 %{_datadir}/applications/vpnpptp.desktop
 
 %changelog
-* Thu Apr 15 2010 Alex Loginov <loginov_alex@inbox.ru> - 0.0.7
-- New release
-
-* Mon Mar 22 2010 Alex Loginov <loginov_alex@inbox.ru> - 0.0.6
-- New release
-
-* Thu Dec 22 2009 ALexander Kazancev <kazancas@mandriva.ru> - 0.0.4.1
-- Internationalisation version and dhcp route script
-
-* Thu Dec 9 2009 Alexander Kazancev <kazancas@mandriva.ru> - 0.0.4
-- New version
-
-* Fri Nov 27 2009 Alexander Kazancev <kazancas@mandriva.ru> - 0.0.2
-- New release
-
-* Mon May 18 2009 Alexander Kazancev <kazancas@gmail.com> - 0.0.1
-- Initial release
