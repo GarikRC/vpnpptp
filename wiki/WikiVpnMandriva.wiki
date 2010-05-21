@@ -1,5 +1,0 @@
-#summary Общие инструкции по настройке VPN в Mandriva
-
-http://wiki.mandriva.com/ru/%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0_VPN_%D0%B2_Mandriva
-
-http://ru.posix.wikia.com/wiki/PPTP
