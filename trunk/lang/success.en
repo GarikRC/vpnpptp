@@ -2,10 +2,10 @@ Establishing a VPN PPTP is complete!
 
 You can connect to the Internet:
 1) Using the shortcut on the Desktop;
-2) Start Menu-> Internet-> Connect VPN PPTP (Manage connection VPN PPTP) or Menu-> Utilities-> System-> Connect VPN PPTP (Manage connection VPN PPTP);
-3) After completing an administrator under the command /opt/vpnpptp/ponoff;
-This configuration can also be called by root of command /opt/vpnpptp/vpnpptp or from the Menu-> Internet-> Settings VPN PPTP (Setting up connection VPN PPTP) or from Menu-> Utilities-> System-> Configuration VPN PPTP (Setting up connection VPN PPTP);
-4) Holds under any user of the command /usr/sbin/pppd call connection_name (in this case, the VPN will work without a GUI).
+2) Start Menu-> Internet-> ponoff (Manage connection VPN PPTP) or Menu-> Utilities-> System-> ponoff (Manage connection VPN PPTP);
+3) After completing an administrator under the command ponoff;
+This configuration can also be called by root of command vpnpptp or from the Menu-> Internet-> vpnpptp (Setting up connection VPN PPTP) or from Menu-> Utilities-> System-> vpnpptp (Setting up connection VPN PPTP);
+4) Holds under root of the command /usr/sbin/pppd call connection_name (in this case, the VPN will work without a GUI).
 
 If the connection is properly configured - run this configuration again. Make sure the data.
 If you do not see the shortcut icon on the Desktop, then refresh the desktop (F5).
