@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 444
+  Left = 400
   Height = 576
-  Top = 124
+  Top = 107
   Width = 800
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2143,10 +2143,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 800
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
@@ -2156,7 +2156,6 @@ object Form1: TForm1
       Caption = 'Этап 1'
       ClientHeight = 509
       ClientWidth = 798
-      OnContextPopup = TabSheet1ContextPopup
       object Label_IPS: TLabel
         AnchorSideLeft.Control = Label40
         AnchorSideTop.Control = Edit_IPS
@@ -2620,7 +2619,6 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label13
         Left = 630
         Height = 14
         Top = 133
@@ -2629,186 +2627,20 @@ object Form1: TForm1
         Caption = 'Примечания:'
         ParentColor = False
       end
-      object Label13: TLabel
-        AnchorSideLeft.Control = Label12
-        AnchorSideTop.Control = Label12
-        AnchorSideTop.Side = asrBottom
-        AnchorSideBottom.Control = Label14
-        AnchorSideBottom.Side = asrCenter
-        Left = 630
-        Height = 14
-        Top = 147
-        Width = 128
-        Anchors = [akLeft]
-        Caption = '- желательно вписать'
-        ParentColor = False
-      end
-      object Label14: TLabel
-        AnchorSideLeft.Control = Label13
-        AnchorSideTop.Control = Label13
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label16
-        Left = 630
-        Height = 14
-        Top = 161
-        Width = 161
-        Caption = 'маршруты для vpn-сервера,'
-        ParentColor = False
-      end
-      object Label16: TLabel
-        AnchorSideLeft.Control = Label14
-        AnchorSideTop.Control = Label14
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label17
-        Left = 630
-        Height = 14
-        Top = 175
-        Width = 132
-        Caption = 'dns-серверов, особенно'
-        ParentColor = False
-      end
-      object Label17: TLabel
-        AnchorSideLeft.Control = Label16
-        AnchorSideTop.Control = Label16
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label15
-        Left = 630
-        Height = 14
-        Top = 189
-        Width = 150
-        Caption = 'если включенных сетевых'
-        ParentColor = False
-      end
-      object Label18: TLabel
-        AnchorSideLeft.Control = Label15
-        AnchorSideTop.Control = Label15
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label20
-        Left = 630
-        Height = 14
-        Top = 217
-        Width = 124
-        Caption = 'более одного, а также'
-        ParentColor = False
-      end
       object Label19: TLabel
         AnchorSideLeft.Control = CheckBox_shifr
         AnchorSideTop.Control = CheckBox_shifr
+        AnchorSideRight.Control = CheckBox_shifr
+        AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = CheckBox_desktop
         AnchorSideBottom.Side = asrCenter
-        Left = 630
+        Left = 650
         Height = 14
         Top = 17
-        Width = 78
-        Anchors = [akLeft]
+        Width = 133
+        Anchors = [akRight]
         BorderSpacing.Top = 17
-        Caption = '(если задано)'
-        ParentColor = False
-      end
-      object Label15: TLabel
-        AnchorSideLeft.Control = Label17
-        AnchorSideTop.Control = Label17
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label18
-        Left = 630
-        Height = 14
-        Top = 203
-        Width = 134
-        Caption = 'интерфейсов в системе'
-        ParentColor = False
-      end
-      object Label20: TLabel
-        AnchorSideLeft.Control = Label18
-        AnchorSideTop.Control = Label18
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label9
-        Left = 630
-        Height = 14
-        Top = 231
-        Width = 154
-        Caption = 'вписать другие маршруты'
-        ParentColor = False
-      end
-      object Label9: TLabel
-        AnchorSideLeft.Control = Label20
-        AnchorSideTop.Control = Label20
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label21
-        Left = 630
-        Height = 14
-        Top = 245
-        Width = 146
-        Caption = '- если сетевой интерфейс'
-        ParentColor = False
-      end
-      object Label21: TLabel
-        AnchorSideLeft.Control = Label9
-        AnchorSideTop.Control = Label9
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label26
-        Left = 630
-        Height = 14
-        Top = 259
-        Width = 149
-        Caption = 'и/или шлюз определились'
-        ParentColor = False
-      end
-      object Label22: TLabel
-        AnchorSideLeft.Control = Label26
-        AnchorSideTop.Control = Label26
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label23
-        Left = 630
-        Height = 14
-        Top = 287
-        Width = 126
-        Caption = 'требующийся сетевой'
-        ParentColor = False
-      end
-      object Label23: TLabel
-        AnchorSideLeft.Control = Label22
-        AnchorSideTop.Control = Label22
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label24
-        Left = 630
-        Height = 14
-        Top = 301
-        Width = 131
-        Caption = 'интерфейс основным и'
-        ParentColor = False
-      end
-      object Label24: TLabel
-        AnchorSideLeft.Control = Label23
-        AnchorSideTop.Control = Label23
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label27
-        Left = 630
-        Height = 14
-        Top = 315
-        Width = 125
-        Caption = 'настройте все заново'
+        Caption = 'и/или аутентификацию'
         ParentColor = False
       end
       object Label25: TLabel
@@ -2823,139 +2655,60 @@ object Form1: TForm1
         Caption = 'Сетевой интерфейс по умолчанию (определяется автоматически):'
         ParentColor = False
       end
-      object Label26: TLabel
-        AnchorSideLeft.Control = Label21
-        AnchorSideTop.Control = Label21
+      object Label45: TLabel
+        AnchorSideLeft.Control = Memo_route
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = Label12
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label22
+        AnchorSideBottom.Side = asrCenter
         Left = 630
-        Height = 14
-        Top = 273
-        Width = 151
-        Caption = 'неправильно, то сделайте'
+        Height = 110
+        Top = 147
+        Width = 168
+        Anchors = [akTop, akLeft, akRight]
+        Caption = '- желательно вписать маршруты для vpn-сервера, dns-серверов, особенно если включенных сетевых интерфейсов в системе более одного, а также вписать другие маршруты'
         ParentColor = False
+        WordWrap = True
       end
-      object Label27: TLabel
-        AnchorSideLeft.Control = Label24
-        AnchorSideTop.Control = Label24
+      object Label46: TLabel
+        AnchorSideLeft.Control = Label12
+        AnchorSideTop.Control = Label45
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label28
+        AnchorSideBottom.Side = asrCenter
         Left = 630
-        Height = 14
-        Top = 329
-        Width = 152
-        Caption = 'или введите эти значения'
+        Height = 126
+        Top = 257
+        Width = 168
+        Anchors = [akTop, akLeft, akRight]
+        Caption = '- если сетевой интерфейс и/или шлюз определились неправильно, то сделайте требующийся сетевой интерфейс основным и настройте все заново или введите эти значения вручную'
         ParentColor = False
+        WordWrap = True
       end
-      object Label28: TLabel
-        AnchorSideLeft.Control = Label27
-        AnchorSideTop.Control = Label27
+      object Label47: TLabel
+        AnchorSideLeft.Control = Label12
+        AnchorSideTop.Control = Label46
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label29
+        AnchorSideBottom.Side = asrCenter
         Left = 630
-        Height = 14
-        Top = 343
-        Width = 49
-        Caption = 'вручную'
+        Height = 94
+        Top = 383
+        Width = 168
+        Anchors = [akTop, akLeft, akRight]
+        Caption = '- без занесения маршрутов не гарантируется одновременная работа интернета и локальной сети, но интернет в любом случае будет работать'
         ParentColor = False
-      end
-      object Label29: TLabel
-        AnchorSideLeft.Control = Label28
-        AnchorSideTop.Control = Label28
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label30
-        Left = 630
-        Height = 14
-        Top = 357
-        Width = 155
-        Caption = '- без занесения маршрутов'
-        ParentColor = False
-      end
-      object Label30: TLabel
-        AnchorSideLeft.Control = Label29
-        AnchorSideTop.Control = Label29
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label31
-        Left = 630
-        Height = 14
-        Top = 371
-        Width = 157
-        Caption = 'не гарантируется одновре-'
-        ParentColor = False
-      end
-      object Label31: TLabel
-        AnchorSideLeft.Control = Label30
-        AnchorSideTop.Control = Label30
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label32
-        Left = 630
-        Height = 14
-        Top = 385
-        Width = 160
-        Caption = 'менная работа интернета и'
-        ParentColor = False
-      end
-      object Label32: TLabel
-        AnchorSideLeft.Control = Label31
-        AnchorSideTop.Control = Label31
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label33
-        Left = 630
-        Height = 14
-        Top = 399
-        Width = 150
-        Caption = 'локальной сети, но интер-'
-        ParentColor = False
-      end
-      object Label33: TLabel
-        AnchorSideLeft.Control = Label32
-        AnchorSideTop.Control = Label32
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = Label34
-        Left = 630
-        Height = 14
-        Top = 413
-        Width = 146
-        Caption = 'нет в любом случае будет'
-        ParentColor = False
-      end
-      object Label34: TLabel
-        AnchorSideLeft.Control = Label33
-        AnchorSideTop.Control = Label33
-        AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = TabSheet2
-        AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = TabSheet2
-        AnchorSideBottom.Side = asrBottom
-        Left = 630
-        Height = 14
-        Top = 427
-        Width = 55
-        BorderSpacing.Bottom = 10
-        Caption = 'работать'
-        ParentColor = False
+        WordWrap = True
       end
       object Edit_eth: TEdit
         AnchorSideLeft.Control = Label25
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = TabSheet2
-        AnchorSideRight.Control = Label14
+        AnchorSideRight.Control = require_mppe_128
         Left = 383
         Height = 21
         Top = 10
@@ -2969,7 +2722,7 @@ object Form1: TForm1
         AnchorSideLeft.Control = Edit_eth
         AnchorSideTop.Control = Edit_eth
         AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = Label14
+        AnchorSideRight.Control = require_mppe_128
         AnchorSideBottom.Control = Label_mtu
         Left = 383
         Height = 21
@@ -2983,7 +2736,7 @@ object Form1: TForm1
       object Edit_mtu: TEdit
         AnchorSideLeft.Control = Edit_eth
         AnchorSideTop.Control = Edit_gate
-        AnchorSideRight.Control = Label14
+        AnchorSideRight.Control = require_mppe_128
         AnchorSideBottom.Control = Memo_route
         Left = 383
         Height = 21
@@ -3103,19 +2856,19 @@ object Form1: TForm1
         AnchorSideLeft.Control = TabSheet2
         AnchorSideTop.Control = Label5
         AnchorSideTop.Side = asrBottom
-        AnchorSideRight.Control = Label14
+        AnchorSideRight.Control = require_mppe_128
         AnchorSideBottom.Control = CheckBox_desktop
-        Left = 2
+        Left = -118
         Height = 353
         Top = 135
-        Width = 623
-        Anchors = [akTop, akLeft, akRight, akBottom]
+        Width = 743
+        Anchors = [akTop, akRight, akBottom]
         BorderSpacing.Left = 2
         BorderSpacing.Right = 5
         Lines.Strings = (
           ''
         )
-        TabOrder = 10
+        TabOrder = 11
       end
       object CheckBox_desktop: TCheckBox
         AnchorSideBottom.Control = TabSheet2
@@ -3129,7 +2882,7 @@ object Form1: TForm1
         Checked = True
         OnChange = CheckBox_desktopChange
         State = cbChecked
-        TabOrder = 11
+        TabOrder = 12
       end
       object require_mppe_128: TCheckBox
         AnchorSideLeft.Control = CheckBox_no40
@@ -3144,7 +2897,7 @@ object Form1: TForm1
         Anchors = [akLeft]
         Caption = 'require-mppe-128'
         OnChange = require_mppe_128Change
-        TabOrder = 12
+        TabOrder = 10
       end
     end
     object TabSheet3: TTabSheet
@@ -3401,6 +3154,57 @@ object Form1: TForm1
         TabOrder = 17
         Visible = False
       end
+      object networktest: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 150
+        Width = 346
+        Caption = 'Проверять vpn-сервер, шлюз локальной сети и интернет'
+        Checked = True
+        OnChange = networktestChange
+        State = cbChecked
+        TabOrder = 18
+      end
+      object balloon: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 174
+        Width = 313
+        Caption = 'Блокировать все всплывающие сообщения из трея'
+        OnChange = balloonChange
+        TabOrder = 19
+      end
+      object Memo_networktest: TMemo
+        Left = 639
+        Height = 52
+        Top = 134
+        Width = 70
+        Lines.Strings = (
+          'Memo_networktest'
+        )
+        TabOrder = 20
+        Visible = False
+      end
+      object Sudo_sudoers: TCheckBox
+        Left = 7
+        Height = 21
+        Top = 198
+        Width = 326
+        Caption = 'Разрешить пользователям управлять подключением'
+        OnChange = Sudo_sudoersChange
+        TabOrder = 21
+      end
+      object Memo_sudo: TMemo
+        Left = 639
+        Height = 50
+        Top = 187
+        Width = 70
+        Lines.Strings = (
+          'Memo_sudo'
+        )
+        TabOrder = 22
+        Visible = False
+      end
     end
     object TabSheet4: TTabSheet
       Caption = 'Этап 4'
@@ -3417,6 +3221,7 @@ object Form1: TForm1
           ''
         )
         OnChange = Memo_createChange
+        ReadOnly = True
         TabOrder = 0
       end
     end

@@ -38,6 +38,14 @@ type
     Button_exit: TButton;
     Button_next1: TButton;
     Button_next2: TButton;
+    balloon: TCheckBox;
+    Label45: TLabel;
+    Label46: TLabel;
+    Label47: TLabel;
+    Memo_sudo: TMemo;
+    Sudo_sudoers: TCheckBox;
+    Memo_networktest: TMemo;
+    networktest: TCheckBox;
     Memo_bindutilshost: TMemo;
     routevpnauto: TCheckBox;
     Memo_ip_IPS: TMemo;
@@ -75,30 +83,10 @@ type
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
-    Label13: TLabel;
-    Label14: TLabel;
-    Label15: TLabel;
-    Label16: TLabel;
-    Label17: TLabel;
-    Label18: TLabel;
     Label19: TLabel;
     Label2: TLabel;
-    Label20: TLabel;
-    Label21: TLabel;
-    Label22: TLabel;
-    Label23: TLabel;
-    Label24: TLabel;
     Label25: TLabel;
-    Label26: TLabel;
-    Label27: TLabel;
-    Label28: TLabel;
-    Label29: TLabel;
     Label3: TLabel;
-    Label30: TLabel;
-    Label31: TLabel;
-    Label32: TLabel;
-    Label33: TLabel;
-    Label34: TLabel;
     Label35: TLabel;
     Label36: TLabel;
     Label37: TLabel;
@@ -110,7 +98,6 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
-    Label9: TLabel;
     Label_IPS: TLabel;
     Label_gate: TLabel;
     Label_ip_down: TLabel;
@@ -136,6 +123,7 @@ type
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
     Tmpnostart: TMemo;
+    procedure balloonChange(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button_addoptionsClick(Sender: TObject);
     procedure Button_createClick(Sender: TObject);
@@ -144,6 +132,7 @@ type
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
     procedure CheckBox_desktopChange(Sender: TObject);
+    procedure networktestChange(Sender: TObject);
     procedure routevpnautoChange(Sender: TObject);
     procedure CheckBox_no40Change(Sender: TObject);
     procedure CheckBox_no56Change(Sender: TObject);
@@ -176,8 +165,7 @@ type
     procedure Pppd_logChange(Sender: TObject);
     procedure Reconnect_pptpChange(Sender: TObject);
     procedure require_mppe_128Change(Sender: TObject);
-    procedure TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
+    procedure Sudo_sudoersChange(Sender: TObject);
   private
     { private declarations }
   public
@@ -204,8 +192,9 @@ var
   IPS: boolean; // если true, то в поле vpn-сервера введен ip; если false - то имя
   StartMessage:boolean; // принудительное блокирование сообщений
   BindUtils:boolean; //установлен ли пакет bind-utils
+  Sudo:boolean; //установлен ли пакет sudo
 const
-  Config_n=23;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=26;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
@@ -213,10 +202,10 @@ resourcestring
   message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd реконнекта проигнорирован.';
   message4='Так как реконнект будет реализован встроенным в демон pppd методом, то время реконнекта (время отправки LCP эхо-запросов) установлено в 20 сек.';
   message5='Так как реконнект будет реализован встроенным в демон pppd методом, то время дозвона не используется за ненадобностью.';
-  message6='Так как выбрана/изменена опция получения маршрутов через DHCP, то сеть будет перезапущена.';
+  //message6='Так как выбрана/изменена опция получения маршрутов через DHCP, то сеть будет перезапущена.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
-  message9='Так как выбрана/изменена опция добавления интерфейсов [ppp0..ppp9] в исключения файервола, то файервол будет перезапущен.';
+  //message9='Так как выбрана/изменена опция добавления интерфейсов [ppp0..ppp9] в исключения файервола, то файервол будет перезапущен.';
   message10='В поле "Время реконнекта" можно ввести лишь число в пределах от 0 до 255 сек.';
   message11='Рекомендуется отключить поднятое VPN PPTP - тогда шлюз локальной сети определится автоматически.';
   message12='Сетевой интерфейс не определился.';
@@ -245,6 +234,27 @@ resourcestring
   message35='Отменив получение маршрутов через dhcp, не будут одновременно работать интернет и локальная сеть, а будет работать только интернет.';
   message36='Отменить настройку файервола программой стоит только если файервол отключен, или файервол Вами самостоятельно настраивается.';
   message37='Если интернет хорошо работает без опции программного добавления маршрута к vpn-серверу, то не стоит нагружать систему.';
+  message38='При выборе этой опции проверяется пинг vpn-сервера, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные проблемы, выводя сообщения.';
+  message39='Отменить эту опцию стоит только если у Вас стабильные локальная сеть и интернет, и они никогда не падают.';
+  message40='Эта опция блокирует все всплывающие сообщения из трея, а также отключает проверку vpn-сервера, шлюза локальной сети и есть ли интернет.';
+  message41='Проверка показала, что маршруты через dhcp не приходят. Одновременная работа интернета и лок. сети не настроена.';
+  message42='Получение маршрутов через dhcp будет отменено, так как маршруты через dhcp не приходят.';
+  message43='Vpn-сервер не пингуется. Устраните проблему и заново запустите конфигуратор.';
+  message44='Шлюз локальной сети не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
+  message45='Пингуется vpn-сервер. Ожидайте...';
+  message46='Определяется ip-адрес vpn-сервера через команду ping. Ожидайте...';
+  message47='Пингуется шлюз локальной сети. Ожидайте...';
+  message48='Осуществляется подготовка сети для проверки приходят ли маршруты через dhcp. Ожидайте...';
+  message49='Сеть подготовлена для проверки приходят ли маршруты через dhcp. Вызывается dhclient. Ожидайте...';
+  message50='Определяются ip-адреса vpn-сервера через команду host из пакета bind-utils. Ожидайте...';
+  message51='Отменяется получение маршрутов через dhcp. Ожидайте...';
+  message52='Пинг проверен';
+  message53='Минуточку...';
+  message54='Не определилось ни одного ip-адреса vpn-сервера.';
+  message55='Часто используется аутентификация mschap v2 - это одновременный выбор refuse-eap, refuse-chap, refuse-mschap. Часто используется шифрование трафика require-mppe-128.';
+  message56='Эта опция создает ярлык ponoff на Рабочем столе для доступа в интернет пользователю, позволяя ему управлять соединением через иконку в трее.';
+  message57='Для того, чтобы разрешить пользователям управлять подключением сначала установите пакет sudo.';
+  message58='Пользователям разрешается управлять подключением через ярлык на Рабочем столе - была включена опция создания ярлыка на Рабочем столе.';
 
 implementation
 
@@ -291,12 +301,21 @@ While pos(d, s) <> 0 do
 Delete(s, (pos(d, s)), 1); result := s;
 End;
 
+procedure Sbros;
+begin
+   If (not Form1.CheckBox_rchap.Checked) and (not Form1.CheckBox_reap.Checked) and
+       (not Form1.CheckBox_rmschap.Checked) and (not Form1.CheckBox_stateless.Checked) and
+         (not Form1.CheckBox_no40.Checked) and (not Form1.CheckBox_no56.Checked) and (not Form1.require_mppe_128.Checked) then
+                                                                                         Form1.CheckBox_shifr.Checked:=false;
+end;
+
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i:integer;
     pchar_message0,pchar_message1:pchar;
     gksu, link_on_desktop:boolean;
     Str,Str1:string;
+    Find_sudoers_ponoff,flag:boolean;
 begin
 Shell('rm -f /opt/vpnpptp/hosts');
 If Mii_tool_no.Checked then If StrToInt(Edit_MaxTime.Text)<20 then
@@ -341,10 +360,36 @@ If Reconnect_pptp.Checked then
                           if FileExists('/etc/dhclient-exit-hooks') then Shell('cp -f /etc/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks.old');
                           Shell('rm -f /etc/dhclient-exit-hooks');
                           if FileExists('/opt/vpnpptp/scripts/dhclient-exit-hooks') then Shell('cp -f /opt/vpnpptp/scripts/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks');
-                          pchar_message0:=Pchar(message0);
-                          pchar_message1:=Pchar(message6);
-                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          //проверка получаются ли маршруты по dhcp и настройка - если получаются или отмена - если не получаются
+                          Label42.Caption:='';
+                          Label43.Caption:=message48;
+                          Application.ProcessMessages;
+                          Shell ('ifdown '+Edit_eth.Text);
+                          Shell ('ifup '+Edit_eth.Text);
+                          Application.ProcessMessages;
+                          Shell ('rm -f /tmp/dhclienttest1');
+                          Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest1');
+                          Shell ('rm -f /tmp/dhclienttest2');
+                          Label42.Caption:='';
+                          Label43.Caption:=message49;
+                          Application.ProcessMessages;
                           Shell ('dhclient '+Edit_eth.Text);
+                          Application.ProcessMessages;
+                          Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest2');
+                          If FileSize('/tmp/dhclienttest2')<=FileSize('/tmp/dhclienttest1') then
+                                                                                               begin
+                                                                                                 Label42.Caption:='';
+                                                                                                 Label43.Caption:=message41;
+                                                                                                 Application.ProcessMessages;
+                                                                                                 pchar_message0:=Pchar(message0);
+                                                                                                 pchar_message1:=Pchar(message42);
+                                                                                                 Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                                                 StartMessage:=false;
+                                                                                                 dhcp_route.Checked:=false;
+                                                                                                 StartMessage:=true;
+                                                                                               end;
+                         Shell('rm -f /tmp/dhclienttest1');
+                         Shell('rm -f /tmp/dhclienttest2');
                        end;
 If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') then
                        begin
@@ -352,11 +397,12 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                           Shell('rm -f /etc/dhclient.conf.old');
                           if FileExists('/etc/dhclient-exit-hooks.old') then Shell('cp -f /etc/dhclient-exit-hooks.old'+' '+'/etc/dhclient-exit-hooks');
                           Shell('rm -f /etc/dhclient-exit-hooks.old');
-                          pchar_message0:=Pchar(message0);
-                          pchar_message1:=Pchar(message6);
-                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          Label42.Caption:='';
+                          Label43.Caption:=message51;
+                          Application.ProcessMessages;
                           Shell ('ifdown '+Edit_eth.Text);
                           Shell ('ifup '+Edit_eth.Text);
+                          Application.ProcessMessages;
                        end;
  If CheckBox_shorewall.Checked then If not FileExists('/etc/shorewall/interfaces.old') then
                        begin
@@ -365,9 +411,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                         Shell('cp -f /etc/shorewall/interfaces'+' '+'/etc/shorewall/interfaces.old');
                                                                         Memo_shorewall.Lines.Clear;
                                                                         Memo_shorewall.Lines.LoadFromFile('/etc/shorewall/interfaces');
-                                                                        pchar_message0:=Pchar(message0);
-                                                                        pchar_message1:=Pchar(message9);
-                                                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                                         i:=0;
                                                                         Repeat
                                                                         i:=i+1;
@@ -399,9 +442,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
 If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.old') then
                                                                   begin
                                                                         Shell('cp -f /etc/shorewall/interfaces.old'+' '+'/etc/shorewall/interfaces');
-                                                                        pchar_message0:=Pchar(message0);
-                                                                        pchar_message1:=Pchar(message9);
-                                                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                                         Shell('rm -f /etc/shorewall/interfaces.old');
                                                                         Shell ('/etc/init.d/shorewall restart');
                                                                   end;
@@ -454,19 +494,42 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  Memo_ip_up.Clear;
  Memo_ip_up.Lines.Add('#!/bin/sh');
  If routevpnauto.Checked then if IPS then Memo_ip_up.Lines.Add('/sbin/route add -host ' + Edit_IPS.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
- If routevpnauto.Checked then if not IPS then if BindUtils then //определение всех актуальных в данный момент ip-адресов vpn-сервера с занесением в Memo_bindutilshost.Lines и в файл /opt/vpnpptp/hosts
+ flag:=false;
+ If routevpnauto.Checked then if not IPS then  //определение всех актуальных в данный момент ip-адресов vpn-сервера с занесением в Memo_bindutilshost.Lines и в файл /opt/vpnpptp/hosts
                                               begin
-                                                  Str:='host '+Edit_IPS.Text+'|grep address|grep '+Edit_IPS.Text+'|awk '+ chr(39)+'{print $4}'+chr(39);
+                                                  if BindUtils then Str:='host '+Edit_IPS.Text+'|grep address|grep '+Edit_IPS.Text+'|awk '+ chr(39)+'{print $4}'+chr(39);
+                                                  if not BindUtils then Str:= 'ping -c1 '+Edit_IPS.Text+'|grep '+Edit_IPS.Text+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39);
+                                                  Label42.Caption:='';
+                                                  If not BindUtils then Label43.Caption:=message46 else Label43.Caption:=message50;
+                                                  Application.ProcessMessages;
                                                   Shell (Str+' > /opt/vpnpptp/hosts');
-                                                  Shell('printf "none\n" >> /opt/vpnpptp/hosts');
+                                                  If not BindUtils then flag:=true;
+                                                  Application.ProcessMessages;
                                                   Memo_bindutilshost.Lines.LoadFromFile('/opt/vpnpptp/hosts');
-                                                  If Memo_bindutilshost.Lines[0]<>'none' then
+                                                  If FileSize('/opt/vpnpptp/hosts')<>0 then If Memo_bindutilshost.Lines[0]<>'none' then
                                                                                          begin
                                                                                             For i:=0 to Memo_bindutilshost.Lines.Count-1 do
                                                                                                begin
+                                                                                                  Memo_bindutilshost.Lines[i]:=DeleteSym(')',Memo_bindutilshost.Lines[i]);
+                                                                                                  Memo_bindutilshost.Lines[i]:=DeleteSym('(',Memo_bindutilshost.Lines[i]);
                                                                                                   If Memo_bindutilshost.Lines[i]<>'none' then Memo_ip_up.Lines.Add('/sbin/route add -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
                                                                                                end;
+                                                                                         if not BindUtils then
+                                                                                                              begin //просто перезаписать файл /opt/vpnpptp/hosts
+                                                                                                                Shell('rm -f /opt/vpnpptp/hosts');
+                                                                                                                Str:=Memo_bindutilshost.Lines[0];
+                                                                                                                Shell('printf "'+Str+'\n" >> /opt/vpnpptp/hosts');
+                                                                                                              end;
                                                                                          end;
+                                                  If FileSize('/opt/vpnpptp/hosts')=0 then
+                                                                                             begin
+                                                                                                  Label42.Caption:='';
+                                                                                                  If BindUtils then Label43.Caption:=message54 else Label43.Caption:=message43;
+                                                                                                  Application.ProcessMessages;
+                                                                                                  pchar_message0:=Pchar(message0);
+                                                                                                  If BindUtils then pchar_message1:=Pchar(message54) else pchar_message1:=Pchar(message43);
+                                                                                                  Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                                             end;
                                               end;
  If Memo_route.Lines.Text <>'' then
  If Memo_route.Lines[0]<>'' then
@@ -509,12 +572,12 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
     end;
   end;
  end;
- If routevpnauto.Checked then if not IPS then if BindUtils then //отмена маршрутов, полученных от команды host или ping
-               If Memo_bindutilshost.Lines[0]<>'none' then
+ If routevpnauto.Checked then if not IPS then //отмена маршрутов, полученных от команды host или ping
+               If FileSize('/opt/vpnpptp/hosts')<>0 then
                                                         begin
                                                            For i:=0 to Memo_bindutilshost.Lines.Count-1 do
                                                              begin
-                                                               If Memo_bindutilshost.Lines[i]<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+                                                               If LeftStr(Memo_bindutilshost.Lines[i],4)<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
                                                              end;
                                                         end;
  Memo_ip_down.Lines.Add('/sbin/route del default');
@@ -523,6 +586,14 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  If routevpnauto.Checked then if IPS then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Edit_IPS.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
+//включаем опцию добавления ярлыка на рабочий стол для sudo
+ If Sudo_sudoers.Checked then If not CheckBox_desktop.Checked then
+                       begin
+                          CheckBox_desktop.Checked:=true;
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message58);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 
 //Записываем готовый конфиг, кроме логина и пароля
  If Edit_MinTime.Text<>'0' then Edit_MinTime.Text:=Edit_MinTime.Text+'000';
@@ -568,6 +639,12 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                               Shell('printf "IPS-no\n" >> /opt/vpnpptp/config');
  If routevpnauto.Checked then Shell('printf "routevpnauto-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "routevpnauto-no\n" >> /opt/vpnpptp/config');
+ If networktest.Checked then Shell('printf "networktest-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "networktest-no\n" >> /opt/vpnpptp/config');
+ If balloon.Checked then Shell('printf "balloon-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "balloon-no\n" >> /opt/vpnpptp/config');
+ If Sudo_sudoers.Checked then Shell('printf "sudo-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "sudo-no\n" >> /opt/vpnpptp/config');
 //Создаем ярлык для подключения
  gksu:=false;
  link_on_desktop:=false;
@@ -598,7 +675,14 @@ begin
   Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP');
   Memo_create.Lines.Add('Comment[uk]=Управління з'' єднанням VPN PPTP');
   Memo_create.Lines.Add('Comment=Control MS VPN via PPTP');
-  If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
+  If not Sudo_sudoers.Checked then
+     begin
+         If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
+     end;
+  If Sudo_sudoers.Checked then
+     begin
+         Memo_create.Lines.Add('Exec=sudo /opt/vpnpptp/ponoff');
+     end;
   Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP');
   Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP');
   Memo_create.Lines.Add('GenericName=VPN PPTP Control');
@@ -613,9 +697,9 @@ begin
   Memo_create.Lines.Add('TerminalOptions=');
   Memo_create.Lines.Add('Type=Application');
   Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
-  Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
-  Memo_create.Lines.Add('X-KDE-Username=root');
-  Memo_create.Lines.Add('StartupNotify=false');
+  If not Sudo_sudoers.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
+  If not Sudo_sudoers.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
+  If not Sudo_sudoers.Checked then Memo_create.Lines.Add('StartupNotify=false');
 //Получаем список пользователей
   Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users'); //для новых идентификаторов
   Memo_users.Clear;
@@ -652,6 +736,70 @@ end;
                                     pchar_message1:=Pchar(message22);
                                     Application.MessageBox(pchar_message1,pchar_message0, 0);
                                end;
+//настройка sudoers
+Find_sudoers_ponoff:=false;
+If Sudo_sudoers.Checked then If FileExists ('/etc/sudoers') then
+                              begin
+                                Memo_sudo.Lines.LoadFromFile('/etc/sudoers');
+                                for i:=0 to Memo_sudo.Lines.Count-1 do
+                                       If Memo_sudo.Lines[i]='ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff' then Find_sudoers_ponoff:=true;
+                                If not Find_sudoers_ponoff then
+                                                           begin
+                                                             Shell('cp -f /etc/sudoers /etc/sudoers.old');
+                                                             Shell ('printf "ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff\n" >> /etc/sudoers');
+                                                           end;
+                              end;
+If not Sudo_sudoers.Checked then If FileExists ('/etc/sudoers.old') then
+                                                            begin
+                                                              Shell('cp -f /etc/sudoers.old /etc/sudoers');
+                                                              Shell('rm -f /etc/sudoers.old');
+                                                            end;
+//проверка технической возможности поднятия соединения (пока только проверка vpn-сервера и шлюза, dns потом напишу)
+   //тест vpn-сервера
+If not flag then
+   begin
+     Shell('rm -f /tmp/networktest');
+     Str:='ping -c1 '+Edit_IPS.Text+'|grep '+Edit_IPS.Text+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
+     Label42.Caption:='';
+     Label43.Caption:=message45;
+     Application.ProcessMessages;
+     Shell(str);
+     Application.ProcessMessages;
+     Shell('printf "none\n" >> /tmp/networktest');
+     Memo_networktest.Lines.Clear;
+     Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+     If Memo_networktest.Lines[0]='none' then
+                                         begin
+                                                Label42.Caption:='';
+                                                Label43.Caption:=message43;
+                                                Application.ProcessMessages;
+                                                pchar_message0:=Pchar(message0);
+                                                pchar_message1:=Pchar(message43);
+                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                         end;
+     Shell('rm -f /tmp/networktest');
+   end;
+   //тест шлюза локальной сети
+     Shell('rm -f /tmp/networktest');
+     Str:='ping -c2 '+Edit_gate.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
+     Label42.Caption:='';
+     Label43.Caption:=message47;
+     Application.ProcessMessages;
+     Shell(str);
+     Application.ProcessMessages;
+     Shell('printf "none\n" >> /tmp/networktest');
+     Memo_networktest.Lines.Clear;
+     Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+     If Memo_networktest.Lines[0]='none' then
+                                         begin
+                                                Label42.Caption:='';
+                                                Label43.Caption:=message44;
+                                                Application.ProcessMessages;
+                                                pchar_message0:=Pchar(message0);
+                                                pchar_message1:=Pchar(message44);
+                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                         end;
+     Shell('rm -f /tmp/networktest');
               Button_create.Visible:=True;
               TabSheet2.TabVisible:= False;
               TabSheet1.TabVisible:= False;
@@ -671,6 +819,7 @@ end;
  Shell('echo "#Clear config file" > /etc/ppp/options');
  if not FileExists('/etc/ppp/options.pptp.old') then Shell('cp -f /etc/ppp/options.pptp /etc/ppp/options.pptp.old');
  Shell('echo "#Clear config file" > /etc/ppp/options.pptp');
+ If require_mppe_128.Checked then Shell ('modprobe ppp_mppe');//загрузка модуля ядра для обеспечения шифрования
 end;
 
 procedure TForm1.Button_addoptionsClick(Sender: TObject);
@@ -681,12 +830,17 @@ end;
 procedure TForm1.Button1Click(Sender: TObject);
 //определение ip vpn-сервера по кнопке
 var
-   str,str1:string;
+   str0,str:string;
    pchar_message0,pchar_message1:pchar;
 begin
+  str0:=Button1.Caption;
+  Button1.Caption:=message53;
+  Application.ProcessMessages;
   Shell('rm -f /tmp/ip_IPS');
   If StartMessage then If Edit_IPS.Text='' then
                                              begin
+                                                Button1.Caption:=str0;
+                                                Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message28);
                                                 Application.MessageBox(pchar_message1,pchar_message0, 0);
@@ -699,14 +853,41 @@ begin
   Str:=Memo_ip_IPS.Lines[0];
   If StartMessage then If Str='none' then
                                      begin
+                                          Button1.Caption:=str0;
+                                          Application.ProcessMessages;
                                           pchar_message0:=Pchar(message0);
                                           pchar_message1:=Pchar(message26);
                                           Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                          exit;
                                      end;
 If Str <>'none' then Str:=DeleteSym(')',Str);
 If Str <>'none' then Str:=DeleteSym('(',Str);
 If Str <>'none' then Edit_IPS.Text:=Str;
 Shell('rm -f /tmp/ip_IPS');
+Button1.Caption:=message52;
+Application.ProcessMessages;
+sleep(2000);
+Button1.Caption:=str0;
+Application.ProcessMessages;
+end;
+
+procedure TForm1.balloonChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+ If balloon.Checked then
+                         balloon.Checked:=true
+                                                   else
+                                                       balloon.Checked:=false;
+  If StartMessage then If balloon.Checked then
+                       begin
+                          StartMessage:=false;
+                          networktest.Checked:=false;
+                          StartMessage:=true;
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message40);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.Button_exitClick(Sender: TObject);
@@ -736,10 +917,36 @@ begin
 
 end;
 
+procedure TForm1.networktestChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+ If networktest.Checked then
+                         networktest.Checked:=true
+                                                   else
+                                                       networktest.Checked:=false;
+  If StartMessage then If networktest.Checked then
+                       begin
+                          StartMessage:=false;
+                          balloon.Checked:=false;
+                          StartMessage:=true;
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message38);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+  If StartMessage then If not networktest.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message39);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+end;
+
 procedure TForm1.routevpnautoChange(Sender: TObject);
 var
    pchar_message0,pchar_message1:pchar;
 begin
+   If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
    If routevpnauto.Checked then routevpnauto.Checked:=true else routevpnauto.Checked:=false;
    If StartMessage then If routevpnauto.Checked then
                        begin
@@ -757,26 +964,31 @@ end;
 
 procedure TForm1.CheckBox_no40Change(Sender: TObject);
 begin
+    Sbros;
     If CheckBox_no40.Checked then CheckBox_shifr.Checked:=true;
 end;
 
 procedure TForm1.CheckBox_no56Change(Sender: TObject);
 begin
+    Sbros;
     If CheckBox_no56.Checked then CheckBox_shifr.Checked:=true;
 end;
 
 procedure TForm1.CheckBox_rchapChange(Sender: TObject);
 begin
+  Sbros;
   If CheckBox_rchap.Checked then CheckBox_shifr.Checked:=true;
 end;
 
 procedure TForm1.CheckBox_reapChange(Sender: TObject);
 begin
+    Sbros;
     If CheckBox_reap.Checked then CheckBox_shifr.Checked:=true;
 end;
 
 procedure TForm1.CheckBox_rmschapChange(Sender: TObject);
 begin
+    Sbros;
     If CheckBox_rmschap.Checked then CheckBox_shifr.Checked:=true;
 end;
 
@@ -804,6 +1016,7 @@ end;
 
 procedure TForm1.CheckBox_statelessChange(Sender: TObject);
 begin
+    Sbros;
     If CheckBox_stateless.Checked then CheckBox_shifr.Checked:=true;
 end;
 
@@ -815,17 +1028,21 @@ begin
                          dhcp_route.Checked:=true
                                                    else
                                                        dhcp_route.Checked:=false;
-  If StartMessage then If dhcp_route.Checked then if not dhclient then
-                       begin
-                          pchar_message0:=Pchar(message0);
-                          pchar_message1:=Pchar(message27);
-                          Application.MessageBox(pchar_message1,pchar_message0, 0);
-                       end;
   If StartMessage then If dhcp_route.Checked then
                        begin
                           pchar_message0:=Pchar(message0);
                           pchar_message1:=Pchar(message33);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+  If StartMessage then If dhcp_route.Checked then if not dhclient then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message27);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          dhcp_route.Checked:=false;
+                          StartMessage:=true;
+                          exit;
                        end;
   If StartMessage then If not dhcp_route.Checked then
                        begin
@@ -872,7 +1089,6 @@ var
    i:word;
    y:boolean;
    pchar_message0,pchar_message1:pchar;
-   str,IP:string;
    j:byte; //точка в написании шлюза
    a,b,c,d:string; //a.b.c.d-это шлюз
 begin
@@ -929,22 +1145,22 @@ if not y then
                 Button_next1.Visible:=False;
                 Button_next2.Visible:=True;
               end;
-//проверка строки VPN-сервера
+//проверка строки vpn-сервера
 y:=false;
-If (Edit_IPS.Text='none') or (Edit_IPS.Text='') or (Length(Edit_gate.Text)>15) then //15-макс.длина шлюза 255.255.255.255
+If (Form1.Edit_IPS.Text='none') or (Form1.Edit_IPS.Text='') or (Length(Form1.Edit_gate.Text)>15) then //15-макс.длина шлюза 255.255.255.255
                     begin
                       y:=true;
                     end;
 j:=0;
 a:=''; b:=''; c:=''; d:='';
 y:=false;
-For i:=1 to Length (Edit_IPS.Text) do //символьная строка шлюза разбивается на октеты (или квадранты)
+For i:=1 to Length (Form1.Edit_IPS.Text) do //символьная строка шлюза разбивается на октеты (или квадранты)
     begin
-      if j=0 then if Edit_IPS.Text[i]<>'.' then a:=a+Edit_IPS.Text[i];
-      if j=1 then if Edit_IPS.Text[i]<>'.' then b:=b+Edit_IPS.Text[i];
-      if j=2 then if Edit_IPS.Text[i]<>'.' then c:=c+Edit_IPS.Text[i];
-      if j=3 then if Edit_IPS.Text[i]<>'.' then d:=d+Edit_IPS.Text[i];
-      if Edit_IPS.Text[i]='.' then j:=j+1;
+      if j=0 then if Form1.Edit_IPS.Text[i]<>'.' then a:=a+Form1.Edit_IPS.Text[i];
+      if j=1 then if Form1.Edit_IPS.Text[i]<>'.' then b:=b+Form1.Edit_IPS.Text[i];
+      if j=2 then if Form1.Edit_IPS.Text[i]<>'.' then c:=c+Form1.Edit_IPS.Text[i];
+      if j=3 then if Form1.Edit_IPS.Text[i]<>'.' then d:=d+Form1.Edit_IPS.Text[i];
+      if Form1.Edit_IPS.Text[i]='.' then j:=j+1;
     end;
 If (j>3) or (Length(a)>3) or (Length(b)>3) or (Length(c)>3) or (Length(d)>3)
 or (a='') or (b='') or (c='') or (d='') then y:=true;
@@ -963,7 +1179,7 @@ If not y then if not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
 If not y then if not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
 If not y then if not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
 If not y then if not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
-If not y then if not y then Edit_IPS.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+If not y then if not y then Form1.Edit_IPS.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
 If not y then IPS:=true else IPS:=false;
 //определяем шлюз по умолчанию
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -1150,6 +1366,7 @@ end;
 procedure TForm1.CheckBox_shifrChange(Sender: TObject);
 var
   b:boolean;
+  pchar_message0,pchar_message1:pchar;
 begin
   b:=CheckBox_shifr.Checked;
   CheckBox_no40.Checked:=b;
@@ -1159,6 +1376,12 @@ begin
   CheckBox_rmschap.Checked:=b;
   CheckBox_stateless.Checked:=b;
   require_mppe_128.Checked:=b;
+  If StartMessage then If CheckBox_shifr.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message55);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.Edit_IPSChange(Sender: TObject);
@@ -1182,7 +1405,7 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var i,j:integer;
+var i:integer;
     pchar_message0,pchar_message1:pchar;
     len:integer;
 begin
@@ -1308,7 +1531,7 @@ If Screen.Height>1000 then
                                                                                                       Shell('rm -f /tmp/tmpnostart');
                                                                                                       halt;
                                                                                                     end;
-//проверка dhclient в процессах root
+//проверка dhclient в процессах root и установлен ли пакет
    dhclient:=true;
    Shell('ps -u root | grep dhclient | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart');
    Shell('printf "none" >> /tmp/tmpnostart');
@@ -1322,7 +1545,10 @@ If Screen.Height>1000 then
                                                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                          Shell('rm -f /tmp/tmpnostart');
                                                        end;
-
+//dhclient:=false; //просто для проверки при отладке
+//проверка установлен ли пакет Sudo
+If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
+//Sudo:=false; //просто для проверки при отладке
   Shell('rm -f /tmp/tmpnostart');
   Shell('rm -f /tmp/gate');
   Shell('rm -f /tmp/eth');
@@ -1376,6 +1602,9 @@ If Screen.Height>1000 then
         If Memo_config.Lines[20]='require-mppe-128-yes' then require_mppe_128.Checked:=true else require_mppe_128.Checked:=false;
         If Memo_config.Lines[21]='IPS-yes' then IPS:=true else IPS:=false;
         If Memo_config.Lines[22]='routevpnauto-yes' then routevpnauto.Checked:=true else routevpnauto.Checked:=false;
+        If Memo_config.Lines[23]='networktest-yes' then networktest.Checked:=true else networktest.Checked:=false;
+        If Memo_config.Lines[24]='balloon-yes' then balloon.Checked:=true else balloon.Checked:=false;
+        If Memo_config.Lines[25]='sudo-yes' then Sudo_sudoers.Checked:=true else Sudo_sudoers.Checked:=false;
             If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
@@ -1400,6 +1629,7 @@ If Screen.Height>1000 then
   Button_next1.Visible:=True;
   Button_next2.Visible:=False;
 If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
+//BindUtils:=false; //просто для проверки при отладке метода ping
 StartMessage:=true;
 end;
 
@@ -1487,21 +1717,42 @@ end;
 
 procedure TForm1.require_mppe_128Change(Sender: TObject);
 begin
+    Sbros;
     If require_mppe_128.Checked then CheckBox_shifr.Checked:=true;
 end;
 
-procedure TForm1.TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
-  var Handled: Boolean);
+procedure TForm1.Sudo_sudoersChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-
+//проверка установлен ли пакет Sudo
+If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
+   If Sudo_sudoers.Checked then Sudo_sudoers.Checked:=true else Sudo_sudoers.Checked:=false;
+   If StartMessage then If Sudo_sudoers.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message56);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+   If StartMessage then If Sudo_sudoers.Checked then If not Sudo then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message57);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Sudo_sudoers.Checked:=false;
+                          StartMessage:=true;
+                          exit;
+                       end;
 end;
+
 
 initialization
 
   {$I unit1.lrs}
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
-  //FallbackLang:='uk'; //просто для проверки при отладке
+  //FallbackLang:='en'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/vpnpptp.ru.po';

@@ -1,4 +1,4 @@
-%define rel 4
+%define rel 5
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control MS VPN via PPTP
 Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPT
 Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
 Name: vpnpptp-allde
-Version: 0.0.8
+Version: 0.0.9
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -58,6 +58,8 @@ mkdir -p $RPM_BUILD_ROOT
 %postun
 
 %post
+ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
+ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
 
 %pre
 
@@ -95,9 +97,9 @@ Encoding=UTF-8
 GenericName=VPN PPTP Control
 GenericName[ru]=Управление соединением VPN PPTP
 GenericName[uk]=Керування з'єднанням VPN PPTP
-Name=Connect VPN PPT
-Name[ru]=Подключение VPN PPTP
-Name[uk]=З’єднання VPN PPTP
+Name=ponoff
+Name[ru]=ponoff
+Name[uk]=ponoff
 Exec=gksu -u root -l /opt/vpnpptp/ponoff
 Comment=Control MS VPN via PPTP
 Comment[ru]=Управление соединением MS VPN через PPTP
@@ -119,9 +121,9 @@ Encoding=UTF-8
 GenericName=VPN PPTP Setup
 GenericName[ru]=Настройка соединения VPN PPTP
 GenericName[uk]=Налаштування з’єднання VPN PPTP
-Name=Setup VPN PPTP
-Name[ru]=Настройка VPN PPTP
-Name[uk]=Налаштування VPN PPTP
+Name=vpnpptp
+Name[ru]=vpnpptp
+Name[uk]=vpnpptp
 Exec=gksu -u root -l /opt/vpnpptp/vpnpptp
 Comment=Setup MS VPN via PPTP
 Comment[ru]=Настройка соединения VPN PPTP
