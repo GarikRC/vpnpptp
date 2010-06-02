@@ -35,6 +35,7 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    Memo_etc_ppp_ip_up: TMemo;
     Memo_networktest: TMemo;
     Memo_bindutilshost0: TMemo;
     Memo_gate: TMemo;
@@ -84,11 +85,12 @@ var
   NewIPS:boolean; //найден новый, неизвестный ранее ip-адрес vpn-сервера
   NoPingIPS, NoDNS, NoPingGW:boolean;
   NoInternet:boolean;
-  Filenetworktest:textfile;
+  Filenetworktest, FileRemoteIPaddress:textfile;
   DhclientStart:boolean;
+  RemoteIPaddress:string;
 
 const
-  Config_n=26;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=30;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 
 resourcestring
   message0='Внимание!';
@@ -111,6 +113,7 @@ resourcestring
   message17='DNS-сервер не отвечает или некорректный адрес vpn-сервера. ';
   message18='Шлюз локальной сети не пингуется. ';
   message19='Проверено! Интернет работает!';
+  message20='Обнаружено совпадение remote ip address с ip-адресом самого vpn-сервера. Соединение было перенастроено.';
 
 implementation
 
@@ -137,7 +140,8 @@ var
     link:1..4;//1-link ok, 2-no link, 3-none, 4-еще не определено
     pchar_message0,pchar_message1:pchar;
     str:string;
-    Str_networktest:string;
+    Str_networktest, Str_RemoteIPaddress:string;
+    FindRemoteIPaddress:boolean;
 begin
   NewIPS:=true;
   NoPingIPS:=false;
@@ -157,21 +161,71 @@ begin
        Code_up_ppp:=True;
       end;
    end;
-//проверяем поднялось ли соединение на pppN и если нет, то поднимаем на pppN
-If Code_up_ppp then
+//проверяем поднялось ли соединение на pppN и если нет, то поднимаем на pppN; переводим pppN в фон
+If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=true;
+If Code_up_ppp then If NoInternet then
  begin
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default |grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If LeftStr(Memo_gate.Lines[0],3)<>'ppp' then If Memo_gate.Lines[0]<>'none' then
+  If LeftStr(Memo_gate.Lines[0],4)<>'ppp0' then If Memo_gate.Lines[0]<>'none' then
                                begin
-                                 Shell ('sbin/route add default dev '+Memo_gate.Lines[0]);
+                                  If Memo_Config.Lines[29]<>'pppnotdefault-yes' then Shell ('/sbin/route add default dev '+Memo_gate.Lines[0]);
+                               end;
+  If LeftStr(Memo_gate.Lines[0],4)='ppp0' then If Memo_gate.Lines[0]<>'none' then
+                               begin
+                                  If Memo_Config.Lines[29]='pppnotdefault-yes' then
+                                           begin
+                                             Shell ('/sbin/route del default dev '+Memo_gate.Lines[0]);
+                                             Shell ('/sbin/route add default gw '+Memo_config.Lines[2]+' dev '+Memo_config.Lines[3]);
+                                             NoInternet:=false;//считаем, что типа при этом есть интернет
+                                             Shell ('/etc/ppp/ip-up.d/ip.up'); //повторно указываем где искать vpn-сервер
+                                           end;
                                end;
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
  end;
+ //обработка случая когда RemoteIPaddress совпадается с ip-адресом самого vpn-сервера
+If Code_up_ppp then
+               If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
+                            if Memo_config.Lines[21]='IPS-no' then
+                                      begin
+                                         Shell('rm -f /tmp/RemoteIPaddress');
+                                         Shell ('ifconfig|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39)+' >> /tmp/RemoteIPaddress');
+                                         If FileSize('/tmp/RemoteIPaddress')<>0 then
+                                                                                 begin
+                                                                                    Shell('cp -f /etc/ppp/ip-up'+' '+'/etc/ppp/ip-up.old');
+                                                                                    AssignFile (FileRemoteIPaddress,'/tmp/RemoteIPaddress');
+                                                                                    reset (FileRemoteIPaddress);
+                                                                                    readln(FileRemoteIPaddress, Str_RemoteIPaddress);
+                                                                                    RemoteIPaddress:=RightStr(Str_RemoteIPaddress,Length(Str_RemoteIPaddress)-6);
+                                                                                    closefile (FileRemoteIPaddress);
+                                                                                    Shell('rm -f /tmp/RemoteIPaddress');
+                                                                                    Memo_bindutilshost0.Lines.LoadFromFile('/opt/vpnpptp/hosts');
+                                                                                    FindRemoteIPaddress:=false;
+                                                                                    For i:=0 to Memo_bindutilshost0.Lines.Count-1 do
+                                                                                    If RemoteIPaddress=Memo_bindutilshost0.Lines[i] then FindRemoteIPaddress:=true;
+                                                                                    If FindRemoteIPaddress then
+                                                                                                          begin
+                                                                                                            //обнаружено совпадение RemoteIPaddress с ip-адресом самого vpn-сервера
+                                                                                                            Application.ProcessMessages;
+                                                                                                            str:=message20;
+                                                                                                            BalloonMessage (8000,str);
+                                                                                                            Application.ProcessMessages;
+                                                                                                            Shell('rm -f /opt/vpnpptp/hosts');
+                                                                                                            Memo_etc_ppp_ip_up.Lines.LoadFromFile('/etc/ppp/ip-up');
+                                                                                                            Shell('rm -f /etc/ppp/ip-up');
+                                                                                                            for i:=0 to Memo_etc_ppp_ip_up.Lines.Count-1 do
+                                                                                                            if Memo_etc_ppp_ip_up.Lines[i]='exit 0' then Memo_etc_ppp_ip_up.Lines[i]:='      ';
+                                                                                                            Memo_etc_ppp_ip_up.Lines[Memo_etc_ppp_ip_up.Lines.Count-1]:='route add -host $5 gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3];
+                                                                                                            Memo_etc_ppp_ip_up.Lines.Add('exit 0');
+                                                                                                            Memo_etc_ppp_ip_up.Lines.SaveToFile('/etc/ppp/ip-up');
+                                                                                                            Shell('chmod a+x /etc/ppp/ip-up');
+                                                                                                          end;
+                                                                                 end;
+                                      end;
   //проверка состояния сетевого интерфейса
 link:=4;
 If Memo_Config.Lines[6]='mii-tool-no' then link:=1; //отказ от контроля link
@@ -188,7 +242,7 @@ If link=4 then
      If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
    end;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN PPTP
-If link=1 then
+If link=1 then If NoInternet then
   begin
        Shell ('rm -f /tmp/gate');
        Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -203,7 +257,6 @@ If link=1 then
        Shell ('rm -f /tmp/gate');
        Memo_gate.Lines.Clear;
   end;
-  //BindUtils:=false; //просто для проверки при отладке метода ping
   //проверка технической возможности поднятия соединения (пока только проверка vpn-сервера и шлюза, dns потом напишу)
  If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindUtils)) or ((Memo_Config.Lines[23]='networktest-yes') and (Memo_config.Lines[22]='routevpnauto-no')) then
                             begin //тест vpn-сервера
@@ -240,6 +293,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               Application.ProcessMessages;
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
+  If not FileExists('/opt/vpnpptp/hosts') then NewIPS:=false;
   if BindUtils then Str:='host '+Memo_config.Lines[1]+'|grep address|grep '+Memo_config.Lines[1]+'|awk '+ chr(39)+'{print $4}'+chr(39);
   if not BindUtils then Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39);
   If not Code_up_ppp then If link=1 then
@@ -402,14 +456,20 @@ var
 begin
   NoInternet:=true;
   DhclientStart:=false;
+  RemoteIPaddress:='none';
   If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
   MenuItem3.Caption:=message10;
   MenuItem4.Caption:=message11;
   TrayIcon1.BalloonTitle:=message0;
   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   StartMessage:=true;
+  Application.ProcessMessages;
   Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
+  Form1.Hide;
   Memo_Config.Clear;
+  Application.ProcessMessages;
+  TrayIcon1.Show;
+  Application.ProcessMessages;
 //проверка ponoff в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep ponoff | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart1');
    Shell('printf "none" >> /tmp/tmpnostart1');
@@ -617,6 +677,9 @@ var
   Str:string;
 begin
   //Проверяем поднялось ли соединение
+  Application.ProcessMessages;
+  TrayIcon1.Show;
+  Application.ProcessMessages;
   Shell('rm -f /tmp/status.ppp');
   Memo2.Clear;
   Shell('ifconfig | grep Link > /tmp/status.ppp');
@@ -650,6 +713,7 @@ begin
                              TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
                              If StartMessage then BalloonMessage (8000,message6+Memo_Config.Lines[0]+message7+'...');
 If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
+If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
 If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                             begin //тест интернета
                                  Shell('rm -f /tmp/networktest');
@@ -681,6 +745,9 @@ If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-y
                              TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                              StartMessage:=true;
                            end;
+  Application.ProcessMessages;
+  TrayIcon1.Show;
+  Application.ProcessMessages;
 end;
 
 procedure TForm1.tmpnostartChange(Sender: TObject);

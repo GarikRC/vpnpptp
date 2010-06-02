@@ -1,5 +1,5 @@
 1 VERSIONINFO
-FILEVERSION 0,0,4,2710
+FILEVERSION 0,0,4,2894
 PRODUCTVERSION 0,0,4
 {
  BLOCK "StringFileInfo"
@@ -9,7 +9,7 @@ PRODUCTVERSION 0,0,4
    VALUE "Comments", "\000"
    VALUE "CompanyName", "\000"
    VALUE "FileDescription", "\000"
-   VALUE "FileVersion", "0.0.4.2710\000"
+   VALUE "FileVersion", "0.0.4.2894\000"
    VALUE "InternalName", "\000"
    VALUE "LegalCopyright", "Edumandriva 2009\000"
    VALUE "LegalTrademarks", "\000"

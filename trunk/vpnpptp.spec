@@ -1,4 +1,4 @@
-%define rel 5
+%define rel 2
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control MS VPN via PPTP
 Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPT
 Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
 Name: vpnpptp-allde
-Version: 0.0.9
+Version: 0.1.0
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -109,6 +109,7 @@ Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
 X-KDE-SubstituteUID=true
 X-KDE-Username=root
+X-KDE-autostart-after=kdesktop
 StartupNotify=false
 EOF
 install -m 0644 ponoff.desktop \

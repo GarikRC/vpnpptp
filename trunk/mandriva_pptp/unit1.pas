@@ -39,11 +39,19 @@ type
     Button_next1: TButton;
     Button_next2: TButton;
     balloon: TCheckBox;
+    Autostart_ponoff: TCheckBox;
+    Autostartpppd: TCheckBox;
+    Memonew1: TMemo;
+    Memonew2: TMemo;
+    pppnotdefault: TCheckBox;
+    Memo_Autostartpppd: TMemo;
+    Memo_sudo: TMemo;
+    Memo_vpnpptp_ponoff_desktop: TMemo;
+    Sudo_configure: TCheckBox;
     Label45: TLabel;
     Label46: TLabel;
     Label47: TLabel;
-    Memo_sudo: TMemo;
-    Sudo_sudoers: TCheckBox;
+    Sudo_ponoff: TCheckBox;
     Memo_networktest: TMemo;
     networktest: TCheckBox;
     Memo_bindutilshost: TMemo;
@@ -123,6 +131,8 @@ type
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
     Tmpnostart: TMemo;
+    procedure AutostartpppdChange(Sender: TObject);
+    procedure Autostart_ponoffChange(Sender: TObject);
     procedure balloonChange(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button_addoptionsClick(Sender: TObject);
@@ -133,6 +143,7 @@ type
     procedure Button_next3Click(Sender: TObject);
     procedure CheckBox_desktopChange(Sender: TObject);
     procedure networktestChange(Sender: TObject);
+    procedure pppnotdefaultChange(Sender: TObject);
     procedure routevpnautoChange(Sender: TObject);
     procedure CheckBox_no40Change(Sender: TObject);
     procedure CheckBox_no56Change(Sender: TObject);
@@ -165,7 +176,8 @@ type
     procedure Pppd_logChange(Sender: TObject);
     procedure Reconnect_pptpChange(Sender: TObject);
     procedure require_mppe_128Change(Sender: TObject);
-    procedure Sudo_sudoersChange(Sender: TObject);
+    procedure Sudo_configureChange(Sender: TObject);
+    procedure Sudo_ponoffChange(Sender: TObject);
   private
     { private declarations }
   public
@@ -194,7 +206,7 @@ var
   BindUtils:boolean; //установлен ли пакет bind-utils
   Sudo:boolean; //установлен ли пакет sudo
 const
-  Config_n=26;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=30;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
@@ -202,10 +214,10 @@ resourcestring
   message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd реконнекта проигнорирован.';
   message4='Так как реконнект будет реализован встроенным в демон pppd методом, то время реконнекта (время отправки LCP эхо-запросов) установлено в 20 сек.';
   message5='Так как реконнект будет реализован встроенным в демон pppd методом, то время дозвона не используется за ненадобностью.';
-  //message6='Так как выбрана/изменена опция получения маршрутов через DHCP, то сеть будет перезапущена.';
+  message6='Для того, чтобы разрешить пользователям конфигурировать соединение сначала установите пакет sudo.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
-  //message9='Так как выбрана/изменена опция добавления интерфейсов [ppp0..ppp9] в исключения файервола, то файервол будет перезапущен.';
+  message9='Эта опция позволяет пользователям запускать конфигуратор VPN PPTP без пароля администратора и конфигурировать соединение.';
   message10='В поле "Время реконнекта" можно ввести лишь число в пределах от 0 до 255 сек.';
   message11='Рекомендуется отключить поднятое VPN PPTP - тогда шлюз локальной сети определится автоматически.';
   message12='Сетевой интерфейс не определился.';
@@ -214,13 +226,13 @@ resourcestring
   message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9 или от wlan0 до wlan9.';
   message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500]. Рекомендуется MTU=1460.';
-  message18='Запуск этой программы возможен только под администратором. Нажмите <OK> для отказа от запуска.';
+  message18='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <OK> для отказа от запуска.';
   message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP. Нажмите <OK> для отказа от двойного запуска.';
   message20='Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux.';
-  //message21='Установка не удалась';//выхлоп urpmi --auto pptp-linux
+  message21='Эта опция позволяет запустить модуль ponoff при старте операционной системы и установить соединение VPN PPTP автозагрузкой.';
   message22='Невозможно создать ярлык на рабочем столе, так как используется нестандартный идентификатор пользователя и/или локализация.';
   message23='Невозможно создать ярлык на рабочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop.';
-  //message24='Файервол уже настроен.';
+  message24='Для того, чтобы разрешить автозапуск интернета при старте системы сначала установите пакет sudo.';
   message25='Не установлен и не запущен dhclient (то есть пакет dhcp-client). Возможны проблемы в работе сети.';
   message26='Не удалось определить IP-адрес VPN-сервера. VPN-сервер не пингуется. Или он введен неправильно, или проблема с DNS.';
   message27='Маршруты не могут приходить через dhcp, так как не установлен и не запущен dhclient (то есть пакет dhcp-client).';
@@ -254,7 +266,13 @@ resourcestring
   message55='Часто используется аутентификация mschap v2 - это одновременный выбор refuse-eap, refuse-chap, refuse-mschap. Часто используется шифрование трафика require-mppe-128.';
   message56='Эта опция создает ярлык ponoff на Рабочем столе для доступа в интернет пользователю, позволяя ему управлять соединением через иконку в трее.';
   message57='Для того, чтобы разрешить пользователям управлять подключением сначала установите пакет sudo.';
-  message58='Пользователям разрешается управлять подключением через ярлык на Рабочем столе - была включена опция создания ярлыка на Рабочем столе.';
+  //message58='Пользователям разрешается управлять подключением через ярлык на Рабочем столе - была включена опция создания ярлыка на Рабочем столе.';
+  message59='Выбор опции автозапуска интернета при старте системы возможен только при выборе опции разрешения пользователям управлять подключением.';
+  message60='Автозапуск интернета при старте системы не настроен. Отсутствует ~/.config/autostart/ или используется нестандартный идентификатор пользователя.';
+  message61='Автозапуск интернета при старте системы не настроен. Отсутствует файл /usr/share/applications/ponoff.desktop.';
+  message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff. Рекомендуется использовать с pppd-реконнектом.';
+  message63='Не допустим одновременный выбор графического автозапуска интернета при старте системы и автозапуск демоном pppd без графики.';
+  message64='Эта опция полезна если VPN PPTP не должно быть главным.';
 
 implementation
 
@@ -315,9 +333,57 @@ var mppe_string:string;
     pchar_message0,pchar_message1:pchar;
     gksu, link_on_desktop:boolean;
     Str,Str1:string;
-    Find_sudoers_ponoff,flag:boolean;
+    flag:boolean;
+    FileSudoers,FileAutostartpppd:textfile;
+    FlagAutostartPonoff:boolean;
 begin
+FlagAutostartPonoff:=false;
+StartMessage:=true;
+//проверка текущего состояния дополнительных сторонних пакетов
+ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
+   If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message57);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Sudo_ponoff.Checked:=false;
+                          StartMessage:=true;
+                       end;
+   If StartMessage then If Sudo_configure.Checked then If not Sudo then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message6);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Sudo_configure.Checked:=false;
+                          StartMessage:=true;
+                       end;
+   If StartMessage then If Autostart_ponoff.Checked then If not Sudo then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message24);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Autostart_ponoff.Checked:=false;
+                          StartMessage:=true;
+                       end;
+  If StartMessage then If dhcp_route.Checked then if not dhclient then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message27);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          dhcp_route.Checked:=false;
+                          StartMessage:=true;
+                       end;
 Shell('rm -f /opt/vpnpptp/hosts');
+If FileExists('/etc/ppp/ip-up.old') then //сброс настройки маршрутизации remote ip address в шлюз локальной сети
+                                   begin
+                                      Shell('cp -f /etc/ppp/ip-up.old /etc/ppp/ip-up');
+                                      Shell('chmod a+x /etc/ppp/ip-up');
+                                      Shell('rm -f /etc/ppp/ip-up.old');
+                                   end;
 If Mii_tool_no.Checked then If StrToInt(Edit_MaxTime.Text)<20 then
                         begin
                           pchar_message0:=Pchar(message0);
@@ -354,12 +420,12 @@ If Reconnect_pptp.Checked then
                         end;
  If dhcp_route.Checked then If not FileExists('/etc/dhclient-exit-hooks.old') then
                        begin
-                          if FileExists('/etc/dhclient.conf') then Shell('cp -f /etc/dhclient.conf'+' '+'/etc/dhclient.conf.old');
+                          if FileExists('/etc/dhclient.conf') then Shell('cp -f /etc/dhclient.conf /etc/dhclient.conf.old');
                           Shell('rm -f /etc/dhclient.conf');
-                          if FileExists('/opt/vpnpptp/scripts/dhclient.conf') then Shell('cp -f /opt/vpnpptp/scripts/dhclient.conf'+' '+'/etc/dhclient.conf');
-                          if FileExists('/etc/dhclient-exit-hooks') then Shell('cp -f /etc/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks.old');
+                          if FileExists('/opt/vpnpptp/scripts/dhclient.conf') then Shell('cp -f /opt/vpnpptp/scripts/dhclient.conf /etc/dhclient.conf');
+                          if FileExists('/etc/dhclient-exit-hooks') then Shell('cp -f /etc/dhclient-exit-hooks /etc/dhclient-exit-hooks.old');
                           Shell('rm -f /etc/dhclient-exit-hooks');
-                          if FileExists('/opt/vpnpptp/scripts/dhclient-exit-hooks') then Shell('cp -f /opt/vpnpptp/scripts/dhclient-exit-hooks'+' '+'/etc/dhclient-exit-hooks');
+                          if FileExists('/opt/vpnpptp/scripts/dhclient-exit-hooks') then Shell('cp -f /opt/vpnpptp/scripts/dhclient-exit-hooks /etc/dhclient-exit-hooks');
                           //проверка получаются ли маршруты по dhcp и настройка - если получаются или отмена - если не получаются
                           Label42.Caption:='';
                           Label43.Caption:=message48;
@@ -393,9 +459,9 @@ If Reconnect_pptp.Checked then
                        end;
 If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') then
                        begin
-                          if FileExists('/etc/dhclient.conf.old') then Shell('cp -f /etc/dhclient.conf.old'+' '+'/etc/dhclient.conf');
+                          if FileExists('/etc/dhclient.conf.old') then Shell('cp -f /etc/dhclient.conf.old /etc/dhclient.conf');
                           Shell('rm -f /etc/dhclient.conf.old');
-                          if FileExists('/etc/dhclient-exit-hooks.old') then Shell('cp -f /etc/dhclient-exit-hooks.old'+' '+'/etc/dhclient-exit-hooks');
+                          if FileExists('/etc/dhclient-exit-hooks.old') then Shell('cp -f /etc/dhclient-exit-hooks.old /etc/dhclient-exit-hooks');
                           Shell('rm -f /etc/dhclient-exit-hooks.old');
                           Label42.Caption:='';
                           Label43.Caption:=message51;
@@ -408,7 +474,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                        begin
                           if FileExists('/etc/shorewall/interfaces') then
                                                                      begin
-                                                                        Shell('cp -f /etc/shorewall/interfaces'+' '+'/etc/shorewall/interfaces.old');
+                                                                        Shell('cp -f /etc/shorewall/interfaces /etc/shorewall/interfaces.old');
                                                                         Memo_shorewall.Lines.Clear;
                                                                         Memo_shorewall.Lines.LoadFromFile('/etc/shorewall/interfaces');
                                                                         i:=0;
@@ -441,7 +507,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                        end;
 If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.old') then
                                                                   begin
-                                                                        Shell('cp -f /etc/shorewall/interfaces.old'+' '+'/etc/shorewall/interfaces');
+                                                                        Shell('cp -f /etc/shorewall/interfaces.old /etc/shorewall/interfaces');
                                                                         Shell('rm -f /etc/shorewall/interfaces.old');
                                                                         Shell ('/etc/init.d/shorewall restart');
                                                                   end;
@@ -480,7 +546,7 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
    If require_mppe_128.Checked then Memo_peer.Lines.Add(require_mppe_128.Caption);
    If mppe_string<>'mppe required' then Memo_peer.Lines.Add(mppe_string);
   end;
- Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем профиль подключения
+ Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
  Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные файлы
   Shell('rm -f /tmp/gate');
@@ -541,8 +607,8 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
      i:=i+1;
     end;
   end;
- Memo_ip_up.Lines.Add('/sbin/route del default');
- Memo_ip_up.Lines.Add('/sbin/route add default dev ppp0');
+ If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
+ If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route add default dev ppp0');
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
@@ -580,21 +646,12 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                                                If LeftStr(Memo_bindutilshost.Lines[i],4)<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
                                                              end;
                                                         end;
- Memo_ip_down.Lines.Add('/sbin/route del default');
+ If not pppnotdefault.Checked then Memo_ip_down.Lines.Add('/sbin/route del default');
  if Edit_gate.Text <> '' then
-                           Memo_ip_down.Lines.Add('/sbin/route add default gw '+Edit_gate.Text);
+                           Memo_ip_down.Lines.Add('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
  If routevpnauto.Checked then if IPS then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Edit_IPS.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
-//включаем опцию добавления ярлыка на рабочий стол для sudo
- If Sudo_sudoers.Checked then If not CheckBox_desktop.Checked then
-                       begin
-                          CheckBox_desktop.Checked:=true;
-                          pchar_message0:=Pchar(message0);
-                          pchar_message1:=Pchar(message58);
-                          Application.MessageBox(pchar_message1,pchar_message0, 0);
-                       end;
-
 //Записываем готовый конфиг, кроме логина и пароля
  If Edit_MinTime.Text<>'0' then Edit_MinTime.Text:=Edit_MinTime.Text+'000';
  Edit_MaxTime.Text:=Edit_MaxTime.Text+'000';
@@ -643,8 +700,17 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                               Shell('printf "networktest-no\n" >> /opt/vpnpptp/config');
  If balloon.Checked then Shell('printf "balloon-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "balloon-no\n" >> /opt/vpnpptp/config');
- If Sudo_sudoers.Checked then Shell('printf "sudo-yes\n" >> /opt/vpnpptp/config') else
+ If Sudo_ponoff.Checked then Shell('printf "sudo-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "sudo-no\n" >> /opt/vpnpptp/config');
+ If Sudo_configure.Checked then Shell('printf "sudo-configure-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "sudo-configure-no\n" >> /opt/vpnpptp/config');
+ If Autostart_ponoff.Checked then Shell('printf "autostart-ponoff-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "autostart-ponoff-no\n" >> /opt/vpnpptp/config');
+ If Autostartpppd.Checked then Shell('printf "autostart-pppd-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "autostart-pppd-no\n" >> /opt/vpnpptp/config');
+ If pppnotdefault.Checked then Shell('printf "pppnotdefault-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "pppnotdefault-no\n" >> /opt/vpnpptp/config');
+Shell ('chmod 600 /opt/vpnpptp/config');
 //Создаем ярлык для подключения
  gksu:=false;
  link_on_desktop:=false;
@@ -675,11 +741,11 @@ begin
   Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP');
   Memo_create.Lines.Add('Comment[uk]=Управління з'' єднанням VPN PPTP');
   Memo_create.Lines.Add('Comment=Control MS VPN via PPTP');
-  If not Sudo_sudoers.Checked then
+  If not Sudo_ponoff.Checked then
      begin
          If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
      end;
-  If Sudo_sudoers.Checked then
+  If Sudo_ponoff.Checked then
      begin
          Memo_create.Lines.Add('Exec=sudo /opt/vpnpptp/ponoff');
      end;
@@ -697,10 +763,11 @@ begin
   Memo_create.Lines.Add('TerminalOptions=');
   Memo_create.Lines.Add('Type=Application');
   Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
-  If not Sudo_sudoers.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
-  If not Sudo_sudoers.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
-  If not Sudo_sudoers.Checked then Memo_create.Lines.Add('StartupNotify=false');
-//Получаем список пользователей
+  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
+  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
+  Memo_create.Lines.Add('X-KDE-autostart-after=kdesktop');
+  Memo_create.Lines.Add('StartupNotify=false');
+//Получаем список пользователей для создания иконки на рабочем столе
   Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users'); //для новых идентификаторов
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile('/tmp/users');
@@ -737,23 +804,167 @@ end;
                                     Application.MessageBox(pchar_message1,pchar_message0, 0);
                                end;
 //настройка sudoers
-Find_sudoers_ponoff:=false;
-If Sudo_sudoers.Checked then If FileExists ('/etc/sudoers') then
+If FileExists ('/etc/sudoers') then If ((Sudo_ponoff.Checked) or (Sudo_configure.Checked)) then
                               begin
-                                Memo_sudo.Lines.LoadFromFile('/etc/sudoers');
-                                for i:=0 to Memo_sudo.Lines.Count-1 do
-                                       If Memo_sudo.Lines[i]='ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff' then Find_sudoers_ponoff:=true;
-                                If not Find_sudoers_ponoff then
-                                                           begin
-                                                             Shell('cp -f /etc/sudoers /etc/sudoers.old');
-                                                             Shell ('printf "ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff\n" >> /etc/sudoers');
-                                                           end;
+                                AssignFile (FileSudoers,'/etc/sudoers');
+                                reset (FileSudoers);
+                                Memo_sudo.Lines.Clear;
+                                If not FileExists ('/etc/sudoers.old') then Shell('cp -f /etc/sudoers /etc/sudoers.old');
+                                While not eof (FileSudoers) do
+                                   begin
+                                     readln(FileSudoers, str);
+                                     If (Sudo_ponoff.Checked) or (Sudo_configure.Checked) then //очистка от старых записей
+                                           begin
+                                             If ((str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff') and (str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp')) then
+                                             Memo_sudo.Lines.Add(str);
+                                           end;
+                                   end;
+                                 If Sudo_ponoff.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff');
+                                 If Sudo_configure.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp');
+                                 closefile(FileSudoers);
+                                 Shell('rm -f /etc/sudoers');
+                                 Memo_sudo.Lines.SaveToFile('/etc/sudoers');
+                                 Shell ('chmod 0440 /etc/sudoers');
                               end;
-If not Sudo_sudoers.Checked then If FileExists ('/etc/sudoers.old') then
-                                                            begin
-                                                              Shell('cp -f /etc/sudoers.old /etc/sudoers');
-                                                              Shell('rm -f /etc/sudoers.old');
-                                                            end;
+If FileExists ('/etc/sudoers') then If (not(Sudo_ponoff.Checked) and (not Sudo_configure.Checked)) then  //очистка от старых записей
+                              begin
+                                AssignFile (FileSudoers,'/etc/sudoers');
+                                reset (FileSudoers);
+                                Memo_sudo.Lines.Clear;
+                                While not eof (FileSudoers) do
+                                   begin
+                                     readln(FileSudoers, str);
+                                     If ((str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff') and (str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp')) then
+                                          Memo_sudo.Lines.Add(str);
+                                   end;
+                                 closefile(FileSudoers);
+                                 Shell('rm -f /etc/sudoers');
+                                 Memo_sudo.Lines.SaveToFile('/etc/sudoers');
+                                 Shell ('chmod 0440 /etc/sudoers');
+                              end;
+If Sudo_configure.Checked then If not FileExists('/usr/share/applications/vpnpptp.desktop.old') then
+                     If FileExists('/usr/share/applications/vpnpptp.desktop') then //правим ярлык запуска vpnpptp
+                        begin
+                            Shell('cp -f /usr/share/applications/vpnpptp.desktop /usr/share/applications/vpnpptp.desktop.old');
+                            Memo_vpnpptp_ponoff_desktop.Lines.LoadFromFile('/usr/share/applications/vpnpptp.desktop');
+                            Memonew1.Lines.Clear;
+                            For i:=0 to Memo_vpnpptp_ponoff_desktop.Lines.Count-1 do
+                              begin
+                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)='Exec=' then Memonew1.Lines.Add('Exec=sudo /opt/vpnpptp/vpnpptp');
+                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)<>'Exec=' then
+                                    If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-SubstituteUID=true' then
+                                       If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-Username=root' then
+                                           Memonew1.Lines.Add(Memo_vpnpptp_ponoff_desktop.Lines[i]);
+                              end;
+                            Memonew1.Lines.SaveToFile('/usr/share/applications/vpnpptp.desktop');
+                        end;
+If not Sudo_configure.Checked then
+                     If FileExists('/usr/share/applications/vpnpptp.desktop.old') then //восстанавливаем ярлык запуска vpnpptp
+                                            begin
+                                              Shell('cp -f /usr/share/applications/vpnpptp.desktop.old /usr/share/applications/vpnpptp.desktop');
+                                              Shell('rm -f /usr/share/applications/vpnpptp.desktop.old');
+                                            end;
+If Sudo_ponoff.Checked then If not FileExists('/usr/share/applications/ponoff.desktop.old') then
+                     If FileExists('/usr/share/applications/ponoff.desktop') then //правим ярлык запуска ponoff
+                        begin
+                            Shell('cp -f /usr/share/applications/ponoff.desktop /usr/share/applications/ponoff.desktop.old');
+                            Memo_vpnpptp_ponoff_desktop.Lines.Clear;
+                            Memo_vpnpptp_ponoff_desktop.Lines.LoadFromFile('/usr/share/applications/ponoff.desktop');
+                            Memonew2.Lines.Clear;
+                            For i:=0 to Memo_vpnpptp_ponoff_desktop.Lines.Count-1 do
+                              begin
+                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)='Exec=' then Memonew2.Lines.Add('Exec=sudo /opt/vpnpptp/ponoff');
+                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)<>'Exec=' then
+                                    If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-SubstituteUID=true' then
+                                       If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-Username=root' then
+                                           Memonew2.Lines.Add(Memo_vpnpptp_ponoff_desktop.Lines[i]);
+                              end;
+                            Memonew2.Lines.SaveToFile('/usr/share/applications/ponoff.desktop');
+                        end;
+If not Sudo_ponoff.Checked then
+                     If FileExists('/usr/share/applications/ponoff.desktop.old') then //восстанавливаем ярлык запуска vpnpptp
+                                            begin
+                                              Shell('cp -f /usr/share/applications/ponoff.desktop.old /usr/share/applications/ponoff.desktop');
+                                              Shell('rm -f /usr/share/applications/ponoff.desktop.old');
+                                            end;
+//Получаем список пользователей для автозапуска ponoff при старте системы и организация автозапуска
+  Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users'); //для новых идентификаторов
+  Memo_users.Clear;
+  Memo_users.Lines.LoadFromFile('/tmp/users');
+  i:=0;
+   while Memo_users.Lines.Count > i do
+    begin
+      if DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then
+      begin
+       FlagAutostartPonoff:=true;
+       If Autostart_ponoff.Checked then Shell ('cp -f /usr/share/applications/ponoff.desktop /home/'+Memo_users.Lines[i]+'/.config/autostart/');
+       If not Autostart_ponoff.Checked then Shell ('rm -f /home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
+      end;
+      i:=i+1;
+    end;
+  Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > /tmp/users'); //для старых идентификаторов
+  Memo_users.Clear;
+  Memo_users.Lines.LoadFromFile('/tmp/users');
+  i:=0;
+   while Memo_users.Lines.Count > i do
+    begin
+      if DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then
+      begin
+       FlagAutostartPonoff:=true;
+       If Autostart_ponoff.Checked then Shell ('cp -f /usr/share/applications/ponoff.desktop /home/'+Memo_users.Lines[i]+'/.config/autostart/');
+       If not Autostart_ponoff.Checked then Shell ('rm -f /home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
+      end;
+      i:=i+1;
+    end;
+ //обработка ошибок организации автозапуска ponoff
+  If Autostart_ponoff.Checked then If not FlagAutostartPonoff then
+                               begin
+                                    pchar_message0:=Pchar(message0);
+                                    pchar_message1:=Pchar(message60);
+                                    Application.MessageBox(pchar_message1,pchar_message0, 0);
+                               end;
+ If Autostart_ponoff.Checked then If not FileExists ('/usr/share/applications/ponoff.desktop') then
+                               begin
+                                    pchar_message0:=Pchar(message0);
+                                    pchar_message1:=Pchar(message61);
+                                    Application.MessageBox(pchar_message1,pchar_message0, 0);
+                               end;
+//настройка /etc/rc.d/rc.local
+If FileExists ('/etc/rc.d/rc.local') then If (Autostartpppd.Checked) then
+                              begin
+                                AssignFile (FileAutostartpppd,'/etc/rc.d/rc.local');
+                                reset (FileAutostartpppd);
+                                Memo_Autostartpppd.Lines.Clear;
+                                If not FileExists ('/etc/rc.d/rc.local.old') then Shell('cp -f /etc/rc.d/rc.local /etc/rc.d/rc.local.old');
+                                While not eof (FileAutostartpppd) do
+                                   begin
+                                     readln(FileAutostartpppd, str);
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') then
+                                     Memo_Autostartpppd.Lines.Add(str);
+                                   end;
+                                 If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
+                                 Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text);
+                                 closefile(FileAutostartpppd);
+                                 Shell('rm -f /etc/rc.d/rc.local');
+                                 Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
+                                 Shell ('chmod +x /etc/rc.d/rc.local');
+                              end;
+If FileExists ('/etc/rc.d/rc.local') then If not Autostartpppd.Checked then  //очистка от старых записей
+                              begin
+                                AssignFile (FileAutostartpppd,'/etc/rc.d/rc.local');
+                                reset (FileAutostartpppd);
+                                Memo_Autostartpppd.Lines.Clear;
+                                While not eof (FileAutostartpppd) do
+                                   begin
+                                     readln(FileAutostartpppd, str);
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') then
+                                     Memo_Autostartpppd.Lines.Add(str);
+                                   end;
+                                 closefile(FileAutostartpppd);
+                                 Shell('rm -f /etc/rc.d/rc.local');
+                                 Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
+                                 Shell ('chmod +x /etc/rc.d/rc.local');
+                              end;
 //проверка технической возможности поднятия соединения (пока только проверка vpn-сервера и шлюза, dns потом напишу)
    //тест vpn-сервера
 If not flag then
@@ -890,6 +1101,71 @@ begin
                        end;
 end;
 
+procedure TForm1.Autostart_ponoffChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+//проверка установлен ли пакет Sudo
+If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
+   If Autostart_ponoff.Checked then Autostart_ponoff.Checked:=true else Autostart_ponoff.Checked:=false;
+   If StartMessage then If Autostart_ponoff.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message21);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+   If StartMessage then If Autostart_ponoff.Checked then If not Sudo then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message24);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Autostart_ponoff.Checked:=false;
+                          StartMessage:=true;
+                          exit;
+                       end;
+   If StartMessage then If Autostart_ponoff.Checked then If not Sudo_ponoff.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message59);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Sudo_ponoff.Checked:=true;
+                          StartMessage:=true;
+                       end;
+   If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message63);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Autostartpppd.Checked:=false;
+                          StartMessage:=true;
+                       end;
+end;
+
+procedure TForm1.AutostartpppdChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+   If Autostartpppd.Checked then Autostartpppd.Checked:=true else Autostartpppd.Checked:=false;
+   If StartMessage then If Autostartpppd.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message62);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+   If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message63);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Autostart_ponoff.Checked:=false;
+                          StartMessage:=true;
+                       end;
+end;
+
 procedure TForm1.Button_exitClick(Sender: TObject);
 begin
   Shell('rm -f /tmp/gate');
@@ -938,6 +1214,18 @@ begin
                        begin
                           pchar_message0:=Pchar(message0);
                           pchar_message1:=Pchar(message39);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+end;
+
+procedure TForm1.pppnotdefaultChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+   If StartMessage then If pppnotdefault.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message64);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                        end;
 end;
@@ -1545,10 +1833,8 @@ If Screen.Height>1000 then
                                                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                          Shell('rm -f /tmp/tmpnostart');
                                                        end;
-//dhclient:=false; //просто для проверки при отладке
 //проверка установлен ли пакет Sudo
 If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-//Sudo:=false; //просто для проверки при отладке
   Shell('rm -f /tmp/tmpnostart');
   Shell('rm -f /tmp/gate');
   Shell('rm -f /tmp/eth');
@@ -1604,7 +1890,11 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
         If Memo_config.Lines[22]='routevpnauto-yes' then routevpnauto.Checked:=true else routevpnauto.Checked:=false;
         If Memo_config.Lines[23]='networktest-yes' then networktest.Checked:=true else networktest.Checked:=false;
         If Memo_config.Lines[24]='balloon-yes' then balloon.Checked:=true else balloon.Checked:=false;
-        If Memo_config.Lines[25]='sudo-yes' then Sudo_sudoers.Checked:=true else Sudo_sudoers.Checked:=false;
+        If Memo_config.Lines[25]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
+        If Memo_config.Lines[26]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
+        If Memo_config.Lines[27]='autostart-ponoff-yes' then Autostart_ponoff.Checked:=true else Autostart_ponoff.Checked:=false;
+        If Memo_config.Lines[28]='autostart-pppd-yes' then Autostartpppd.Checked:=true else Autostartpppd.Checked:=false;
+        If Memo_config.Lines[29]='pppnotdefault-yes' then pppnotdefault.Checked:=true else pppnotdefault.Checked:=false;
             If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
@@ -1629,8 +1919,16 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
   Button_next1.Visible:=True;
   Button_next2.Visible:=False;
 If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
-//BindUtils:=false; //просто для проверки при отладке метода ping
 StartMessage:=true;
+//определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть
+  Shell ('rm -f /tmp/gate');
+  Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
+  Shell('printf "none" >> /tmp/gate');
+  Memo_gate.Clear;
+  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+  If Memo_gate.Lines[0]='none' then Shell ('/etc/init.d/network restart');
+  Shell ('rm -f /tmp/gate');
+  Memo_gate.Lines.Clear;
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
@@ -1721,28 +2019,62 @@ begin
     If require_mppe_128.Checked then CheckBox_shifr.Checked:=true;
 end;
 
-procedure TForm1.Sudo_sudoersChange(Sender: TObject);
+procedure TForm1.Sudo_configureChange(Sender: TObject);
 var
    pchar_message0,pchar_message1:pchar;
 begin
 //проверка установлен ли пакет Sudo
 If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-   If Sudo_sudoers.Checked then Sudo_sudoers.Checked:=true else Sudo_sudoers.Checked:=false;
-   If StartMessage then If Sudo_sudoers.Checked then
+   If Sudo_configure.Checked then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
+   If StartMessage then If Sudo_configure.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message9);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+   If StartMessage then If Sudo_configure.Checked then If not Sudo then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message6);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Sudo_configure.Checked:=false;
+                          StartMessage:=true;
+                          exit;
+                       end;
+end;
+
+procedure TForm1.Sudo_ponoffChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+//проверка установлен ли пакет Sudo
+If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
+   If Sudo_ponoff.Checked then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
+   If StartMessage then If Sudo_ponoff.Checked then
                        begin
                           pchar_message0:=Pchar(message0);
                           pchar_message1:=Pchar(message56);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                        end;
-   If StartMessage then If Sudo_sudoers.Checked then If not Sudo then
+   If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
                        begin
                           pchar_message0:=Pchar(message0);
                           pchar_message1:=Pchar(message57);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                           StartMessage:=false;
-                          Sudo_sudoers.Checked:=false;
+                          Sudo_ponoff.Checked:=false;
                           StartMessage:=true;
                           exit;
+                       end;
+   If StartMessage then If Autostart_ponoff.Checked then If not Sudo_ponoff.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message59);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Autostart_ponoff.Checked:=false;
+                          StartMessage:=true;
                        end;
 end;
 

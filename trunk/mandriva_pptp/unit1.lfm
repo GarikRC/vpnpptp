@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 400
+  Left = 454
   Height = 576
-  Top = 107
+  Top = 88
   Width = 800
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -3051,7 +3051,7 @@ object Form1: TForm1
         Visible = False
       end
       object Mii_tool_no: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
         Top = 6
         Width = 258
@@ -3069,7 +3069,7 @@ object Form1: TForm1
         TabOrder = 9
       end
       object Pppd_log: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
         Top = 54
         Width = 214
@@ -3135,7 +3135,7 @@ object Form1: TForm1
         Visible = False
       end
       object routevpnauto: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
         Top = 126
         Width = 292
@@ -3155,7 +3155,7 @@ object Form1: TForm1
         Visible = False
       end
       object networktest: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
         Top = 150
         Width = 346
@@ -3166,7 +3166,7 @@ object Form1: TForm1
         TabOrder = 18
       end
       object balloon: TCheckBox
-        Left = 7
+        Left = 8
         Height = 21
         Top = 174
         Width = 313
@@ -3185,24 +3185,104 @@ object Form1: TForm1
         TabOrder = 20
         Visible = False
       end
-      object Sudo_sudoers: TCheckBox
-        Left = 7
+      object Sudo_ponoff: TCheckBox
+        Left = 8
         Height = 21
         Top = 198
         Width = 326
         Caption = 'Разрешить пользователям управлять подключением'
-        OnChange = Sudo_sudoersChange
+        OnChange = Sudo_ponoffChange
         TabOrder = 21
+      end
+      object Sudo_configure: TCheckBox
+        Left = 8
+        Height = 21
+        Top = 222
+        Width = 348
+        Caption = 'Разрешить пользователям конфигурировать соединение'
+        OnChange = Sudo_configureChange
+        TabOrder = 22
+      end
+      object Memo_vpnpptp_ponoff_desktop: TMemo
+        Left = 639
+        Height = 47
+        Top = 190
+        Width = 70
+        Lines.Strings = (
+          'Memo_vpnpptp_desktop'
+        )
+        TabOrder = 23
+        Visible = False
       end
       object Memo_sudo: TMemo
         Left = 639
-        Height = 50
-        Top = 187
+        Height = 41
+        Top = 238
         Width = 70
         Lines.Strings = (
           'Memo_sudo'
         )
-        TabOrder = 22
+        TabOrder = 24
+        Visible = False
+      end
+      object Autostart_ponoff: TCheckBox
+        Left = 8
+        Height = 21
+        Top = 246
+        Width = 356
+        Caption = 'Автозапуск интернета при старте системы (графический)'
+        OnChange = Autostart_ponoffChange
+        TabOrder = 25
+      end
+      object Autostartpppd: TCheckBox
+        Left = 8
+        Height = 21
+        Top = 270
+        Width = 620
+        Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
+        OnChange = AutostartpppdChange
+        TabOrder = 26
+      end
+      object Memo_Autostartpppd: TMemo
+        Left = 639
+        Height = 41
+        Top = 278
+        Width = 70
+        Lines.Strings = (
+          'Memo_Autostartpppd'
+        )
+        TabOrder = 27
+        Visible = False
+      end
+      object pppnotdefault: TCheckBox
+        Left = 8
+        Height = 21
+        Top = 294
+        Width = 346
+        Caption = 'Не изменять дефолтный шлюз, запустив VPN PPTP в фоне'
+        OnChange = pppnotdefaultChange
+        TabOrder = 28
+      end
+      object Memonew1: TMemo
+        Left = 639
+        Height = 42
+        Top = 318
+        Width = 70
+        Lines.Strings = (
+          'Memonew1'
+        )
+        TabOrder = 29
+        Visible = False
+      end
+      object Memonew2: TMemo
+        Left = 639
+        Height = 42
+        Top = 358
+        Width = 70
+        Lines.Strings = (
+          'Memonew1'
+        )
+        TabOrder = 30
         Visible = False
       end
     end

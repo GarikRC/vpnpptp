@@ -63,7 +63,7 @@ msgstr "Connecting "
 
 #: unit1.message1
 msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом или с #209�аз#209�ешения админист#209�ато#209�а. Нажмите <OK> для отказа от запуска."
-msgstr "The start of this program is possible only as administrator or with administrator's permission. Press <OK> for exit."
+msgstr "The start of this program is possible only as root or with root's permission. Press <OK> for exit."
 
 #: unit1.message13
 msgid "Получены ма#209�ш#209�уты по DHCP. "
@@ -92,3 +92,7 @@ msgstr "The local network gate is not pinged. "
 #: unit1.message19
 msgid "П#209�ове#209�ено! Инте#209�нет #209�аботает!"
 msgstr "Сhecked! The Internet is working!"
+
+#: unit1.message20
+msgid "Обна#209�ужено совпадение remote ip address с ip-ад#209�есом самого vpn-се#209�ве#209�а. Соединение было пе#209�енаст#209�оено."
+msgstr "Found to match with the remote ip address ip-address of the vpn-server. The connection has been reconfigured."

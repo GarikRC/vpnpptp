@@ -1,13 +1,13 @@
 object Form1: TForm1
-  Left = 987
-  Height = 366
-  Top = 75
+  Left = 937
+  Height = 424
+  Top = 120
   Width = 289
   ActiveControl = Memo_Config
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Соединение pptp'
-  ClientHeight = 366
+  ClientHeight = 424
   ClientWidth = 289
   FormStyle = fsSplash
   Icon.Data = {
@@ -2244,7 +2244,7 @@ object Form1: TForm1
   end
   object Memo_testonstart: TMemo
     Left = 51
-    Height = 35
+    Height = 40
     Top = 320
     Width = 229
     Lines.Strings = (
@@ -2261,6 +2261,16 @@ object Form1: TForm1
       'Memo_networktest'
     )
     TabOrder = 12
+  end
+  object Memo_etc_ppp_ip_up: TMemo
+    Left = 52
+    Height = 43
+    Top = 368
+    Width = 227
+    Lines.Strings = (
+      'Memo_etc_ppp_ip_up'
+    )
+    TabOrder = 13
   end
   object TrayIcon1: TTrayIcon
     BalloonTimeout = 0

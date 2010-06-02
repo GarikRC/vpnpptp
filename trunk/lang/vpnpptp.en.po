@@ -275,8 +275,8 @@ msgid "Поле \"MTU\" заполнено неве#209�но. Раз#209�е�
 msgstr "Field \"MTU\" is wrong. Required limit is [576..1460..1492..1500]. MTU=1460 is recomended."
 
 #: unit1.message18
-msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом. Нажмите <OK> для отказа от запуска."
-msgstr "Run this program requires root user rights. Press <OK> for exit."
+msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом или с #209�аз#209�ешения админист#209�ато#209�а. Нажмите <OK> для отказа от запуска."
+msgstr "Run this program requires root user rights or root's permission. Press <OK> for exit."
 
 #: unit1.message19
 msgid "Д#209�угая такая же п#209�ог#209�амма уже пытается сконфигу#209�и#209�овать VPN PPTP. Нажмите <OK> для отказа от двойного запуска."
@@ -290,10 +290,6 @@ msgstr "Dial time set to 20 seconds since you has not state network cable and sy
 msgid "Невозможно наст#209�оить VPN PPTP в связи с отсутствием пакета pptp-linux."
 msgstr "Unable find ppptp-linux packet. VPN PPTP can not configure."
 
-#: unit1.message21
-msgid "Установка не удалась"
-msgstr "Failure install"
-
 #: unit1.message3
 msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd #209�еконнекта п#209�оигно#209�и#209�ован."
 msgstr "Select internal pppd daemon reconnect is ignore since you not select reconnect option."
@@ -305,10 +301,6 @@ msgstr "Reconnect time (time to send LCP echo-request) set to 20 seconds since r
 #: unit1.message5
 msgid "Так как #209�еконнект будет #209�еализован вст#209�оенным в демон pppd методом, то в#209�емя дозвона не используется за ненадобностью."
 msgstr "Dial time is obsolete since reconnect not use internal pppd daemon method."
-
-#: unit1.message6
-msgid "Так как выб#209�ана/изменена опция получения ма#209�ш#209�утов че#209�ез DHCP, то сеть будет пе#209�езапущена."
-msgstr "Network is rerun since select/change DHCP get routes."
 
 #: unit1.message7
 msgid "Рабочий стол"
@@ -323,17 +315,9 @@ msgstr "Field \"Dial time\" must be a number with limit from 5 to 255 sec."
 msgid "Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола"
 msgstr "Adding network interfaces [ppp0..ppp9] for firewall exclusion rules"
 
-#: unit1.message9
-msgid "Так как выб#209�ана/изменена опция добавления инте#209�фейсов [ppp0..ppp9] в исключения файе#209�вола, то файе#209�вол будет пе#209�езапущен."
-msgstr "As firewall exclusion network interface select/change, firewall will restart."
-
 #: unit1.message22
 msgid "Невозможно создать я#209�лык на #209�абочем столе, так как используется нестанда#209�тный идентификато#209� пользователя и/или локализация."
 msgstr "Unable to create link on the Desktop, as it uses a non-standard user ID and/or localization."
-
-#: unit1.message24
-msgid "Файе#209�вол уже наст#209�оен."
-msgstr "Firewall is already configured."
 
 #: unit1.message23
 msgid "Невозможно создать я#209�лык на #209�абочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop."
@@ -509,3 +493,51 @@ msgstr "- if network interface and/or gate defined not correct, do useful net in
 #: TFORM1.LABEL47.CAPTION
 msgid "- без занесения маршрутов не гарантируется одновременная работа интернета и локальной сети, но интернет в любом случае будет работать"
 msgstr "- not add routes not garanted simultaneously works internet and local network, but internet will works on all ways"
+
+#: unit1.message6
+msgid "Для того, чтобы #209�аз#209�ешить пользователям конфигу#209�и#209�овать соединение сначала установите пакет sudo."
+msgstr "In order to allow users to configure the connection, first install the packet sudo."
+
+#: unit1.message9
+msgid "Эта опция позволяет пользователям запускать конфигу#209�ато#209� VPN PPTP без па#209�оля админист#209�ато#209�а и конфигу#209�и#209�овать соединение."
+msgstr "This option allows users to run VPN PPTP configuration without root password and configure the connection."
+
+#: unit1.message59
+msgid "Выбо#209� опции автозапуска инте#209�нета п#209�и ста#209�те системы возможен только п#209�и выбо#209�е опции #209�аз#209�ешения пользователям уп#209�авлять подключением."
+msgstr "Selecting Internet autostart at startup is possible only when you select options permit users to manage the connection."
+
+#: unit1.message60
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы не наст#209�оен. Отсутствует ~/.config/autostart/ или используется нестанда#209�тный идентификато#209� пользователя."
+msgstr "Autostart Internet at startup is not configured. There is no ~/.config/autostart/ or used non-standard user ID."
+
+#: unit1.message61
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы не наст#209�оен. Отсутствует файл /usr/share/applications/ponoff.desktop."
+msgstr "Autostart Internet at startup is not configured. There is no file /usr/share/applications/ponoff.desktop."
+
+#: TFORM1.SUDO_CONFIGURE.CAPTION
+msgid "Разрешить пользователям конфигурировать соединение"
+msgstr "Allow users to configure the connection"
+
+#: TFORM1.AUTOSTART_PONOFF.CAPTION
+msgid "Автозапуск интернета при старте системы (графический)"
+msgstr "Autostart Internet at startup (graphical)"
+
+#: TFORM1.AUTOSTARTPPPD.CAPTION
+msgid "Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)"
+msgstr "Autostart Internet at startup with help pppd-daemon whithout graphics (do not use)"
+
+#: unit1.message62
+msgid "Эта опция осуществляет автозапуск инте#209�нета п#209�и ста#209�те системы без использования ponoff. Рекомендуется использовать с pppd-#209�еконнектом."
+msgstr "This option provides Autostart Internet at system startup without using ponoff. It is recommended to use with pppd-reconnect."
+
+#: unit1.message63
+msgid "Не допустим однов#209�еменный выбо#209� г#209�афического автозапуска инте#209�нета п#209�и ста#209�те системы и автозапуск демоном pppd без г#209�афики."
+msgstr "Do not let the simultaneous selection of graphical Autostart Internet at system startup and autostart with help ppdd-daemon without graphics."
+
+#: unit1.message64
+msgid "Эта опция полезна если VPN PPTP не должно быть главным."
+msgstr "This option is useful if the VPN PPTP should not be main."
+
+#: TFORM1.PPPNOTDEFAULT.CAPTION
+msgid "Не изменять дефолтный шлюз, запустив VPN PPTP в фоне"
+msgstr "Do not change default gateway, VPN PPTP running in the background"
