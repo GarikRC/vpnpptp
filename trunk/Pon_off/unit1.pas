@@ -114,6 +114,7 @@ resourcestring
   message18='Шлюз локальной сети не пингуется. ';
   message19='Проверено! Интернет работает!';
   message20='Обнаружено совпадение remote ip address с ip-адресом самого vpn-сервера. Соединение было перенастроено.';
+  message21='Ошибка получения маршрутов по DHCP. ';
 
 implementation
 
@@ -289,8 +290,24 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               begin
                               If not DhclientStart then Shell ('dhclient '+Memo_Config.Lines[3]);
                               DhclientStart:=true;
+                              //Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
                               end;
                               Application.ProcessMessages;
+                              If link=1 then If NoInternet then //проверка поднялся ли интерфейс после dhclient
+                              begin
+                                 Shell ('rm -f /tmp/gate');
+                                 Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > /tmp/gate');
+                                 Shell('printf "none" >> /tmp/gate');
+                                 Memo_gate.Clear;
+                                 If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+                                 If Memo_gate.Lines[0]='none' then
+                                    begin
+                                         Shell ('ifup '+Memo_Config.Lines[3]);
+                                         DhclientStart:=false;
+                                    end;
+                                 Shell ('rm -f /tmp/gate');
+                                 Memo_gate.Lines.Clear;
+                              end;
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
   If not FileExists('/opt/vpnpptp/hosts') then NewIPS:=false;
@@ -346,7 +363,8 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                         Application.ProcessMessages;
                                                         str:='';
                                                         str:=message14+message12+Memo_Config.Lines[0]+'...';
-                                                        If Memo_Config.Lines[9]='dhcp-route-yes' then str:=message13+str;
+                                                        If Memo_Config.Lines[9]='dhcp-route-yes' then if DhclientStart then str:=message13+str;
+                                                        If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then str:=message21+str;
                                                         BalloonMessage (8000,str);
                                                         Application.ProcessMessages;
                                                         If Form1.Memo_Config.Lines[24]='balloon-no' then sleep(2000);
@@ -434,7 +452,8 @@ If not Code_up_ppp then If link=1 then
                                   str:='';
                                   str:=message12+Memo_Config.Lines[0]+'...';
                                   If Memo_config.Lines[22]='routevpnauto-yes' then If NewIPS then str:=message14+str;
-                                  If Memo_Config.Lines[9]='dhcp-route-yes' then str:=message13+str;
+                                  If Memo_Config.Lines[9]='dhcp-route-yes' then if DhclientStart then str:=message13+str;
+                                  If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then str:=message21+str;
                                   If NoPingIPS then str:=message15;
                                   If NoDNS then str:=message17;
                                   If NoPingGW then str:=message18;

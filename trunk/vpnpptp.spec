@@ -1,4 +1,4 @@
-%define rel 2
+%define rel 1
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control MS VPN via PPTP
 Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPT
 Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
 Name: vpnpptp-allde
-Version: 0.1.0
+Version: 0.1.1
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network

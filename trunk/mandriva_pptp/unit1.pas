@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Gettext, Typinfo;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Gettext, Typinfo, Unit2;
 
 type
 
@@ -36,6 +36,7 @@ type
     Button1: TButton;
     Button_create: TButton;
     Button_exit: TButton;
+    Button_more: TButton;
     Button_next1: TButton;
     Button_next2: TButton;
     balloon: TCheckBox;
@@ -138,6 +139,7 @@ type
     procedure Button_addoptionsClick(Sender: TObject);
     procedure Button_createClick(Sender: TObject);
     procedure Button_exitClick(Sender: TObject);
+    procedure Button_moreClick(Sender: TObject);
     procedure Button_next1Click(Sender: TObject);
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
@@ -205,6 +207,7 @@ var
   StartMessage:boolean; // принудительное блокирование сообщений
   BindUtils:boolean; //установлен ли пакет bind-utils
   Sudo:boolean; //установлен ли пакет sudo
+  More:boolean; //отслеживает, что кнопку Button_more уже нажимали
 const
   Config_n=30;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
@@ -273,6 +276,7 @@ resourcestring
   message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff. Рекомендуется использовать с pppd-реконнектом.';
   message63='Не допустим одновременный выбор графического автозапуска интернета при старте системы и автозапуск демоном pppd без графики.';
   message64='Эта опция полезна если VPN PPTP не должно быть главным.';
+  message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd и неизменять дефолтный шлюз, запустив VPN PPTP в фоне.';
 
 implementation
 
@@ -339,6 +343,7 @@ var mppe_string:string;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
+Button_more.Visible:=false;
 //проверка текущего состояния дополнительных сторонних пакетов
  If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
@@ -442,6 +447,15 @@ If Reconnect_pptp.Checked then
                           Shell ('dhclient '+Edit_eth.Text);
                           Application.ProcessMessages;
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest2');
+                          //проверка поднялся ли интерфейс после dhclient
+                          Shell ('rm -f /tmp/gate');
+                          Shell('/sbin/ip r|grep '+Edit_eth.Text+' > /tmp/gate');
+                          Shell('printf "none" >> /tmp/gate');
+                          Memo_gate.Clear;
+                          If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+                          If Memo_gate.Lines[0]='none' then Shell ('ifup '+Edit_eth.Text);
+                          Shell ('rm -f /tmp/gate');
+                          Memo_gate.Lines.Clear;
                           If FileSize('/tmp/dhclienttest2')<=FileSize('/tmp/dhclienttest1') then
                                                                                                begin
                                                                                                  Label42.Caption:='';
@@ -513,18 +527,35 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                                                   end;
  If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
+ Unit2.Form2.Obrabotka(Edit_peer.Text, more);
  Shell('rm -f '+ Label_peername.Caption);
  Memo_peer.Clear;
  Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
  Memo_peer.Lines.Add('remotename pptp');
  Memo_peer.Lines.Add('user "'+Edit_user.Text+'"');
  Memo_peer.Lines.Add('password "'+Edit_passwd.Text+'"');
- Memo_peer.Lines.Add('lock');
- Memo_peer.Lines.Add('usepeerdns');
- Memo_peer.Lines.Add('nodeflate');
- Memo_peer.Lines.Add('nobsdcomp');
- Memo_peer.Lines.Add('noauth');
- Memo_peer.Lines.Add('persist');
+ If Unit2.Form2.CheckBoxlock.Checked then Memo_peer.Lines.Add('lock');
+ If Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_peer.Lines.Add('usepeerdns');
+ If Unit2.Form2.CheckBoxnodeflate.Checked then Memo_peer.Lines.Add('nodeflate');
+ If Unit2.Form2.CheckBoxnobsdcomp.Checked then Memo_peer.Lines.Add('nobsdcomp');
+ If Unit2.Form2.CheckBoxnoauth.Checked then Memo_peer.Lines.Add('noauth');
+ If Unit2.Form2.CheckBoxpersist.Checked then Memo_peer.Lines.Add('persist');
+ If Unit2.Form2.CheckBoxnoipdefault.Checked then Memo_peer.Lines.Add('noipdefault');
+ If Unit2.Form2.CheckBoxnomppe.Checked then Memo_peer.Lines.Add('nomppe');
+ If Unit2.Form2.CheckBoxnomppc.Checked then Memo_peer.Lines.Add('nomppc');
+ If Unit2.Form2.CheckBoxdefaultroute.Checked then Memo_peer.Lines.Add('defaultroute');
+ If Unit2.Form2.CheckBoxnopcomp.Checked then Memo_peer.Lines.Add('nopcomp');
+ If Unit2.Form2.CheckBoxnoccp.Checked then Memo_peer.Lines.Add('noccp');
+ If Unit2.Form2.CheckBoxnovj.Checked then Memo_peer.Lines.Add('novj');
+ If Unit2.Form2.CheckBoxnovjccomp.Checked then Memo_peer.Lines.Add('novjccomp');
+ If Unit2.Form2.CheckBoxnoaccomp.Checked then Memo_peer.Lines.Add('noaccomp');
+ If Unit2.Form2.CheckBoxnoipv6.Checked then Memo_peer.Lines.Add('noipv6');
+ If Unit2.Form2.CheckBoxreceiveall.Checked then Memo_peer.Lines.Add('receive-all');
+ If Unit2.Form2.CheckBoxnodetach.Checked then Memo_peer.Lines.Add('nodetach');
+ If Unit2.Form2.CheckBoxreplacedefaultroute.Checked then Memo_peer.Lines.Add('replacedefaultroute');
+ If Unit2.Form2.CheckBoxauth.Checked then Memo_peer.Lines.Add('auth');
+ If Unit2.Form2.CheckBoxpassive.Checked then Memo_peer.Lines.Add('passive');
+ If Unit2.Form2.CheckBoxnodefaultroute.Checked then Memo_peer.Lines.Add('nodefaultroute');
  If not Reconnect_pptp.Checked then Memo_peer.Lines.Add('maxfail 10') else
                                     begin
                                       Memo_peer.Lines.Add('maxfail 0');
@@ -1164,6 +1195,15 @@ begin
                           Autostart_ponoff.Checked:=false;
                           StartMessage:=true;
                        end;
+If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message65);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          Autostartpppd.Checked:=false;
+                          StartMessage:=true;
+                       end;
 end;
 
 procedure TForm1.Button_exitClick(Sender: TObject);
@@ -1174,6 +1214,13 @@ begin
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
   halt;
+end;
+
+procedure TForm1.Button_moreClick(Sender: TObject);
+begin
+     Unit2.Form2.Obrabotka(Edit_peer.Text,more);
+     Unit2.Form2.ShowModal;
+     more:=true;
 end;
 
 procedure TForm1.Button_next3Click(Sender: TObject);
@@ -1227,6 +1274,15 @@ begin
                           pchar_message0:=Pchar(message0);
                           pchar_message1:=Pchar(message64);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message65);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          StartMessage:=false;
+                          pppnotdefault.Checked:=false;
+                          StartMessage:=true;
                        end;
 end;
 
@@ -1569,6 +1625,13 @@ if y then
                           TabSheet2.TabVisible:= True;
                           exit;
                     end;
+//wlanN не поддерживается mii-tool
+If not FileExists('/opt/vpnpptp/config') then if LeftStr(Edit_eth.Text,4)='wlan' then
+                                                                                 begin
+                                                                                   StartMessage:=false;
+                                                                                   Mii_tool_no.Checked:=true;
+                                                                                   StartMessage:=true;
+                                                                                 end;
 //проверка корректности ввода шлюза локальной сети
 If (Edit_gate.Text='none') or (Edit_gate.Text='') or (Length(Edit_gate.Text)>15) then //15-макс.длина шлюза 255.255.255.255
                     begin
@@ -1644,6 +1707,7 @@ If (StrToInt(Edit_mtu.Text)>1500) or (StrToInt(Edit_mtu.Text)<576) then
                                       end;
 end;
  Edit_gate.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+ Button_more.Visible:=True;
  Button_create.Visible:=True;
  TabSheet1.TabVisible:= False;
  TabSheet2.TabVisible:= False;
@@ -1698,6 +1762,7 @@ var i:integer;
     len:integer;
 begin
 StartMessage:=false;
+more:=false;
 //масштабирование формы в зависимости от разрешения экрана
    Form1.Height:=600;
    Form1.Width:=794;
@@ -1732,6 +1797,9 @@ StartMessage:=false;
                              Form1.Constraints.MinHeight:=Screen.Height-50;
                              Button_create.BorderSpacing.Left:=Screen.Width-182;
                              PageControl1.Height:=Screen.Height-200;
+                             Button_next1.BorderSpacing.Left:=180;
+                             Button_next2.BorderSpacing.Left:=180;
+                             Button_more.BorderSpacing.Left:=180;
                             end;
    If Screen.Height<=480 then
                         begin
@@ -1745,6 +1813,9 @@ StartMessage:=false;
                              Form1.Constraints.MaxHeight:=Screen.Height-45;
                              Form1.Constraints.MinHeight:=Screen.Height-45;
                              Metka.BorderSpacing.Top:=0;
+                             Button_next1.BorderSpacing.Left:=220;
+                             Button_next2.BorderSpacing.Left:=220;
+                             Button_more.BorderSpacing.Left:=220;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
@@ -1795,6 +1866,9 @@ If Screen.Height>1000 then
                              Form1.Constraints.MaxWidth:=884;
                              Form1.Constraints.MinWidth:=884;
                              PageControl1.Height:=640;
+                             Button_next1.BorderSpacing.Left:=350;
+                             Button_next2.BorderSpacing.Left:=350;
+                             Button_more.BorderSpacing.Left:=350;
                          end;
 //проверка vpnpptp в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart');
