@@ -541,3 +541,15 @@ msgstr "This option is useful if the VPN PPTP should not be main."
 #: TFORM1.PPPNOTDEFAULT.CAPTION
 msgid "Не изменять дефолтный шлюз, запустив VPN PPTP в фоне"
 msgstr "Do not change default gateway, VPN PPTP running in the background"
+
+#: unit1.message65
+msgid "Пока нельзя однов#209�еменно выб#209�ать автозапуск инте#209�нета демоном pppd и неизменять дефолтный шлюз, запустив VPN PPTP в фоне."
+msgstr "Not yet simultaneously select autostart Internet daemon pppd and immutable on the default gateway, VPN PPTP running in the background."
+
+#: TFORM2.CAPTION
+msgid "Опции демона pppd"
+msgstr "Options daemon pppd"
+
+#: TFORM1.BUTTON_MORE.CAPTION
+msgid "Дополнительно"
+msgstr "Advanced"

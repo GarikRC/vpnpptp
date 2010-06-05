@@ -96,3 +96,7 @@ msgstr "Сhecked! The Internet is working!"
 #: unit1.message20
 msgid "Обна#209�ужено совпадение remote ip address с ip-ад#209�есом самого vpn-се#209�ве#209�а. Соединение было пе#209�енаст#209�оено."
 msgstr "Found to match with the remote ip address ip-address of the vpn-server. The connection has been reconfigured."
+
+#: unit1.message21
+msgid "Ошибка получения ма#209�ш#209�утов по DHCP. "
+msgstr "Failed to get routes via DHCP."
