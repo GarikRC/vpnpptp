@@ -1,4 +1,4 @@
-%define rel 1
+%define rel 2
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -16,6 +16,7 @@ Packager: Alexander Kazancev <kazancas@mandriva.ru>; Alex Loginov <loginov_alex@
 Vendor: Mandriva Russia, http://www.mandriva.ru
 
 Source: vpnpptp-src-%{version}.tar.gz
+Source1: vpnpptp_kde_one.pm
 %ifarch x86_64
 Patch0: ponoff.patch
 Patch1: mandriva_pptp.patch
@@ -139,6 +140,8 @@ EOF
 install -m 0644 vpnpptp.desktop \
 %{buildroot}%{_datadir}/applications/vpnpptp.desktop
 
+install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp_kde_one.pm
+
 %clean
 
 %files
@@ -153,5 +156,6 @@ install -m 0644 vpnpptp.desktop \
 /opt/vpnpptp/scripts
 %{_datadir}/applications/ponoff.desktop
 %{_datadir}/applications/vpnpptp.desktop
+/usr/lib/libDrakX/network/vpn/vpnpptp_kde_one.pm
 
 %changelog
