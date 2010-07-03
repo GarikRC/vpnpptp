@@ -83,14 +83,14 @@ var
   BindUtils:boolean; //установлен ли пакет bind-utils
   StartMessage:boolean;
   NewIPS:boolean; //найден новый, неизвестный ранее ip-адрес vpn-сервера
-  NoPingIPS, NoDNS, NoPingGW:boolean;
+  NoPingIPS, NoDNS, NoPingGW, NoPingDNS1, NoPingDNS2:boolean;
   NoInternet:boolean;
   Filenetworktest, FileRemoteIPaddress:textfile;
   DhclientStart:boolean;
   RemoteIPaddress:string;
 
 const
-  Config_n=30;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=37;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 
 resourcestring
   message0='Внимание!';
@@ -115,6 +115,9 @@ resourcestring
   message19='Проверено! Интернет работает!';
   message20='Обнаружено совпадение remote ip address с ip-адресом самого vpn-сервера. Соединение было перенастроено.';
   message21='Ошибка получения маршрутов по DHCP. ';
+  //message22='';
+  message23='DNS1-сервер не пингуется. ';
+  message24='DNS2-сервер не пингуется. ';
 
 implementation
 
@@ -127,11 +130,32 @@ While pos(d, s) <> 0 do
 Delete(s, (pos(d, s)), 1); result := s;
 End;
 
-procedure BalloonMessage (i:integer;str:string);
+procedure BalloonMessage (i:integer;str1:string);
 begin
 Form1.TrayIcon1.BalloonTimeout:=i;
-Form1.TrayIcon1.BalloonHint:=str;
-If Form1.Memo_Config.Lines[24]='balloon-no' then Form1.TrayIcon1.ShowBalloonHint;
+Form1.TrayIcon1.BalloonHint:=str1;
+Application.ProcessMessages;
+If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
+Application.ProcessMessages;
+end;
+
+function CompareFiles(const FirstFile, SecondFile: string): Boolean;
+//сравнение файлов
+var
+  f1, f2: TMemoryStream;
+begin
+  Result := false;
+  f1 := TMemoryStream.Create;
+  f2 := TMemoryStream.Create;
+  try
+    f1.LoadFromFile(FirstFile);
+    f2.LoadFromFile(SecondFile);
+    if f1.Size = f2.Size then
+           Result := CompareMem(f1.Memory, f2.memory, f1.Size);
+  finally
+    f2.Free;
+    f1.Free;
+  end
 end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
@@ -143,11 +167,15 @@ var
     str:string;
     Str_networktest, Str_RemoteIPaddress:string;
     FindRemoteIPaddress:boolean;
+    {DNS_flag:boolean;
+    FileResolv_conf:textfile;}
 begin
   NewIPS:=true;
   NoPingIPS:=false;
   NoDNS:=false;
   NoPingGW:=false;
+  NoPingDNS1:=false;
+  NoPingDNS2:=false;
   //Проверяем поднялось ли соединение
   Shell('rm -f /tmp/status.ppp');
   Memo2.Clear;
@@ -258,7 +286,33 @@ If link=1 then If NoInternet then
        Shell ('rm -f /tmp/gate');
        Memo_gate.Lines.Clear;
   end;
-  //проверка технической возможности поднятия соединения (пока только проверка vpn-сервера и шлюза, dns потом напишу)
+  //проверка технической возможности поднятия соединения
+{If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_Config.Lines[34]<>'usepeerdns-yes' then
+       if not FileExists('/var/run/ppp/resolv.conf') then
+                            begin //тест dns1-сервера
+                                 Shell('rm -f /tmp/networktest');
+                                 Str:='ping -c1 '+Memo_config.Lines[30]+'|grep '+chr(39)+'1 received'+chr(39)+' > /tmp/networktest';
+                                 Application.ProcessMessages;
+                                 Shell(str);
+                                 Application.ProcessMessages;
+                                 Shell('printf "none\n" >> /tmp/networktest');
+                                 Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+                                 If Memo_networktest.Lines[0]='none' then NoPingDNS1:=true;
+                                 Shell('rm -f /tmp/networktest');
+                            end;
+If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_Config.Lines[34]<>'usepeerdns-yes' then
+       if not FileExists('/var/run/ppp/resolv.conf') then
+                            begin //тест dns2-сервера
+                                 Shell('rm -f /tmp/networktest');
+                                 Str:='ping -c1 '+Memo_config.Lines[31]+'|grep '+chr(39)+'1 received'+chr(39)+' > /tmp/networktest';
+                                 Application.ProcessMessages;
+                                 Shell(str);
+                                 Application.ProcessMessages;
+                                 Shell('printf "none\n" >> /tmp/networktest');
+                                 Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+                                 If Memo_networktest.Lines[0]='none' then NoPingDNS2:=true;
+                                 Shell('rm -f /tmp/networktest');
+                            end;}
  If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindUtils)) or ((Memo_Config.Lines[23]='networktest-yes') and (Memo_config.Lines[22]='routevpnauto-no')) then
                             begin //тест vpn-сервера
                                  Shell('rm -f /tmp/networktest');
@@ -360,14 +414,6 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                                                         Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
                                                         If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/tmp/ip-down') then
                                                                                         Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
-                                                        Application.ProcessMessages;
-                                                        str:='';
-                                                        str:=message14+message12+Memo_Config.Lines[0]+'...';
-                                                        If Memo_Config.Lines[9]='dhcp-route-yes' then if DhclientStart then str:=message13+str;
-                                                        If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then str:=message21+str;
-                                                        BalloonMessage (8000,str);
-                                                        Application.ProcessMessages;
-                                                        If Form1.Memo_Config.Lines[24]='balloon-no' then sleep(2000);
                                                   end;
                                               end;
                                            closefile (Filenetworktest);
@@ -433,22 +479,30 @@ If not Code_up_ppp then If link=2 then
                                                                 halt;
                                                               end;
                                   end;
-If not Code_up_ppp then
+If not Code_up_ppp then If ((link=2) or (link=3)) then
                            begin
-                                 Application.ProcessMessages;
-                                 If NoPingIPS then str:=message15;
-                                 If NoPingGW then str:=message18;
-                                 If NoDNS then str:=message17;
-                                 If (NoPingIPS and NoDNS) then str:=message15+message17;
-                                 If (NoPingGW and NoDNS) then str:=message18+message17;
-                                 If (NoPingGW and NoPingIPS) then str:=message18+message15;
-                                 If (NoPingGW and NoPingIPS and NoDNS) then str:=message18+message15+message17;
-                             If (NoPingIPS) or (NoPingGW) or (NoDNS) then BalloonMessage (8000,str);
+                                  Application.ProcessMessages;
+                                  If NoPingDNS1 then BalloonMessage (8000,message23);
+                                  If NoPingDNS2 then BalloonMessage (8000,message24);
+                                  str:='';
+                                  If Memo_config.Lines[22]='routevpnauto-yes' then If NewIPS then str:=message14+str;
+                                  If Memo_Config.Lines[9]='dhcp-route-yes' then if DhclientStart then str:=message13+str;
+                                  If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then str:=message21+str;
+                                  If NoPingIPS then str:=message15;
+                                  If NoPingGW then str:=message18;
+                                  If NoDNS then str:=message17;
+                                  If (NoPingIPS and NoDNS) then str:=message15+message17;
+                                  If (NoPingGW and NoDNS) then str:=message18+message17;
+                                  If (NoPingGW and NoPingIPS) then str:=message18+message15;
+                                  If (NoPingGW and NoPingIPS and NoDNS) then str:=message18+message15+message17;
+                                  If (NoPingIPS) or (NoPingGW) or (NoDNS) then BalloonMessage (8000,str);
                            end;
 If not Code_up_ppp then If link=1 then
                            begin
                                   Form1.MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
                                   Application.ProcessMessages;
+                                  If NoPingDNS1 then BalloonMessage (8000,message23);
+                                  If NoPingDNS2 then BalloonMessage (8000,message24);
                                   str:='';
                                   str:=message12+Memo_Config.Lines[0]+'...';
                                   If Memo_config.Lines[22]='routevpnauto-yes' then If NewIPS then str:=message14+str;
@@ -465,6 +519,9 @@ If not Code_up_ppp then If link=1 then
                                   Application.ProcessMessages;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then Shell('/usr/sbin/pppd call '+Memo_Config.Lines[0]);
                            end;
+Application.ProcessMessages;
+If NoPingDNS1 then begin sleep(1000); BalloonMessage (8000,message23);end;
+If NoPingDNS2 then begin sleep(1000); BalloonMessage (8000,message24);end;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -543,9 +600,10 @@ If FileExists('/opt/vpnpptp/config') then
     Timer2.Enabled:=False;
     halt;
    end;
-  If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
-
-                                                If FileExists('/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
+   Shell('rm -f /etc/resolv.conf.old');
+   If FileExists ('/etc/resolv.conf') then Shell('cp -f /etc/resolv.conf /etc/resolv.conf.old');
+   If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
+   If FileExists('/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
                                                                               begin
                                                                                   Memo_ip_down.Clear;
                                                                                   Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
@@ -553,7 +611,7 @@ If FileExists('/opt/vpnpptp/config') then
                                                                                   Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                   Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                                                               end;
-        If Memo_Config.Lines[7]='noreconnect-pptp' then
+   If Memo_Config.Lines[7]='noreconnect-pptp' then
                                              begin
                                                 Shell ('rm -f /tmp/ip-down');
                                                 Memo_ip_down.Clear;
@@ -602,7 +660,7 @@ If FileExists('/opt/vpnpptp/config') then
                                              MenuItem1Click(Self);
                                              end
                                                 else
-                                                   Timer1.Interval:=500;
+                                                   Timer1.Interval:=100;
 end;
 
 procedure TForm1.Memo_networktestChange(Sender: TObject);
@@ -629,13 +687,15 @@ begin
  Shell('rm -f /tmp/gate2');
  Shell('rm -f /tmp/users');
  Shell('rm -f /tmp/tmpnostart1');
- Shell('rm -f /tmp/status1.ppp');
  Shell('rm -f /tmp/status3.ppp');
  Shell('rm -f /tmp/status.ppp');
  Shell('rm -f /tmp/tmp_pppd');
 end;
 
 procedure TForm1.MenuItem3Click(Sender: TObject);
+//выход без аварии
+var
+ restart:boolean;
 begin
  Timer1.Enabled:=False;
  If Memo_Config.Lines[7]='noreconnect-pptp' then
@@ -660,13 +720,27 @@ begin
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then Shell ('/etc/ppp/ip-down.d/ip-down');
   Shell ('rm -f /tmp/gate');
+  restart:=false;
+  If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
+                                      begin
+                                         If not CompareFiles('/etc/resolv.conf.old','/etc/resolv.conf') then restart:=true;
+                                         Shell('cp -f /etc/resolv.conf.old /etc/resolv.conf');
+                                         Shell('rm -f /etc/resolv.conf.old');
+                                         If Memo_Config.Lines[34]<>'usepeerdns-yes' then If restart then Shell ('ifup '+Memo_Config.Lines[3]);
+                                      end;
   halt;
 end;
 
 procedure TForm1.MenuItem4Click(Sender: TObject);
+//выход при аварии
 begin
  MenuItem2Click(Self);
  Timer1.Enabled:=False;
+ If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
+                                      begin
+                                         Shell('cp -f /etc/resolv.conf.old /etc/resolv.conf');
+                                         Shell('rm -f /etc/resolv.conf.old');
+                                      end;
  If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
@@ -678,8 +752,8 @@ begin
                                                                                  Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                                                                  Shell ('rm -f /tmp/ip-down');
                                                                              end;
-                                              Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
                                             end;
+ Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
  halt;
 end;
 
@@ -692,7 +766,7 @@ procedure TForm1.Timer2Timer(Sender: TObject);
 //индикация иконки в трее, балуны и тест интернета
 var
   j:integer;
-  Code_up_ppp_timer,Code_up_ppp:boolean;
+  Code_up_ppp:boolean;
   Str:string;
 begin
   //Проверяем поднялось ли соединение
@@ -712,21 +786,7 @@ begin
        Code_up_ppp:=True;
       end;
    end;
-  Shell('rm -f /tmp/status1.ppp');
-  Memo2.Clear;
-  Shell('ifconfig | grep Link > /tmp/status1.ppp');
-  Application.ProcessMessages;
-  Code_up_ppp_timer:=False;
-  If FileExists('/tmp/status1.ppp') then Memo2.Lines.LoadFromFile('/tmp/status1.ppp');
-  Memo2.Lines.Add(' ');
-  For j:=0 to Memo2.Lines.Count-1 do
-   begin
-     If LeftStr(Memo2.Lines[j],3)='ppp' then
-      begin
-       Code_up_ppp_timer:=True;
-      end;
-   end;
-  If Code_up_ppp_timer then
+  If Code_up_ppp then
                            begin
                              Application.ProcessMessages;
                              TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
@@ -752,7 +812,7 @@ If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-y
                             end;
                              StartMessage:=false;
                            end;
-  If not Code_up_ppp_timer then
+  If not Code_up_ppp then
                            begin
                              Application.ProcessMessages;
                              If not StartMessage then

@@ -1,4 +1,4 @@
-%define rel 2
+%define rel 5
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control MS VPN via PPTP
 Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPT
 Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
 Name: vpnpptp-allde
-Version: 0.1.1
+Version: 0.1.2
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -73,6 +73,7 @@ ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
 mkdir $RPM_BUILD_ROOT/opt
 mkdir $RPM_BUILD_ROOT/opt/vpnpptp
 mkdir $RPM_BUILD_ROOT/opt/vpnpptp/scripts
+mkdir $RPM_BUILD_ROOT/opt/vpnpptp/wiki
 mkdir $RPM_BUILD_ROOT/opt/vpnpptp/lang
 mkdir $RPM_BUILD_ROOT/usr
 mkdir $RPM_BUILD_ROOT/usr/bin
@@ -89,6 +90,7 @@ cp -f ./ponoff.png $RPM_BUILD_ROOT/opt/vpnpptp/
 cp -f ./vpnpptp.png $RPM_BUILD_ROOT/opt/vpnpptp/
 cp -f ./*.ico $RPM_BUILD_ROOT/opt/vpnpptp
 cp -rf ./scripts $RPM_BUILD_ROOT/opt/vpnpptp/
+cp -rf ./wiki $RPM_BUILD_ROOT/opt/vpnpptp/
 cp -rf ./lang $RPM_BUILD_ROOT/opt/vpnpptp/
 
 install -dm 755 %{buildroot}%{_datadir}/applications
@@ -154,6 +156,7 @@ install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp_al
 /opt/vpnpptp/vpnpptp.png
 /opt/vpnpptp/*.ico
 /opt/vpnpptp/scripts
+/opt/vpnpptp/wiki
 %{_datadir}/applications/ponoff.desktop
 %{_datadir}/applications/vpnpptp.desktop
 /usr/lib/libDrakX/network/vpn/vpnpptp_allde.pm
