@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, SynExportHTML, unix;
+  StdCtrls, unix;
 
 type
 
@@ -105,7 +105,6 @@ end;
 { TForm2 }
 
 procedure TForm2.FormCreate(Sender: TObject);
-var str:string;
 begin
    Form2.Hide;
 //масштабирование формы в зависимости от разрешения экрана

@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 177
+  Left = 817
   Height = 307
-  Top = 114
+  Top = 64
   Width = 457
   ActiveControl = CheckBoxlock
   Caption = 'Опции демона pppd'

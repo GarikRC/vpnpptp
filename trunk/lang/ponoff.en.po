@@ -100,3 +100,11 @@ msgstr "Found to match with the remote ip address ip-address of the vpn-server. 
 #: unit1.message21
 msgid "Ошибка получения ма#209�ш#209�утов по DHCP. "
 msgstr "Failed to get routes via DHCP."
+
+#: unit1.message23
+msgid "DNS1-се#209�ве#209� не пингуется. "
+msgstr "DNS1-server does not ping. "
+
+#: unit1.message24
+msgid "DNS2-се#209�ве#209� не пингуется. "
+msgstr "DNS2-server does not ping. "

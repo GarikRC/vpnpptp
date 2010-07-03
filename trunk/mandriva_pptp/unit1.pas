@@ -33,8 +33,10 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
-    Button1: TButton;
+    ButtonVPN: TButton;
+    ButtonHidePass: TButton;
     Button_create: TButton;
+    ButtonHelp: TButton;
     Button_exit: TButton;
     Button_more: TButton;
     Button_next1: TButton;
@@ -42,6 +44,18 @@ type
     balloon: TCheckBox;
     Autostart_ponoff: TCheckBox;
     Autostartpppd: TCheckBox;
+    EditDNS3: TEdit;
+    EditDNS4: TEdit;
+    LabelDNS3: TLabel;
+    LabelDNS4: TLabel;
+    routeDNSauto: TCheckBox;
+    EditDNSdop3: TEdit;
+    EditDNS1: TEdit;
+    EditDNS2: TEdit;
+    Edit_mtu: TEdit;
+    LabelDNS2: TLabel;
+    LabelDNS1: TLabel;
+    Label_mtu: TLabel;
     Memonew1: TMemo;
     Memonew2: TMemo;
     pppnotdefault: TCheckBox;
@@ -84,7 +98,6 @@ type
     Edit_eth: TEdit;
     Edit_gate: TEdit;
     Edit_IPS: TEdit;
-    Edit_mtu: TEdit;
     Edit_passwd: TEdit;
     Edit_peer: TEdit;
     Edit_user: TEdit;
@@ -116,7 +129,6 @@ type
     Label_route: TLabel;
     Label_user: TLabel;
     Label_pswd: TLabel;
-    Label_mtu: TLabel;
     Memo_eth: TMemo;
     Memo_pptp: TMemo;
     Memo_peer: TMemo;
@@ -135,7 +147,9 @@ type
     procedure AutostartpppdChange(Sender: TObject);
     procedure Autostart_ponoffChange(Sender: TObject);
     procedure balloonChange(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure ButtonHelpClick(Sender: TObject);
+    procedure ButtonHidePassClick(Sender: TObject);
+    procedure ButtonVPNClick(Sender: TObject);
     procedure Button_addoptionsClick(Sender: TObject);
     procedure Button_createClick(Sender: TObject);
     procedure Button_exitClick(Sender: TObject);
@@ -146,6 +160,7 @@ type
     procedure CheckBox_desktopChange(Sender: TObject);
     procedure networktestChange(Sender: TObject);
     procedure pppnotdefaultChange(Sender: TObject);
+    procedure routeDNSautoChange(Sender: TObject);
     procedure routevpnautoChange(Sender: TObject);
     procedure CheckBox_no40Change(Sender: TObject);
     procedure CheckBox_no56Change(Sender: TObject);
@@ -208,8 +223,11 @@ var
   BindUtils:boolean; //установлен ли пакет bind-utils
   Sudo:boolean; //установлен ли пакет sudo
   More:boolean; //отслеживает, что кнопку Button_more уже нажимали
+  DNS_auto:boolean; //если false, то DNS провайдер выдает для ручного ввода
+  DNSA,DNSB,DNSdopC,DNSC,DNSD:string; //автоопределенные конфигуратором DNS
+
 const
-  Config_n=30;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=37;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
@@ -249,9 +267,9 @@ resourcestring
   message35='Отменив получение маршрутов через dhcp, не будут одновременно работать интернет и локальная сеть, а будет работать только интернет.';
   message36='Отменить настройку файервола программой стоит только если файервол отключен, или файервол Вами самостоятельно настраивается.';
   message37='Если интернет хорошо работает без опции программного добавления маршрута к vpn-серверу, то не стоит нагружать систему.';
-  message38='При выборе этой опции проверяется пинг vpn-сервера, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные проблемы, выводя сообщения.';
+  message38='При выборе этой опции проверяется пинг vpn-, dns-сервера, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные проблемы, выводя сообщения.';
   message39='Отменить эту опцию стоит только если у Вас стабильные локальная сеть и интернет, и они никогда не падают.';
-  message40='Эта опция блокирует все всплывающие сообщения из трея, а также отключает проверку vpn-сервера, шлюза локальной сети и есть ли интернет.';
+  message40='Эта опция блокирует все всплывающие сообщения из трея, а также отключает проверку dns-, vpn-сервера, шлюза локальной сети и есть ли интернет.';
   message41='Проверка показала, что маршруты через dhcp не приходят. Одновременная работа интернета и лок. сети не настроена.';
   message42='Получение маршрутов через dhcp будет отменено, так как маршруты через dhcp не приходят.';
   message43='Vpn-сервер не пингуется. Устраните проблему и заново запустите конфигуратор.';
@@ -269,7 +287,7 @@ resourcestring
   message55='Часто используется аутентификация mschap v2 - это одновременный выбор refuse-eap, refuse-chap, refuse-mschap. Часто используется шифрование трафика require-mppe-128.';
   message56='Эта опция создает ярлык ponoff на Рабочем столе для доступа в интернет пользователю, позволяя ему управлять соединением через иконку в трее.';
   message57='Для того, чтобы разрешить пользователям управлять подключением сначала установите пакет sudo.';
-  //message58='Пользователям разрешается управлять подключением через ярлык на Рабочем столе - была включена опция создания ярлыка на Рабочем столе.';
+  ////message58='Пользователям разрешается управлять подключением через ярлык на Рабочем столе - была включена опция создания ярлыка на Рабочем столе.';
   message59='Выбор опции автозапуска интернета при старте системы возможен только при выборе опции разрешения пользователям управлять подключением.';
   message60='Автозапуск интернета при старте системы не настроен. Отсутствует ~/.config/autostart/ или используется нестандартный идентификатор пользователя.';
   message61='Автозапуск интернета при старте системы не настроен. Отсутствует файл /usr/share/applications/ponoff.desktop.';
@@ -277,6 +295,28 @@ resourcestring
   message63='Не допустим одновременный выбор графического автозапуска интернета при старте системы и автозапуск демоном pppd без графики.';
   message64='Эта опция полезна если VPN PPTP не должно быть главным.';
   message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd и неизменять дефолтный шлюз, запустив VPN PPTP в фоне.';
+  message66='Не удалось автоматически определить ни DNS1, ни DNS2.';
+  message67='Поле "DNS1 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
+  message68='Поле "DNS2 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
+  message69='Необходимо ввести хотя бы одно DNS1 до поднятия VPN или DNS2 до поднятия VPN.';
+  ////message70='';
+  message71='Эта опция часто позволяет достичь ускорения интернета, но не у всех провайдеров и невсегда.';
+  ////message72='При отмене этой опции dns-сервера будут доступны через внешнюю сеть, если Вы или сам провайдер не маршрутизируете их иначе.';
+  message73='Пингуется DNS1-сервер. Ожидайте...';
+  message74='DNS1-сервер не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
+  message75='Пингуется DNS2-сервер. Ожидайте...';
+  message76='DNS2-сервер не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
+  ////message77='Сейчас автоматически DNS1 до поднятия VPN поменяется местами с DNS2 до поднятия VPN.';
+  ////message78='Нельзя маршрутизировать нелокальные dns-сервера в шлюз локальной сети.';
+  ////message79='';
+  message80='Выбрана опция usepeerdns: если vpn-сервер предоставит свои dns, то будут использоваться они, невзирая на другие настройки dns.';
+  message81='Поле "DNS1 при поднятом VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
+  message82='Поле "DNS2 при поднятом VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
+  message83='Необходимо ввести хотя бы одно DNS1 при поднятом VPN или DNS2 при поднятом VPN.';
+  message84='DNS2-сервер не пингуется или теряются пакеты, но пингуется DNS1-сервер, поэтому это некритично.';
+  message85='DNS1-сервер не пингуется или теряются пакеты, но пингуется DNS2-сервер, поэтому будут тормоза.';
+  message86='Показать пароль';
+  message87='Скрыть пароль';
 
 implementation
 
@@ -331,6 +371,25 @@ begin
                                                                                          Form1.CheckBox_shifr.Checked:=false;
 end;
 
+function CompareFiles(const FirstFile, SecondFile: string): Boolean;
+//сравнение файлов
+var
+  f1, f2: TMemoryStream;
+begin
+  Result := false;
+  f1 := TMemoryStream.Create;
+  f2 := TMemoryStream.Create;
+  try
+    f1.LoadFromFile(FirstFile);
+    f2.LoadFromFile(SecondFile);
+    if f1.Size = f2.Size then
+            Result := CompareMem(f1.Memory, f2.memory, f1.Size);
+  finally
+    f2.Free;
+    f1.Free;
+  end
+end;
+
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i:integer;
@@ -338,13 +397,15 @@ var mppe_string:string;
     gksu, link_on_desktop:boolean;
     Str,Str1:string;
     flag:boolean;
-    FileSudoers,FileAutostartpppd:textfile;
+    FileSudoers,FileAutostartpppd,FileResolvConf:textfile;
     FlagAutostartPonoff:boolean;
+    EditDNS1ping, EditDNS2ping:boolean;
+    endprint:boolean;
+    N:byte;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
-Button_more.Visible:=false;
-//проверка текущего состояния дополнительных сторонних пакетов
+//проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
  If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
                        begin
@@ -382,6 +443,20 @@ Button_more.Visible:=false;
                           dhcp_route.Checked:=false;
                           StartMessage:=true;
                        end;
+   If StartMessage then If routevpnauto.Checked then If not BindUtils then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message29);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+  If Unit2.Form2.CheckBoxusepeerdns.Checked then
+                                         begin
+                                            pchar_message0:=Pchar(message0);
+                                            pchar_message1:=Pchar(message80);
+                                            if Application.MessageBox(pchar_message1,pchar_message0, 1)<>mrOK then exit;
+                                         end;
+Button_more.Visible:=false;
+If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 Shell('rm -f /opt/vpnpptp/hosts');
 If FileExists('/etc/ppp/ip-up.old') then //сброс настройки маршрутизации remote ip address в шлюз локальной сети
                                    begin
@@ -638,8 +713,19 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
      i:=i+1;
     end;
   end;
+ If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS1.Text<>'none' then Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS1.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+ If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS2.Text<>'none' then Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS2.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+ If routeDNSauto.Checked then If pppnotdefault.Checked then
+                                                       begin
+                                                          Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                       end;
  If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
- If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route add default dev ppp0');
+ If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
+ Memo_ip_up.Lines.Add('cp -f /etc/resolv.conf /etc/resolv.conf.lock');
+ Memo_ip_up.Lines.Add('cp -f /var/run/ppp/resolv.conf /etc/resolv.conf');
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
@@ -681,6 +767,17 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  if Edit_gate.Text <> '' then
                            Memo_ip_down.Lines.Add('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
  If routevpnauto.Checked then if IPS then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Edit_IPS.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+ If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS1.Text<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + EditDNS1.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+ If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS2.Text<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + EditDNS2.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+ If routeDNSauto.Checked then If pppnotdefault.Checked then
+                                                       begin
+                                                          Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                       end;
+ Memo_ip_down.Lines.Add('cp -f /etc/resolv.conf.lock /etc/resolv.conf');
+ Memo_ip_down.Lines.Add('rm -f /etc/resolv.conf.lock');
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля
@@ -741,7 +838,16 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                               Shell('printf "autostart-pppd-no\n" >> /opt/vpnpptp/config');
  If pppnotdefault.Checked then Shell('printf "pppnotdefault-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "pppnotdefault-no\n" >> /opt/vpnpptp/config');
-Shell ('chmod 600 /opt/vpnpptp/config');
+ Shell('printf "'+EditDNS1.Text+'\n" >> /opt/vpnpptp/config');
+ Shell('printf "'+EditDNS2.Text+'\n" >> /opt/vpnpptp/config');
+ Shell('printf "'+EditDNSdop3.Text+'\n" >> /opt/vpnpptp/config');
+ If routeDNSauto.Checked then Shell('printf "routednsauto-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "routednsauto-no\n" >> /opt/vpnpptp/config');
+ If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('printf "usepeerdns-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell ('printf "usepeerdns-no\n" >> /opt/vpnpptp/config');
+ Shell('printf "'+EditDNS3.Text+'\n" >> /opt/vpnpptp/config');
+ Shell('printf "'+EditDNS4.Text+'\n" >> /opt/vpnpptp/config');
+ Shell ('chmod 600 /opt/vpnpptp/config');
 //Создаем ярлык для подключения
  gksu:=false;
  link_on_desktop:=false;
@@ -835,6 +941,16 @@ end;
                                     Application.MessageBox(pchar_message1,pchar_message0, 0);
                                end;
 //настройка sudoers
+If FileExists('/usr/share/applications/ponoff.desktop.old') then //восстанавливаем ярлык запуска ponoff
+                                            begin
+                                              Shell('cp -f /usr/share/applications/ponoff.desktop.old /usr/share/applications/ponoff.desktop');
+                                              Shell('rm -f /usr/share/applications/ponoff.desktop.old');
+                                            end;
+If FileExists('/usr/share/applications/vpnpptp.desktop.old') then //восстанавливаем ярлык запуска vpnpptp
+                                            begin
+                                              Shell('cp -f /usr/share/applications/vpnpptp.desktop.old /usr/share/applications/vpnpptp.desktop');
+                                              Shell('rm -f /usr/share/applications/vpnpptp.desktop.old');
+                                            end;
 If FileExists ('/etc/sudoers') then If ((Sudo_ponoff.Checked) or (Sudo_configure.Checked)) then
                               begin
                                 AssignFile (FileSudoers,'/etc/sudoers');
@@ -889,12 +1005,6 @@ If Sudo_configure.Checked then If not FileExists('/usr/share/applications/vpnppt
                               end;
                             Memonew1.Lines.SaveToFile('/usr/share/applications/vpnpptp.desktop');
                         end;
-If not Sudo_configure.Checked then
-                     If FileExists('/usr/share/applications/vpnpptp.desktop.old') then //восстанавливаем ярлык запуска vpnpptp
-                                            begin
-                                              Shell('cp -f /usr/share/applications/vpnpptp.desktop.old /usr/share/applications/vpnpptp.desktop');
-                                              Shell('rm -f /usr/share/applications/vpnpptp.desktop.old');
-                                            end;
 If Sudo_ponoff.Checked then If not FileExists('/usr/share/applications/ponoff.desktop.old') then
                      If FileExists('/usr/share/applications/ponoff.desktop') then //правим ярлык запуска ponoff
                         begin
@@ -912,12 +1022,6 @@ If Sudo_ponoff.Checked then If not FileExists('/usr/share/applications/ponoff.de
                               end;
                             Memonew2.Lines.SaveToFile('/usr/share/applications/ponoff.desktop');
                         end;
-If not Sudo_ponoff.Checked then
-                     If FileExists('/usr/share/applications/ponoff.desktop.old') then //восстанавливаем ярлык запуска vpnpptp
-                                            begin
-                                              Shell('cp -f /usr/share/applications/ponoff.desktop.old /usr/share/applications/ponoff.desktop');
-                                              Shell('rm -f /usr/share/applications/ponoff.desktop.old');
-                                            end;
 //Получаем список пользователей для автозапуска ponoff при старте системы и организация автозапуска
   Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users'); //для новых идентификаторов
   Memo_users.Clear;
@@ -996,7 +1100,99 @@ If FileExists ('/etc/rc.d/rc.local') then If not Autostartpppd.Checked then  //�
                                  Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
                                  Shell ('chmod +x /etc/rc.d/rc.local');
                               end;
-//проверка технической возможности поднятия соединения (пока только проверка vpn-сервера и шлюза, dns потом напишу)
+ //настраиваем /var/run/ppp/resolv.conf
+ endprint:=false;
+ i:=0;
+ N:=0;
+ if EditDNS3.Text='' then EditDNS3.Text:='none';
+ if EditDNS4.Text='' then EditDNS4.Text:='none';
+ if EditDNS3.Text<>'none' then if EditDNS4.Text<>'none' then N:=2;
+ if (EditDNS3.Text='none') or (EditDNS4.Text='none') then N:=1;
+ if EditDNS3.Text='none' then if EditDNS4.Text='none' then N:=0;
+ AssignFile (FileResolvConf,'/etc/resolv.conf');
+ reset (FileResolvConf);
+ While not eof (FileResolvConf) do
+     begin
+        readln(FileResolvConf, str);
+        if LeftStr(str,11)<>'nameserver ' then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
+        if LeftStr(str,11)='nameserver ' then i:=i+1;
+        if LeftStr(str,11)='nameserver ' then if not endprint then
+                                       begin
+                                            if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then Shell ('printf "nameserver '+EditDNS3.Text+'\n" >> /var/run/ppp/resolv.conf');
+                                            if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /var/run/ppp/resolv.conf');
+                                            endprint:=true;
+                                       end;
+        if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
+     end;
+ closefile(FileResolvConf);
+//проверка технической возможности поднятия соединения
+EditDNS1ping:=true;
+EditDNS2ping:=true;
+   //тест EditDNS1-сервера
+If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
+  begin
+     Shell('rm -f /tmp/networktest');
+     Str:='ping -c2 '+EditDNS1.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
+     Label42.Caption:='';
+     Label43.Caption:=message73;
+     Application.ProcessMessages;
+     Shell(str);
+     Application.ProcessMessages;
+     Shell('printf "none\n" >> /tmp/networktest');
+     Memo_networktest.Lines.Clear;
+     Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+     If Memo_networktest.Lines[0]='none' then EditDNS1ping:=false;
+     Shell('rm -f /tmp/networktest');
+  end;
+   //тест EditDNS2-сервера
+If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
+  begin
+     Shell('rm -f /tmp/networktest');
+     Str:='ping -c2 '+EditDNS2.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
+     Label42.Caption:='';
+     Label43.Caption:=message75;
+     Application.ProcessMessages;
+     Shell(str);
+     Application.ProcessMessages;
+     Shell('printf "none\n" >> /tmp/networktest');
+     Memo_networktest.Lines.Clear;
+     Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+     If Memo_networktest.Lines[0]='none' then EditDNS2ping:=false;
+     Shell('rm -f /tmp/networktest');
+  end;
+If (not EditDNS1ping) and (not EditDNS2ping) then
+                                         begin
+                                                Label42.Caption:='';
+                                                Label43.Caption:=message74;
+                                                Application.ProcessMessages;
+                                                pchar_message0:=Pchar(message0);
+                                                pchar_message1:=Pchar(message74);
+                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                Label42.Caption:='';
+                                                Label43.Caption:=message76;
+                                                Application.ProcessMessages;
+                                                pchar_message0:=Pchar(message0);
+                                                pchar_message1:=Pchar(message76);
+                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                         end;
+If (EditDNS1ping) and (not EditDNS2ping) then
+                                         begin
+                                                Label42.Caption:='';
+                                                Label43.Caption:=message84;
+                                                Application.ProcessMessages;
+                                                pchar_message0:=Pchar(message0);
+                                                pchar_message1:=Pchar(message84);
+                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                         end;
+If (not EditDNS1ping) and (EditDNS2ping) then
+                                         begin
+                                                Label42.Caption:='';
+                                                Label43.Caption:=message85;
+                                                Application.ProcessMessages;
+                                                pchar_message0:=Pchar(message0);
+                                                pchar_message1:=Pchar(message85);
+                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                         end;
    //тест vpn-сервера
 If not flag then
    begin
@@ -1069,19 +1265,19 @@ begin
 
 end;
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.ButtonVPNClick(Sender: TObject);
 //определение ip vpn-сервера по кнопке
 var
    str0,str:string;
    pchar_message0,pchar_message1:pchar;
 begin
-  str0:=Button1.Caption;
-  Button1.Caption:=message53;
+  str0:=ButtonVPN.Caption;
+  ButtonVPN.Caption:=message53;
   Application.ProcessMessages;
   Shell('rm -f /tmp/ip_IPS');
   If StartMessage then If Edit_IPS.Text='' then
                                              begin
-                                                Button1.Caption:=str0;
+                                                ButtonVPN.Caption:=str0;
                                                 Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message28);
@@ -1095,7 +1291,7 @@ begin
   Str:=Memo_ip_IPS.Lines[0];
   If StartMessage then If Str='none' then
                                      begin
-                                          Button1.Caption:=str0;
+                                          ButtonVPN.Caption:=str0;
                                           Application.ProcessMessages;
                                           pchar_message0:=Pchar(message0);
                                           pchar_message1:=Pchar(message26);
@@ -1106,10 +1302,10 @@ If Str <>'none' then Str:=DeleteSym(')',Str);
 If Str <>'none' then Str:=DeleteSym('(',Str);
 If Str <>'none' then Edit_IPS.Text:=Str;
 Shell('rm -f /tmp/ip_IPS');
-Button1.Caption:=message52;
+ButtonVPN.Caption:=message52;
 Application.ProcessMessages;
 sleep(2000);
-Button1.Caption:=str0;
+ButtonVPN.Caption:=str0;
 Application.ProcessMessages;
 end;
 
@@ -1130,6 +1326,29 @@ begin
                           pchar_message1:=Pchar(message40);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                        end;
+end;
+
+procedure TForm1.ButtonHelpClick(Sender: TObject);
+begin
+    If FallbackLang='ru' then Shell('oowriter /opt/vpnpptp/wiki/Help_ru.doc');
+end;
+
+procedure TForm1.ButtonHidePassClick(Sender: TObject);
+begin
+  If Edit_passwd.EchoMode=emPassword then
+     begin
+          Edit_passwd.EchoMode:=emNormal;
+          ButtonHidePass.Caption:=message87;
+          Application.ProcessMessages;
+          exit;
+    end;
+  If Edit_passwd.EchoMode=emNormal then
+     begin
+          Edit_passwd.EchoMode:=emPassword;
+          ButtonHidePass.Caption:=message86;
+          Application.ProcessMessages;
+          exit;
+    end;
 end;
 
 procedure TForm1.Autostart_ponoffChange(Sender: TObject);
@@ -1286,6 +1505,18 @@ If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
                        end;
 end;
 
+procedure TForm1.routeDNSautoChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+   If StartMessage then If routeDNSauto.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message71);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+end;
+
 procedure TForm1.routevpnautoChange(Sender: TObject);
 var
    pchar_message0,pchar_message1:pchar;
@@ -1435,6 +1666,8 @@ var
    pchar_message0,pchar_message1:pchar;
    j:byte; //точка в написании шлюза
    a,b,c,d:string; //a.b.c.d-это шлюз
+   FileResolv_conf:textfile;
+   str:string;
 begin
 y:=false;
 //проверка корректности ввода времени дозвона
@@ -1568,6 +1801,34 @@ If not y then IPS:=true else IPS:=false;
                              pchar_message1:=Pchar(message14);
                              Application.MessageBox(pchar_message1,pchar_message0, 0);
                            end;
+  //определяем DNSA, DNSB и DNSdopC
+  If FileExists('/etc/resolv.conf') then
+                                    begin
+                                      AssignFile (FileResolv_conf,'/etc/resolv.conf');
+                                      reset (FileResolv_conf);
+                                      While not eof (FileResolv_conf) do
+                                          begin
+                                           readln(FileResolv_conf, str);
+                                           If leftstr(str,11)='nameserver ' then If DNSA='none' then DNSA:=RightStr(str,Length(str)-11);
+                                           If leftstr(str,11)='nameserver ' then If DNSB='none' then if DNSA<>'none' then if RightStr(str,Length(str)-11)<>DNSA then DNSB:=RightStr(str,Length(str)-11);
+                                           If leftstr(str,11)='nameserver ' then If DNSB<>'none' then if DNSA<>'none' then if RightStr(str,Length(str)-11)<>DNSA then if RightStr(str,Length(str)-11)<>DNSB then DNSdopC:=RightStr(str,Length(str)-11);
+                                         end;
+                                      closefile(FileResolv_conf);
+                                    end;
+  If DNSA='none' then if DNSB='none' then
+                           begin
+                             DNS_auto:=false;
+                             pchar_message0:=Pchar(message0);
+                             pchar_message1:=Pchar(message66);
+                             Application.MessageBox(pchar_message1,pchar_message0, 0);
+                           end;
+  EditDNS1.Text:=DNSA;
+  EditDNS2.Text:=DNSB;
+  DNSC:=DNSA;
+  DNSD:=DNSB;
+  EditDNSdop3.Text:=DNSdopC;
+  EditDNS3.Text:=DNSA;
+  EditDNS4.Text:=DNSB;
   If not FileExists ('/opt/vpnpptp/route') then Memo_route.Clear;
   Shell('rm -f /tmp/gate');
   Shell('rm -f /tmp/eth');
@@ -1686,6 +1947,132 @@ If y then
            Edit_gate.Text:=Memo_gate.Lines[0];
            exit;
          end;
+ Edit_gate.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+//проверка корректности ввода EditDNS3
+If Length(EditDNS3.Text)>15 then //15-макс.длина шлюза 255.255.255.255
+                    begin
+                         pchar_message0:=Pchar(message0);
+                         pchar_message1:=Pchar(message81);
+                         Application.MessageBox(pchar_message1,pchar_message0, 0);
+                         EditDNS3.Text:='none';
+                         exit;
+                    end;
+j:=0;
+a:=''; b:=''; c:=''; d:='';
+y:=false;
+For i:=1 to Length (EditDNS3.Text) do //символьная строка шлюза разбивается на октеты (или квадранты)
+    begin
+      if j=0 then if EditDNS3.Text[i]<>'.' then a:=a+EditDNS3.Text[i];
+      if j=1 then if EditDNS3.Text[i]<>'.' then b:=b+EditDNS3.Text[i];
+      if j=2 then if EditDNS3.Text[i]<>'.' then c:=c+EditDNS3.Text[i];
+      if j=3 then if EditDNS3.Text[i]<>'.' then d:=d+EditDNS3.Text[i];
+      if EditDNS3.Text[i]='.' then j:=j+1;
+    end;
+If (j>3) or (Length(a)>3) or (Length(b)>3) or (Length(c)>3) or (Length(d)>3)
+or (a='') or (b='') or (c='') or (d='') then y:=true;
+//проверка на то, а все ли цифры, нет ли букв и иных символов
+if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
+Try
+    StrToInt(a);
+    StrToInt(b);
+    StrToInt(c);
+    StrToInt(d);
+  except
+    On EConvertError do
+      y:=true;
+  end;
+If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
+         begin
+           pchar_message0:=Pchar(message0);
+           pchar_message1:=Pchar(message81);
+           Application.MessageBox(pchar_message1,pchar_message0, 0);
+           EditDNS3.Text:='none';
+           exit;
+         end;
+//каждый октет (или квадрант) может принимать значение от 0 до 255, итого 256 значений
+if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
+begin
+If not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
+If not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
+If not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
+If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
+end;
+If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
+         begin
+           pchar_message0:=Pchar(message0);
+           pchar_message1:=Pchar(message81);
+           Application.MessageBox(pchar_message1,pchar_message0, 0);
+           EditDNS3.Text:='none';
+           exit;
+         end;
+if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then EditDNS3.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+//проверка корректности ввода EditDNS4
+If Length(EditDNS4.Text)>15 then //15-макс.длина шлюза 255.255.255.255
+                    begin
+                         pchar_message0:=Pchar(message0);
+                         pchar_message1:=Pchar(message82);
+                         Application.MessageBox(pchar_message1,pchar_message0, 0);
+                         EditDNS4.Text:='none';
+                         exit;
+                    end;
+j:=0;
+a:=''; b:=''; c:=''; d:='';
+y:=false;
+For i:=1 to Length (EditDNS4.Text) do //символьная строка шлюза разбивается на октеты (или квадранты)
+    begin
+      if j=0 then if EditDNS4.Text[i]<>'.' then a:=a+EditDNS4.Text[i];
+      if j=1 then if EditDNS4.Text[i]<>'.' then b:=b+EditDNS4.Text[i];
+      if j=2 then if EditDNS4.Text[i]<>'.' then c:=c+EditDNS4.Text[i];
+      if j=3 then if EditDNS4.Text[i]<>'.' then d:=d+EditDNS4.Text[i];
+      if EditDNS4.Text[i]='.' then j:=j+1;
+    end;
+If (j>3) or (Length(a)>3) or (Length(b)>3) or (Length(c)>3) or (Length(d)>3)
+or (a='') or (b='') or (c='') or (d='') then y:=true;
+//проверка на то, а все ли цифры, нет ли букв и иных символов
+if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
+Try
+    StrToInt(a);
+    StrToInt(b);
+    StrToInt(c);
+    StrToInt(d);
+  except
+    On EConvertError do
+      y:=true;
+  end;
+If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
+         begin
+           pchar_message0:=Pchar(message0);
+           pchar_message1:=Pchar(message82);
+           Application.MessageBox(pchar_message1,pchar_message0, 0);
+           EditDNS4.Text:='none';
+           exit;
+         end;
+//каждый октет (или квадрант) может принимать значение от 0 до 255, итого 256 значений
+if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
+begin
+If not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
+If not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
+If not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
+If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
+end;
+If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
+         begin
+           pchar_message0:=Pchar(message0);
+           pchar_message1:=Pchar(message82);
+           Application.MessageBox(pchar_message1,pchar_message0, 0);
+           EditDNS4.Text:='none';
+           exit;
+         end;
+if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then EditDNS4.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+If ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if ((EditDNS4.Text='none') or (EditDNS4.Text='')) then
+                           begin
+                             pchar_message0:=Pchar(message0);
+                             pchar_message1:=Pchar(message83);
+                             Application.MessageBox(pchar_message1,pchar_message0, 0);
+                             exit;
+                           end;
+If EditDNS3.Text='' then EditDNS3.Text:='none';
+If EditDNS4.Text='' then EditDNS4.Text:='none';
 //проверка ввода mtu, разрешен диапазон [576..1500], рекомендуется 1460
 For i:=1 to Length(Edit_mtu.Text) do
 begin
@@ -1706,13 +2093,14 @@ If (StrToInt(Edit_mtu.Text)>1500) or (StrToInt(Edit_mtu.Text)<576) then
                                         exit;
                                       end;
 end;
- Edit_gate.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
  Button_more.Visible:=True;
  Button_create.Visible:=True;
  TabSheet1.TabVisible:= False;
  TabSheet2.TabVisible:= False;
  TabSheet3.TabVisible:= True;
  Button_next2.Visible:=False;
+ Unit2.Form2.Obrabotka(Edit_peer.Text, more);
+ ButtonHelp.Visible:=false;
 end;
 
 procedure TForm1.CheckBox_shifrChange(Sender: TObject);
@@ -1761,8 +2149,22 @@ var i:integer;
     pchar_message0,pchar_message1:pchar;
     len:integer;
 begin
+ButtonHidePass.Caption:=message86;
 StartMessage:=false;
 more:=false;
+EditDNS1.Text:='none';
+EditDNS2.Text:='none';
+EditDNSdop3.Text:='none';
+EditDNS3.Text:='none';
+EditDNS4.Text:='none';
+DNSA:='none';
+DNSB:='none';
+DNSdopC:='none';
+DNSC:='none';
+DNSD:='none';
+If FallbackLang='ru' then ButtonHelp.Visible:=true;
+If FileExists('/var/run/ppp/resolv.conf') then Shell('rm -f /var/run/ppp/resolv.conf');
+DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получаются автоматически пока не будет доказано обратного
 //масштабирование формы в зависимости от разрешения экрана
    Form1.Height:=600;
    Form1.Width:=794;
@@ -1796,6 +2198,7 @@ more:=false;
                              Form1.Constraints.MaxHeight:=Screen.Height-50;
                              Form1.Constraints.MinHeight:=Screen.Height-50;
                              Button_create.BorderSpacing.Left:=Screen.Width-182;
+                             ButtonHelp.BorderSpacing.Left:=Screen.Width-182;
                              PageControl1.Height:=Screen.Height-200;
                              Button_next1.BorderSpacing.Left:=180;
                              Button_next2.BorderSpacing.Left:=180;
@@ -1809,6 +2212,7 @@ more:=false;
                              PageControl1.Width:=Screen.Width-1;
                              PageControl1.Height:=Screen.Height-50;
                              Button_create.BorderSpacing.Left:=Screen.Width-182;
+                             ButtonHelp.BorderSpacing.Left:=Screen.Width-182;
                              Memo_create.Width:=Screen.Width-5;
                              Form1.Constraints.MaxHeight:=Screen.Height-45;
                              Form1.Constraints.MinHeight:=Screen.Height-45;
@@ -1816,6 +2220,9 @@ more:=false;
                              Button_next1.BorderSpacing.Left:=220;
                              Button_next2.BorderSpacing.Left:=220;
                              Button_more.BorderSpacing.Left:=220;
+                             LabelDNS1.BorderSpacing.Top:=27;
+                             LabelDNS2.BorderSpacing.Top:=21;
+                             LabelDNS3.BorderSpacing.Top:=27;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
@@ -1848,6 +2255,7 @@ If Screen.Height>550 then   //разрешение в основном нетб�
                              Form1.Width:=794;
                              Memo_create.Width:=788;
                              Button_create.BorderSpacing.Left:=615;
+                             ButtonHelp.BorderSpacing.Left:=615;
                              Form1.Constraints.MaxHeight:=550;
                              Form1.Constraints.MinHeight:=550;
                              Form1.Constraints.MaxWidth:=794;
@@ -1861,6 +2269,7 @@ If Screen.Height>1000 then
                              Form1.Width:=884;
                              Memo_create.Width:=880;
                              Button_create.BorderSpacing.Left:=705;
+                             ButtonHelp.BorderSpacing.Left:=705;
                              Form1.Constraints.MaxHeight:=650;
                              Form1.Constraints.MinHeight:=650;
                              Form1.Constraints.MaxWidth:=884;
@@ -1869,6 +2278,9 @@ If Screen.Height>1000 then
                              Button_next1.BorderSpacing.Left:=350;
                              Button_next2.BorderSpacing.Left:=350;
                              Button_more.BorderSpacing.Left:=350;
+                             Label_mtu.BorderSpacing.Top:=20;
+                             EditDNS2.BorderSpacing.Top:=40;
+                             EditDNS4.BorderSpacing.Top:=35;
                          end;
 //проверка vpnpptp в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart');
@@ -1969,6 +2381,13 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
         If Memo_config.Lines[27]='autostart-ponoff-yes' then Autostart_ponoff.Checked:=true else Autostart_ponoff.Checked:=false;
         If Memo_config.Lines[28]='autostart-pppd-yes' then Autostartpppd.Checked:=true else Autostartpppd.Checked:=false;
         If Memo_config.Lines[29]='pppnotdefault-yes' then pppnotdefault.Checked:=true else pppnotdefault.Checked:=false;
+        //EditDNS1.Text:=Memo_config.Lines[30];
+        //EditDNS2.Text:=Memo_config.Lines[31];
+        //EditDNSdop3.Text:=Memo_config.Lines[32];
+        If Memo_config.Lines[33]='routednsauto-yes' then routeDNSauto.Checked:=true else routeDNSauto.Checked:=false;
+        //Memo_config.Lines[34] не восстанавливается из конфига
+        //EditDNS3.Text:=Memo_config.Lines[35];
+        //EditDNS4.Text:=Memo_config.Lines[36];
             If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
@@ -1994,15 +2413,16 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
   Button_next2.Visible:=False;
 If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
 StartMessage:=true;
-//определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть
-  Shell ('rm -f /tmp/gate');
+//рестарт
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If Memo_gate.Lines[0]='none' then Shell ('/etc/init.d/network restart');
-  Shell ('rm -f /tmp/gate');
-  Memo_gate.Lines.Clear;
+  If LeftStr(Memo_gate.Lines[0],3)<>'ppp' then
+                                         begin
+                                           Shell ('/etc/init.d/network restart');
+                                           sleep(3000);
+                                         end;
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
@@ -2158,7 +2578,7 @@ initialization
   {$I unit1.lrs}
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
-  //FallbackLang:='en'; //просто для проверки при отладке
+  //FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/vpnpptp.ru.po';

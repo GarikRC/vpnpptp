@@ -384,16 +384,16 @@ msgid "Если инте#209�нет хо#209�ошо #209�аботает б
 msgstr "If the internet works fine without the software options add a route to vpn server, then you should not load the system."
 
 #: unit1.message38
-msgid "П#209�и выбо#209�е этой опции п#209�ове#209�яется пинг vpn-се#209�ве#209�а, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные п#209�облемы, выводя сообщения."
-msgstr "In case of choosing this option, ping of vpn server, ping of local network, ping of yandex.ru are checked, main problems are discovered, taping messages."
+msgid "П#209�и выбо#209�е этой опции п#209�ове#209�яется пинг vpn-, dns-се#209�ве#209�а, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные п#209�облемы, выводя сообщения."
+msgstr "In case of choosing this option, ping of dns, vpn server, ping of local network, ping of yandex.ru are checked, main problems are discovered, taping messages."
 
 #: unit1.message39
 msgid "Отменить эту опцию стоит только если у Вас стабильные локальная сеть и инте#209�нет, и они никогда не падают."
 msgstr "You may cancel this option only if you have stable local network and The Internet and they never drop."
 
 #: unit1.message40
-msgid "Эта опция блоки#209�ует все всплывающие сообщения из т#209�ея, а также отключает п#209�ове#209�ку vpn-се#209�ве#209�а, шлюза локальной сети и есть ли инте#209�нет."
-msgstr "This option blocks all pop-up messages from tray , besides switches off checking vpn server, local network gate and the presence of The Internet."
+msgid "Эта опция блоки#209�ует все всплывающие сообщения из т#209�ея, а также отключает п#209�ове#209�ку dns-, vpn-се#209�ве#209�а, шлюза локальной сети и есть ли инте#209�нет."
+msgstr "This option blocks all pop-up messages from tray, besides switches off checking dns, vpn server, local network gate and the presence of Internet."
 
 #: unit1.message41
 msgid "П#209�ове#209�ка показала, что ма#209�ш#209�уты че#209�ез dhcp не п#209�иходят. Однов#209�еменная #209�абота инте#209�нета и лок. сети не наст#209�оена."
@@ -471,8 +471,8 @@ msgid "Пользователям #209�аз#209�ешается уп#209�а
 msgstr "Users is allowed to operate the connection with help link on Desktop - the option of creating link on Desktop was switched on."
 
 #: TFORM1.NETWORKTEST.CAPTION
-msgid "Проверять vpn-сервер, шлюз локальной сети и интернет"
-msgstr "To check vpn server, local network gate and The Internet"
+msgid "Проверять vpn-сервер, dns-сервер, шлюз локальной сети и интернет"
+msgstr "To check vpn server, dns server, local network gate and Internet"
 
 #: TFORM1.BALLOON.CAPTION
 msgid "Блокировать все всплывающие сообщения из трея"
@@ -553,3 +553,109 @@ msgstr "Options daemon pppd"
 #: TFORM1.BUTTON_MORE.CAPTION
 msgid "Дополнительно"
 msgstr "Advanced"
+
+#: TFORM1.ROUTEDNSAUTO.CAPTION
+msgid "Программно маршрутизировать dns-сервера"
+msgstr "Software to route the dns-server"
+
+#: unit1.message66
+msgid "Не удалось автоматически оп#209�еделить ни DNS1, ни DNS2."
+msgstr "Failed to automatically detect any DNS1, nor DNS2."
+
+#: unit1.message71
+msgid "Эта опция часто позволяет достичь уско#209�ения инте#209�нета, но не у всех п#209�овайде#209�ов и невсегда."
+msgstr "This option is often achieves speed Internet, but not all providers and does not always."
+
+#: unit1.message72
+msgid "П#209�и отмене этой опции dns-се#209�ве#209�а будут доступны че#209�ез внешнюю сеть, если Вы или сам п#209�овайде#209� не ма#209�ш#209�утизи#209�уете их иначе."
+msgstr "If you cancel this option dns-server will be available via the external network, if you or your ISP did not route them differently."
+
+#: unit1.message73
+msgid "Пингуется DNS1-се#209�ве#209�. Ожидайте..."
+msgstr "Can you ping DNS1-server. Please wait..."
+
+#: unit1.message74
+msgid "DNS1-се#209�ве#209� не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "DNS1-server does not ping or lost packets. Correct the problem and restart the configurator."
+
+#: unit1.message75
+msgid "Пингуется DNS2-се#209�ве#209�. Ожидайте..."
+msgstr "Can you ping DNS1-server. Please wait..."
+
+#: unit1.message76
+msgid "DNS2-се#209�ве#209� не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "DNS2-server does not ping or lost packets. Correct the problem and restart the configurator."
+
+#: unit1.message77
+msgid "Сейчас автоматически DNS1 встанет на место DNS2, а DNS2 встанет на место DNS1."
+msgstr "Now automatically DNS1 snaps home DNS2, and DNS2 will take the place DNS1."
+
+#: unit1.message78
+msgid "Нельзя ма#209�ш#209�утизи#209�овать нелокальные dns-се#209�ве#209�а в шлюз локальной сети."
+msgstr "You can not route non-local dns-server via the gateway network."
+
+#: TFORM1.LABELDNS1.CAPTION
+msgctxt "TFORM1.LABELDNS1.CAPTION"
+msgid "DNS1 до поднятия VPN (определяется автоматически):"
+msgstr "DNS1 before raise VPN (autodetected):"
+
+#: TFORM1.LABELDNS2.CAPTION
+msgctxt "TFORM1.LABELDNS2.CAPTION"
+msgid "DNS2 до поднятия VPN (определяется автоматически):"
+msgstr "DNS2 before raise VPN (autodetected):"
+
+#: TFORM1.LABELDNS3.CAPTION
+msgid "DNS1 при поднятом VPN (для детей введите 81.176.72.82):"
+msgstr "DNS1 at elevated VPN (for children enter 81.176.72.82):"
+
+#: TFORM1.LABELDNS4.CAPTION
+msgid "DNS2 при поднятом VPN (для детей введите 81.176.72.83):"
+msgstr "DNS2 at elevated VPN (for children enter 81.176.72.82):"
+
+#: unit1.message67
+msgid "Поле \"DNS1 до поднятия VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS1 before raise VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message68
+msgid "Поле \"DNS2 до поднятия VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS2 before raise VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message69
+msgid "Необходимо ввести хотя бы одно DNS1 до поднятия VPN или DNS2 до поднятия VPN."
+msgstr "You must enter at least one lifting up DNS1 before raise the VPN or DNS2 before raise the VPN."
+
+#: unit1.message81
+msgid "Поле \"DNS1 п#209�и поднятом VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS1 at elevated VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message82
+msgid "Поле \"DNS2 п#209�и поднятом VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS2 at elevated VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message83
+msgid "Необходимо ввести хотя бы одно DNS1 п#209�и поднятом VPN или DNS2 п#209�и поднятом VPN."
+msgstr "You must enter DNS1 at elevated VPN or DNS2 at elevated VPN."
+
+#: unit1.message84
+msgid "DNS2-се#209�ве#209� не пингуется или те#209�яются пакеты, но пингуется DNS1-се#209�ве#209�, поэтому это нек#209�итично."
+msgstr "DNS2-server does not ping or lost packets, but ping DNS1-server, so it's not critical."
+
+#: unit1.message85
+msgid "DNS1-се#209�ве#209� не пингуется или те#209�яются пакеты, но пингуется DNS2-се#209�ве#209�, поэтому будут то#209�моза."
+msgstr "DNS1-server does not ping or lost packets, but ping DNS2-server, so will the brake."
+
+#: unit1.message80
+msgid "Выб#209�ана опция usepeerdns: если vpn-се#209�ве#209� п#209�едоставит свои dns, то будут использоваться они, невзи#209�ая на д#209�угие наст#209�ойки dns."
+msgstr "Option is selected usepeerdns: if vpn-server will provide for you your dns, then they will be used, regardless of other settings dns."
+
+#: unit1.message86
+msgid "Показать па#209�оль"
+msgstr "Show password"
+
+#: unit1.message87
+msgid "Ск#209�ыть па#209�оль"
+msgstr "Hide password"
+
+#: TFORM1.BUTTONHELP.CAPTION
+msgid "Справка"
+msgstr "Help"
