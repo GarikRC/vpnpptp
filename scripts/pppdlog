@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Проверяем наличие в системе файла /var/log/pppd.log
+if [ -f /var/log/pppd.log ]
+then
+    # Файл уже есть в системе. Завершаем работу сценария    
+    echo "File /var/log/pppd.log is already exists."
+    exit 1
+else
+    # Файла в системе нет. Дописываем в /etc/syslog.conf необходимые строки
+    echo "File /var/log/pppd.log doesn't exist."
+    sed -i '$ a \\n!pppd\n*.*\t\t\t\t\t\t/var/log/pppd.log\n!ppp\n*.*\t\t\t\t\t\t/var/log/ppp.log' /etc/syslog.conf
+fi
+
+# Перезапускаем службу syslogd
+kill -1 `cat /var/run/syslogd.pid`
+
+touch /var/log/pppd.log 
