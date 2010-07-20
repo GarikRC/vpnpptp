@@ -455,8 +455,8 @@ msgid "Не оп#209�еделилось ни одного ip-ад#209�еса
 msgstr "No ip-addresses of vpn server is defined."
 
 #: unit1.message55
-msgid "Часто используется аутентификация mschap v2 - это однов#209�еменный выбо#209� refuse-eap, refuse-chap, refuse-mschap. Часто используется шиф#209�ование т#209�афика require-mppe-128."
-msgstr "Authentication of mschap v2 is used frequently - this is a simultaneous choice of refuse-eap, refuse-chap, refuse-mschap. Traffic-encryption require-mppe-128 is used frequently."
+msgid "Часто используется аутентификация mschap v2 - это однов#209�еменный выбо#209� refuse-eap, refuse-chap, refuse-mschap."
+msgstr "Authentication of mschap v2 is used frequently - this is a simultaneous choice of refuse-eap, refuse-chap, refuse-mschap."
 
 #: unit1.message56
 msgid "Эта опция создает я#209�лык ponoff на Рабочем столе для доступа в инте#209�нет пользователю, позволяя ему уп#209�авлять соединением че#209�ез иконку в т#209�ее."
@@ -465,10 +465,6 @@ msgstr "This option creates link ponoff on Desktop for access to The Internet fo
 #: unit1.message57
 msgid "Для того, чтобы #209�аз#209�ешить пользователям уп#209�авлять подключением сначала установите пакет sudo."
 msgstr "In order to let users operate the connection, at first install packet sudo and start the configurator again."
-
-#: unit1.message58
-msgid "Пользователям #209�аз#209�ешается уп#209�авлять подключением че#209�ез я#209�лык на Рабочем столе - была включена опция создания я#209�лыка на Рабочем столе."
-msgstr "Users is allowed to operate the connection with help link on Desktop - the option of creating link on Desktop was switched on."
 
 #: TFORM1.NETWORKTEST.CAPTION
 msgid "Проверять vpn-сервер, dns-сервер, шлюз локальной сети и интернет"
@@ -559,40 +555,28 @@ msgid "Программно маршрутизировать dns-сервера"
 msgstr "Software to route the dns-server"
 
 #: unit1.message66
-msgid "Не удалось автоматически оп#209�еделить ни DNS1, ни DNS2."
-msgstr "Failed to automatically detect any DNS1, nor DNS2."
+msgid "Не удалось автоматически оп#209�еделить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN."
+msgstr "Failed to automatically detect any DNS1 before raise VPN, nor DNS2 before raise VPN."
 
 #: unit1.message71
 msgid "Эта опция часто позволяет достичь уско#209�ения инте#209�нета, но не у всех п#209�овайде#209�ов и невсегда."
 msgstr "This option is often achieves speed Internet, but not all providers and does not always."
 
-#: unit1.message72
-msgid "П#209�и отмене этой опции dns-се#209�ве#209�а будут доступны че#209�ез внешнюю сеть, если Вы или сам п#209�овайде#209� не ма#209�ш#209�утизи#209�уете их иначе."
-msgstr "If you cancel this option dns-server will be available via the external network, if you or your ISP did not route them differently."
-
 #: unit1.message73
-msgid "Пингуется DNS1-се#209�ве#209�. Ожидайте..."
-msgstr "Can you ping DNS1-server. Please wait..."
+msgid "Пингуется DNS1-се#209�ве#209� до поднятия VPN. Ожидайте..."
+msgstr "Can you ping DNS1-server before raise VPN. Please wait..."
 
 #: unit1.message74
-msgid "DNS1-се#209�ве#209� не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
-msgstr "DNS1-server does not ping or lost packets. Correct the problem and restart the configurator."
+msgid "DNS1-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "DNS1-server before raise VPN does not ping or lost packets. Correct the problem and restart the configurator."
 
 #: unit1.message75
-msgid "Пингуется DNS2-се#209�ве#209�. Ожидайте..."
-msgstr "Can you ping DNS1-server. Please wait..."
+msgid "Пингуется DNS2-се#209�ве#209� до поднятия VPN. Ожидайте..."
+msgstr "Can you ping DNS2-server before raise VPN. Please wait..."
 
 #: unit1.message76
-msgid "DNS2-се#209�ве#209� не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
-msgstr "DNS2-server does not ping or lost packets. Correct the problem and restart the configurator."
-
-#: unit1.message77
-msgid "Сейчас автоматически DNS1 встанет на место DNS2, а DNS2 встанет на место DNS1."
-msgstr "Now automatically DNS1 snaps home DNS2, and DNS2 will take the place DNS1."
-
-#: unit1.message78
-msgid "Нельзя ма#209�ш#209�утизи#209�овать нелокальные dns-се#209�ве#209�а в шлюз локальной сети."
-msgstr "You can not route non-local dns-server via the gateway network."
+msgid "DNS2-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "DNS2-server before raise VPN does not ping or lost packets. Correct the problem and restart the configurator."
 
 #: TFORM1.LABELDNS1.CAPTION
 msgctxt "TFORM1.LABELDNS1.CAPTION"
@@ -637,12 +621,12 @@ msgid "Необходимо ввести хотя бы одно DNS1 п#209�и
 msgstr "You must enter DNS1 at elevated VPN or DNS2 at elevated VPN."
 
 #: unit1.message84
-msgid "DNS2-се#209�ве#209� не пингуется или те#209�яются пакеты, но пингуется DNS1-се#209�ве#209�, поэтому это нек#209�итично."
-msgstr "DNS2-server does not ping or lost packets, but ping DNS1-server, so it's not critical."
+msgid "DNS2-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты, но пингуется DNS1-се#209�ве#209� до поднятия VPN, поэтому это нек#209�итично."
+msgstr "DNS2-server before raise VPN does not ping or lost packets, but ping DNS1-server before raise VPN, so it's not critical."
 
 #: unit1.message85
-msgid "DNS1-се#209�ве#209� не пингуется или те#209�яются пакеты, но пингуется DNS2-се#209�ве#209�, поэтому будут то#209�моза."
-msgstr "DNS1-server does not ping or lost packets, but ping DNS2-server, so will the brake."
+msgid "DNS1-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты, но пингуется DNS2-се#209�ве#209� до поднятия VPN, поэтому будут то#209�моза."
+msgstr "DNS1-server before raise VPN does not ping or lost packets, but ping DNS2-server before raise VPN, so will the brake."
 
 #: unit1.message80
 msgid "Выб#209�ана опция usepeerdns: если vpn-се#209�ве#209� п#209�едоставит свои dns, то будут использоваться они, невзи#209�ая на д#209�угие наст#209�ойки dns."
@@ -659,3 +643,59 @@ msgstr "Hide password"
 #: TFORM1.BUTTONHELP.CAPTION
 msgid "Справка"
 msgstr "Help"
+
+#: TFORM1.LABEL9.CAPTION
+msgid "Аутентификация:"
+msgstr "Authentication:"
+
+#: TFORM1.LABEL13.CAPTION
+msgid "Шифрование mppe:"
+msgstr "Encription mppe:"
+
+#: unit1.message58
+msgid "П#209�и использовании опции refuse-chap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу CHAP."
+msgstr "With option refuse-chap, pppd will not agree to authenticate itself to the peer using CHAP."
+
+#: unit1.message70
+msgid "П#209�и использовании опции refuse-eap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу EAP."
+msgstr "With option refuse-eap, pppd will not agree to authenticate itself to the peer using EAP."
+
+#: unit1.message72
+msgid "П#209�и использовании опции refuse-mschap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу MS-CHAP."
+msgstr "With option refuse-mschap, pppd will not agree to authenticate itself to the peer using MS-CHAP."
+
+#: unit1.message77
+msgid "П#209�и использовании опции refuse-pap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу PAP."
+msgstr "With option refuse-pap, pppd will not agree to authenticate itself to the peer using PAP."
+
+#: unit1.message78
+msgid "П#209�и использовании опции refuse-mschap-v2 демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу MS-CHAPv2."
+msgstr "With option refuse-mschap-v2, pppd will not agree to authenticate itself to the peer using MS-CHAPv2."
+
+#: unit1.message79
+msgid "Опция required делает шиф#209�ование mppe обязательным и т#209�ебует его использовать - не соединяться если п#209�овайде#209� не подде#209�живает шиф#209�ование mppe."
+msgstr "required - require mppe; disconnect if peer doesn't support it."
+
+#: unit1.message88
+msgid "Часто используется шиф#209�ование т#209�афика mppe с 128-битным шиф#209�ованием - это однов#209�еменный выбо#209� required, stateless, no40, no56."
+msgstr "Encryption mppe often used with 128-bit encryption - is the simultaneous selection of required, stateless, no40, no56."
+
+#: unit1.message89
+msgid "Опция stateless пытается #209�еализовать шиф#209�ование mppe в #209�ежиме без подде#209�жки состояний."
+msgstr "stateless - try to negotiate stateless mode."
+
+#: unit1.message90
+msgid "Опция no40 отключает 40-битное шиф#209�ование mppe."
+msgstr "no40 - disable 40 bit keys."
+
+#: unit1.message91
+msgid "Опция no56 отключает 56-битное шиф#209�ование mppe."
+msgstr "no56 - disable 56 bit keys."
+
+#: unit1.message92
+msgid "Опция no128 отключает 128-битное шиф#209�ование mppe."
+msgstr "no128 - disable 128 bit keys."
+
+#: unit1.message93
+msgid "П#209�инудительный #209�еста#209�т сети"
+msgstr "Forced restart the network"

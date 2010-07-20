@@ -33,6 +33,7 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    ButtonRestart: TButton;
     ButtonVPN: TButton;
     ButtonHidePass: TButton;
     Button_create: TButton;
@@ -44,8 +45,15 @@ type
     balloon: TCheckBox;
     Autostart_ponoff: TCheckBox;
     Autostartpppd: TCheckBox;
+    CheckBox_required: TCheckBox;
+    CheckBox_no128: TCheckBox;
+    CheckBox_rpap: TCheckBox;
+    CheckBox_rmschapv2: TCheckBox;
+    ComboBoxVPN: TComboBox;
     EditDNS3: TEdit;
     EditDNS4: TEdit;
+    Label13: TLabel;
+    Label9: TLabel;
     LabelDNS3: TLabel;
     LabelDNS4: TLabel;
     routeDNSauto: TCheckBox;
@@ -72,7 +80,6 @@ type
     Memo_bindutilshost: TMemo;
     routevpnauto: TCheckBox;
     Memo_ip_IPS: TMemo;
-    require_mppe_128: TCheckBox;
     CheckBox_shorewall: TCheckBox;
     dhcp_route: TCheckBox;
     Metka: TLabel;
@@ -87,7 +94,6 @@ type
     CheckBox_rchap: TCheckBox;
     CheckBox_reap: TCheckBox;
     CheckBox_rmschap: TCheckBox;
-    CheckBox_shifr: TCheckBox;
     CheckBox_stateless: TCheckBox;
     Label41: TLabel;
     Edit_MinTime: TEdit;
@@ -105,7 +111,6 @@ type
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
-    Label19: TLabel;
     Label2: TLabel;
     Label25: TLabel;
     Label3: TLabel;
@@ -149,6 +154,7 @@ type
     procedure balloonChange(Sender: TObject);
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonHidePassClick(Sender: TObject);
+    procedure ButtonRestartClick(Sender: TObject);
     procedure ButtonVPNClick(Sender: TObject);
     procedure Button_addoptionsClick(Sender: TObject);
     procedure Button_createClick(Sender: TObject);
@@ -158,6 +164,17 @@ type
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
     procedure CheckBox_desktopChange(Sender: TObject);
+    procedure CheckBox_no128Change(Sender: TObject);
+    procedure CheckBox_requiredChange(Sender: TObject);
+    procedure CheckBox_rmschapv2Change(Sender: TObject);
+    procedure CheckBox_rpapChange(Sender: TObject);
+    procedure ComboBoxVPNChange(Sender: TObject);
+    procedure ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure ComboBoxVPNKeyPress(Sender: TObject; var Key: char);
+    procedure Edit_peerChange(Sender: TObject);
+    procedure Edit_userChange(Sender: TObject);
+    procedure MetkaClick(Sender: TObject);
     procedure networktestChange(Sender: TObject);
     procedure pppnotdefaultChange(Sender: TObject);
     procedure routeDNSautoChange(Sender: TObject);
@@ -174,7 +191,6 @@ type
     procedure Memo_configChange(Sender: TObject);
     procedure Memo_createChange(Sender: TObject);
     procedure Mii_tool_noChange(Sender: TObject);
-    procedure CheckBox_shifrChange(Sender: TObject);
     procedure Edit_IPSChange(Sender: TObject);
     procedure Edit_MaxTimeChange(Sender: TObject);
     procedure Edit_MinTimeChange(Sender: TObject);
@@ -192,7 +208,6 @@ type
     procedure On_ethChange(Sender: TObject);
     procedure Pppd_logChange(Sender: TObject);
     procedure Reconnect_pptpChange(Sender: TObject);
-    procedure require_mppe_128Change(Sender: TObject);
     procedure Sudo_configureChange(Sender: TObject);
     procedure Sudo_ponoffChange(Sender: TObject);
   private
@@ -225,9 +240,10 @@ var
   More:boolean; //отслеживает, что кнопку Button_more уже нажимали
   DNS_auto:boolean; //если false, то DNS провайдер выдает для ручного ввода
   DNSA,DNSB,DNSdopC,DNSC,DNSD:string; //автоопределенные конфигуратором DNS
+  Stroowriter:string;
 
 const
-  Config_n=37;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=40;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
@@ -284,10 +300,10 @@ resourcestring
   message52='Пинг проверен';
   message53='Минуточку...';
   message54='Не определилось ни одного ip-адреса vpn-сервера.';
-  message55='Часто используется аутентификация mschap v2 - это одновременный выбор refuse-eap, refuse-chap, refuse-mschap. Часто используется шифрование трафика require-mppe-128.';
+  message55='Часто используется аутентификация mschap v2 - это одновременный выбор refuse-eap, refuse-chap, refuse-mschap.';
   message56='Эта опция создает ярлык ponoff на Рабочем столе для доступа в интернет пользователю, позволяя ему управлять соединением через иконку в трее.';
   message57='Для того, чтобы разрешить пользователям управлять подключением сначала установите пакет sudo.';
-  ////message58='Пользователям разрешается управлять подключением через ярлык на Рабочем столе - была включена опция создания ярлыка на Рабочем столе.';
+  message58='При использовании опции refuse-chap демон pppd не согласится аутентифицировать себя по протоколу CHAP.';
   message59='Выбор опции автозапуска интернета при старте системы возможен только при выборе опции разрешения пользователям управлять подключением.';
   message60='Автозапуск интернета при старте системы не настроен. Отсутствует ~/.config/autostart/ или используется нестандартный идентификатор пользователя.';
   message61='Автозапуск интернета при старте системы не настроен. Отсутствует файл /usr/share/applications/ponoff.desktop.';
@@ -295,28 +311,34 @@ resourcestring
   message63='Не допустим одновременный выбор графического автозапуска интернета при старте системы и автозапуск демоном pppd без графики.';
   message64='Эта опция полезна если VPN PPTP не должно быть главным.';
   message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd и неизменять дефолтный шлюз, запустив VPN PPTP в фоне.';
-  message66='Не удалось автоматически определить ни DNS1, ни DNS2.';
+  message66='Не удалось автоматически определить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN.';
   message67='Поле "DNS1 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message68='Поле "DNS2 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message69='Необходимо ввести хотя бы одно DNS1 до поднятия VPN или DNS2 до поднятия VPN.';
-  ////message70='';
+  message70='При использовании опции refuse-eap демон pppd не согласится аутентифицировать себя по протоколу EAP.';
   message71='Эта опция часто позволяет достичь ускорения интернета, но не у всех провайдеров и невсегда.';
-  ////message72='При отмене этой опции dns-сервера будут доступны через внешнюю сеть, если Вы или сам провайдер не маршрутизируете их иначе.';
-  message73='Пингуется DNS1-сервер. Ожидайте...';
-  message74='DNS1-сервер не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
-  message75='Пингуется DNS2-сервер. Ожидайте...';
-  message76='DNS2-сервер не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
-  ////message77='Сейчас автоматически DNS1 до поднятия VPN поменяется местами с DNS2 до поднятия VPN.';
-  ////message78='Нельзя маршрутизировать нелокальные dns-сервера в шлюз локальной сети.';
-  ////message79='';
+  message72='При использовании опции refuse-mschap демон pppd не согласится аутентифицировать себя по протоколу MS-CHAP.';
+  message73='Пингуется DNS1-сервер до поднятия VPN. Ожидайте...';
+  message74='DNS1-сервер до поднятия VPN не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
+  message75='Пингуется DNS2-сервер до поднятия VPN. Ожидайте...';
+  message76='DNS2-сервер до поднятия VPN не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
+  message77='При использовании опции refuse-pap демон pppd не согласится аутентифицировать себя по протоколу PAP.';
+  message78='При использовании опции refuse-mschap-v2 демон pppd не согласится аутентифицировать себя по протоколу MS-CHAPv2.';
+  message79='Опция required делает шифрование mppe обязательным и требует его использовать - не соединяться если провайдер не поддерживает шифрование mppe.';
   message80='Выбрана опция usepeerdns: если vpn-сервер предоставит свои dns, то будут использоваться они, невзирая на другие настройки dns.';
   message81='Поле "DNS1 при поднятом VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message82='Поле "DNS2 при поднятом VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message83='Необходимо ввести хотя бы одно DNS1 при поднятом VPN или DNS2 при поднятом VPN.';
-  message84='DNS2-сервер не пингуется или теряются пакеты, но пингуется DNS1-сервер, поэтому это некритично.';
-  message85='DNS1-сервер не пингуется или теряются пакеты, но пингуется DNS2-сервер, поэтому будут тормоза.';
+  message84='DNS2-сервер до поднятия VPN не пингуется или теряются пакеты, но пингуется DNS1-сервер до поднятия VPN, поэтому это некритично.';
+  message85='DNS1-сервер до поднятия VPN не пингуется или теряются пакеты, но пингуется DNS2-сервер до поднятия VPN, поэтому будут тормоза.';
   message86='Показать пароль';
   message87='Скрыть пароль';
+  message88='Часто используется шифрование трафика mppe с 128-битным шифрованием - это одновременный выбор required, stateless, no40, no56.';
+  message89='Опция stateless пытается реализовать шифрование mppe в режиме без поддержки состояний.';
+  message90='Опция no40 отключает 40-битное шифрование mppe.';
+  message91='Опция no56 отключает 56-битное шифрование mppe.';
+  message92='Опция no128 отключает 128-битное шифрование mppe.';
+  message93='Принудительный рестарт сети';
 
 implementation
 
@@ -362,14 +384,6 @@ Begin
 While pos(d, s) <> 0 do
 Delete(s, (pos(d, s)), 1); result := s;
 End;
-
-procedure Sbros;
-begin
-   If (not Form1.CheckBox_rchap.Checked) and (not Form1.CheckBox_reap.Checked) and
-       (not Form1.CheckBox_rmschap.Checked) and (not Form1.CheckBox_stateless.Checked) and
-         (not Form1.CheckBox_no40.Checked) and (not Form1.CheckBox_no56.Checked) and (not Form1.require_mppe_128.Checked) then
-                                                                                         Form1.CheckBox_shifr.Checked:=false;
-end;
 
 function CompareFiles(const FirstFile, SecondFile: string): Boolean;
 //сравнение файлов
@@ -640,18 +654,23 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  If Pppd_log.Checked then Memo_peer.Lines.Add('debug');
  If Edit_mtu.Text <> '' then Memo_peer.Lines.Add('mtu '+Edit_mtu.Text);
 //Разбираемся с шифрованием
- If CheckBox_shifr.Checked then
-  begin
-   mppe_string:='mppe required';
-   if CheckBox_stateless.Checked then mppe_string:=mppe_string+','+CheckBox_stateless.Caption;
-   if CheckBox_no40.Checked then mppe_string:=mppe_string+','+CheckBox_no40.Caption;
-   if CheckBox_no56.Checked then mppe_string:=mppe_string+','+CheckBox_no56.Caption;
+   mppe_string:='mppe ';
+   if CheckBox_required.Checked then mppe_string:=mppe_string+CheckBox_required.Caption;
+      if CheckBox_required.Checked then if CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+   if CheckBox_stateless.Checked then mppe_string:=mppe_string+CheckBox_stateless.Caption;
+      if CheckBox_stateless.Checked then if CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+   if CheckBox_no40.Checked then mppe_string:=mppe_string+CheckBox_no40.Caption;
+      if CheckBox_no40.Checked then if CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+   if CheckBox_no56.Checked then mppe_string:=mppe_string+CheckBox_no56.Caption;
+      if CheckBox_no56.Checked then if CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+   if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
+//Разбираемся с аутентификацией
    If CheckBox_rmschap.Checked then Memo_peer.Lines.Add(CheckBox_rmschap.Caption);
    If CheckBox_reap.Checked then Memo_peer.Lines.Add(CheckBox_reap.Caption);
    If CheckBox_rchap.Checked then Memo_peer.Lines.Add(CheckBox_rchap.Caption);
-   If require_mppe_128.Checked then Memo_peer.Lines.Add(require_mppe_128.Caption);
-   If mppe_string<>'mppe required' then Memo_peer.Lines.Add(mppe_string);
-  end;
+   If CheckBox_rpap.Checked then Memo_peer.Lines.Add(CheckBox_rpap.Caption);
+   If CheckBox_rmschapv2.Checked then Memo_peer.Lines.Add(CheckBox_rmschapv2.Caption);
+   If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
  Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные файлы
@@ -800,8 +819,8 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  If dhcp_route.Checked then Shell('printf "dhcp-route-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "dhcp-route-no\n" >> /opt/vpnpptp/config');
  Shell('printf "'+Edit_mtu.Text+'\n" >> /opt/vpnpptp/config');
- If CheckBox_shifr.Checked then Shell('printf "shifr-yes\n" >> /opt/vpnpptp/config') else
-                                              Shell('printf "shifr-no\n" >> /opt/vpnpptp/config');
+ If CheckBox_required.Checked then Shell('printf "required-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "required-no\n" >> /opt/vpnpptp/config');
  If CheckBox_rchap.Checked then Shell('printf "rchap-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "rchap-no\n" >> /opt/vpnpptp/config');
  If CheckBox_reap.Checked then Shell('printf "reap-yes\n" >> /opt/vpnpptp/config') else
@@ -818,8 +837,8 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                               Shell('printf "shorewall-no\n" >> /opt/vpnpptp/config');
  If CheckBox_desktop.Checked then Shell('printf "link-desktop-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "link-desktop-no\n" >> /opt/vpnpptp/config');
- If require_mppe_128.Checked then Shell('printf "require-mppe-128-yes\n" >> /opt/vpnpptp/config') else
-                                              Shell('printf "require-mppe-128-no\n" >> /opt/vpnpptp/config');
+ If CheckBox_no128.Checked then Shell('printf "no128-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "no128-no\n" >> /opt/vpnpptp/config');
  If IPS then Shell('printf "IPS-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "IPS-no\n" >> /opt/vpnpptp/config');
  If routevpnauto.Checked then Shell('printf "routevpnauto-yes\n" >> /opt/vpnpptp/config') else
@@ -847,6 +866,13 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                               Shell ('printf "usepeerdns-no\n" >> /opt/vpnpptp/config');
  Shell('printf "'+EditDNS3.Text+'\n" >> /opt/vpnpptp/config');
  Shell('printf "'+EditDNS4.Text+'\n" >> /opt/vpnpptp/config');
+ If CheckBox_rpap.Checked then Shell('printf "rpap-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "rpap-no\n" >> /opt/vpnpptp/config');
+ If CheckBox_rmschapv2.Checked then Shell('printf "rmschapv2-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "rmschapv2-no\n" >> /opt/vpnpptp/config');
+ If ComboBoxVPN.Text='VPN L2TP' then Shell('printf "l2tp\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "pptp\n" >> /opt/vpnpptp/config');
+
  Shell ('chmod 600 /opt/vpnpptp/config');
 //Создаем ярлык для подключения
  gksu:=false;
@@ -905,7 +931,7 @@ begin
   Memo_create.Lines.Add('X-KDE-autostart-after=kdesktop');
   Memo_create.Lines.Add('StartupNotify=false');
 //Получаем список пользователей для создания иконки на рабочем столе
-  Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users'); //для новых идентификаторов
+  Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile('/tmp/users');
   i:=0;
@@ -919,7 +945,7 @@ begin
       end;
       i:=i+1;
     end;
-  Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > /tmp/users'); //для старых идентификаторов
+  Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > /tmp/users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile('/tmp/users');
   i:=0;
@@ -1023,7 +1049,7 @@ If Sudo_ponoff.Checked then If not FileExists('/usr/share/applications/ponoff.de
                             Memonew2.Lines.SaveToFile('/usr/share/applications/ponoff.desktop');
                         end;
 //Получаем список пользователей для автозапуска ponoff при старте системы и организация автозапуска
-  Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users'); //для новых идентификаторов
+  Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > /tmp/users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile('/tmp/users');
   i:=0;
@@ -1037,7 +1063,7 @@ If Sudo_ponoff.Checked then If not FileExists('/usr/share/applications/ponoff.de
       end;
       i:=i+1;
     end;
-  Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > /tmp/users'); //для старых идентификаторов
+  Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > /tmp/users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile('/tmp/users');
   i:=0;
@@ -1257,7 +1283,6 @@ If not flag then
  Shell('echo "#Clear config file" > /etc/ppp/options');
  if not FileExists('/etc/ppp/options.pptp.old') then Shell('cp -f /etc/ppp/options.pptp /etc/ppp/options.pptp.old');
  Shell('echo "#Clear config file" > /etc/ppp/options.pptp');
- If require_mppe_128.Checked then Shell ('modprobe ppp_mppe');//загрузка модуля ядра для обеспечения шифрования
 end;
 
 procedure TForm1.Button_addoptionsClick(Sender: TObject);
@@ -1330,7 +1355,8 @@ end;
 
 procedure TForm1.ButtonHelpClick(Sender: TObject);
 begin
-    If FallbackLang='ru' then Shell('oowriter /opt/vpnpptp/wiki/Help_ru.doc');
+    If FallbackLang='ru' then Shell(Stroowriter+' /opt/vpnpptp/wiki/Help_ru.doc');
+    If FallbackLang='uk' then Shell(Stroowriter+' /opt/vpnpptp/wiki/Help_uk.doc');
 end;
 
 procedure TForm1.ButtonHidePassClick(Sender: TObject);
@@ -1349,6 +1375,49 @@ begin
           Application.ProcessMessages;
           exit;
     end;
+end;
+
+procedure TForm1.ButtonRestartClick(Sender: TObject);
+var i:integer;
+//рестарт сети
+begin
+ButtonRestart.Caption:=message53;
+Button_exit.Enabled:=false;
+Button_next1.Enabled:=false;
+ButtonHelp.Enabled:=false;
+ButtonVPN.Enabled:=false;
+ButtonRestart.Enabled:=false;
+ButtonHidePass.Enabled:=false;
+Edit_IPS.Enabled:=false;
+Edit_peer.Enabled:=false;
+Edit_user.Enabled:=false;
+Edit_passwd.Enabled:=false;
+Edit_MaxTime.Enabled:=false;
+Edit_MinTime.Enabled:=false;
+ComboBoxVPN.Enabled:=false;
+Application.ProcessMessages;
+    Shell ('/etc/init.d/network stop');
+    For i:=0 to 9 do
+        begin
+          Shell ('ifup eth'+IntToStr(i));
+          Shell ('ifup wlan'+IntToStr(i));
+        end;
+    Shell ('resolvconf -u');
+ButtonRestart.Caption:=message93;
+Button_exit.Enabled:=true;
+Button_next1.Enabled:=true;
+ButtonHelp.Enabled:=true;
+ButtonVPN.Enabled:=true;
+ButtonRestart.Enabled:=true;
+ButtonHidePass.Enabled:=true;
+Edit_IPS.Enabled:=true;
+Edit_peer.Enabled:=true;
+Edit_user.Enabled:=true;
+Edit_passwd.Enabled:=true;
+Edit_MaxTime.Enabled:=true;
+Edit_MinTime.Enabled:=true;
+//ComboBoxVPN.Enabled:=true;
+Application.ProcessMessages;
 end;
 
 procedure TForm1.Autostart_ponoffChange(Sender: TObject);
@@ -1459,6 +1528,86 @@ begin
 
 end;
 
+procedure TForm1.CheckBox_no128Change(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+  If StartMessage then If CheckBox_no128.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message92+' '+message88);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+end;
+
+procedure TForm1.CheckBox_requiredChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+  If StartMessage then If CheckBox_required.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message79+' '+message88);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+end;
+
+procedure TForm1.CheckBox_rmschapv2Change(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+  If StartMessage then If CheckBox_rmschapv2.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message78+' '+message55);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+
+end;
+
+procedure TForm1.CheckBox_rpapChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
+begin
+  If StartMessage then If CheckBox_rpap.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message77+' '+message55);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
+end;
+
+procedure TForm1.ComboBoxVPNChange(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  Key:=0;
+end;
+
+procedure TForm1.ComboBoxVPNKeyPress(Sender: TObject; var Key: char);
+begin
+  Key:=#0;
+end;
+
+procedure TForm1.Edit_peerChange(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Edit_userChange(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.MetkaClick(Sender: TObject);
+begin
+
+end;
+
 procedure TForm1.networktestChange(Sender: TObject);
 var
    pchar_message0,pchar_message1:pchar;
@@ -1538,33 +1687,63 @@ begin
 end;
 
 procedure TForm1.CheckBox_no40Change(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-    Sbros;
-    If CheckBox_no40.Checked then CheckBox_shifr.Checked:=true;
+  If StartMessage then If CheckBox_no40.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message90+' '+message88);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.CheckBox_no56Change(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-    Sbros;
-    If CheckBox_no56.Checked then CheckBox_shifr.Checked:=true;
+  If StartMessage then If CheckBox_no56.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message91+' '+message88);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.CheckBox_rchapChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-  Sbros;
-  If CheckBox_rchap.Checked then CheckBox_shifr.Checked:=true;
+  If StartMessage then If CheckBox_rchap.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message58+' '+message55);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.CheckBox_reapChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-    Sbros;
-    If CheckBox_reap.Checked then CheckBox_shifr.Checked:=true;
+  If StartMessage then If CheckBox_reap.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message70+' '+message55);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.CheckBox_rmschapChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-    Sbros;
-    If CheckBox_rmschap.Checked then CheckBox_shifr.Checked:=true;
+  If StartMessage then If CheckBox_rmschap.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message72+' '+message55);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.CheckBox_shorewallChange(Sender: TObject);
@@ -1590,9 +1769,15 @@ begin
 end;
 
 procedure TForm1.CheckBox_statelessChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-    Sbros;
-    If CheckBox_stateless.Checked then CheckBox_shifr.Checked:=true;
+  If StartMessage then If CheckBox_stateless.Checked then
+                       begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message89+' '+message88);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                       end;
 end;
 
 procedure TForm1.dhcp_routeChange(Sender: TObject);
@@ -1802,7 +1987,13 @@ If not y then IPS:=true else IPS:=false;
                              Application.MessageBox(pchar_message1,pchar_message0, 0);
                            end;
   //определяем DNSA, DNSB и DNSdopC
-  If FileExists('/etc/resolv.conf') then
+  If LeftStr(Memo_gate.Lines[0],3)='ppp' then
+                                         begin
+                                              DNSA:='none';
+                                              DNSB:='none';
+                                              DNSdopC:='none';
+                                         end;
+  If FileExists('/etc/resolv.conf') then If not (LeftStr(Memo_gate.Lines[0],3)='ppp') then
                                     begin
                                       AssignFile (FileResolv_conf,'/etc/resolv.conf');
                                       reset (FileResolv_conf);
@@ -2103,27 +2294,6 @@ end;
  ButtonHelp.Visible:=false;
 end;
 
-procedure TForm1.CheckBox_shifrChange(Sender: TObject);
-var
-  b:boolean;
-  pchar_message0,pchar_message1:pchar;
-begin
-  b:=CheckBox_shifr.Checked;
-  CheckBox_no40.Checked:=b;
-  CheckBox_no56.Checked:=b;
-  CheckBox_rchap.Checked:=b;
-  CheckBox_reap.Checked:=b;
-  CheckBox_rmschap.Checked:=b;
-  CheckBox_stateless.Checked:=b;
-  require_mppe_128.Checked:=b;
-  If StartMessage then If CheckBox_shifr.Checked then
-                       begin
-                          pchar_message0:=Pchar(message0);
-                          pchar_message1:=Pchar(message55);
-                          Application.MessageBox(pchar_message1,pchar_message0, 0);
-                       end;
-end;
-
 procedure TForm1.Edit_IPSChange(Sender: TObject);
 begin
 
@@ -2148,8 +2318,11 @@ procedure TForm1.FormCreate(Sender: TObject);
 var i:integer;
     pchar_message0,pchar_message1:pchar;
     len:integer;
+    Fileoowriter_find:textfile;
+    str:string;
 begin
 ButtonHidePass.Caption:=message86;
+ButtonRestart.Caption:=message93;
 StartMessage:=false;
 more:=false;
 EditDNS1.Text:='none';
@@ -2162,7 +2335,23 @@ DNSB:='none';
 DNSdopC:='none';
 DNSC:='none';
 DNSD:='none';
-If FallbackLang='ru' then ButtonHelp.Visible:=true;
+ButtonHelp.Visible:=true;
+ButtonHelp.Enabled:=false;
+Shell('rm -f /tmp/oowriter_find');
+Stroowriter:='none';
+Shell ('find /usr/bin/ -name oowriter* >/tmp/oowriter_find');
+Shell('printf "none" >> /tmp/oowriter_find');
+AssignFile (Fileoowriter_find,'/tmp/oowriter_find');
+reset (Fileoowriter_find);
+While not eof (Fileoowriter_find) do
+       begin
+         readln(Fileoowriter_find, str);
+         If str<>'none' then If leftstr(str,17)='/usr/bin/oowriter' then Stroowriter:=str;
+       end;
+closefile(Fileoowriter_find);
+Shell('rm -f /tmp/oowriter_find');
+If Stroowriter<> 'none' then If FileExists(Stroowriter) then If FallbackLang='ru' then If FileExists('/opt/vpnpptp/wiki/Help_ru.doc') then ButtonHelp.Enabled:=true;
+If Stroowriter<> 'none' then If FileExists(Stroowriter) then If FallbackLang='uk' then If FileExists('/opt/vpnpptp/wiki/Help_uk.doc') then ButtonHelp.Enabled:=true;
 If FileExists('/var/run/ppp/resolv.conf') then Shell('rm -f /var/run/ppp/resolv.conf');
 DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получаются автоматически пока не будет доказано обратного
 //масштабирование формы в зависимости от разрешения экрана
@@ -2203,10 +2392,12 @@ DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получа
                              Button_next1.BorderSpacing.Left:=180;
                              Button_next2.BorderSpacing.Left:=180;
                              Button_more.BorderSpacing.Left:=180;
+                             Memo_route.Width:=400;
                             end;
    If Screen.Height<=480 then
                         begin
                              Form1.Font.Size:=6;
+                             ComboBoxVPN.Font.Size:=6;
                              Form1.Height:=Screen.Height-45;
                              Form1.Width:=Screen.Width;
                              PageControl1.Width:=Screen.Width-1;
@@ -2223,6 +2414,7 @@ DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получа
                              LabelDNS1.BorderSpacing.Top:=27;
                              LabelDNS2.BorderSpacing.Top:=21;
                              LabelDNS3.BorderSpacing.Top:=27;
+                             Memo_route.Width:=470;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
@@ -2251,6 +2443,7 @@ DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получа
 If Screen.Height>550 then   //разрешение в основном нетбуков
                         begin
                              Form1.Font.Size:=8;
+                             ComboBoxVPN.Font.Size:=8;
                              Form1.Height:=550;
                              Form1.Width:=794;
                              Memo_create.Width:=788;
@@ -2265,6 +2458,7 @@ If Screen.Height>1000 then
                         begin
                              Form1.Position:=poScreenCenter;
                              Form1.Font.Size:=10;
+                             ComboBoxVPN.Font.Size:=10;
                              Form1.Height:=650;
                              Form1.Width:=884;
                              Memo_create.Width:=880;
@@ -2281,6 +2475,7 @@ If Screen.Height>1000 then
                              Label_mtu.BorderSpacing.Top:=20;
                              EditDNS2.BorderSpacing.Top:=40;
                              EditDNS4.BorderSpacing.Top:=35;
+                             Memo_route.Width:=650;
                          end;
 //проверка vpnpptp в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart');
@@ -2362,16 +2557,17 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
         If Memo_config.Lines[9]='dhcp-route-yes' then dhcp_route.Checked:=true else dhcp_route.Checked:=false;
         Edit_mtu.Text:=Memo_config.Lines[10];
         If Edit_mtu.Text='mtu-none' then Edit_mtu.Text:='';
-        If Memo_config.Lines[11]='shifr-yes' then CheckBox_shifr.Checked:= true else CheckBox_shifr.Checked:= false;
-        If Memo_config.Lines[12]='rchap-yes' then CheckBox_rchap.Checked:= true else CheckBox_rchap.Checked:= false;
-        If Memo_config.Lines[13]='reap-yes' then CheckBox_reap.Checked:= true else CheckBox_reap.Checked:= false;
-        If Memo_config.Lines[14]='rmschap-yes' then CheckBox_rmschap.Checked:= true else CheckBox_rmschap.Checked:= false;
-        If Memo_config.Lines[15]='stateless-yes' then CheckBox_stateless.Checked:= true else CheckBox_stateless.Checked:= false;
-        If Memo_config.Lines[16]='no40-yes' then CheckBox_no40.Checked:= true else CheckBox_no40.Checked:= false;
-        If Memo_config.Lines[17]='no56-yes' then CheckBox_no56.Checked:= true else CheckBox_no56.Checked:= false;
+        If Memo_config.Lines[11]='required-yes' then CheckBox_required.Checked:= true else CheckBox_required.Checked:=false;
+        If Memo_config.Lines[11]='shifr-yes' then CheckBox_required.Checked:=true;
+        If Memo_config.Lines[12]='rchap-yes' then CheckBox_rchap.Checked:=true else CheckBox_rchap.Checked:=false;
+        If Memo_config.Lines[13]='reap-yes' then CheckBox_reap.Checked:=true else CheckBox_reap.Checked:=false;
+        If Memo_config.Lines[14]='rmschap-yes' then CheckBox_rmschap.Checked:=true else CheckBox_rmschap.Checked:=false;
+        If Memo_config.Lines[15]='stateless-yes' then CheckBox_stateless.Checked:=true else CheckBox_stateless.Checked:=false;
+        If Memo_config.Lines[16]='no40-yes' then CheckBox_no40.Checked:=true else CheckBox_no40.Checked:=false;
+        If Memo_config.Lines[17]='no56-yes' then CheckBox_no56.Checked:=true else CheckBox_no56.Checked:=false;
         If Memo_config.Lines[18]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
         If Memo_config.Lines[19]='link-desktop-yes' then CheckBox_desktop.Checked:=true else CheckBox_desktop.Checked:=false;
-        If Memo_config.Lines[20]='require-mppe-128-yes' then require_mppe_128.Checked:=true else require_mppe_128.Checked:=false;
+        If Memo_config.Lines[20]='no128-yes' then CheckBox_no128.Checked:=true else CheckBox_no128.Checked:=false;
         If Memo_config.Lines[21]='IPS-yes' then IPS:=true else IPS:=false;
         If Memo_config.Lines[22]='routevpnauto-yes' then routevpnauto.Checked:=true else routevpnauto.Checked:=false;
         If Memo_config.Lines[23]='networktest-yes' then networktest.Checked:=true else networktest.Checked:=false;
@@ -2388,6 +2584,9 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
         //Memo_config.Lines[34] не восстанавливается из конфига
         //EditDNS3.Text:=Memo_config.Lines[35];
         //EditDNS4.Text:=Memo_config.Lines[36];
+        If Memo_config.Lines[37]='rpap-yes' then CheckBox_rpap.Checked:=true else CheckBox_rpap.Checked:=false;
+        If Memo_config.Lines[38]='rmschapv2-yes' then CheckBox_rmschapv2.Checked:=true else CheckBox_rmschapv2.Checked:=false;
+        If Memo_config.Lines[39]='l2tp' then ComboBoxVPN.Text:='VPN L2TP' else ComboBoxVPN.Text:='VPN PPTP';
             If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
@@ -2402,6 +2601,7 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
                     Edit_passwd.Text:=LeftStr(Edit_passwd.Text,len-1);
                 end;
      end;
+  If not FileExists('/opt/vpnpptp/config') then ComboBoxVPN.Text:='VPN PPTP';
   If FileExists ('/opt/vpnpptp/route') then Memo_route.Lines.LoadFromFile('/opt/vpnpptp/route'); //восстановление маршрутов
   TabSheet1.TabVisible:= True;
   TabSheet2.TabVisible:= False;
@@ -2413,16 +2613,15 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
   Button_next2.Visible:=False;
 If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
 StartMessage:=true;
-//рестарт
+//определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть
+  Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If LeftStr(Memo_gate.Lines[0],3)<>'ppp' then
-                                         begin
-                                           Shell ('/etc/init.d/network restart');
-                                           sleep(3000);
-                                         end;
+  If Memo_gate.Lines[0]='none' then Shell ('/etc/init.d/network restart');
+  Shell ('rm -f /tmp/gate');
+  Memo_gate.Lines.Clear;
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
@@ -2505,12 +2704,6 @@ begin
                           pchar_message1:=Pchar(message31);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                        end;
-end;
-
-procedure TForm1.require_mppe_128Change(Sender: TObject);
-begin
-    Sbros;
-    If require_mppe_128.Checked then CheckBox_shifr.Checked:=true;
 end;
 
 procedure TForm1.Sudo_configureChange(Sender: TObject);
