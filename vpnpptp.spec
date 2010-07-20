@@ -1,4 +1,4 @@
-%define rel 5
+%define rel 3
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control MS VPN via PPTP
 Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPT
 Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
 Name: vpnpptp-allde
-Version: 0.1.2
+Version: 0.1.3
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -57,6 +57,8 @@ mkdir -p $RPM_BUILD_ROOT
 %endif
 
 %postun
+rm -f %{_datadir}/applications/ponoff.desktop.old
+rm -f %{_datadir}/applications/vpnpptp.desktop.old
 
 %post
 ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff

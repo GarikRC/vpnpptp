@@ -82,8 +82,8 @@ msgid "Доступ в инте#209�нет отсутствует..."
 msgstr "No Internet access available..."
 
 #: unit1.message17
-msgid "DNS-се#209�ве#209� не отвечает или неко#209�#209�ектный ад#209�ес vpn-се#209�ве#209�а. "
-msgstr "DNS server is not responding or incorrect address vpn server. "
+msgid "DNS-се#209�ве#209� до поднятия VPN не отвечает или неко#209�#209�ектный ад#209�ес vpn-се#209�ве#209�а. "
+msgstr "DNS server before raise VPN is not responding or incorrect address vpn server. "
 
 #: unit1.message18
 msgid "Шлюз локальной сети не пингуется. "
@@ -102,9 +102,9 @@ msgid "Ошибка получения ма#209�ш#209�утов по DHCP. "
 msgstr "Failed to get routes via DHCP."
 
 #: unit1.message23
-msgid "DNS1-се#209�ве#209� не пингуется. "
-msgstr "DNS1-server does not ping. "
+msgid "DNS1-се#209�ве#209� до поднятия VPN не пингуется. "
+msgstr "DNS1-server before raise VPN does not ping. "
 
 #: unit1.message24
-msgid "DNS2-се#209�ве#209� не пингуется. "
-msgstr "DNS2-server does not ping. "
+msgid "DNS2-се#209�ве#209� до поднятия VPN не пингуется. "
+msgstr "DNS2-server before raise VPN does not ping. "
