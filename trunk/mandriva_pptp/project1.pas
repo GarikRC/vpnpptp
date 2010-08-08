@@ -13,8 +13,6 @@ uses
 {$IFDEF WINDOWS}{$R project1.rc}{$ENDIF}
 
 begin
-  Application.Title:='Настройка подключения к '
-    +'VPN через PPTP/L2TP';
   {$I project1.lrs}
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);

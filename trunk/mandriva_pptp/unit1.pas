@@ -52,10 +52,12 @@ type
     ComboBoxVPN: TComboBox;
     EditDNS3: TEdit;
     EditDNS4: TEdit;
+    Edit_mru: TEdit;
     Label13: TLabel;
     Label9: TLabel;
     LabelDNS3: TLabel;
     LabelDNS4: TLabel;
+    Label_mru: TLabel;
     routeDNSauto: TCheckBox;
     EditDNSdop3: TEdit;
     EditDNS1: TEdit;
@@ -171,7 +173,7 @@ type
     procedure ComboBoxVPNChange(Sender: TObject);
     procedure ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure ComboBoxVPNKeyPress(Sender: TObject; var Key: char);
+    procedure Edit_mtuChange(Sender: TObject);
     procedure Edit_peerChange(Sender: TObject);
     procedure Edit_userChange(Sender: TObject);
     procedure MetkaClick(Sender: TObject);
@@ -243,20 +245,20 @@ var
   Stroowriter:string;
 
 const
-  Config_n=40;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=41;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
   message2='Так как Вы отказались от контроля state сетевого кабеля, то в целях снижения нагрузки на систему время дозвона установлено в 20 сек.';
-  message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd реконнекта проигнорирован.';
-  message4='Так как реконнект будет реализован встроенным в демон pppd методом, то время реконнекта (время отправки LCP эхо-запросов) установлено в 20 сек.';
-  message5='Так как реконнект будет реализован встроенным в демон pppd методом, то время дозвона не используется за ненадобностью.';
+  message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd(xl2tpd) реконнекта проигнорирован.';
+  //message4='Так как реконнект будет реализован встроенным в демон pppd методом, то время реконнекта (время отправки LCP эхо-запросов) установлено в 20 сек.';
+  //message5='Так как реконнект будет реализован встроенным в демон pppd методом, то время дозвона не используется за ненадобностью.';
   message6='Для того, чтобы разрешить пользователям конфигурировать соединение сначала установите пакет sudo.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
-  message9='Эта опция позволяет пользователям запускать конфигуратор VPN PPTP без пароля администратора и конфигурировать соединение.';
+  message9='Эта опция позволяет пользователям запускать конфигуратор VPN PPTP/L2TP без пароля администратора и конфигурировать соединение.';
   message10='В поле "Время реконнекта" можно ввести лишь число в пределах от 0 до 255 сек.';
-  message11='Рекомендуется отключить поднятое VPN PPTP - тогда шлюз локальной сети определится автоматически.';
+  message11='Рекомендуется отключить поднятое VPN PPTP/L2TP - тогда шлюз локальной сети определится автоматически.';
   message12='Сетевой интерфейс не определился.';
   message13='Сетевой кабель для автоматического определения шлюза локальной сети не подключен.';
   message14='Не удалось автоматически определить шлюз локальной сети.';
@@ -264,9 +266,9 @@ resourcestring
   message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500]. Рекомендуется MTU=1460.';
   message18='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <OK> для отказа от запуска.';
-  message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP. Нажмите <OK> для отказа от двойного запуска.';
-  message20='Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux.';
-  message21='Эта опция позволяет запустить модуль ponoff при старте операционной системы и установить соединение VPN PPTP автозагрузкой.';
+  message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP/L2TP. Нажмите <OK> для отказа от двойного запуска.';
+  message20='Невозможно настроить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux.';
+  message21='Эта опция позволяет запустить модуль ponoff при старте операционной системы и установить соединение VPN PPTP/L2TP автозагрузкой.';
   message22='Невозможно создать ярлык на рабочем столе, так как используется нестандартный идентификатор пользователя и/или локализация.';
   message23='Невозможно создать ярлык на рабочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop.';
   message24='Для того, чтобы разрешить автозапуск интернета при старте системы сначала установите пакет sudo.';
@@ -276,8 +278,8 @@ resourcestring
   message28='Нельзя определить IP-адрес VPN-сервера, так как строка для ввода не заполнена.';
   message29='Не установлен пакет bind-utils. Его установка необязательна, но она ускорит механизм программного добавления маршрута к vpn-серверу.';
   message30='Используйте опцию отключения контроля state сетевого кабеля если только по другому не работает (об этом попросит сама программа).';
-  message31='Встроенный в демон pppd механизм реконнекта не умеет контролировать state сетевого кабеля, поэтому он не желателен к использованию.';
-  message32='Ведите лог pppd для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
+  message31='Встроенный в демон pppd(xl2tpd) механизм реконнекта не умеет контролировать state сетевого кабеля, поэтому он не желателен к использованию.';
+  message32='Ведите лог pppd(xl2tpd) для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
   message33='Получение маршрутов через dhcp необходимо для одновременной работы локальной сети и интернета, но провайдер не всегда их присылает.';
   message34='Эта опция настраивает файервол лишь для интернета, но не для p2p и не для других соединений.';
   message35='Отменив получение маршрутов через dhcp, не будут одновременно работать интернет и локальная сеть, а будет работать только интернет.';
@@ -307,10 +309,10 @@ resourcestring
   message59='Выбор опции автозапуска интернета при старте системы возможен только при выборе опции разрешения пользователям управлять подключением.';
   message60='Автозапуск интернета при старте системы не настроен. Отсутствует ~/.config/autostart/ или используется нестандартный идентификатор пользователя.';
   message61='Автозапуск интернета при старте системы не настроен. Отсутствует файл /usr/share/applications/ponoff.desktop.';
-  message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff. Рекомендуется использовать с pppd-реконнектом.';
-  message63='Не допустим одновременный выбор графического автозапуска интернета при старте системы и автозапуск демоном pppd без графики.';
-  message64='Эта опция полезна если VPN PPTP не должно быть главным.';
-  message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd и неизменять дефолтный шлюз, запустив VPN PPTP в фоне.';
+  message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff. Рекомендуется использовать с pppd(xl2tpd)-реконнектом.';
+  message63='Не допустим одновременный выбор графического автозапуска интернета при старте системы и автозапуск демоном pppd(xl2tpd) без графики.';
+  message64='Эта опция полезна если VPN PPTP/L2TP не должно быть главным.';
+  message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd(xl2tpd) и неизменять дефолтный шлюз, запустив VPN PPTP/L2TP в фоне.';
   message66='Не удалось автоматически определить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN.';
   message67='Поле "DNS1 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message68='Поле "DNS2 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
@@ -339,6 +341,17 @@ resourcestring
   message91='Опция no56 отключает 56-битное шифрование mppe.';
   message92='Опция no128 отключает 128-битное шифрование mppe.';
   message93='Принудительный рестарт сети';
+  message94='Невозможно выбрать VPN L2TP, так как не установлен пакет xl2tpd.';
+  message95='Соединение будет сконфигурировано по протоколу VPN PPTP.';
+  message96='Использовать встроенный в демон xl2tpd механизм реконнекта (не рекомендуется если несколько сетевых карт)';
+  message97='Вести лог pppd в /var/log/pppd.log и лог xl2tpd в /var/log/syslog';
+  message98='Автозапуск интернета при старте системы демоном xl2tpd без графики (не рекомендуется использовать)';
+  message99='I) Введите адрес vpn-сервера... (например, vpn.internet.beeline.ru)';
+  message100='I) Введите адрес vpn-сервера... (например, tp.internet.beeline.ru)';
+  message101='Для VPN L2TP значение MTU должно быть меньше, чем для VPN PPTP как минимум на 20 байт, но не более чем 1460 байт.';
+  message102='Рекомендуется значение MTU 1400 байт. <ОК> - игнорировать это предупреждение и продолжить. <Cancel> - поправить.';
+  message103='Настройка VPN PPTP/L2TP';
+  message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
 
 implementation
 
@@ -421,6 +434,13 @@ FlagAutostartPonoff:=false;
 StartMessage:=true;
 //проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
  If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
+   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists ('/usr/sbin/xl2tpd') then
+                     begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message94+' '+message95);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          ComboBoxVPN.Text:='VPN PPTP';
+                     end;
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
                        begin
                           pchar_message0:=Pchar(message0);
@@ -470,13 +490,21 @@ StartMessage:=true;
                                             if Application.MessageBox(pchar_message1,pchar_message0, 1)<>mrOK then exit;
                                          end;
 Button_more.Visible:=false;
+Button_create.Enabled:=false;
+Button_exit.Enabled:=false;
 If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 Shell('rm -f /opt/vpnpptp/hosts');
 If FileExists('/etc/ppp/ip-up.old') then //сброс настройки маршрутизации remote ip address в шлюз локальной сети
+                                         //оставлено для совместимости с пред.версиями
                                    begin
                                       Shell('cp -f /etc/ppp/ip-up.old /etc/ppp/ip-up');
                                       Shell('chmod a+x /etc/ppp/ip-up');
                                       Shell('rm -f /etc/ppp/ip-up.old');
+                                   end;
+if FileExists('/etc/ppp/options.pptp.old') then //для совместимости с пред.версиями
+                                   begin
+                                      Shell('cp -f /etc/ppp/options.pptp.old /etc/ppp/options.pptp');
+                                      Shell('rm -f /etc/ppp/options.pptp.old');
                                    end;
 If Mii_tool_no.Checked then If StrToInt(Edit_MaxTime.Text)<20 then
                         begin
@@ -493,19 +521,6 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           StartMessage:=false;
                           Reconnect_pptp.Checked:=False;
                           StartMessage:=true;
-                        end;
-If Reconnect_pptp.Checked then If StrToInt(Edit_MinTime.Text)<20 then
-                        begin
-                          pchar_message0:=Pchar(message0);
-                          pchar_message1:=Pchar(message4);
-                          Application.MessageBox(pchar_message1,pchar_message0, 0);
-                          Edit_MinTime.Text:='20';
-                        end;
-If Reconnect_pptp.Checked then
-                        begin
-                          pchar_message0:=Pchar(message0);
-                          pchar_message1:=Pchar(message5);
-                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                         end;
  If dhcp_route.Checked then
                        begin
@@ -608,7 +623,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                         Shell ('chmod 600 /etc/shorewall/interfaces');
                                                                      end;
                        end;
-If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.old') then
+ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.old') then
                                                                   begin
                                                                         Shell('cp -f /etc/shorewall/interfaces.old /etc/shorewall/interfaces');
                                                                         Shell('rm -f /etc/shorewall/interfaces.old');
@@ -619,8 +634,9 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  Unit2.Form2.Obrabotka(Edit_peer.Text, more);
  Shell('rm -f '+ Label_peername.Caption);
  Memo_peer.Clear;
- Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
- Memo_peer.Lines.Add('remotename pptp');
+ If ComboBoxVPN.Text<>'VPN L2TP' then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"') else
+                                 Memo_peer.Lines.Add('#pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
+ Memo_peer.Lines.Add('remotename '+Edit_peer.Text);
  Memo_peer.Lines.Add('user "'+Edit_user.Text+'"');
  Memo_peer.Lines.Add('password "'+Edit_passwd.Text+'"');
  If Unit2.Form2.CheckBoxlock.Checked then Memo_peer.Lines.Add('lock');
@@ -645,14 +661,23 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  If Unit2.Form2.CheckBoxauth.Checked then Memo_peer.Lines.Add('auth');
  If Unit2.Form2.CheckBoxpassive.Checked then Memo_peer.Lines.Add('passive');
  If Unit2.Form2.CheckBoxnodefaultroute.Checked then Memo_peer.Lines.Add('nodefaultroute');
- If not Reconnect_pptp.Checked then Memo_peer.Lines.Add('maxfail 10') else
+ If not Reconnect_pptp.Checked then Memo_peer.Lines.Add('maxfail 10');
+ If Reconnect_pptp.Checked then
                                     begin
                                       Memo_peer.Lines.Add('maxfail 0');
+                                      Memo_peer.Lines.Add('holdoff '+Edit_MaxTime.Text);
                                       Memo_peer.Lines.Add('lcp-echo-interval '+Edit_MinTime.Text);
                                       Memo_peer.Lines.Add('lcp-echo-failure 4');
                                     end;
  If Pppd_log.Checked then Memo_peer.Lines.Add('debug');
  If Edit_mtu.Text <> '' then Memo_peer.Lines.Add('mtu '+Edit_mtu.Text);
+ If Edit_mru.Text <> '' then Memo_peer.Lines.Add('mru '+Edit_mru.Text);
+//Разбираемся с аутентификацией
+   If CheckBox_rmschap.Checked then Memo_peer.Lines.Add(CheckBox_rmschap.Caption);
+   If CheckBox_reap.Checked then Memo_peer.Lines.Add(CheckBox_reap.Caption);
+   If CheckBox_rchap.Checked then Memo_peer.Lines.Add(CheckBox_rchap.Caption);
+   If CheckBox_rpap.Checked then Memo_peer.Lines.Add(CheckBox_rpap.Caption);
+   If CheckBox_rmschapv2.Checked then Memo_peer.Lines.Add(CheckBox_rmschapv2.Caption);
 //Разбираемся с шифрованием
    mppe_string:='mppe ';
    if CheckBox_required.Checked then mppe_string:=mppe_string+CheckBox_required.Caption;
@@ -664,12 +689,6 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
    if CheckBox_no56.Checked then mppe_string:=mppe_string+CheckBox_no56.Caption;
       if CheckBox_no56.Checked then if CheckBox_no128.Checked then mppe_string:=mppe_string+',';
    if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
-//Разбираемся с аутентификацией
-   If CheckBox_rmschap.Checked then Memo_peer.Lines.Add(CheckBox_rmschap.Caption);
-   If CheckBox_reap.Checked then Memo_peer.Lines.Add(CheckBox_reap.Caption);
-   If CheckBox_rchap.Checked then Memo_peer.Lines.Add(CheckBox_rchap.Caption);
-   If CheckBox_rpap.Checked then Memo_peer.Lines.Add(CheckBox_rpap.Caption);
-   If CheckBox_rmschapv2.Checked then Memo_peer.Lines.Add(CheckBox_rmschapv2.Caption);
    If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
  Shell ('chmod 600 '+Label_peername.Caption);
@@ -803,6 +822,7 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
  If Edit_MinTime.Text<>'0' then Edit_MinTime.Text:=Edit_MinTime.Text+'000';
  Edit_MaxTime.Text:=Edit_MaxTime.Text+'000';
  If Edit_mtu.Text='' then Edit_mtu.Text:='mtu-none';
+ If Edit_mru.Text='' then Edit_mru.Text:='mru-none';
  Shell('rm -f /opt/vpnpptp/config');
  Shell('printf "'+Edit_peer.Text+'\n" >> /opt/vpnpptp/config');
  Shell('printf "'+Edit_IPS.Text+'\n" >> /opt/vpnpptp/config');
@@ -872,6 +892,7 @@ If not CheckBox_shorewall.Checked then If FileExists('/etc/shorewall/interfaces.
                                               Shell('printf "rmschapv2-no\n" >> /opt/vpnpptp/config');
  If ComboBoxVPN.Text='VPN L2TP' then Shell('printf "l2tp\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "pptp\n" >> /opt/vpnpptp/config');
+ Shell('printf "'+Edit_mru.Text+'\n" >> /opt/vpnpptp/config');
 
  Shell ('chmod 600 /opt/vpnpptp/config');
 //Создаем ярлык для подключения
@@ -901,9 +922,9 @@ begin
   Memo_create.Clear;
   Memo_create.Lines.Add('[Desktop Entry]');
   Memo_create.Lines.Add('Encoding=UTF-8');
-  Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP');
-  Memo_create.Lines.Add('Comment[uk]=Управління з'' єднанням VPN PPTP');
-  Memo_create.Lines.Add('Comment=Control MS VPN via PPTP');
+  Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP/L2TP');
+  Memo_create.Lines.Add('Comment[uk]=Управління з'' єднанням VPN PPTP/L2TP');
+  Memo_create.Lines.Add('Comment=Control VPN via PPTP/L2TP');
   If not Sudo_ponoff.Checked then
      begin
          If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
@@ -912,9 +933,9 @@ begin
      begin
          Memo_create.Lines.Add('Exec=sudo /opt/vpnpptp/ponoff');
      end;
-  Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP');
-  Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP');
-  Memo_create.Lines.Add('GenericName=VPN PPTP Control');
+  Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP/L2TP');
+  Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP/L2TP');
+  Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP Control');
   Memo_create.Lines.Add('Icon=/opt/vpnpptp/ponoff.png');
   Memo_create.Lines.Add('MimeType=');
   Memo_create.Lines.Add('Name[ru]=Подключение '+Edit_peer.Text);
@@ -1100,11 +1121,12 @@ If FileExists ('/etc/rc.d/rc.local') then If (Autostartpppd.Checked) then
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') then
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
                                      Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
-                                 Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text);
+                                 If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
+                                                                     else Memo_Autostartpppd.Lines.Add('/etc/init.d/xl2tpd restart');
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f /etc/rc.d/rc.local');
                                  Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
@@ -1118,7 +1140,7 @@ If FileExists ('/etc/rc.d/rc.local') then If not Autostartpppd.Checked then  //�
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') then
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
                                      Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  closefile(FileAutostartpppd);
@@ -1151,6 +1173,33 @@ If FileExists ('/etc/rc.d/rc.local') then If not Autostartpppd.Checked then  //�
         if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
      end;
  closefile(FileResolvConf);
+//настройка /etc/ppp/chap-secrets
+If not FileExists('/etc/ppp/chap-secrets.old') then Shell('cp -f /etc/ppp/chap-secrets /etc/ppp/chap-secrets.old');
+Shell ('rm -f /etc/ppp/chap-secrets');
+Shell ('printf "# Secrets for authentication using CHAP\n" >> /etc/ppp/chap-secrets');
+Shell ('printf "# client        server  secret                  IP addresses\n" >> /etc/ppp/chap-secrets');
+Shell ('chmod 600 /etc/ppp/chap-secrets');
+//настройка /etc/xl2tpd/xl2tpd.conf
+ If ComboBoxVPN.Text='VPN L2TP' then If not FileExists('/etc/xl2tpd/xl2tpd.conf.old') then Shell('cp -f /etc/xl2tpd/xl2tpd.conf /etc/xl2tpd/xl2tpd.conf.old');
+ If ComboBoxVPN.Text='VPN L2TP' then Shell ('rm -f /etc/xl2tpd/xl2tpd.conf');
+ If ComboBoxVPN.Text='VPN L2TP' then
+                                  begin
+                                       Shell('printf "'+'[global]'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       Shell('printf "'+'access control = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       Shell('printf "\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       Shell('printf "'+'[lac '+Edit_peer.Text+']'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       Shell('printf "'+'name = '+Edit_user.Text+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       Shell('printf "'+'lns = '+Edit_IPS.Text+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       If Reconnect_pptp.Checked then If Edit_MinTime.Text<>'0' then Shell('printf "'+'redial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       If Reconnect_pptp.Checked then If Edit_MinTime.Text<>'0' then Shell('printf "'+'redial timeout = '+LeftStr(Edit_MinTime.Text,Length(Edit_MinTime.Text)-3)+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       Shell('printf "'+'pppoptfile = /etc/ppp/peers/'+Edit_peer.Text+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       Shell('printf "'+'autodial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       If Pppd_log.Checked then Shell('printf "'+'ppp debug = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                  end;
+//настройка /etc/ppp/options.l2tp
+ If ComboBoxVPN.Text='VPN L2TP' then If not FileExists('/etc/ppp/options.l2tp.old') then Shell('cp -f /etc/ppp/options.l2tp /etc/ppp/options.l2tp.old');
+ If ComboBoxVPN.Text='VPN L2TP' then Shell ('rm -f /etc/ppp/options.l2tp');
+ If ComboBoxVPN.Text='VPN L2TP' then Shell('printf "#Clear config file\n" >> /etc/ppp/options.l2tp');
 //проверка технической возможности поднятия соединения
 EditDNS1ping:=true;
 EditDNS2ping:=true;
@@ -1281,8 +1330,7 @@ If not flag then
  If Pppd_log.Checked then Shell ('/opt/vpnpptp/scripts/pppdlog');
  if not FileExists('/etc/ppp/options.old') then Shell('cp -f /etc/ppp/options /etc/ppp/options.old');
  Shell('echo "#Clear config file" > /etc/ppp/options');
- if not FileExists('/etc/ppp/options.pptp.old') then Shell('cp -f /etc/ppp/options.pptp /etc/ppp/options.pptp.old');
- Shell('echo "#Clear config file" > /etc/ppp/options.pptp');
+ Button_exit.Enabled:=true;
 end;
 
 procedure TForm1.Button_addoptionsClick(Sender: TObject);
@@ -1416,7 +1464,7 @@ Edit_user.Enabled:=true;
 Edit_passwd.Enabled:=true;
 Edit_MaxTime.Enabled:=true;
 Edit_MinTime.Enabled:=true;
-//ComboBoxVPN.Enabled:=true;
+ComboBoxVPN.Enabled:=true;
 Application.ProcessMessages;
 end;
 
@@ -1578,19 +1626,31 @@ begin
 end;
 
 procedure TForm1.ComboBoxVPNChange(Sender: TObject);
+var
+   pchar_message0,pchar_message1:pchar;
 begin
-
+   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists ('/usr/sbin/xl2tpd') then
+                     begin
+                          pchar_message0:=Pchar(message0);
+                          pchar_message1:=Pchar(message94);
+                          Application.MessageBox(pchar_message1,pchar_message0, 0);
+                          ComboBoxVPN.Text:='VPN PPTP';
+                     end;
+   If ComboBoxVPN.Text='VPN L2TP' then Label1.Caption:=message100 else Label1.Caption:=message99;
+   Application.ProcessMessages;
 end;
 
 procedure TForm1.ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
+  if Key=16 then Edit_user.SetFocus;
+  if Key=9 then Edit_passwd.SetFocus;
   Key:=0;
 end;
 
-procedure TForm1.ComboBoxVPNKeyPress(Sender: TObject; var Key: char);
+procedure TForm1.Edit_mtuChange(Sender: TObject);
 begin
-  Key:=#0;
+     Edit_mru.Text:=Edit_mtu.Text;
 end;
 
 procedure TForm1.Edit_peerChange(Sender: TObject);
@@ -2026,7 +2086,15 @@ If not y then IPS:=true else IPS:=false;
   Shell('rm -f /tmp/users');
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
-
+  If ComboBoxVPN.Text='VPN L2TP' then Reconnect_pptp.Caption:=message96;
+  If ComboBoxVPN.Text='VPN L2TP' then Pppd_log.Caption:=message97;
+  If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
+  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_required.Enabled:=false; CheckBox_required.Checked:=false; StartMessage:=true; end;
+  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_stateless.Enabled:=false; CheckBox_stateless.Checked:=false; StartMessage:=true; end;
+  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no40.Enabled:=false; CheckBox_no40.Checked:=false; StartMessage:=true; end;
+  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no56.Enabled:=false; CheckBox_no56.Checked:=false; StartMessage:=true; end;
+  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
+  Application.ProcessMessages;
 end;
 
 procedure TForm1.Button_next2Click(Sender: TObject);
@@ -2264,7 +2332,7 @@ If ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if ((EditDNS4.Text='none'
                            end;
 If EditDNS3.Text='' then EditDNS3.Text:='none';
 If EditDNS4.Text='' then EditDNS4.Text:='none';
-//проверка ввода mtu, разрешен диапазон [576..1500], рекомендуется 1460
+//проверка ввода mtu, разрешен диапазон [576..1500], рекомендуется 1400, 1460
 For i:=1 to Length(Edit_mtu.Text) do
 begin
    if not (Edit_mtu.Text[i] in ['0'..'9']) then
@@ -2284,6 +2352,46 @@ If (StrToInt(Edit_mtu.Text)>1500) or (StrToInt(Edit_mtu.Text)<576) then
                                         exit;
                                       end;
 end;
+//проверка ввода mru, разрешен диапазон [576..1500]
+For i:=1 to Length(Edit_mru.Text) do
+begin
+   if not (Edit_mru.Text[i] in ['0'..'9']) then
+                                      begin
+                                        pchar_message0:=Pchar(message0);
+                                        pchar_message1:=Pchar(message104);
+                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                        Edit_mru.Clear;
+                                        Edit_mru.Text:=Edit_mtu.Text;
+                                        exit;
+                                      end;
+If (StrToInt(Edit_mru.Text)>1500) or (StrToInt(Edit_mru.Text)<576) then
+                                      begin
+                                        pchar_message0:=Pchar(message0);
+                                        pchar_message1:=Pchar(message104);
+                                        Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                        Edit_mru.Clear;
+                                        Edit_mru.Text:=Edit_mtu.Text;
+                                        exit;
+                                      end;
+end;
+If ComboBoxVPN.Text='VPN L2TP' then
+                               begin
+                                   If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1400) then
+                                      begin
+                                        pchar_message0:=Pchar(message0);
+                                        pchar_message1:=Pchar(message101+' '+message102);
+                                        if Application.MessageBox(pchar_message1,pchar_message0, 1)<>mrOK then exit;
+                                      end;
+                               end;
+If ComboBoxVPN.Text='VPN L2TP' then
+                               begin
+                                   If Edit_mtu.Text='' then
+                                      begin
+                                        pchar_message0:=Pchar(message0);
+                                        pchar_message1:=Pchar(message101+' '+message102);
+                                        if Application.MessageBox(pchar_message1,pchar_message0, 1)<>mrOK then exit;
+                                      end;
+                               end;
  Button_more.Visible:=True;
  Button_create.Visible:=True;
  TabSheet1.TabVisible:= False;
@@ -2321,6 +2429,7 @@ var i:integer;
     Fileoowriter_find:textfile;
     str:string;
 begin
+Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
 StartMessage:=false;
@@ -2476,6 +2585,7 @@ If Screen.Height>1000 then
                              EditDNS2.BorderSpacing.Top:=40;
                              EditDNS4.BorderSpacing.Top:=35;
                              Memo_route.Width:=650;
+                             Edit_mru.BorderSpacing.Top:=40;
                          end;
 //проверка vpnpptp в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart');
@@ -2587,6 +2697,9 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
         If Memo_config.Lines[37]='rpap-yes' then CheckBox_rpap.Checked:=true else CheckBox_rpap.Checked:=false;
         If Memo_config.Lines[38]='rmschapv2-yes' then CheckBox_rmschapv2.Checked:=true else CheckBox_rmschapv2.Checked:=false;
         If Memo_config.Lines[39]='l2tp' then ComboBoxVPN.Text:='VPN L2TP' else ComboBoxVPN.Text:='VPN PPTP';
+        If Memo_config.Lines[39]='l2tp' then Label1.Caption:=message100 else Label1.Caption:=message99;
+        Edit_mru.Text:=Memo_config.Lines[40];
+        If (Edit_mru.Text='mru-none') or (Edit_mru.Text='none') then Edit_mru.Text:='';
             If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;

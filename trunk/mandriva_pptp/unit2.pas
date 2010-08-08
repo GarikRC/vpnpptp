@@ -67,6 +67,8 @@ if not FileExists ('/etc/ppp/peers/'+str_peer) then if not more then
                                              CheckBoxnobsdcomp.Checked:=true;
                                              CheckBoxnoauth.Checked:=true;
                                              CheckBoxpersist.Checked:=true;
+                                             CheckBoxnopcomp.Checked:=true;
+                                             CheckBoxnoaccomp.Checked:=true;
                                         end;
 If FileExists ('/opt/vpnpptp/config') then if FileExists ('/etc/ppp/peers/'+str_peer) then if not more then
                                         begin

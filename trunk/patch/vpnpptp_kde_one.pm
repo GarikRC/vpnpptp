@@ -7,7 +7,7 @@ use common;
 use run_program;
 
 sub get_type { 'vpnpptp' }
-sub get_description { N("MS VPN (PPTP)") }
+sub get_description { N("VPN PPTP/L2TP") }
 sub get_packages { 'vpnpptp-kde-one' }
 
 sub read_config {
