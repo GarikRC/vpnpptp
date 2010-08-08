@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 463
+  Left = 453
   Height = 570
-  Top = 164
+  Top = 85
   Width = 793
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2143,10 +2143,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 793
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
@@ -2604,7 +2604,6 @@ object Form1: TForm1
         Top = 137
         Width = 342
         Anchors = [akTop, akLeft, akBottom]
-        Enabled = False
         ItemHeight = 0
         Items.Strings = (
           'VPN PPTP'
@@ -2612,10 +2611,8 @@ object Form1: TForm1
         )
         OnChange = ComboBoxVPNChange
         OnKeyDown = ComboBoxVPNKeyDown
-        OnKeyPress = ComboBoxVPNKeyPress
         Style = csSimple
         TabOrder = 5
-        TabStop = False
       end
     end
     object TabSheet2: TTabSheet
@@ -2638,11 +2635,11 @@ object Form1: TForm1
         ParentColor = False
       end
       object Label_route: TLabel
-        AnchorSideTop.Control = Label_mtu
+        AnchorSideTop.Control = Label_mru
         AnchorSideTop.Side = asrBottom
         Left = 7
         Height = 14
-        Top = 253
+        Top = 290
         Width = 351
         BorderSpacing.Top = 10
         Caption = 'Дополнительные маршруты (необязательно, но желательно):'
@@ -2653,7 +2650,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 7
         Height = 14
-        Top = 281
+        Top = 318
         Width = 379
         Caption = '/sbin/route add -net [ip] netmask [маска] gw [шлюз] dev [устройство]'
         ParentColor = False
@@ -2663,7 +2660,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 7
         Height = 14
-        Top = 267
+        Top = 304
         Width = 384
         Caption = '/sbin/route add -host [ip] netmask [маска] gw [шлюз] dev [устройство]'
         ParentColor = False
@@ -2837,6 +2834,20 @@ object Form1: TForm1
         Caption = 'Шифрование mppe:'
         ParentColor = False
       end
+      object Label_mru: TLabel
+        AnchorSideTop.Control = Label_mtu
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = Edit_mtu
+        Left = 275
+        Height = 14
+        Top = 266
+        Width = 108
+        Anchors = [akTop, akRight]
+        BorderSpacing.Left = 10
+        BorderSpacing.Top = 23
+        Caption = 'MRU (если задано):'
+        ParentColor = False
+      end
       object Edit_eth: TEdit
         AnchorSideLeft.Control = Label25
         AnchorSideLeft.Side = asrBottom
@@ -2958,8 +2969,8 @@ object Form1: TForm1
         AnchorSideRight.Control = CheckBox_no40
         AnchorSideBottom.Control = CheckBox_desktop
         Left = 2
-        Height = 193
-        Top = 295
+        Height = 156
+        Top = 332
         Width = 599
         Anchors = [akTop, akLeft, akBottom]
         BorderSpacing.Left = 2
@@ -3025,18 +3036,19 @@ object Form1: TForm1
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 30
         MaxLength = 10
+        OnChange = Edit_mtuChange
         TabOrder = 6
       end
       object EditDNSdop3: TEdit
         AnchorSideLeft.Control = Label10
         AnchorSideLeft.Side = asrBottom
-        AnchorSideTop.Control = Label_mtu
+        AnchorSideTop.Control = Label_mru
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
         Left = 401
         Height = 21
-        Top = 258
+        Top = 295
         Width = 200
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Left = 10
@@ -3121,6 +3133,20 @@ object Form1: TForm1
         Caption = 'refuse-mschap-v2'
         OnChange = CheckBox_rmschapv2Change
         TabOrder = 19
+      end
+      object Edit_mru: TEdit
+        AnchorSideLeft.Control = EditDNS2
+        AnchorSideTop.Control = Edit_mtu
+        AnchorSideRight.Control = Memo_route
+        AnchorSideRight.Side = asrBottom
+        Left = 383
+        Height = 21
+        Top = 257
+        Width = 218
+        Anchors = [akTop, akLeft, akRight]
+        BorderSpacing.Top = 35
+        MaxLength = 10
+        TabOrder = 20
       end
     end
     object TabSheet3: TTabSheet

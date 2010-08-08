@@ -43,6 +43,7 @@ TFORM1.LABELDNS3.CAPTION=DNS1 при поднятом VPN (для детей в�
 TFORM1.LABELDNS4.CAPTION=DNS2 при поднятом VPN (для детей введите 81.176.72.83):
 TFORM1.LABEL9.CAPTION=Аутентификация:
 TFORM1.LABEL13.CAPTION=Шифрование mppe:
+TFORM1.LABEL_MRU.CAPTION=MRU (если задано):
 TFORM1.CHECKBOX_RCHAP.CAPTION=refuse-chap
 TFORM1.CHECKBOX_REAP.CAPTION=refuse-eap
 TFORM1.CHECKBOX_RMSCHAP.CAPTION=refuse-mschap

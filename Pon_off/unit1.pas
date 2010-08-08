@@ -92,7 +92,7 @@ var
   Welcome:boolean;
 
 const
-  Config_n=40;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=41;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 
 resourcestring
   message0='Внимание!';
@@ -249,7 +249,6 @@ If Code_up_ppp then
                                          Shell ('ifconfig|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39)+' >> /tmp/RemoteIPaddress');
                                          If FileSize('/tmp/RemoteIPaddress')<>0 then
                                                                                  begin
-                                                                                    Shell('cp -f /etc/ppp/ip-up'+' '+'/etc/ppp/ip-up.old');
                                                                                     AssignFile (FileRemoteIPaddress,'/tmp/RemoteIPaddress');
                                                                                     reset (FileRemoteIPaddress);
                                                                                     readln(FileRemoteIPaddress, Str_RemoteIPaddress);
@@ -268,14 +267,14 @@ If Code_up_ppp then
                                                                                                             BalloonMessage (8000,str);
                                                                                                             Application.ProcessMessages;
                                                                                                             Shell('rm -f /opt/vpnpptp/hosts');
-                                                                                                            Memo_etc_ppp_ip_up.Lines.LoadFromFile('/etc/ppp/ip-up');
-                                                                                                            Shell('rm -f /etc/ppp/ip-up');
-                                                                                                            for i:=0 to Memo_etc_ppp_ip_up.Lines.Count-1 do
-                                                                                                            if Memo_etc_ppp_ip_up.Lines[i]='exit 0' then Memo_etc_ppp_ip_up.Lines[i]:='      ';
-                                                                                                            Memo_etc_ppp_ip_up.Lines[Memo_etc_ppp_ip_up.Lines.Count-1]:='route add -host $5 gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3];
-                                                                                                            Memo_etc_ppp_ip_up.Lines.Add('exit 0');
-                                                                                                            Memo_etc_ppp_ip_up.Lines.SaveToFile('/etc/ppp/ip-up');
-                                                                                                            Shell('chmod a+x /etc/ppp/ip-up');
+                                                                                                            //изменение скрипта ip-up
+                                                                                                            If FileExists('/etc/ppp/ip-up.d/ip-up') then
+                                                                                                                                                    Shell ('printf "'+'/sbin/route add -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
+                                                                                                            //изменение скрипта ip-down
+                                                                                                            If Memo_Config.Lines[7]='reconnect-pptp' then if FileExists('/etc/ppp/ip-down.d/ip-down') then
+                                                                                                                                                    Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                                                                            If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/tmp/ip-down') then
+                                                                                                                                                    Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
                                                                                                           end;
                                                                                  end;
                                       end;
@@ -367,6 +366,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
                                 Shell ('route del default');
+                                Shell ('ifup '+Memo_Config.Lines[3]);
                                 If not DhclientStart then Shell ('dhclient '+Memo_Config.Lines[3]);
                                 DhclientStart:=true;
                               //Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
@@ -544,12 +544,14 @@ If not Code_up_ppp then If link=1 then
                                   Application.ProcessMessages;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
+                                                      Shell ('resolvconf -u');
                                                       If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('route del default');
                                                       If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('route del default');
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       Shell ('resolvconf -u');
-                                                      Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]);
+                                                      If Memo_Config.Lines[39]<>'l2tp' then Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
+                                                                            Shell ('/etc/init.d/xl2tpd restart')
                                                    end;
                            end;
 Application.ProcessMessages;
@@ -726,7 +728,7 @@ begin
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
- //просто убивает pppd и удаляет временные файлы
+ //просто убивает pppd, xl2tpd и других демонов и удаляет временные файлы
 begin
 //проверка наличия в процессах демона pppd
  Shell('ps -u root | grep pppd | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmp_pppd');
@@ -736,6 +738,10 @@ begin
  Application.ProcessMessages;
  If LeftStr(tmp_pppd.Lines[0],4)='pppd' then
                                         Shell('killall pppd');
+ Shell ('/etc/init.d/xl2tpd stop');
+ Shell ('killall xl2tpd');
+ Shell ('killall openl2tpd');
+ Shell ('killall l2tpd');
  Application.ProcessMessages;
  Shell('rm -f /tmp/status.ppp');
  Shell('rm -f /tmp/tmp');
@@ -751,8 +757,6 @@ end;
 
 procedure TForm1.MenuItem3Click(Sender: TObject);
 //выход без аварии
-//var
-// restart:boolean;
 begin
  Timer1.Enabled:=False;
  If Memo_Config.Lines[7]='noreconnect-pptp' then
@@ -778,13 +782,10 @@ begin
   If Memo_gate.Lines[0]='none' then
                                Shell ('/etc/ppp/ip-down.d/ip-down');
   Shell ('rm -f /tmp/gate');
-  //restart:=false;
   If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
                                       begin
-                                         //If not CompareFiles('/etc/resolv.conf.old','/etc/resolv.conf') then restart:=true;
                                          Shell('cp -f /etc/resolv.conf.old /etc/resolv.conf');
                                          Shell('rm -f /etc/resolv.conf.old');
-                                         //If Memo_Config.Lines[34]<>'usepeerdns-yes' then If restart then Shell ('ifup '+Memo_Config.Lines[3]);
                                       end;
   If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
   Shell('rm -f /etc/resolv.conf.lock');
@@ -800,7 +801,6 @@ var
 i:integer;
 //выход при аварии
 begin
-//  MenuItem2Click(Self);
   Timer1.Enabled:=False;
   If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
                                       begin
@@ -826,8 +826,6 @@ begin
         Shell ('ifdown wlan'+IntToStr(i));
       end;
   Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
-  //Shell ('ifup '+Memo_Config.Lines[3]);
-  //Shell ('route add default dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');

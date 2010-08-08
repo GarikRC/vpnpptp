@@ -247,8 +247,8 @@ msgid "В поле \"В#209�емя #209�еконнекта\" можно вв
 msgstr "Field \"Reconnect time\" must be a number with limit from 5 to 255 sec."
 
 #: unit1.message11
-msgid "Рекомендуется отключить поднятое VPN PPTP - тогда шлюз локальной сети оп#209�еделится автоматически."
-msgstr "Recommend down VPN PPTP connection - then local network gate define automatically."
+msgid "Рекомендуется отключить поднятое VPN PPTP/L2TP - тогда шлюз локальной сети оп#209�еделится автоматически."
+msgstr "Recommend down VPN PPTP/L2TP connection - then local network gate define automatically."
 
 #: unit1.message12
 msgid "Сетевой инте#209�фейс не оп#209�еделился."
@@ -279,20 +279,20 @@ msgid "Запуск этой п#209�ог#209�аммы возможен то�
 msgstr "Run this program requires root user rights or root's permission. Press <OK> for exit."
 
 #: unit1.message19
-msgid "Д#209�угая такая же п#209�ог#209�амма уже пытается сконфигу#209�и#209�овать VPN PPTP. Нажмите <OK> для отказа от двойного запуска."
-msgstr "Another copy of program try configure VPN PPTP. Press <OK> for dismiss double run."
+msgid "Д#209�угая такая же п#209�ог#209�амма уже пытается сконфигу#209�и#209�овать VPN PPTP/L2TP. Нажмите <OK> для отказа от двойного запуска."
+msgstr "Another copy of program try configure VPN PPTP/L2TP. Press <OK> for dismiss double run."
 
 #: unit1.message2
 msgid "Так как Вы отказались от конт#209�оля state сетевого кабеля, то в целях снижения наг#209�узки на систему в#209�емя дозвона установлено в 20 сек."
 msgstr "Dial time set to 20 seconds since you has not state network cable and system load is over."
 
 #: unit1.message20
-msgid "Невозможно наст#209�оить VPN PPTP в связи с отсутствием пакета pptp-linux."
-msgstr "Unable find ppptp-linux packet. VPN PPTP can not configure."
+msgid "Невозможно наст#209�оить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux."
+msgstr "Unable find ppptp-linux packet. VPN PPTP/L2TP can not configure."
 
 #: unit1.message3
-msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd #209�еконнекта п#209�оигно#209�и#209�ован."
-msgstr "Select internal pppd daemon reconnect is ignore since you not select reconnect option."
+msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd(xl2tpd) #209�еконнекта п#209�оигно#209�и#209�ован."
+msgstr "Select internal pppd(xl2tpd) daemon reconnect is ignore since you not select reconnect option."
 
 #: unit1.message4
 msgid "Так как #209�еконнект будет #209�еализован вст#209�оенным в демон pppd методом, то в#209�емя #209�еконнекта (в#209�емя отп#209�авки LCP эхо-зап#209�осов) установлено в 20 сек."
@@ -356,12 +356,12 @@ msgid "Используйте опцию отключения конт#209�о�
 msgstr "Use state disable option if other way not works (program say you if needed)."
 
 #: unit1.message31
-msgid "Вст#209�оенный в демон pppd механизм #209�еконнекта не умеет конт#209�оли#209�овать state сетевого кабеля, поэтому он не желателен к использованию."
-msgstr "Built-in pppd daemon's reconnect mechanism can not control the state network cable, so it is not desirable to use."
+msgid "Вст#209�оенный в демон pppd(xl2tpd) механизм #209�еконнекта не умеет конт#209�оли#209�овать state сетевого кабеля, поэтому он не желателен к использованию."
+msgstr "Built-in pppd(xl2tpd) daemon's reconnect mechanism can not control the state network cable, so it is not desirable to use."
 
 #: unit1.message32
-msgid "Ведите лог pppd для того, чтобы выяснить ошибки наст#209�ойки соединения, ошибки п#209�и соединении и т.д."
-msgstr "Use a log of pppd in order to clarify the connection setup errors, errors when connecting, etc."
+msgid "Ведите лог pppd(xl2tpd) для того, чтобы выяснить ошибки наст#209�ойки соединения, ошибки п#209�и соединении и т.д."
+msgstr "Use a log of pppd(xl2tpd) in order to clarify the connection setup errors, errors when connecting, etc."
 
 #: unit1.message33
 msgid "Получение ма#209�ш#209�утов че#209�ез dhcp необходимо для однов#209�еменной #209�аботы локальной сети и инте#209�нета, но п#209�овайде#209� не всегда их п#209�исылает."
@@ -495,8 +495,8 @@ msgid "Для того, чтобы #209�аз#209�ешить пользова
 msgstr "In order to allow users to configure the connection, first install the packet sudo."
 
 #: unit1.message9
-msgid "Эта опция позволяет пользователям запускать конфигу#209�ато#209� VPN PPTP без па#209�оля админист#209�ато#209�а и конфигу#209�и#209�овать соединение."
-msgstr "This option allows users to run VPN PPTP configuration without root password and configure the connection."
+msgid "Эта опция позволяет пользователям запускать конфигу#209�ато#209� VPN PPTP/L2TP без па#209�оля админист#209�ато#209�а и конфигу#209�и#209�овать соединение."
+msgstr "This option allows users to run VPN PPTP/L2TP configuration without root password and configure the connection."
 
 #: unit1.message59
 msgid "Выбо#209� опции автозапуска инте#209�нета п#209�и ста#209�те системы возможен только п#209�и выбо#209�е опции #209�аз#209�ешения пользователям уп#209�авлять подключением."
@@ -523,24 +523,24 @@ msgid "Автозапуск интернета при старте систем�
 msgstr "Autostart Internet at startup with help pppd-daemon whithout graphics (do not use)"
 
 #: unit1.message62
-msgid "Эта опция осуществляет автозапуск инте#209�нета п#209�и ста#209�те системы без использования ponoff. Рекомендуется использовать с pppd-#209�еконнектом."
-msgstr "This option provides Autostart Internet at system startup without using ponoff. It is recommended to use with pppd-reconnect."
+msgid "Эта опция осуществляет автозапуск инте#209�нета п#209�и ста#209�те системы без использования ponoff. Рекомендуется использовать с pppd(xl2tpd)-#209�еконнектом."
+msgstr "This option provides Autostart Internet at system startup without using ponoff. It is recommended to use with pppd(xl2tpd)-reconnect."
 
 #: unit1.message63
-msgid "Не допустим однов#209�еменный выбо#209� г#209�афического автозапуска инте#209�нета п#209�и ста#209�те системы и автозапуск демоном pppd без г#209�афики."
-msgstr "Do not let the simultaneous selection of graphical Autostart Internet at system startup and autostart with help ppdd-daemon without graphics."
+msgid "Не допустим однов#209�еменный выбо#209� г#209�афического автозапуска инте#209�нета п#209�и ста#209�те системы и автозапуск демоном pppd(xl2tpd) без г#209�афики."
+msgstr "Do not let the simultaneous selection of graphical Autostart Internet at system startup and autostart with help ppdd(xl2tpd)-daemon without graphics."
 
 #: unit1.message64
-msgid "Эта опция полезна если VPN PPTP не должно быть главным."
-msgstr "This option is useful if the VPN PPTP should not be main."
+msgid "Эта опция полезна если VPN PPTP/L2TP не должно быть главным."
+msgstr "This option is useful if the VPN PPTP/L2TP should not be main."
 
 #: TFORM1.PPPNOTDEFAULT.CAPTION
 msgid "Не изменять дефолтный шлюз, запустив VPN PPTP в фоне"
 msgstr "Do not change default gateway, VPN PPTP running in the background"
 
 #: unit1.message65
-msgid "Пока нельзя однов#209�еменно выб#209�ать автозапуск инте#209�нета демоном pppd и неизменять дефолтный шлюз, запустив VPN PPTP в фоне."
-msgstr "Not yet simultaneously select autostart Internet daemon pppd and immutable on the default gateway, VPN PPTP running in the background."
+msgid "Пока нельзя однов#209�еменно выб#209�ать автозапуск инте#209�нета демоном pppd(xl2tpd) и неизменять дефолтный шлюз, запустив VPN PPTP/L2TP в фоне."
+msgstr "Not yet simultaneously select autostart Internet daemon pppd(xl2tpd) and immutable on the default gateway, VPN PPTP/L2TP running in the background."
 
 #: TFORM2.CAPTION
 msgid "Опции демона pppd"
@@ -699,3 +699,51 @@ msgstr "no128 - disable 128 bit keys."
 #: unit1.message93
 msgid "П#209�инудительный #209�еста#209�т сети"
 msgstr "Forced restart the network"
+
+#: unit1.message21
+msgid "Эта опция позволяет запустить модуль ponoff п#209�и ста#209�те опе#209�ационной системы и установить соединение VPN PPTP/L2TP автозаг#209�узкой."
+msgstr "This option allows to run the module ponoff on start operating system and connect to VPN PPTP/L2TP with help autostart."
+
+#: unit1.message94
+msgid "Невозможно выб#209�ать VPN L2TP, так как не установлен пакет xl2tpd."
+msgstr "Unable to select VPN L2TP, so as not installed xl2tpd."
+
+#: unit1.message95
+msgid "Соединение будет сконфигу#209�и#209�овано по п#209�отоколу VPN PPTP."
+msgstr "The connection will be configured on the protocol VPN PPTP."
+
+#: unit1.message96
+msgid "Использовать вст#209�оенный в демон xl2tpd механизм #209�еконнекта (не #209�екомендуется если несколько сетевых ка#209�т)"
+msgstr "Use internak mechanism of xl2tpd daemon for reconnect (not useful if more than one network cards)"
+
+#: unit1.message97
+msgid "Вести лог pppd в /var/log/pppd.log и лог xl2tpd в /var/log/syslog"
+msgstr "pppd logging on /var/log/pppd.log and xl2tpd logging on /var/log/syslog"
+
+#: unit1.message98
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном xl2tpd без г#209�афики (не #209�екомендуется использовать)"
+msgstr "Autostart Internet at startup with help xl2tpd-daemon whithout graphics (do not use)"
+
+#: unit1.message99
+msgid "I) Введите ад#209�ес vpn-се#209�ве#209�а... (нап#209�име#209�, vpn.internet.beeline.ru)"
+msgstr "I) Enter vpn server adress... (for example vpn.internet.beeline.ru)"
+
+#: unit1.message100
+msgid "I) Введите ад#209�ес vpn-се#209�ве#209�а... (нап#209�име#209�, tp.internet.beeline.ru)"
+msgstr "I) Enter vpn server adress... (for example tp.internet.beeline.ru)"
+
+#: unit1.message101
+msgid "Для VPN L2TP значение MTU должно быть меньше, чем для VPN PPTP как минимум на 20 байт, но не более чем 1460 байт."
+msgstr "For VPN L2TP MTU value must be less than for VPN PPTP at least 20 bytes, but not more than 1460 bytes."
+
+#: unit1.message102
+msgid "Рекомендуется значение MTU 1400 байт. <ОК> - игно#209�и#209�овать это п#209�едуп#209�еждение и п#209�одолжить. <Cancel> - поп#209�авить."
+msgstr "It is recommended MTU value 1400 bytes. <OK> - ignore this warning and continue. <Cancel> - Correct."
+
+#: unit1.message103
+msgid "Наст#209�ойка VPN PPTP/L2TP"
+msgstr "Configure VPN PPTP/L2TP"
+
+#: unit1.message104
+msgid "Поле \"MRU\" заполнено неве#209�но. Раз#209�ешен лишь диапазон [576..1460..1492..1500]."
+msgstr "Field \"MRU\" is wrong. Required limit is [576..1460..1492..1500]."

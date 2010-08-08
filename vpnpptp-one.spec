@@ -1,13 +1,13 @@
-%define rel 3
+%define rel 2
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
 
-Summary: Tools for setup and control MS VPN via PPTP
-Summary(ru): Инструмент для установки и управления соединением MS VPN через PPTP
-Summary(uk): Інструмент для встановлення та керування з'єднанням MS VPN через PPTP
+Summary: Tools for setup and control VPN via PPTP/L2TP
+Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
+Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-kde-one
-Version: 0.1.3
+Version: 0.1.4
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -32,16 +32,16 @@ BuildRequires: libglib1.2-devel, libgdk-pixbuf2-devel
 %ifarch x86_64
 BuildRequires: lib64glib1.2-devel, lib64gdk-pixbuf2-devel
 %endif
-Requires: pptp-linux
+Requires: pptp-linux, xl2tpd
 Obsoletes: vpnpptp-allde < 0.0.6
 Obsoletes: vpnpptp-kde-one < 0.0.6
 
 %description
-Tools for easy and quick setup and control MS VPN via PPTP
+Tools for easy and quick setup and control VPN via PPTP/L2TP
 %description -l ru
-Инструмент для легкого и быстрого подключения и управления соединением MS VPN через PPTP
+Инструмент для легкого и быстрого подключения и управления соединением VPN через PPTP/L2TP
 %description -l uk
-Інструмент для легкого і швидкого підключення і керування з'єднанням MS VPN через PPTP
+Інструмент для легкого і швидкого підключення і керування з'єднанням VPN через PPTP/L2TP
 
 %prep
 
@@ -99,16 +99,16 @@ install -dm 755 %{buildroot}%{_datadir}/applications
 cat > ponoff.desktop << EOF
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP Control
-GenericName[ru]=Управление соединением VPN PPTP
-GenericName[uk]=Керування з'єднанням VPN PPTP
+GenericName=VPN PPTP/L2TP Control
+GenericName[ru]=Управление соединением VPN PPTP/L2TP
+GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
 Exec=/opt/vpnpptp/ponoff
-Comment=Control MS VPN via PPTP
-Comment[ru]=Управление соединением MS VPN через PPTP
-Comment[uk]=Керування з'єднанням MS VPN через PPTP
+Comment=Control VPN via PPTP/L2TP
+Comment[ru]=Управление соединением VPN через PPTP/L2TP
+Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP
 Icon=/opt/vpnpptp/ponoff.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
@@ -123,16 +123,16 @@ install -dm 755 %{buildroot}%{_datadir}/applications
 cat > vpnpptp.desktop << EOF
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP Setup
-GenericName[ru]=Настройка соединения VPN PPTP
-GenericName[uk]=Налаштування з’єднання VPN PPTP
+GenericName=VPN PPTP/L2TP Setup
+GenericName[ru]=Настройка соединения VPN PPTP/L2TP
+GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
 Exec=/opt/vpnpptp/vpnpptp
-Comment=Setup MS VPN via PPTP
-Comment[ru]=Настройка соединения VPN PPTP
-Comment[uk]=Налаштування з’єднання VPN PPTP
+Comment=Setup VPN via PPTP/L2TP
+Comment[ru]=Настройка соединения VPN PPTP/L2TP
+Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP
 Icon=/opt/vpnpptp/vpnpptp.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
