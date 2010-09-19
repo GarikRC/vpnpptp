@@ -1,7 +1,6 @@
-{ Control pptp vpn connection
+{ Control pptp/l2tp vpn connection
 
-  Copyright (C) 2009 Alexander Kazancev kazancas@gmail.com
-                     Alex Loginov loginov_alex@inbox.ru, loginov.alex.valer@gmail.com
+  Copyright (C) 2009 Alex Loginov (loginov_alex@inbox.ru, loginov.alex.valer@gmail.com)
 
   This source is free software; you can redistribute it and/or modify it under
   the terms of the GNU General Public License as published by the Free
@@ -97,14 +96,14 @@ const
 resourcestring
   message0='Внимание!';
   message1='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <OK> для отказа от запуска.';
-  message2='Другая такая же программа уже работает с VPN PPTP. Нажмите <OK> для отказа от двойного запуска.';
-  message3='Сначала сконфигурируйте соединение: Меню, Утилиты, Системные (или Меню, Интернет), Настройка VPN PPTP (Настройка соединения VPN PPTP).';
-  message4='No ethernet. Cетевой интерфейс для VPN PPTP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
-  message5='No link. Сетевой кабель для VPN PPTP неподключен.';
+  message2='Другая такая же программа уже работает с VPN PPTP/L2TP. Нажмите <OK> для отказа от двойного запуска.';
+  message3='Сначала сконфигурируйте соединение: Меню, Утилиты, Системные (или Меню, Интернет), Настройка VPN PPTP/L2TP (Настройка соединения VPN PPTP/L2TP).';
+  message4='No ethernet. Cетевой интерфейс для VPN PPTP/L2TP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
+  message5='No link. Сетевой кабель для VPN PPTP/L2TP неподключен.';
   message6='Соединение ';
   message7=' установлено';
   message8=' отсутствует';
-  message9='No link. Сетевой кабель для VPN PPTP неподключен. А реконнект не включен.';
+  message9='No link. Сетевой кабель для VPN PPTP/L2TP неподключен. А реконнект не включен.';
   message10='Выход без аварии';
   message11='Выход при аварии';
   message12='Устанавливается соединение ';
@@ -120,6 +119,8 @@ resourcestring
   //message22='';
   message23='DNS1-сервер до поднятия vpn не пингуется. ';
   message24='DNS2-сервер до поднятия vpn не пингуется. ';
+  message25='Вы можете в конфигураторе VPN PPTP/L2TP выбрать опцию разрешения пользователям управлять подключением.';
+  message26='Вы также можете сконфигурировать соединение из Центра Управления, Сеть и интернет, Настройка VPN-соединений, VPN PPTP/L2TP.';
 
 implementation
 
@@ -305,6 +306,7 @@ If link=1 then If NoInternet then
                                begin
                                  Shell ('ifdown '+Memo_Config.Lines[3]);
                                  Shell ('ifup '+Memo_Config.Lines[3]);
+                                 Shell ('ifup lo');
                                end;
        Shell ('rm -f /tmp/gate');
        Memo_gate.Lines.Clear;
@@ -545,13 +547,15 @@ If not Code_up_ppp then If link=1 then
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
                                                       Shell ('resolvconf -u');
+                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Shell ('ifup lo');
                                                       If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('route del default');
                                                       If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('route del default');
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       Shell ('resolvconf -u');
-                                                      If Memo_Config.Lines[39]<>'l2tp' then Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
-                                                                            Shell ('/etc/init.d/xl2tpd restart')
+                                                      If Memo_Config.Lines[39]<>'l2tp' then
+                                                                                    Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
+                                                                                                              Shell ('/etc/init.d/xl2tpd restart')
                                                    end;
                            end;
 Application.ProcessMessages;
@@ -595,7 +599,7 @@ begin
                                                              Timer1.Enabled:=False;
                                                              Timer2.Enabled:=False;
                                                              pchar_message0:=Pchar(message0);
-                                                             pchar_message1:=Pchar(message1);
+                                                             pchar_message1:=Pchar(message1+' '+message25);
                                                              Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                              Shell('rm -f /tmp/tmpnostart1');
                                                              halt;
@@ -627,7 +631,7 @@ If FileExists('/opt/vpnpptp/config') then
    begin
     Timer1.Enabled:=False;
     pchar_message0:=Pchar(message0);
-    pchar_message1:=Pchar(message3);
+    pchar_message1:=Pchar(message3+' '+message26);
     Application.MessageBox(pchar_message1,pchar_message0, 0);
     Timer1.Enabled:=False;
     Timer2.Enabled:=False;
@@ -791,6 +795,7 @@ begin
   Shell('rm -f /etc/resolv.conf.lock');
   Shell ('route del default');
   Shell ('resolvconf -u');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Shell ('ifup lo');
   Shell ('ifup '+Memo_Config.Lines[3]);
   Shell ('resolvconf -u');
   halt;
@@ -826,6 +831,7 @@ begin
         Shell ('ifdown wlan'+IntToStr(i));
       end;
   Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Shell ('ifup lo');
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -835,11 +841,13 @@ begin
   If Memo_gate.Lines[0]='none' then
      begin
            Shell ('/etc/init.d/network stop');
+           Shell ('/etc/init.d/network start');
             For i:=0 to 9 do
                  begin
                     Shell ('ifup eth'+IntToStr(i));
                     Shell ('ifup wlan'+IntToStr(i));
                  end;
+           Shell ('ifup lo');
      end;
   If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
   Shell('rm -f /etc/resolv.conf.lock');

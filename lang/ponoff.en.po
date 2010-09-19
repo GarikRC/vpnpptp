@@ -26,20 +26,20 @@ msgid "Выход п#209�и ава#209�ии"
 msgstr "Exit with problem"
 
 #: unit1.message2
-msgid "Д#209�угая такая же п#209�ог#209�амма уже #209�аботает с VPN PPTP. Нажмите <OK> для отказа от двойного запуска."
-msgstr "Another copy of program try configure VPN PPTP. Press <OK> for dismiss double run."
+msgid "Д#209�угая такая же п#209�ог#209�амма уже #209�аботает с VPN PPTP/L2TP. Нажмите <OK> для отказа от двойного запуска."
+msgstr "Another copy of program try configure VPN PPTP/L2TP. Press <OK> for dismiss double run."
 
 #: unit1.message3
-msgid "Сначала сконфигу#209�и#209�уйте соединение: Меню, Утилиты, Системные (или Меню, Инте#209�нет), Наст#209�ойка VPN PPTP (Наст#209�ойка соединения VPN PPTP)."
+msgid "Сначала сконфигу#209�и#209�уйте соединение: Меню, Утилиты, Системные (или Меню, Инте#209�нет), Наст#209�ойка VPN PPTP/L2TP (Наст#209�ойка соединения VPN PPTP/L2TP)."
 msgstr "First configure connection: Menu, Tools, System (or Menu, Internet), Configure VPN PPTP."
 
 #: unit1.message4
-msgid "No ethernet. Cетевой инте#209�фейс для VPN PPTP недоступен. Если же он доступен, то установите \"Не конт#209�оли#209�овать state сетевого кабеля\" в Конфигу#209�ато#209�е."
-msgstr "No ethernet. Network interface for VPN PPTP is not avalible. If it present, select \"Not control network cable state\" in Configurator."
+msgid "No ethernet. Cетевой инте#209�фейс для VPN PPTP/L2TP недоступен. Если же он доступен, то установите \"Не конт#209�оли#209�овать state сетевого кабеля\" в Конфигу#209�ато#209�е."
+msgstr "No ethernet. Network interface for VPN PPTP/L2TP is not avalible. If it present, select \"Not control network cable state\" in Configurator."
 
 #: unit1.message5
-msgid "No link. Сетевой кабель для VPN PPTP неподключен."
-msgstr "No link. Network cable for VPN PPTP is not connect."
+msgid "No link. Сетевой кабель для VPN PPTP/L2TP неподключен."
+msgstr "No link. Network cable for VPN PPTP/L2TP is not connect."
 
 #: unit1.message6
 msgid "Соединение "
@@ -54,8 +54,8 @@ msgid " отсутствует"
 msgstr " not avalible"
 
 #: unit1.message9
-msgid "No link. Сетевой кабель для VPN PPTP неподключен. А #209�еконнект не включен."
-msgstr "No link. Network cable for VPN PPTP not connect. And reconnect is not on."
+msgid "No link. Сетевой кабель для VPN PPTP/L2TP неподключен. А #209�еконнект не включен."
+msgstr "No link. Network cable for VPN PPTP/L2TP not connect. And reconnect is not on."
 
 #: unit1.message12
 msgid "Устанавливается соединение "
@@ -108,3 +108,11 @@ msgstr "DNS1-server before raise VPN does not ping. "
 #: unit1.message24
 msgid "DNS2-се#209�ве#209� до поднятия VPN не пингуется. "
 msgstr "DNS2-server before raise VPN does not ping. "
+
+#: unit1.message25
+msgid "Вы можете в конфигу#209�ато#209�е VPN PPTP/L2TP выб#209�ать опцию #209�аз#209�ешения пользователям уп#209�авлять подключением."
+msgstr "You can use the configuration tool VPN PPTP/L2TP choose to permit users to manage the connection."
+
+#: unit1.message26
+msgid "Вы также можете сконфигу#209�и#209�овать соединение из Цент#209�а Уп#209�авления, Сеть и инте#209�нет, Наст#209�ойка VPN-соединений, VPN PPTP/L2TP."
+msgstr "You can also configure a connection from the Control Center, Network and Internet, Configuring VPN-connections, VPN PPTP/L2TP."

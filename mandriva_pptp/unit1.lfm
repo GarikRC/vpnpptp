@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 453
+  Left = 434
   Height = 570
-  Top = 85
+  Top = 93
   Width = 793
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2143,10 +2143,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 793
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
@@ -3146,6 +3146,7 @@ object Form1: TForm1
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 35
         MaxLength = 10
+        OnChange = Edit_mruChange
         TabOrder = 20
       end
     end
@@ -3170,6 +3171,7 @@ object Form1: TForm1
         AnchorSideLeft.Control = TabSheet3
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Side = asrCenter
+        AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet3
         AnchorSideBottom.Side = asrBottom
         Left = 108
@@ -3178,6 +3180,7 @@ object Form1: TForm1
         Width = 575
         Anchors = [akLeft, akBottom]
         Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
+        ParentBidiMode = False
         ParentColor = False
       end
       object Label_peername: TLabel
@@ -3206,6 +3209,17 @@ object Form1: TForm1
         Caption = '/etc/ppp/ip-down.d/ip-down'
         ParentColor = False
         Visible = False
+      end
+      object Label14: TLabel
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideBottom.Control = TabSheet3
+        AnchorSideBottom.Side = asrBottom
+        Left = 0
+        Height = 18
+        Top = 491
+        Width = 47
+        Anchors = [akLeft, akBottom]
+        ParentColor = False
       end
       object Memo_peer: TMemo
         Left = 711
@@ -3323,7 +3337,9 @@ object Form1: TForm1
         Top = 54
         Width = 214
         Caption = 'Вести лог pppd в /var/log/pppd.log'
+        Checked = True
         OnChange = Pppd_logChange
+        State = cbChecked
         TabOrder = 2
       end
       object dhcp_route: TCheckBox
@@ -3543,17 +3559,35 @@ object Form1: TForm1
         OnChange = routeDNSautoChange
         TabOrder = 6
       end
+      object MemoTest: TMemo
+        Left = 639
+        Height = 41
+        Top = 398
+        Width = 70
+        Lines.Strings = (
+          'MemoTest'
+        )
+        TabOrder = 32
+        Visible = False
+      end
     end
     object TabSheet4: TTabSheet
       Caption = 'Этап 4'
       ClientHeight = 509
       ClientWidth = 791
       object Memo_create: TMemo
-        Left = 1
-        Height = 497
-        Top = 6
-        Width = 792
-        Anchors = [akTop, akLeft, akBottom]
+        AnchorSideLeft.Control = TabSheet4
+        AnchorSideTop.Control = TabSheet4
+        AnchorSideRight.Control = TabSheet4
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = TabSheet4
+        AnchorSideBottom.Side = asrBottom
+        Left = 3
+        Height = 503
+        Top = 3
+        Width = 785
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Around = 3
         BorderStyle = bsNone
         Lines.Strings = (
           ''
@@ -3654,6 +3688,22 @@ object Form1: TForm1
     Caption = 'Справка'
     OnClick = ButtonHelpClick
     TabOrder = 6
+    Visible = False
+  end
+  object ButtonTest: TButton
+    AnchorSideLeft.Control = Button_exit
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 616
+    Height = 21
+    Top = 539
+    Width = 176
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.Left = 616
+    BorderSpacing.Bottom = 10
+    Caption = 'Test'
+    OnClick = ButtonTestClick
+    TabOrder = 7
     Visible = False
   end
 end

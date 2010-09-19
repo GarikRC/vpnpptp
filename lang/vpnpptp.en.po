@@ -747,3 +747,31 @@ msgstr "Configure VPN PPTP/L2TP"
 #: unit1.message104
 msgid "Поле \"MRU\" заполнено неве#209�но. Раз#209�ешен лишь диапазон [576..1460..1492..1500]."
 msgstr "Field \"MRU\" is wrong. Required limit is [576..1460..1492..1500]."
+
+#: unit1.message105
+msgid "Обна#209�ужено, что VPN PPTP/L2TP поднято. <OK> - п#209�одолжить, убив VPN PPTP/L2TP и пе#209�езапустив сеть. <Cancel> - отмена запуска конфигу#209�ато#209�а."
+msgstr "Found that the VPN PPTP/L2TP raised. <OK>  - continue, killing VPN PPTP/L2TP and restarting the network. <Cancel> - abolition run configure."
+
+#: unit1.message106
+msgid "Обна#209�ужено, что используется пакет xl2tpd не из #209�епозито#209�ия EduMandriva, поэтому вст#209�оенный в демон xl2tpd механизм #209�еконнекта выб#209�ать нельзя."
+msgstr "Found that the package is used xl2tpd not from the repository EduMandriva, so the built-in daemon xl2tpd reconnect mechanism can not be selected."
+
+#: unit1.message107
+msgid "Запустить конфигу#209�ато#209� VPN PPTP/L2TP можно также из Цент#209�а Уп#209�авления->Сеть и Инте#209�нет->Наст#209�ойка VPN-соединений->VPN PPTP/L2TP."
+msgstr "Run the configurator VPN PPTP/L2TP can also be from the Control Center-> Network and Internet> Setting up VPN-connections-> VPN PPTP/L2TP."
+
+#: unit1.message108
+msgid "Установить тестовое соединение VPN PPTP/L2TP в г#209�афике/без г#209�афики сейчас? <Yes> - установить в г#209�афике, <No> - установить без г#209�афики, <Cancel> - отмена."
+msgstr "Set test connection VPN PPTP/L2TP in graphics/without graphics now? <Yes> - set in graphics, <No> - set without graphics, <Cancel> - cancel."
+
+#: unit1.message109
+msgid "Тестовый запуск"
+msgstr "Test Run"
+
+#: unit1.message110
+msgid "Лог ведется неполный (или не ведется), так как Вы не выб#209�али опцию ведения лога pppd в /var/log/pppd.log и лога xl2tpd в /var/log/syslog."
+msgstr "Log is incomplete (or not being), because you have not chosen the option logging pppd in /var/log/pppd.log and log xl2tpd in /var/log/syslog."
+
+#: unit1.message111
+msgid "Команда запуска:"
+msgstr "Command run:"
