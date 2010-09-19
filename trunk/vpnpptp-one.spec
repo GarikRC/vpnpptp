@@ -1,4 +1,4 @@
-%define rel 2
+%define rel 3
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,12 +7,12 @@ Summary: Tools for setup and control VPN via PPTP/L2TP
 Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
 Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-kde-one
-Version: 0.1.4
+Version: 0.1.5
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
 
-Packager: Alexander Kazancev <kazancas@mandriva.ru>; Alex Loginov <loginov_alex@inbox.ru>, <loginov.alex.valer@gmail.com>
+Packager: Alex Loginov <loginov_alex@inbox.ru>, <loginov.alex.valer@gmail.com>
 Vendor: Mandriva Russia, http://www.mandriva.ru
 
 Source: vpnpptp-src-%{version}.tar.gz

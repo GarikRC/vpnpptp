@@ -1,10 +1,10 @@
-Establishing a VPN PPTP is complete!
+Establishing a VPN PPTP/L2TP is complete!
 
 You can connect to the Internet:
 1) Using the shortcut on the Desktop;
-2) Start Menu-> Internet-> ponoff (Manage connection VPN PPTP) or Menu-> Utilities-> System-> ponoff (Manage connection VPN PPTP);
+2) Start Menu-> Internet-> ponoff (Manage connection VPN PPTP/L2TP) or Menu-> Utilities-> System-> ponoff (Manage connection VPN PPTP/L2TP);
 3) After completing an administrator under the command ponoff;
-This configuration can also be called by root of command vpnpptp or from the Menu-> Internet-> vpnpptp (Setting up connection VPN PPTP) or from Menu-> Utilities-> System-> vpnpptp (Setting up connection VPN PPTP);
+This configuration can also be called by root of command vpnpptp or from the Menu-> Internet-> vpnpptp (Setting up connection VPN PPTP/L2TP) or from Menu-> Utilities-> System-> vpnpptp (Setting up connection VPN PPTP/L2TP);
 4) Holds under root of the command /usr/sbin/pppd call connection_name (in this case, the VPN will work without a GUI).
 
 If the connection is properly configured - run this configuration again. Make sure the data.
@@ -21,6 +21,6 @@ The comments and ideas on the program contact: loginov_alex@inbox.ru
 
 Links:
 http://code.google.com/p/vpnpptp/ - project home page.
-http://code.google.com/p/vpnpptp/w/list - description of program features.
 http://unixforum.org/index.php?showtopic=89669 - forum.
 http://linuxforum.ru/viewtopic.php?id=147 - forum.
+http://forum.edumandriva.ru/forum/viewtopic.php?f=25&t=26&start=0 - forum.

@@ -1,7 +1,6 @@
-{ PPTP VPN setup
+{ PPTP/L2TP VPN setup
 
-  Copyright (C) 2009 Alexander Kazancev kazancas@gmail.com;
-                     Alex Loginov loginov_alex@inbox.ru, loginov.alex.valer@gmail.com
+  Copyright (C) 2009 Alex Loginov (loginov_alex@inbox.ru, loginov.alex.valer@gmail.com)
 
   This source is free software; you can redistribute it and/or modify it under
   the terms of the GNU General Public License as published by the Free
@@ -26,13 +25,14 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Gettext, Typinfo, Unit2;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Gettext, Typinfo, Unit2, Process;
 
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    ButtonTest: TButton;
     ButtonRestart: TButton;
     ButtonVPN: TButton;
     ButtonHidePass: TButton;
@@ -54,10 +54,12 @@ type
     EditDNS4: TEdit;
     Edit_mru: TEdit;
     Label13: TLabel;
+    Label14: TLabel;
     Label9: TLabel;
     LabelDNS3: TLabel;
     LabelDNS4: TLabel;
     Label_mru: TLabel;
+    MemoTest: TMemo;
     routeDNSauto: TCheckBox;
     EditDNSdop3: TEdit;
     EditDNS1: TEdit;
@@ -157,6 +159,7 @@ type
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonHidePassClick(Sender: TObject);
     procedure ButtonRestartClick(Sender: TObject);
+    procedure ButtonTestClick(Sender: TObject);
     procedure ButtonVPNClick(Sender: TObject);
     procedure Button_addoptionsClick(Sender: TObject);
     procedure Button_createClick(Sender: TObject);
@@ -173,6 +176,7 @@ type
     procedure ComboBoxVPNChange(Sender: TObject);
     procedure ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Edit_mruChange(Sender: TObject);
     procedure Edit_mtuChange(Sender: TObject);
     procedure Edit_peerChange(Sender: TObject);
     procedure Edit_userChange(Sender: TObject);
@@ -243,6 +247,7 @@ var
   DNS_auto:boolean; //если false, то DNS провайдер выдает для ручного ввода
   DNSA,DNSB,DNSdopC,DNSC,DNSD:string; //автоопределенные конфигуратором DNS
   Stroowriter:string;
+  AProcess: TProcess;
 
 const
   Config_n=41;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -352,6 +357,13 @@ resourcestring
   message102='Рекомендуется значение MTU 1400 байт. <ОК> - игнорировать это предупреждение и продолжить. <Cancel> - поправить.';
   message103='Настройка VPN PPTP/L2TP';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
+  message105='Обнаружено, что VPN PPTP/L2TP поднято. <OK> - продолжить, убив VPN PPTP/L2TP и перезапустив сеть. <Cancel> - отмена запуска конфигуратора.';
+  message106='Обнаружено, что используется пакет xl2tpd не из репозитория EduMandriva, поэтому встроенный в демон xl2tpd механизм реконнекта выбрать нельзя.';
+  message107='Запустить конфигуратор VPN PPTP/L2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
+  message108='Установить тестовое соединение VPN PPTP/L2TP в графике/без графики сейчас? <Yes> - установить в графике, <No> - установить без графики, <Cancel> - отмена.';
+  message109='Тестовый запуск';
+  message110='Лог ведется неполный (или не ведется), так как Вы не выбрали опцию ведения лога pppd в /var/log/pppd.log и лога xl2tpd в /var/log/syslog.';
+  message111='Команда запуска:';
 
 implementation
 
@@ -483,15 +495,33 @@ StartMessage:=true;
                           pchar_message1:=Pchar(message29);
                           Application.MessageBox(pchar_message1,pchar_message0, 0);
                        end;
+   If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then If FileExists ('/bin/rpm') then
+                               begin
+                                 Shell ('rm -f /tmp/ver_xl2tpd');
+                                 Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd');
+                                 If FileSize ('/tmp/ver_xl2tpd') = 0 then
+                                                                 begin
+                                                                      pchar_message0:=Pchar(message0);
+                                                                      pchar_message1:=Pchar(message106);
+                                                                      Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                      StartMessage:=false;
+                                                                      Reconnect_pptp.Checked:=false;
+                                                                      StartMessage:=true;
+                                                                 end;
+                                 Shell ('rm -f /tmp/ver_xl2tpd');
+                               end;
   If Unit2.Form2.CheckBoxusepeerdns.Checked then
                                          begin
                                             pchar_message0:=Pchar(message0);
                                             pchar_message1:=Pchar(message80);
                                             if Application.MessageBox(pchar_message1,pchar_message0, 1)<>mrOK then exit;
                                          end;
+Label42.Caption:='';
+Label43.Caption:='';
 Button_more.Visible:=false;
 Button_create.Enabled:=false;
 Button_exit.Enabled:=false;
+Application.ProcessMessages;
 If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 Shell('rm -f /opt/vpnpptp/hosts');
 If FileExists('/etc/ppp/ip-up.old') then //сброс настройки маршрутизации remote ip address в шлюз локальной сети
@@ -536,8 +566,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Shell('rm -f /etc/dhclient-exit-hooks');
                           if FileExists('/opt/vpnpptp/scripts/dhclient-exit-hooks') then Shell('cp -f /opt/vpnpptp/scripts/dhclient-exit-hooks /etc/dhclient-exit-hooks');
                           //проверка получаются ли маршруты по dhcp и настройка - если получаются или отмена - если не получаются
-                          Label42.Caption:='';
-                          Label43.Caption:=message48;
+                          Label14.Caption:=message48;
                           Application.ProcessMessages;
                           Shell ('ifdown '+Edit_eth.Text);
                           Shell ('ifup '+Edit_eth.Text);
@@ -545,8 +574,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Shell ('rm -f /tmp/dhclienttest1');
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest1');
                           Shell ('rm -f /tmp/dhclienttest2');
-                          Label42.Caption:='';
-                          Label43.Caption:=message49;
+                          Label14.Caption:=message49;
                           Application.ProcessMessages;
                           Shell ('dhclient '+Edit_eth.Text);
                           Application.ProcessMessages;
@@ -562,8 +590,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Memo_gate.Lines.Clear;
                           If FileSize('/tmp/dhclienttest2')<=FileSize('/tmp/dhclienttest1') then
                                                                                                begin
-                                                                                                 Label42.Caption:='';
-                                                                                                 Label43.Caption:=message41;
+                                                                                                 Label14.Caption:=message41;
                                                                                                  Application.ProcessMessages;
                                                                                                  pchar_message0:=Pchar(message0);
                                                                                                  pchar_message1:=Pchar(message42);
@@ -581,8 +608,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                           Shell('rm -f /etc/dhclient.conf.old');
                           if FileExists('/etc/dhclient-exit-hooks.old') then Shell('cp -f /etc/dhclient-exit-hooks.old /etc/dhclient-exit-hooks');
                           Shell('rm -f /etc/dhclient-exit-hooks.old');
-                          Label42.Caption:='';
-                          Label43.Caption:=message51;
+                          Label14.Caption:=message51;
                           Application.ProcessMessages;
                           Shell ('ifdown '+Edit_eth.Text);
                           Shell ('ifup '+Edit_eth.Text);
@@ -709,8 +735,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                               begin
                                                   if BindUtils then Str:='host '+Edit_IPS.Text+'|grep address|grep '+Edit_IPS.Text+'|awk '+ chr(39)+'{print $4}'+chr(39);
                                                   if not BindUtils then Str:= 'ping -c1 '+Edit_IPS.Text+'|grep '+Edit_IPS.Text+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39);
-                                                  Label42.Caption:='';
-                                                  If not BindUtils then Label43.Caption:=message46 else Label43.Caption:=message50;
+                                                  If not BindUtils then Label14.Caption:=message46 else Label14.Caption:=message50;
                                                   Application.ProcessMessages;
                                                   Shell (Str+' > /opt/vpnpptp/hosts');
                                                   If not BindUtils then flag:=true;
@@ -733,8 +758,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                                          end;
                                                   If FileSize('/opt/vpnpptp/hosts')=0 then
                                                                                              begin
-                                                                                                  Label42.Caption:='';
-                                                                                                  If BindUtils then Label43.Caption:=message54 else Label43.Caption:=message43;
+                                                                                                  If BindUtils then Label14.Caption:=message54 else Label14.Caption:=message43;
                                                                                                   Application.ProcessMessages;
                                                                                                   pchar_message0:=Pchar(message0);
                                                                                                   If BindUtils then pchar_message1:=Pchar(message54) else pchar_message1:=Pchar(message43);
@@ -1191,6 +1215,7 @@ Shell ('chmod 600 /etc/ppp/chap-secrets');
                                        Shell('printf "'+'name = '+Edit_user.Text+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        Shell('printf "'+'lns = '+Edit_IPS.Text+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        If Reconnect_pptp.Checked then If Edit_MinTime.Text<>'0' then Shell('printf "'+'redial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then Shell('printf "'+'redial = no'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        If Reconnect_pptp.Checked then If Edit_MinTime.Text<>'0' then Shell('printf "'+'redial timeout = '+LeftStr(Edit_MinTime.Text,Length(Edit_MinTime.Text)-3)+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        Shell('printf "'+'pppoptfile = /etc/ppp/peers/'+Edit_peer.Text+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        Shell('printf "'+'autodial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
@@ -1206,10 +1231,10 @@ EditDNS2ping:=true;
    //тест EditDNS1-сервера
 If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
   begin
+     If EditDNS1.Text='127.0.0.1' then Shell ('ifup lo');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS1.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
-     Label42.Caption:='';
-     Label43.Caption:=message73;
+     Label14.Caption:=message73;
      Application.ProcessMessages;
      Shell(str);
      Application.ProcessMessages;
@@ -1222,10 +1247,10 @@ If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
    //тест EditDNS2-сервера
 If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
   begin
+     If EditDNS2.Text='127.0.0.1' then Shell ('ifup lo');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS2.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
-     Label42.Caption:='';
-     Label43.Caption:=message75;
+     Label14.Caption:=message75;
      Application.ProcessMessages;
      Shell(str);
      Application.ProcessMessages;
@@ -1237,14 +1262,12 @@ If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
   end;
 If (not EditDNS1ping) and (not EditDNS2ping) then
                                          begin
-                                                Label42.Caption:='';
-                                                Label43.Caption:=message74;
+                                                Label14.Caption:=message74;
                                                 Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message74);
                                                 Application.MessageBox(pchar_message1,pchar_message0, 0);
-                                                Label42.Caption:='';
-                                                Label43.Caption:=message76;
+                                                Label14.Caption:=message76;
                                                 Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message76);
@@ -1252,8 +1275,7 @@ If (not EditDNS1ping) and (not EditDNS2ping) then
                                          end;
 If (EditDNS1ping) and (not EditDNS2ping) then
                                          begin
-                                                Label42.Caption:='';
-                                                Label43.Caption:=message84;
+                                                Label14.Caption:=message84;
                                                 Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message84);
@@ -1261,8 +1283,7 @@ If (EditDNS1ping) and (not EditDNS2ping) then
                                          end;
 If (not EditDNS1ping) and (EditDNS2ping) then
                                          begin
-                                                Label42.Caption:='';
-                                                Label43.Caption:=message85;
+                                                Label14.Caption:=message85;
                                                 Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message85);
@@ -1273,8 +1294,7 @@ If not flag then
    begin
      Shell('rm -f /tmp/networktest');
      Str:='ping -c1 '+Edit_IPS.Text+'|grep '+Edit_IPS.Text+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
-     Label42.Caption:='';
-     Label43.Caption:=message45;
+     Label14.Caption:=message45;
      Application.ProcessMessages;
      Shell(str);
      Application.ProcessMessages;
@@ -1283,8 +1303,7 @@ If not flag then
      Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
      If Memo_networktest.Lines[0]='none' then
                                          begin
-                                                Label42.Caption:='';
-                                                Label43.Caption:=message43;
+                                                Label14.Caption:=message43;
                                                 Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message43);
@@ -1295,8 +1314,7 @@ If not flag then
    //тест шлюза локальной сети
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+Edit_gate.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
-     Label42.Caption:='';
-     Label43.Caption:=message47;
+     Label14.Caption:=message47;
      Application.ProcessMessages;
      Shell(str);
      Application.ProcessMessages;
@@ -1305,8 +1323,7 @@ If not flag then
      Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
      If Memo_networktest.Lines[0]='none' then
                                          begin
-                                                Label42.Caption:='';
-                                                Label43.Caption:=message44;
+                                                Label14.Caption:=message44;
                                                 Application.ProcessMessages;
                                                 pchar_message0:=Pchar(message0);
                                                 pchar_message1:=Pchar(message44);
@@ -1327,10 +1344,18 @@ If not flag then
  Button_create.Visible:=False;
  Shell('rm -f /tmp/users');
  //применяем дополнительные настройки
- If Pppd_log.Checked then Shell ('/opt/vpnpptp/scripts/pppdlog');
+ If Pppd_log.Checked then
+                     begin
+                          Shell ('/opt/vpnpptp/scripts/pppdlog');
+                          Shell ('/etc/rc.d/init.d/syslog restart');
+                          Shell ('/etc/rc.d/init.d/rsyslog restart');
+                     end;
  if not FileExists('/etc/ppp/options.old') then Shell('cp -f /etc/ppp/options /etc/ppp/options.old');
  Shell('echo "#Clear config file" > /etc/ppp/options');
  Button_exit.Enabled:=true;
+ ButtonTest.Caption:=message109;
+ ButtonTest.Visible:=true;
+ Application.ProcessMessages;
 end;
 
 procedure TForm1.Button_addoptionsClick(Sender: TObject);
@@ -1445,11 +1470,13 @@ Edit_MinTime.Enabled:=false;
 ComboBoxVPN.Enabled:=false;
 Application.ProcessMessages;
     Shell ('/etc/init.d/network stop');
+    Shell ('/etc/init.d/network start');
     For i:=0 to 9 do
         begin
           Shell ('ifup eth'+IntToStr(i));
           Shell ('ifup wlan'+IntToStr(i));
         end;
+    Shell ('ifup lo');
     Shell ('resolvconf -u');
 ButtonRestart.Caption:=message93;
 Button_exit.Enabled:=true;
@@ -1466,6 +1493,79 @@ Edit_MaxTime.Enabled:=true;
 Edit_MinTime.Enabled:=true;
 ComboBoxVPN.Enabled:=true;
 Application.ProcessMessages;
+end;
+
+procedure TForm1.ButtonTestClick(Sender: TObject);
+ //тестовый запуск сконфигурированного соединения
+var
+ pchar_message0,pchar_message1:pchar;
+ Otvet:integer;
+ i,j,k:integer;
+ flag:boolean;
+begin
+ If not Pppd_log.Checked then
+                         begin
+                            pchar_message0:=Pchar(message0);
+                            pchar_message1:=Pchar(message110);
+                            Application.MessageBox(pchar_message1,pchar_message0, 0);
+                         end;
+ pchar_message0:=Pchar(message0);
+ pchar_message1:=Pchar(message108);
+ Otvet:=Application.MessageBox(pchar_message1,pchar_message0, 3);
+ If Otvet=mrCancel then exit;
+ Shell ('/etc/rc.d/init.d/syslog restart');
+ Shell ('/etc/rc.d/init.d/rsyslog restart');
+ ButtonTest.Enabled:=false;
+ If Otvet=mrYes then AProcess := TProcess.Create(nil);
+ Shell ('rm -f /tmp/test_vpn');
+ Memo_create.Clear;
+ If Otvet=mrYes then AProcess.CommandLine := '/opt/vpnpptp/ponoff';
+ If Otvet=mrYes then AProcess.Execute;
+ If ComboBoxVPN.Text='VPN L2TP' then
+                                    begin
+                                       Shell('printf "\n" >> /var/log/syslog');
+                                       Shell('printf "'+message109+' VPN L2TP (/var/log/syslog)\n" >> /var/log/syslog');
+                                       If Otvet=mrYes then Shell('printf "'+message111+' /opt/vpnpptp/ponoff'+'\n" >> /var/log/syslog');
+                                       If Otvet=mrNo then Shell('printf "'+message111+' /etc/init.d/xl2tpd restart'+'\n" >> /var/log/syslog');
+                                       If Otvet=mrNo then Shell ('/etc/init.d/xl2tpd restart');
+                                    end;
+ If ComboBoxVPN.Text='VPN PPTP' then
+                                    begin
+                                        Shell('printf "\n" >> /var/log/pppd.log');
+                                        Shell('printf "'+message109+' VPN PPTP (/var/log/pppd.log)\n" >> /var/log/pppd.log');
+                                        If Otvet=mrYes then Shell('printf "'+message111+' /opt/vpnpptp/ponoff'+'\n" >> /var/log/pppd.log');
+                                        If Otvet=mrNo then Shell('printf "'+message111+' pppd call '+Edit_peer.Text+'\n" >> /var/log/pppd.log');
+                                        If Otvet=mrNo then Shell ('pppd call '+Edit_peer.Text);
+                                    end;
+ While true do
+    begin
+       If ComboBoxVPN.Text='VPN PPTP' then Shell ('tail -40 /var/log/pppd.log > /tmp/test_vpn');
+       If ComboBoxVPN.Text='VPN L2TP' then Shell ('tail -40 /var/log/syslog > /tmp/test_vpn');
+       If FileExists ('/tmp/test_vpn') then MemoTest.Lines.LoadFromFile('/tmp/test_vpn');
+       j:=0;
+       While j<=MemoTest.Lines.Count-1 do
+         begin
+           flag:=false;
+           For i:=0 to Memo_create.Lines.Count-1 do
+              begin
+                    If Memo_create.Lines[i]=MemoTest.Lines[j] then flag:=true;
+              end;
+           If not flag then If MemoTest.Lines[j]<>'' then
+                                                         begin
+                                                             For k:=j to MemoTest.Lines.Count-1 do
+                                                                  begin
+                                                                     Memo_create.Lines.Add(MemoTest.Lines[k]);
+                                                                     Application.ProcessMessages;
+                                                                  end;
+                                                             j:=MemoTest.Lines.Count;
+                                                         end;
+           j:=j+1;
+         end;
+       Application.ProcessMessages;
+       Sleep(100);
+    end;
+ Shell ('rm -f /tmp/test_vpn');
+ If Otvet=mrYes then AProcess.Free;
 end;
 
 procedure TForm1.Autostart_ponoffChange(Sender: TObject);
@@ -1549,6 +1649,7 @@ begin
   Shell('rm -f /tmp/users');
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
+  Shell ('rm -f /tmp/test_vpn');
   halt;
 end;
 
@@ -1648,9 +1749,14 @@ begin
   Key:=0;
 end;
 
+procedure TForm1.Edit_mruChange(Sender: TObject);
+begin
+
+end;
+
 procedure TForm1.Edit_mtuChange(Sender: TObject);
 begin
-     Edit_mru.Text:=Edit_mtu.Text;
+
 end;
 
 procedure TForm1.Edit_peerChange(Sender: TObject);
@@ -2355,28 +2461,28 @@ end;
 //проверка ввода mru, разрешен диапазон [576..1500]
 For i:=1 to Length(Edit_mru.Text) do
 begin
-   if not (Edit_mru.Text[i] in ['0'..'9']) then
+   If not (Edit_mru.Text[i] in ['0'..'9']) then
                                       begin
                                         pchar_message0:=Pchar(message0);
                                         pchar_message1:=Pchar(message104);
                                         Application.MessageBox(pchar_message1,pchar_message0, 0);
                                         Edit_mru.Clear;
-                                        Edit_mru.Text:=Edit_mtu.Text;
+                                        //Edit_mru.Text:=Edit_mtu.Text;
                                         exit;
                                       end;
-If (StrToInt(Edit_mru.Text)>1500) or (StrToInt(Edit_mru.Text)<576) then
+  If (StrToInt(Edit_mru.Text)>1500) or (StrToInt(Edit_mru.Text)<576) then
                                       begin
                                         pchar_message0:=Pchar(message0);
                                         pchar_message1:=Pchar(message104);
                                         Application.MessageBox(pchar_message1,pchar_message0, 0);
                                         Edit_mru.Clear;
-                                        Edit_mru.Text:=Edit_mtu.Text;
+                                        //Edit_mru.Text:=Edit_mtu.Text;
                                         exit;
                                       end;
 end;
 If ComboBoxVPN.Text='VPN L2TP' then
                                begin
-                                   If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1400) then
+                                   If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1460) then
                                       begin
                                         pchar_message0:=Pchar(message0);
                                         pchar_message1:=Pchar(message101+' '+message102);
@@ -2429,6 +2535,24 @@ var i:integer;
     Fileoowriter_find:textfile;
     str:string;
 begin
+//определяем произошел ли запуск при поднятом pppN
+  Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
+  Shell('printf "none" >> /tmp/gate');
+  Memo_gate.Clear;
+  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+  If LeftStr(Memo_gate.Lines[0],3)='ppp' then
+                                         begin
+                                           pchar_message0:=Pchar(message0);
+                                           pchar_message1:=Pchar(message105);
+                                           if Application.MessageBox(pchar_message1,pchar_message0, 1)<>mrOK then halt;
+                                           Shell ('killall ponoff');
+                                           Shell('killall pppd');
+                                           Shell ('/etc/init.d/xl2tpd stop');
+                                           Shell ('killall xl2tpd');
+                                           Shell ('killall openl2tpd');
+                                           Shell ('killall l2tpd');
+                                           ButtonRestartClick(Sender);
+                                         end;
 Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
@@ -2497,6 +2621,7 @@ DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получа
                              Form1.Constraints.MinHeight:=Screen.Height-50;
                              Button_create.BorderSpacing.Left:=Screen.Width-182;
                              ButtonHelp.BorderSpacing.Left:=Screen.Width-182;
+                             ButtonTest.BorderSpacing.Left:=Screen.Width-182;
                              PageControl1.Height:=Screen.Height-200;
                              Button_next1.BorderSpacing.Left:=180;
                              Button_next2.BorderSpacing.Left:=180;
@@ -2513,6 +2638,7 @@ DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получа
                              PageControl1.Height:=Screen.Height-50;
                              Button_create.BorderSpacing.Left:=Screen.Width-182;
                              ButtonHelp.BorderSpacing.Left:=Screen.Width-182;
+                             ButtonTest.BorderSpacing.Left:=Screen.Width-182;
                              Memo_create.Width:=Screen.Width-5;
                              Form1.Constraints.MaxHeight:=Screen.Height-45;
                              Form1.Constraints.MinHeight:=Screen.Height-45;
@@ -2558,6 +2684,7 @@ If Screen.Height>550 then   //разрешение в основном нетб�
                              Memo_create.Width:=788;
                              Button_create.BorderSpacing.Left:=615;
                              ButtonHelp.BorderSpacing.Left:=615;
+                             ButtonTest.BorderSpacing.Left:=615;
                              Form1.Constraints.MaxHeight:=550;
                              Form1.Constraints.MinHeight:=550;
                              Form1.Constraints.MaxWidth:=794;
@@ -2573,6 +2700,7 @@ If Screen.Height>1000 then
                              Memo_create.Width:=880;
                              Button_create.BorderSpacing.Left:=705;
                              ButtonHelp.BorderSpacing.Left:=705;
+                             ButtonTest.BorderSpacing.Left:=705;
                              Form1.Constraints.MaxHeight:=650;
                              Form1.Constraints.MinHeight:=650;
                              Form1.Constraints.MaxWidth:=884;
@@ -2596,7 +2724,7 @@ If Screen.Height>1000 then
                                                        begin
                                                          //запуск не под root
                                                          pchar_message0:=Pchar(message0);
-                                                         pchar_message1:=Pchar(message18);
+                                                         pchar_message1:=Pchar(message18+' '+message107);
                                                          Application.MessageBox(pchar_message1,pchar_message0, 0);
                                                          Shell('rm -f /tmp/tmpnostart');
                                                          halt;
@@ -2699,7 +2827,7 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
         If Memo_config.Lines[39]='l2tp' then ComboBoxVPN.Text:='VPN L2TP' else ComboBoxVPN.Text:='VPN PPTP';
         If Memo_config.Lines[39]='l2tp' then Label1.Caption:=message100 else Label1.Caption:=message99;
         Edit_mru.Text:=Memo_config.Lines[40];
-        If (Edit_mru.Text='mru-none') or (Edit_mru.Text='none') then Edit_mru.Text:='';
+        If Edit_mru.Text='mru-none' then Edit_mru.Text:='';
             If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
@@ -2807,6 +2935,21 @@ procedure TForm1.Reconnect_pptpChange(Sender: TObject);
 var
    pchar_message0,pchar_message1:pchar;
 begin
+    //проверка версии пакета xl2tpd
+    If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then If FileExists ('/bin/rpm') then
+                               begin
+                                 Shell ('rm -f /tmp/ver_xl2tpd');
+                                 Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd');
+                                 If FileSize ('/tmp/ver_xl2tpd') = 0 then If StartMessage then
+                                                                 begin
+                                                                      pchar_message0:=Pchar(message0);
+                                                                      pchar_message1:=Pchar(message106);
+                                                                      Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                      Reconnect_pptp.Checked:=false;
+                                                                      exit;
+                                                                 end;
+                                 Shell ('rm -f /tmp/ver_xl2tpd');
+                               end;
     If Reconnect_pptp.Checked then
                          Reconnect_pptp.Checked:=true
                                                    else
