@@ -305,6 +305,7 @@ If link=1 then If NoInternet then
        If Memo_gate.Lines[0]='none' then
                                begin
                                  Shell ('ifdown '+Memo_Config.Lines[3]);
+                                 Shell ('resolvconf -u');
                                  Shell ('ifup '+Memo_Config.Lines[3]);
                                  Shell ('ifup lo');
                                end;
@@ -544,6 +545,12 @@ If not Code_up_ppp then If link=1 then
                                   If (NoPingIPS and NoPingGW and NoDNS) then str:=message18+message15+message17;
                                   BalloonMessage (8000,str);
                                   Application.ProcessMessages;
+                                  If NoPingIPS then
+                                                   begin
+                                                      Shell ('route del default');
+                                                      Shell ('ifdown '+Memo_Config.Lines[3]);
+                                                      Shell ('ifup '+Memo_Config.Lines[3]);
+                                                   end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
                                                       Shell ('resolvconf -u');
@@ -571,6 +578,8 @@ var
   FilePeers:textfile;
   str:string;
 begin
+  Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
+  Form1.Hide;
   Scripts:=true;
   NoInternet:=true;
   DhclientStart:=false;
@@ -582,8 +591,6 @@ begin
   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   StartMessage:=true;
   Application.ProcessMessages;
-  Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
-  Form1.Hide;
   Memo_Config.Clear;
   Application.ProcessMessages;
   TrayIcon1.Show;
@@ -674,7 +681,10 @@ If FileExists('/opt/vpnpptp/config') then
                 begin
                    Shell ('/etc/init.d/network restart');
                    Shell ('route del default');
+                   Shell ('ifdown '+Memo_Config.Lines[3]);
+                   Shell ('resolvconf -u');
                    Shell ('ifup '+Memo_Config.Lines[3]);
+                   Shell ('resolvconf -u');
                    //повторная проверка состояния сетевого интерфейса
                    Shell('rm -f /tmp/gate2');
                    Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> /tmp/gate2');
@@ -763,6 +773,7 @@ procedure TForm1.MenuItem3Click(Sender: TObject);
 //выход без аварии
 begin
  Timer1.Enabled:=False;
+ Timer2.Enabled:=False;
  If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
@@ -775,8 +786,10 @@ begin
                                                                                  Shell ('rm -f /tmp/ip-down');
                                                                             end;
                                             end;
- MenuItem2Click(Self);
- //определяем текущий шлюз, и если он не восстановлен скриптом ip-down, то восстанавливаем его сами
+  MenuItem2Click(Self);
+  TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  Application.ProcessMessages;
+  //определяем текущий шлюз, и если он не восстановлен скриптом ip-down, то восстанавливаем его сами
   //sleep(1000);
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -807,6 +820,7 @@ i:integer;
 //выход при аварии
 begin
   Timer1.Enabled:=False;
+  Timer2.Enabled:=False;
   If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
                                       begin
                                          Shell('cp -f /etc/resolv.conf.old /etc/resolv.conf');
@@ -825,6 +839,8 @@ begin
                                                                              end;
                                             end;
   MenuItem2Click(Self);
+  TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  Application.ProcessMessages;
   For i:=0 to 9 do
       begin
         Shell ('ifdown eth'+IntToStr(i));
@@ -840,8 +856,13 @@ begin
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then
      begin
-           Shell ('/etc/init.d/network stop');
-           Shell ('/etc/init.d/network start');
+         For i:=0 to 9 do
+             begin
+              Shell ('ifdown eth'+IntToStr(i));
+              Shell ('ifdown wlan'+IntToStr(i));
+             end;
+            Shell ('/etc/init.d/network stop');
+            Shell ('/etc/init.d/network start');
             For i:=0 to 9 do
                  begin
                     Shell ('ifup eth'+IntToStr(i));
@@ -959,8 +980,17 @@ begin
        Code_up_ppp:=True;
       end;
    end;
-  If Code_up_ppp then TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+message7
-                    else TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+message8;
+  If Memo_Config.Lines[39]<>'l2tp' then
+                                   begin
+  If Code_up_ppp then TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN PPTP)'+message7
+                    else TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN PPTP)'+message8;
+                                   end;
+  If Memo_Config.Lines[39]='l2tp' then
+                                   begin
+  If Code_up_ppp then TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN L2TP)'+message7
+                    else TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN L2TP)'+message8;
+                                   end;
+
 end;
 
 
