@@ -1,7 +1,5 @@
-{ Это - файл ресурсов, автоматически созданный lazarus }
-
 LazarusResources.Add('TForm2','FORMDATA',[
-  'TPF0'#6'TForm2'#5'Form2'#4'Left'#3#239#2#6'Height'#3'3'#1#3'Top'#3#27#2#5'Wi'
+  'TPF0'#6'TForm2'#5'Form2'#4'Left'#3#22#3#6'Height'#3'3'#1#3'Top'#3#239#1#5'Wi'
   +'dth'#3#201#1#13'ActiveControl'#7#12'CheckBoxlock'#7'Caption'#6#28#208#158
   +#208#191#209#134#208#184#208#184' '#208#180#208#181#208#188#208#190#208#189
   +#208#176' pppd'#12'ClientHeight'#3'3'#1#11'ClientWidth'#3#201#1#9'Icon.Data'
@@ -2919,5 +2917,7 @@ LazarusResources.Add('TForm2','FORMDATA',[
   +#2#18#0#0#9'TCheckBox'#15'CheckBoxpersist'#4'Left'#2#9#6'Height'#2#21#3'Top'
   +#3#128#0#5'Width'#2'E'#7'Caption'#6#7'persist'#8'TabOrder'#2#6#0#0#9'TCheckB'
   +'ox'#22'CheckBoxnodefaultroute'#4'Left'#2'x'#6'Height'#2#21#3'Top'#3#152#0#5
-  +'Width'#2'|'#7'Caption'#6#14'nodefaultroute'#8'TabOrder'#2#15#0#0#0
+  +'Width'#2'|'#7'Caption'#6#14'nodefaultroute'#8'TabOrder'#2#15#0#0#9'TCheckBo'
+  +'x'#18'CheckBoxdefaultmru'#4'Left'#3#24#1#6'Height'#2#21#3'Top'#3#152#0#5'Wi'
+  +'dth'#2'g'#7'Caption'#6#11'default-mru'#8'TabOrder'#2#23#0#0#0
 ]);

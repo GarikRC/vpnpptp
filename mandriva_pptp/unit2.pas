@@ -14,6 +14,7 @@ type
 
   TForm2 = class(TForm)
     Button1: TButton;
+    CheckBoxdefaultmru: TCheckBox;
     CheckBoxnodefaultroute: TCheckBox;
     CheckBoxpersist: TCheckBox;
     CheckBoxpassive: TCheckBox;
@@ -52,6 +53,8 @@ var
   Form2: TForm2; 
 
 implementation
+
+{ TForm2 }
 
 procedure TForm2.Obrabotka (str_peer:string; more:boolean);
 //восстанавливает сохраненные значения или устанавливает значения по-умолчанию
@@ -99,12 +102,11 @@ If FileExists ('/opt/vpnpptp/config') then if FileExists ('/etc/ppp/peers/'+str_
                                               If str='auth' then CheckBoxauth.Checked:=true;
                                               If str='passive' then CheckBoxpassive.Checked:=true;
                                               If str='nodefaultroute' then CheckBoxnodefaultroute.Checked:=true;
+                                              If str='default-mru' then CheckBoxdefaultmru.Checked:=true;
                                             end;
                                             closefile(File_peer);
                                         end;
 end;
-
-{ TForm2 }
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin

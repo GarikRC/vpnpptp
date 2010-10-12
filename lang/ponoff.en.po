@@ -26,12 +26,12 @@ msgid "Выход п#209�и ава#209�ии"
 msgstr "Exit with problem"
 
 #: unit1.message2
-msgid "Д#209�угая такая же п#209�ог#209�амма уже #209�аботает с VPN PPTP/L2TP. Нажмите <OK> для отказа от двойного запуска."
+msgid "Д#209�угая такая же п#209�ог#209�амма уже #209�аботает с VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска."
 msgstr "Another copy of program try configure VPN PPTP/L2TP. Press <OK> for dismiss double run."
 
 #: unit1.message3
-msgid "Сначала сконфигу#209�и#209�уйте соединение: Меню, Утилиты, Системные (или Меню, Инте#209�нет), Наст#209�ойка VPN PPTP/L2TP (Наст#209�ойка соединения VPN PPTP/L2TP)."
-msgstr "First configure connection: Menu, Tools, System (or Menu, Internet), Configure VPN PPTP."
+msgid "Сначала сконфигу#209�и#209�уйте соединение: Меню->Утилиты->Системные(или Меню->Инте#209�нет)->vpnpptp(Наст#209�ойка соединения VPN PPTP/L2TP)."
+msgstr "First configure connection: Menu->Tools->System(or Menu->Internet)->vpnpptp(Configure VPN PPTP)."
 
 #: unit1.message4
 msgid "No ethernet. Cетевой инте#209�фейс для VPN PPTP/L2TP недоступен. Если же он доступен, то установите \"Не конт#209�оли#209�овать state сетевого кабеля\" в Конфигу#209�ато#209�е."
@@ -42,16 +42,16 @@ msgid "No link. Сетевой кабель для VPN PPTP/L2TP неподкл�
 msgstr "No link. Network cable for VPN PPTP/L2TP is not connect."
 
 #: unit1.message6
-msgid "Соединение "
-msgstr "Connection "
+msgid "Соединение"
+msgstr "Connection"
 
 #: unit1.message7
-msgid " установлено"
-msgstr " is up"
+msgid "установлено"
+msgstr "is up"
 
 #: unit1.message8
-msgid " отсутствует"
-msgstr " not avalible"
+msgid "отсутствует"
+msgstr "not avalible"
 
 #: unit1.message9
 msgid "No link. Сетевой кабель для VPN PPTP/L2TP неподключен. А #209�еконнект не включен."
@@ -62,28 +62,28 @@ msgid "Устанавливается соединение "
 msgstr "Connecting "
 
 #: unit1.message1
-msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом или с #209�аз#209�ешения админист#209�ато#209�а. Нажмите <OK> для отказа от запуска."
+msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом или с #209�аз#209�ешения админист#209�ато#209�а. Нажмите <ОК> для отказа от запуска."
 msgstr "The start of this program is possible only as root or with root's permission. Press <OK> for exit."
 
 #: unit1.message13
-msgid "Получены ма#209�ш#209�уты по DHCP. "
-msgstr "Get routes via DHCP. "
+msgid "Получены ма#209�ш#209�уты по dhcp. "
+msgstr "Get routes via dhcp. "
 
 #: unit1.message14
-msgid "Обна#209�ужен новый ip-ад#209�ес vpn-се#209�ве#209�а. Соединение пе#209�енаст#209�аивается... "
-msgstr "Found a new ip-address vpn server. Connection is reconfigured... "
+msgid "Обна#209�ужен новый IP-ад#209�ес VPN-се#209�ве#209�а. Соединение пе#209�енаст#209�аивается... "
+msgstr "Found a new IP-address VPN-server. Connection is reconfigured... "
 
 #: unit1.message15
-msgid "Vpn-се#209�ве#209� не пингуется. "
-msgstr "Vpn server does not ping. "
+msgid "VPN-се#209�ве#209� не пингуется. "
+msgstr "VPN-server does not ping. "
 
 #: unit1.message16
 msgid "Доступ в инте#209�нет отсутствует..."
 msgstr "No Internet access available..."
 
 #: unit1.message17
-msgid "DNS-се#209�ве#209� до поднятия VPN не отвечает или неко#209�#209�ектный ад#209�ес vpn-се#209�ве#209�а. "
-msgstr "DNS server before raise VPN is not responding or incorrect address vpn server. "
+msgid "DNS-се#209�ве#209� до поднятия VPN не отвечает или неко#209�#209�ектный ад#209�ес VPN-се#209�ве#209�а. "
+msgstr "DNS server before raise VPN is not responding or incorrect address VPN-server. "
 
 #: unit1.message18
 msgid "Шлюз локальной сети не пингуется. "
@@ -94,12 +94,12 @@ msgid "П#209�ове#209�ено! Инте#209�нет #209�аботает
 msgstr "Сhecked! The Internet is working!"
 
 #: unit1.message20
-msgid "Обна#209�ужено совпадение remote ip address с ip-ад#209�есом самого vpn-се#209�ве#209�а. Соединение было пе#209�енаст#209�оено."
-msgstr "Found to match with the remote ip address ip-address of the vpn-server. The connection has been reconfigured."
+msgid "Обна#209�ужено совпадение remote ip address с IP-ад#209�есом самого VPN-се#209�ве#209�а. Соединение было пе#209�енаст#209�оено."
+msgstr "Found to match with the remote ip address IP-address of the VPN-server. The connection has been reconfigured."
 
 #: unit1.message21
-msgid "Ошибка получения ма#209�ш#209�утов по DHCP. "
-msgstr "Failed to get routes via DHCP."
+msgid "Ошибка получения ма#209�ш#209�утов по dhcp. "
+msgstr "Failed to get routes via dhcp. "
 
 #: unit1.message23
 msgid "DNS1-се#209�ве#209� до поднятия VPN не пингуется. "
@@ -114,5 +114,54 @@ msgid "Вы можете в конфигу#209�ато#209�е VPN PPTP/L2TP �
 msgstr "You can use the configuration tool VPN PPTP/L2TP choose to permit users to manage the connection."
 
 #: unit1.message26
-msgid "Вы также можете сконфигу#209�и#209�овать соединение из Цент#209�а Уп#209�авления, Сеть и инте#209�нет, Наст#209�ойка VPN-соединений, VPN PPTP/L2TP."
-msgstr "You can also configure a connection from the Control Center, Network and Internet, Configuring VPN-connections, VPN PPTP/L2TP."
+msgid "Вы также можете сконфигу#209�и#209�овать соединение из Цент#209�а Уп#209�авления->Сеть и инте#209�нет->Наст#209�ойка VPN-соединений->VPN PPTP/L2TP."
+msgstr "You can also configure a connection from the Control Center->Network and Internet->Configuring VPN-connections->VPN PPTP/L2TP."
+
+#: unit1.message22
+msgid "Статус:"
+msgstr "Status:"
+
+#: unit1.message27
+msgid "Заг#209�ужено:"
+msgstr "Download:"
+
+#: unit1.message28
+msgid "Отдано:"
+msgstr "Upload:"
+
+#: unit1.message29
+msgid "В#209�емя в сети:"
+msgstr "Online Time:"
+
+#: unit1.message30
+msgid "ч."
+msgstr "h."
+
+#: unit1.message31
+msgid "м."
+msgstr "m."
+
+#: unit1.message32
+msgid "с."
+msgstr "s."
+
+#: unit1.message33
+msgctxt "unit1.message33"
+msgid "ОК"
+msgstr "OK"
+
+#: unit1.message34
+msgctxt "unit1.message34"
+msgid "Да"
+msgstr "Yes"
+
+#: unit1.message35
+msgctxt "unit1.message35"
+msgid "Нет"
+msgstr "No"
+
+#: unit1.message36
+msgctxt "unit1.message36"
+msgid "Отмена"
+msgstr "Cancel"
+

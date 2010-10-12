@@ -56,8 +56,8 @@ msgid "stateless"
 msgstr ""
 
 #: TFORM1.DHCP_ROUTE.CAPTION
-msgid "Получать маршруты через DHCP"
-msgstr "Get routes via DHCP"
+msgid "Получать маршруты через dhcp"
+msgstr "Get routes via dhcp"
 
 #: TFORM1.EDIT_MAXTIME.TEXT
 msgctxt "TFORM1.EDIT_MAXTIME.TEXT"
@@ -155,10 +155,6 @@ msgctxt "TFORM1.LABEL6.CAPTION"
 msgid "Примечания:"
 msgstr "Notes:"
 
-#: TFORM1.LABEL7.CAPTION
-msgid "- имя соединения может быть любым (требования к имени соединения как к имени файла)"
-msgstr "- connection name may be any (conection name similar as a file name)"
-
 #: TFORM1.LABEL8.CAPTION
 msgid "- адрес vpn-сервера, логин и пароль уточняйте у провайдера"
 msgstr "- ask you ISP for vpn-server adress, login and password"
@@ -246,10 +242,6 @@ msgstr "Fields \"ISP (IP or Name)\", \"Connection name\", \"User name\", \"Passw
 msgid "В поле \"В#209�емя #209�еконнекта\" можно ввести лишь число в п#209�еделах от 0 до 255 сек."
 msgstr "Field \"Reconnect time\" must be a number with limit from 5 to 255 sec."
 
-#: unit1.message11
-msgid "Рекомендуется отключить поднятое VPN PPTP/L2TP - тогда шлюз локальной сети оп#209�еделится автоматически."
-msgstr "It is recommended to disable VPN PPTP/L2TP connection - then the network gateway is determined automatically."
-
 #: unit1.message12
 msgid "Сетевой инте#209�фейс не оп#209�еделился."
 msgstr "The network interface was not identified."
@@ -271,15 +263,15 @@ msgid "Поле \"Шлюз локальной сети\" заполнено не
 msgstr "Field \"Local network gate\" is wrong. Must be xxx.xxx.xxx.xxx, where xxx - number from 0 to 255."
 
 #: unit1.message17
-msgid "Поле \"MTU\" заполнено неве#209�но. Раз#209�ешен лишь диапазон [576..1460..1492..1500]. Рекомендуется MTU=1460."
-msgstr "Field \"MTU\" is wrong. Required limit is [576..1460..1492..1500]. MTU=1460 is recomended."
+msgid "Поле \"MTU\" заполнено неве#209�но. Раз#209�ешен лишь диапазон [576..1460..1492..1500]."
+msgstr "Field \"MTU\" is wrong. Required limit is [576..1460..1492..1500]."
 
 #: unit1.message18
-msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом или с #209�аз#209�ешения админист#209�ато#209�а. Нажмите <OK> для отказа от запуска."
+msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом или с #209�аз#209�ешения админист#209�ато#209�а. Нажмите <ОК> для отказа от запуска."
 msgstr "Run this program requires root user rights or root's permission. Press <OK> for exit."
 
 #: unit1.message19
-msgid "Д#209�угая такая же п#209�ог#209�амма уже пытается сконфигу#209�и#209�овать VPN PPTP/L2TP. Нажмите <OK> для отказа от двойного запуска."
+msgid "Д#209�угая такая же п#209�ог#209�амма уже пытается сконфигу#209�и#209�овать VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска."
 msgstr "Another copy of program try to configure VPN PPTP/L2TP. Press <OK> for cancel double run."
 
 #: unit1.message2
@@ -340,8 +332,8 @@ msgid "Нельзя оп#209�еделить IP-ад#209�ес VPN-се#209�
 msgstr "It is impossible to determine the IP-address of the VPN-server, since the line input is not filled."
 
 #: unit1.message29
-msgid "Не установлен пакет bind-utils. Его установка необязательна, но она уско#209�ит механизм п#209�ог#209�аммного добавления ма#209�ш#209�ута к vpn-се#209�ве#209�у."
-msgstr "Not installed bind-utils packet. Its installation is optional, but it will accelerate the mechanism of software add route to vpn-server."
+msgid "Его установка необязательна, но она уско#209�ит механизм п#209�ог#209�аммного добавления ма#209�ш#209�ута к vpn-се#209�ве#209�у."
+msgstr "Its installation is optional, but it will accelerate the mechanism of software add route to vpn-server."
 
 #: unit1.message30
 msgid "Используйте опцию отключения конт#209�оля state сетевого кабеля если только по д#209�угому не #209�аботает (об этом поп#209�осит сама п#209�ог#209�амма)."
@@ -396,20 +388,20 @@ msgid "Получение ма#209�ш#209�утов че#209�ез dhcp бу
 msgstr "The receiving of routes via dhcp will be cancelled since the routes via dhcp don't come."
 
 #: unit1.message43
-msgid "Vpn-се#209�ве#209� не пингуется. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
-msgstr "Vpn-server is not pinged. Correct the problem and start configurator again."
+msgid "VPN-се#209�ве#209� не пингуется. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "VPN-server is not pinged. Correct the problem and start configurator again."
 
 #: unit1.message44
 msgid "Шлюз локальной сети не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
 msgstr "The local network gateway in not pinged or the packets are lost. Correct the problem and start configurator again."
 
 #: unit1.message45
-msgid "Пингуется vpn-се#209�ве#209�. Ожидайте..."
-msgstr "Vpn-server is being pinged. Please, wait..."
+msgid "Пингуется VPN-се#209�ве#209�. Ожидайте..."
+msgstr "VPN-server is being pinged. Please, wait..."
 
 #: unit1.message46
-msgid "Оп#209�еделяется ip-ад#209�ес vpn-се#209�ве#209�а че#209�ез команду ping. Ожидайте..."
-msgstr "ip-address of vpn server is being defined with a command ping. Please, wait..."
+msgid "Оп#209�еделяется IP-ад#209�ес VPN-се#209�ве#209�а че#209�ез команду ping. Ожидайте..."
+msgstr "IP-address of VPN server is being defined with a command ping. Please, wait..."
 
 #: unit1.message47
 msgid "Пингуется шлюз локальной сети. Ожидайте..."
@@ -425,8 +417,8 @@ msgstr "The network is ready for testing of route-comings via dhcp. dhclient is 
 
 #: unit1.message50
 msgctxt "unit1.message50"
-msgid "Оп#209�еделяются ip-ад#209�еса vpn-се#209�ве#209�а че#209�ез команду host из пакета bind-utils. Ожидайте..."
-msgstr "ip-addresses of vpn-server are being defined with help command host from packet bind-utils. Please, wait..."
+msgid "Оп#209�еделяются IP-ад#209�еса VPN-се#209�ве#209�а че#209�ез команду host из пакета bind-utils. Ожидайте..."
+msgstr "IP-addresses of VPN-server are being defined with help command host from packet bind-utils. Please, wait..."
 
 #: unit1.message51
 msgid "Отменяется получение ма#209�ш#209�утов че#209�ез dhcp. Ожидайте..."
@@ -443,8 +435,8 @@ msgstr "Please, wait..."
 
 #: unit1.message54
 msgctxt "unit1.message54"
-msgid "Не оп#209�еделилось ни одного ip-ад#209�еса vpn-се#209�ве#209�а."
-msgstr "No ip-addresses of vpn-server is defined."
+msgid "Не оп#209�еделилось ни одного IP-ад#209�еса VPN-се#209�ве#209�а."
+msgstr "No IP-addresses of VPN-server is defined."
 
 #: unit1.message55
 msgid "Часто используется аутентификация mschap v2 - это однов#209�еменный выбо#209� refuse-eap, refuse-chap, refuse-mschap, refuse-pap."
@@ -621,8 +613,8 @@ msgid "DNS1-се#209�ве#209� до поднятия VPN не пингует
 msgstr "DNS1-server before raise VPN does not ping or lost packets, but ping DNS2-server before raise VPN, so will slow down."
 
 #: unit1.message80
-msgid "Выб#209�ана опция usepeerdns: если vpn-се#209�ве#209� п#209�едоставит свои dns, то будут использоваться они, невзи#209�ая на д#209�угие наст#209�ойки dns."
-msgstr "Option is selected usepeerdns: if vpn-server will provide for you your dns, then they will be used, ignoring of other settings dns."
+msgid "Выб#209�ана опция usepeerdns: если VPN-се#209�ве#209� п#209�едоставит свои DNS, то будут использоваться они, невзи#209�ая на д#209�угие наст#209�ойки DNS."
+msgstr "Option is selected usepeerdns: if VPN-server will provide for you your DNS, then they will be used, ignoring of other settings DNS."
 
 #: unit1.message86
 msgid "Показать па#209�оль"
@@ -717,20 +709,20 @@ msgid "Автозапуск инте#209�нета п#209�и ста#209�т�
 msgstr "Autostart the Internet at startup with help xl2tpd-daemon whithout graphics (not recommended for use)"
 
 #: unit1.message99
-msgid "I) Введите ад#209�ес vpn-се#209�ве#209�а... (нап#209�име#209�, vpn.internet.beeline.ru)"
-msgstr "I) Enter vpn-server adress... (for example vpn.internet.beeline.ru)"
+msgid "I) Введите ад#209�ес VPN-се#209�ве#209�а... (нап#209�име#209�, vpn.internet.beeline.ru)"
+msgstr "I) Enter VPN-server adress... (for example vpn.internet.beeline.ru)"
 
 #: unit1.message100
-msgid "I) Введите ад#209�ес vpn-се#209�ве#209�а... (нап#209�име#209�, tp.internet.beeline.ru)"
-msgstr "I) Enter vpn-server adress... (for example tp.internet.beeline.ru)"
+msgid "I) Введите ад#209�ес VPN-се#209�ве#209�а... (нап#209�име#209�, tp.internet.beeline.ru)"
+msgstr "I) Enter VPN-server adress... (for example tp.internet.beeline.ru)"
 
 #: unit1.message101
 msgid "Для VPN L2TP значение MTU должно быть меньше, чем для VPN PPTP как минимум на 20 байт, но не более чем 1460 байт."
 msgstr "For VPN L2TP MTU value must be less than for VPN PPTP at least 20 bytes, but not more than 1460 bytes."
 
 #: unit1.message102
-msgid "Рекомендуется значение MTU 1400 байт. <ОК> - игно#209�и#209�овать это п#209�едуп#209�еждение и п#209�одолжить. <Cancel> - поп#209�авить."
-msgstr "It is recommended MTU value 1400 bytes. <OK> - ignore this warning and continue. <Cancel> - Correct."
+msgid "Рекомендуется значение MTU 1400 байт."
+msgstr "It is recommended MTU value 1400 bytes."
 
 #: unit1.message103
 msgid "Наст#209�ойка VPN PPTP/L2TP"
@@ -741,7 +733,7 @@ msgid "Поле \"MRU\" заполнено неве#209�но. Раз#209�е�
 msgstr "Field \"MRU\" is wrong. Required limit is [576..1460..1492..1500]."
 
 #: unit1.message105
-msgid "Обна#209�ужено, что VPN PPTP/L2TP поднято. <OK> - п#209�одолжить, убив VPN PPTP/L2TP и пе#209�езапустив сеть. <Cancel> - отмена запуска конфигу#209�ато#209�а."
+msgid "Обна#209�ужено, что VPN PPTP/L2TP поднято. <ОК> - п#209�одолжить, убив VPN PPTP/L2TP и пе#209�езапустив сеть. <Отмена> - отмена запуска конфигу#209�ато#209�а."
 msgstr "Found that the VPN PPTP/L2TP works. <OK>  - continue, killing VPN PPTP/L2TP and restarting the network. <Cancel> - to cancel the start of this program."
 
 #: unit1.message106
@@ -753,8 +745,8 @@ msgid "Запустить конфигу#209�ато#209� VPN PPTP/L2TP мо�
 msgstr "To run the configurator VPN PPTP/L2TP can also from the Control Center-> Network and Internet> Setting up VPN-connections-> VPN PPTP/L2TP."
 
 #: unit1.message108
-msgid "Установить тестовое соединение VPN PPTP/L2TP в г#209�афике/без г#209�афики сейчас? <Yes> - установить в г#209�афике, <No> - установить без г#209�афики, <Cancel> - отмена."
-msgstr "Set test connection VPN PPTP/L2TP in graphics/without graphics now? <Yes> - set in graphics, <No> - set without graphics, <Cancel> - cancel."
+msgid "Установить тестовое соединение VPN PPTP/L2TP в г#209�афике/без г#209�афики сейчас?"
+msgstr "Set test connection VPN PPTP/L2TP in graphics/without graphics now?"
 
 #: unit1.message109
 msgid "Тестовый запуск"
@@ -779,3 +771,71 @@ msgstr "Program ponoff not yet completed its work. Wait for the program ponoff q
 #: unit1.message5
 msgid "Не изменять дефолтный шлюз, запустив VPN L2TP в фоне"
 msgstr "Do not change default gateway, VPN L2TP running in the background"
+
+#: unit1.message112
+msgid "Выбо#209� этой опции позволяет установить соединение со случайным ад#209�есом VPN-се#209�ве#209�а, заданного по имени, устанавливая соединение мгновенно."
+msgstr "Choosing this option allows you to connect with a random address VPN-server, specified by name, establishing the connection instantly."
+
+#: unit1.message113
+msgid "П#209�и отмене этой опции соединение не всегда сможет установиться мгновенно с еще неизвестным ад#209�есом VPN-се#209�ве#209�а, особенно если их много."
+msgstr "If you cancel this option, the connection will not always be able to establish immediately a yet-unknown address VPN-server, especially if many of them."
+
+#: unit1.message114
+msgid "Ад#209�ес VPN-се#209�ве#209�а задан по IP, поэтому опцию использования /etc/hosts выб#209�ать нельзя."
+msgstr "The address VPN-server specified by IP, so the option of using /etc/hosts can not be selected."
+
+#: unit1.message115
+msgid "Его установка необязательна, но она уско#209�ит механизм оп#209�еделения IP-ад#209�еса VPN-се#209�ве#209�а, и быст#209�ее соединится."
+msgstr "Installation of this package is optional, but it will speed up the mechanism for determining IP-addresses of VPN-server, and quickly connect."
+
+#: unit1.message116
+msgid "Так как использование /etc/hosts является методом п#209�ог#209�аммной ма#209�ш#209�утизации VPN-се#209�ве#209�а, дополнительным к основному, то выбо#209� будет исп#209�авлен."
+msgstr "As the use /etc/hosts is a method of routing software VPN-server, additional to the core, then the choice will be corrected."
+
+#: unit1.message117
+msgid "Значения MTU, MRU должны быть заданы в#209�учную, так как выб#209�ана опция default-mru."
+msgstr "The values of the MTU, MRU should be set manually, as selected default-mru."
+
+#: unit1.message118
+msgid "Рекомендуется значение MTU 1460 байт."
+msgstr "Recommended MTU of 1460 bytes."
+
+#: unit1.message119
+msgid "Так как значения MTU, MRU не заданы в#209�учную, то #209�екомендуется отключить опцию default-mru."
+msgstr "Since the value of MTU, MRU is not set manually, it is recommended to disable the default-mru."
+
+#: TFORM1.ETC_HOSTS.CAPTION
+msgid "Использовать /etc/hosts динамически для адреса vpn-сервера, заданного по имени (работает только в графике)"
+msgstr "Use /etc/hosts dynamically for vpn-server's address specified by name (only works in the graphic)"
+
+#: unit1.message120
+msgid "<ОК> - игно#209�и#209�овать это п#209�едуп#209�еждение и п#209�одолжить. <Отменаl> - поп#209�авить."
+msgstr "<OK> - ignore this warning and continue. <Cancel> - Correct."
+
+#: unit1.message121
+msgid "Не установлен пакет bind-utils."
+msgstr "Not installed bind-utils packet."
+
+#: unit1.message122
+msgid "ОК"
+msgstr "OK"
+
+#: unit1.message123
+msgid "Да"
+msgstr "Yes"
+
+#: unit1.message124
+msgid "Нет"
+msgstr "No"
+
+#: unit1.message125
+msgid "Отмена"
+msgstr "Cancel"
+
+#: TFORM1.LABEL7.CAPTION
+msgid "- имя соединения может содержать только латинские буквы и цифры и начинаться с буквы"
+msgstr "- the connection name can only contain letters and numbers and must start with the letter"
+
+#: unit1.message11
+msgid "<Да> - установить в г#209�афике, <Нет> - установить без г#209�афики, <Отмена> - отмена."
+msgstr "<Yes> - set in graphics, <No> - set without graphics, <Cancel> - cancel."

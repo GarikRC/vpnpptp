@@ -2,13 +2,13 @@ object Form1: TForm1
   Left = 937
   Height = 424
   Top = 119
-  Width = 289
+  Width = 287
   ActiveControl = Memo_Config
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Соединение pptp'
   ClientHeight = 424
-  ClientWidth = 289
+  ClientWidth = 287
   FormStyle = fsSplash
   Icon.Data = {
     3E08010000000100010080800000010020002808010016000000280000008000
@@ -2194,7 +2194,6 @@ object Form1: TForm1
     Lines.Strings = (
       'tmp'
     )
-    OnChange = tmpnostartChange
     TabOrder = 5
     Visible = False
   end
@@ -2370,7 +2369,6 @@ object Form1: TForm1
       0041
     }
     Visible = True
-    OnClick = TrayIcon1Click
     OnMouseMove = TrayIcon1MouseMove
     left = 8
     top = 8

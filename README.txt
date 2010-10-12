@@ -2,7 +2,7 @@
 Mandriva VPN PPTP/L2TP
 =============
 
-Tools for easy and quick setup and control MS VPN via PPTP/L2TP
+Tools for easy and quick setup and control VPN via PPTP/L2TP
 
 For setup run MCC and then use Network tools drakconnect
 For control use ponoff tools
