@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="7"/>
+    <General>
+      <MainUnit Value="0"/>
+      <TargetFileExt Value=""/>
+      <Title Value="Модуль работы с MyMessageBox"/>
+      <Icon Value="0"/>
+      <UseXPManifest Value="True"/>
+      <ActiveEditorIndexAtStart Value="1"/>
+    </General>
+    <VersionInfo>
+      <ProjectVersion Value=""/>
+    </VersionInfo>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
+      <ExcludeFileFilter Value="*.(bak|ppu|ppw|o|so);*~;backup"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="1">
+      <Item1>
+        <PackageName Value="LCL"/>
+      </Item1>
+    </RequiredPackages>
+    <Units Count="6">
+      <Unit0>
+        <Filename Value="MyMessageBox.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="MyMessageBox"/>
+        <CursorPos X="1" Y="19"/>
+        <TopLine Value="1"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="unitmymessagebox.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form3"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="UnitMyMessageBox"/>
+        <CursorPos X="4" Y="51"/>
+        <TopLine Value="12"/>
+        <EditorIndex Value="0"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="MyMessageBox.lrs"/>
+        <CursorPos X="1" Y="5236"/>
+        <TopLine Value="5201"/>
+        <UsageCount Value="10"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../../../usr/lib/lazarus/lcl/include/application.inc"/>
+        <CursorPos X="1" Y="1258"/>
+        <TopLine Value="1240"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="../../../usr/lib/lazarus/lcl/include/customform.inc"/>
+        <CursorPos X="1" Y="694"/>
+        <TopLine Value="676"/>
+        <UsageCount Value="10"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="../../../usr/lib/lazarus/lcl/include/icon.inc"/>
+        <CursorPos X="1" Y="735"/>
+        <TopLine Value="717"/>
+        <UsageCount Value="10"/>
+      </Unit5>
+    </Units>
+    <JumpHistory Count="16" HistoryIndex="15">
+      <Position1>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="40" Column="6" TopLine="10"/>
+      </Position1>
+      <Position2>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="49" Column="1" TopLine="13"/>
+      </Position2>
+      <Position3>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="69" Column="18" TopLine="20"/>
+      </Position3>
+      <Position4>
+        <Filename Value="MyMessageBox.lpr"/>
+        <Caret Line="14" Column="1" TopLine="1"/>
+      </Position4>
+      <Position5>
+        <Filename Value="MyMessageBox.lpr"/>
+        <Caret Line="16" Column="1" TopLine="1"/>
+      </Position5>
+      <Position6>
+        <Filename Value="MyMessageBox.lpr"/>
+        <Caret Line="17" Column="1" TopLine="1"/>
+      </Position6>
+      <Position7>
+        <Filename Value="MyMessageBox.lpr"/>
+        <Caret Line="18" Column="1" TopLine="1"/>
+      </Position7>
+      <Position8>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="69" Column="18" TopLine="42"/>
+      </Position8>
+      <Position9>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="67" Column="1" TopLine="49"/>
+      </Position9>
+      <Position10>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="68" Column="1" TopLine="50"/>
+      </Position10>
+      <Position11>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="69" Column="1" TopLine="51"/>
+      </Position11>
+      <Position12>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="70" Column="1" TopLine="52"/>
+      </Position12>
+      <Position13>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="68" Column="27" TopLine="50"/>
+      </Position13>
+      <Position14>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="62" Column="6" TopLine="50"/>
+      </Position14>
+      <Position15>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="70" Column="24" TopLine="53"/>
+      </Position15>
+      <Position16>
+        <Filename Value="unitmymessagebox.pas"/>
+        <Caret Line="68" Column="62" TopLine="34"/>
+      </Position16>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="8"/>
+    <Target>
+      <Filename Value="mymessagebox"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)/"/>
+    </SearchPaths>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+    <Other>
+      <CompilerPath Value="$(CompPath)"/>
+    </Other>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
