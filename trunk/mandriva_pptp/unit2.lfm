@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 751
+  Left = 790
   Height = 307
-  Top = 539
+  Top = 495
   Width = 457
   ActiveControl = CheckBoxlock
   Caption = 'Опции демона pppd'
@@ -2358,5 +2358,13 @@ object Form2: TForm2
     Width = 124
     Caption = 'nodefaultroute'
     TabOrder = 15
+  end
+  object CheckBoxdefaultmru: TCheckBox
+    Left = 280
+    Height = 21
+    Top = 152
+    Width = 103
+    Caption = 'default-mru'
+    TabOrder = 23
   end
 end

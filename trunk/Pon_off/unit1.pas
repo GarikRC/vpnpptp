@@ -27,7 +27,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations;
+  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox;
 
 type
 
@@ -57,17 +57,13 @@ type
     Timer1: TTimer;
     TrayIcon1: TTrayIcon;
     procedure FormCreate(Sender: TObject);
-    procedure Memo_networktestChange(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
-    procedure tmpnostartChange(Sender: TObject);
-    procedure TrayIcon1Click(Sender: TObject);
     procedure TrayIcon1MouseMove(Sender: TObject);
-
   private
     { private declarations }
   public
@@ -84,43 +80,62 @@ var
   NewIPS:boolean; //найден новый, неизвестный ранее ip-адрес vpn-сервера
   NoPingIPS, NoDNS, NoPingGW, NoPingDNS1, NoPingDNS2:boolean;
   NoInternet:boolean;
-  Filenetworktest, FileRemoteIPaddress:textfile;
+  Filenetworktest, FileRemoteIPaddress, FileEtc_hosts:textfile;
   DhclientStart:boolean;
   RemoteIPaddress:string;
   Scripts:boolean;//отслеживает невыполнение скриптов поднятия и опускания
   Welcome:boolean;
+  f: text;
+  RX,TX:string;
+  RXbyte,TXbyte:string;
+  //DateStart,DateStop:string;
+  DateStart,DateStop:int64;
+  RXSpeed,TXSpeed:string;
+  Count:byte;
+  ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
+  AFont:integer; //шрифт приложения
 
 const
-  Config_n=41;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=42;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 
 resourcestring
   message0='Внимание!';
-  message1='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <OK> для отказа от запуска.';
-  message2='Другая такая же программа уже работает с VPN PPTP/L2TP. Нажмите <OK> для отказа от двойного запуска.';
-  message3='Сначала сконфигурируйте соединение: Меню, Утилиты, Системные (или Меню, Интернет), Настройка VPN PPTP/L2TP (Настройка соединения VPN PPTP/L2TP).';
+  message1='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
+  message2='Другая такая же программа уже работает с VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска.';
+  message3='Сначала сконфигурируйте соединение: Меню->Утилиты->Системные(или Меню->Интернет)->vpnpptp(Настройка соединения VPN PPTP/L2TP).';
   message4='No ethernet. Cетевой интерфейс для VPN PPTP/L2TP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
   message5='No link. Сетевой кабель для VPN PPTP/L2TP неподключен.';
-  message6='Соединение ';
-  message7=' установлено';
-  message8=' отсутствует';
+  message6='Соединение';
+  message7='установлено';
+  message8='отсутствует';
   message9='No link. Сетевой кабель для VPN PPTP/L2TP неподключен. А реконнект не включен.';
   message10='Выход без аварии';
   message11='Выход при аварии';
   message12='Устанавливается соединение ';
-  message13='Получены маршруты по DHCP. ';
-  message14='Обнаружен новый ip-адрес vpn-сервера. Соединение перенастраивается... ';
-  message15='Vpn-сервер не пингуется. ';
+  message13='Получены маршруты по dhcp. ';
+  message14='Обнаружен новый IP-адрес VPN-сервера. Соединение перенастраивается... ';
+  message15='VPN-сервер не пингуется. ';
   message16='Доступ в интернет отсутствует...';
-  message17='DNS-сервер до поднятия vpn не отвечает или некорректный адрес vpn-сервера. ';
+  message17='DNS-сервер до поднятия VPN не отвечает или некорректный адрес VPN-сервера. ';
   message18='Шлюз локальной сети не пингуется. ';
   message19='Проверено! Интернет работает!';
-  message20='Обнаружено совпадение remote ip address с ip-адресом самого vpn-сервера. Соединение было перенастроено.';
-  message21='Ошибка получения маршрутов по DHCP. ';
-  //message22='';
-  message23='DNS1-сервер до поднятия vpn не пингуется. ';
-  message24='DNS2-сервер до поднятия vpn не пингуется. ';
+  message20='Обнаружено совпадение remote ip address с IP-адресом самого VPN-сервера. Соединение было перенастроено.';
+  message21='Ошибка получения маршрутов по dhcp. ';
+  message22='Статус:';
+  message23='DNS1-сервер до поднятия VPN не пингуется. ';
+  message24='DNS2-сервер до поднятия VPN не пингуется. ';
   message25='Вы можете в конфигураторе VPN PPTP/L2TP выбрать опцию разрешения пользователям управлять подключением.';
-  message26='Вы также можете сконфигурировать соединение из Центра Управления, Сеть и интернет, Настройка VPN-соединений, VPN PPTP/L2TP.';
+  message26='Вы также можете сконфигурировать соединение из Центра Управления->Сеть и интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
+  message27='Загружено:';
+  message28='Отдано:';
+  message29='Время в сети:';
+  message30='ч.';
+  message31='м.';
+  message32='с.';
+  message33='ОК';
+  message34='Да';
+  message35='Нет';
+  message36='Отмена';
 
 implementation
 
@@ -160,13 +175,34 @@ begin
     f1.Free;
   end
 end;
+procedure ClearEtc_hosts;
+//очистка /etc/hosts от старых мешающих записей
+var
+   Str_Etc_hosts:string;
+begin
+If FileExists ('/etc/hosts') then
+    begin
+        If not FileExists ('/etc/hosts.old') then Shell ('cp -f /etc/hosts /etc/hosts.old');
+        AssignFile (FileEtc_hosts,'/etc/hosts');
+        reset (FileEtc_hosts);
+        While not eof(FileEtc_hosts) do
+               begin
+                   readln(FileEtc_hosts, Str_Etc_hosts);
+                   If not (RightStr(Str_Etc_hosts,Length(Form1.Memo_Config.Lines[1]))=Form1.Memo_Config.Lines[1]) then
+                                  Shell('printf "'+Str_Etc_hosts+'\n" >> /tmp/hosts.tmp');
+               end;
+        closefile (FileEtc_hosts);
+        Shell('cp -f /tmp/hosts.tmp /etc/hosts');
+        Shell('rm -f /tmp/hosts.tmp');
+        Shell('chmod 0644 /etc/hosts');
+    end;
+end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
 var
     i,j:integer;
     Code_up_ppp:boolean;
     link:1..4;//1-link ok, 2-no link, 3-none, 4-еще не определено
-    pchar_message0,pchar_message1:pchar;
     str:string;
     Str_networktest, Str_RemoteIPaddress:string;
     FindRemoteIPaddress:boolean;
@@ -241,6 +277,8 @@ If not Scripts then If not Welcome then
                      Shell ('printf "welcome /etc/ppp/ip-up.d/ip-up\n" >> /etc/ppp/peers/'+Memo_Config.Lines[0]);
                      Welcome:=true;
                 end;
+Shell('rm -f /tmp/hosts.tmp');
+If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
  //обработка случая когда RemoteIPaddress совпадается с ip-адресом самого vpn-сервера
 If Code_up_ppp then
                If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
@@ -268,6 +306,7 @@ If Code_up_ppp then
                                                                                                             BalloonMessage (8000,str);
                                                                                                             Application.ProcessMessages;
                                                                                                             Shell('rm -f /opt/vpnpptp/hosts');
+                                                                                                            If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
                                                                                                             //изменение скрипта ip-up
                                                                                                             If FileExists('/etc/ppp/ip-up.d/ip-up') then
                                                                                                                                                     Shell ('printf "'+'/sbin/route add -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
@@ -422,6 +461,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                                       If Str_networktest=Memo_bindutilshost0.Lines[i] then
                                                                                                                       NewIPS:=false;
                                                   end;
+                                              If Memo_Config.Lines[41]='etc-hosts-yes' then Shell ('printf "'+Str_networktest+' '+Memo_config.Lines[1]+'\n" >> /etc/hosts');
                                               If NewIPS then
                                                   begin //определился новый, неизвестный ранее ip-адрес vpn-сервера
                                                         Shell('printf "'+Str_networktest+'\n'+'" >> /opt/vpnpptp/hosts');
@@ -454,7 +494,7 @@ If Code_up_ppp then If link<>1 then //когда связи по факту не
                                  exit;
                                end;
 
-If Code_up_ppp then Timer1.Interval:=StrToInt(Memo_Config.Lines[4]) else Timer1.Interval:=StrToInt(Memo_Config.Lines[5]);
+If Code_up_ppp then Timer1.Interval:=StrToInt64(Memo_Config.Lines[4]) else Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
 If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 
 If not Code_up_ppp then If link=3 then
@@ -463,9 +503,7 @@ If not Code_up_ppp then If link=3 then
                                    TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
-                                                                pchar_message0:=Pchar(message0);
-                                                                pchar_message1:=Pchar(message9);
-                                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
@@ -488,9 +526,7 @@ If not Code_up_ppp then If link=2 then
                                    TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
-                                                                pchar_message0:=Pchar(message0);
-                                                                pchar_message1:=Pchar(message9);
-                                                                Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
@@ -545,7 +581,7 @@ If not Code_up_ppp then If link=1 then
                                   If (NoPingIPS and NoPingGW and NoDNS) then str:=message18+message15+message17;
                                   BalloonMessage (8000,str);
                                   Application.ProcessMessages;
-                                  If NoPingIPS then
+                                  If NoPingIPS or NoDNS then
                                                    begin
                                                       Shell ('route del default');
                                                       Shell ('ifdown '+Memo_Config.Lines[3]);
@@ -553,6 +589,9 @@ If not Code_up_ppp then If link=1 then
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
+                                                      ObnullRX:=false;
+                                                      ObnullTX:=false;
+                                                      DateStart:=0;
                                                       Shell ('resolvconf -u');
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Shell ('ifup lo');
                                                       If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('route del default');
@@ -573,12 +612,23 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   link:1..3; //1-link ok, 2-no link, 3-none
-  pchar_message0,pchar_message1:pchar;
   i:integer;
   FilePeers:textfile;
   str:string;
 begin
   Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
+  Application.CreateForm(TForm3, Form3);
+  If Screen.Height<440 then AFont:=6;
+  If Screen.Height<=480 then AFont:=6;
+  If Screen.Height<550 then If not (Screen.Height<=480) then AFont:=6;
+  If Screen.Height>550 then AFont:=8;
+  If Screen.Height>1000 then AFont:=10;
+  DateStart:=0;
+  RXbyte:='0';
+  TXbyte:='0';
+  RXSpeed:='0b/s';
+  TXSpeed:='0b/s';
+  Count:=0;
   Form1.Hide;
   Scripts:=true;
   NoInternet:=true;
@@ -605,9 +655,7 @@ begin
                                                              //запуск не под root
                                                              Timer1.Enabled:=False;
                                                              Timer2.Enabled:=False;
-                                                             pchar_message0:=Pchar(message0);
-                                                             pchar_message1:=Pchar(message1+' '+message25);
-                                                             Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                             Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                              Shell('rm -f /tmp/tmpnostart1');
                                                              halt;
                                                          end;
@@ -616,9 +664,7 @@ begin
                                                                                                       //двойной запуск
                                                                                                       Timer1.Enabled:=False;
                                                                                                       Timer2.Enabled:=False;
-                                                                                                      pchar_message0:=Pchar(message0);
-                                                                                                      pchar_message1:=Pchar(message2);
-                                                                                                      Application.MessageBox(pchar_message1,pchar_message0, 0);
+                                                                                                      Form3.MyMessageBox(message0,message2,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                                                       Shell('rm -f /tmp/tmpnostart1');
                                                                                                       halt;
                                                                                                   end;
@@ -637,9 +683,7 @@ If FileExists('/opt/vpnpptp/config') then
   else
    begin
     Timer1.Enabled:=False;
-    pchar_message0:=Pchar(message0);
-    pchar_message1:=Pchar(message3+' '+message26);
-    Application.MessageBox(pchar_message1,pchar_message0, 0);
+    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
     Timer1.Enabled:=False;
     Timer2.Enabled:=False;
     halt;
@@ -699,24 +743,20 @@ If FileExists('/opt/vpnpptp/config') then
                 end;
    If link=3 then
                 begin
-                 pchar_message0:=Pchar(message0);
-                 pchar_message1:=Pchar(message4);
                  MenuItem3.Visible:=false;
                  MenuItem4.Visible:=false;
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
-                 Application.MessageBox(pchar_message1,pchar_message0, 0);
+                 Form3.MyMessageBox(message0,message4,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                  halt;
                 end;
    if link=2 then
                 begin
-                 pchar_message0:=Pchar(message0);
-                 pchar_message1:=Pchar(message5);
-                 Application.MessageBox(pchar_message1,pchar_message0, 0);
+                 Form3.MyMessageBox(message0,message5,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                  Timer1.Enabled:=False;
                  halt;
                 end;
-  Timer1.Interval:=StrToInt(Memo_Config.Lines[5]);
+  Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
   MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
   If Memo_Config.Lines[7]='reconnect-pptp' then
                                              begin
@@ -734,11 +774,6 @@ While not eof(FilePeers) do
          If Str='welcome /etc/ppp/ip-up.d/ip-up' then Welcome:=true;
        end;
 closefile (FilePeers);
-end;
-
-procedure TForm1.Memo_networktestChange(Sender: TObject);
-begin
-
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
@@ -774,6 +809,7 @@ procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
  Timer1.Enabled:=False;
  Timer2.Enabled:=False;
+ If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
  If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
@@ -790,7 +826,6 @@ begin
   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Application.ProcessMessages;
   //определяем текущий шлюз, и если он не восстановлен скриптом ip-down, то восстанавливаем его сами
-  //sleep(1000);
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
   Shell('printf "none" >> /tmp/gate');
@@ -821,6 +856,7 @@ i:integer;
 begin
   Timer1.Enabled:=False;
   Timer2.Enabled:=False;
+  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
                                       begin
                                          Shell('cp -f /etc/resolv.conf.old /etc/resolv.conf');
@@ -887,8 +923,12 @@ procedure TForm1.Timer2Timer(Sender: TObject);
 var
   j:integer;
   Code_up_ppp:boolean;
-  Str:string;
+  pppiface,Str:string;
+  RXbyte1,TXbyte1:string;
+  TV : timeval;
 begin
+  Count:=Count+1;
+  If Count=3 then Count:=1;
   //Проверяем поднялось ли соединение
   Application.ProcessMessages;
   TrayIcon1.Show;
@@ -903,17 +943,55 @@ begin
    begin
      If LeftStr(Memo2.Lines[j],3)='ppp' then
       begin
+       pppiface:=LeftStr(Memo2.Lines[j],4);
        Code_up_ppp:=True;
       end;
    end;
+  //определяем скорость, время
+  popen (f,'ifconfig '+pppiface+'|grep RX|grep bytes|awk '+chr(39)+'{print $2}'+chr(39),'R');
+  If eof(f) then RXbyte1:='0';
+  While not eof(f) do
+     begin
+       Readln (f,RXbyte1);
+     end;
+  PClose(f);
+  popen (f,'ifconfig '+pppiface+'|grep TX|grep bytes|awk '+chr(39)+'{print $6}'+chr(39),'R');
+  If eof(f) then TXbyte1:='0';
+  While not eof(f) do
+     begin
+       Readln (f,TXbyte1);
+     end;
+  PClose(f);
+  Delete(RXbyte1,1,6);
+  Delete(TXbyte1,1,6);
+  If StrToInt64(RXbyte1)>=4242538496 then ObnullRX:=true; //реакция программы за 3сек до факта обнуления значений
+  If StrToInt64(TXbyte1)>=4242538496 then ObnullTX:=true; //2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
+  If Count=2 then
+  begin
+     RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
+     TXSpeed:=IntToStr((abs(StrToInt64(TXbyte1)-StrToInt64(TXbyte)) div (Timer2.Interval div 1000)) div Count);
+     RXbyte:=RXbyte1;
+     TXbyte:=TXbyte1;
+     If StrToInt64(RXSpeed)>1048576 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1048576)+'MiB/s'
+           else If StrToInt64(RXSpeed)>1024 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1024)+'KiB/s'
+                                                                             else RXSpeed:=RXSpeed+'b/s';
+     If StrToInt64(TXSpeed)>1048576 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1048576)+'MiB/s'
+           else If StrToInt64(TXSpeed)>1024 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1024)+'KiB/s'
+                                                                             else TXSpeed:=TXSpeed+'b/s';
+  end;
+  If Code_up_ppp then If DateStart=0 then
+                      begin
+                           fpGettimeofday(@TV,nil);
+                           DateStart:=TV.tv_sec;
+                      end;
   If Code_up_ppp then
                            begin
                              Application.ProcessMessages;
                              TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
-                             If StartMessage then BalloonMessage (8000,message6+Memo_Config.Lines[0]+message7+'...');
-If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
-If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
-If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
+                             If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
+  If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
+  If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
+  If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                             begin //тест интернета
                                  Shell('rm -f /tmp/networktest');
                                  Str:='ping -c1 yandex.ru|grep yandex.ru|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
@@ -925,9 +1003,9 @@ If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-y
                                  If Memo_networktest.Lines[0]='none' then NoInternet:=true else NoInternet:=false;
                                  Shell('rm -f /tmp/networktest');
                                  Application.ProcessMessages;
-                                 If NoInternet then BalloonMessage (16000,message6+Memo_Config.Lines[0]+message7+'... '+message16)
+                                 If NoInternet then BalloonMessage (16000,message6+' '+Memo_Config.Lines[0]+' '+message7+'... '+message16)
                                                     else
-                                                          BalloonMessage (8000,message6+Memo_Config.Lines[0]+message7+'... '+message19);
+                                                          BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'... '+message19);
                                  Application.ProcessMessages;
                             end;
                              StartMessage:=false;
@@ -937,7 +1015,7 @@ If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-y
                              Application.ProcessMessages;
                              If not StartMessage then
                                     begin
-                                         BalloonMessage (8000,message6+Memo_Config.Lines[0]+message8+'...');
+                                         BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
                                          DhclientStart:=false;
                                          NoInternet:=true;
                                     end;
@@ -949,22 +1027,35 @@ If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-y
   Application.ProcessMessages;
 end;
 
-procedure TForm1.tmpnostartChange(Sender: TObject);
-begin
-
-end;
-
-procedure TForm1.TrayIcon1Click(Sender: TObject);
-begin
-
-end;
-
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
 // Вывод информации о соединении
 var
   j:integer;
   Code_up_ppp:boolean;
+  str:string;
+  pppiface:string;
+  SecondsPastRun:int64;
+  hour,min,sec:int64;
+  Time:string;
+  TV : timeval;
 begin
+  SecondsPastRun:=0;
+  fpGettimeofday(@TV,nil);
+  DateStop:=TV.tv_sec;
+  If DateStart<>0 then
+     begin
+          SecondsPastRun:=DateStop-DateStart;
+          hour:=SecondsPastRun div 3600;
+          min:=(SecondsPastRun mod 3600) div 60;
+          sec:=(SecondsPastRun mod 3600) mod 60;
+     end else
+             begin
+                  hour:=0;
+                  min:=0;
+                  sec:=0;
+             end;
+  Time:=IntToStr(hour)+message30+IntToStr(min)+message31+IntToStr(sec)+message32;
+  pppiface:='';
   Application.ProcessMessages;
   Shell('rm -f /tmp/status3.ppp');
   Memo2.Clear;
@@ -977,20 +1068,43 @@ begin
    begin
      If LeftStr(Memo2.Lines[j],3)='ppp' then
       begin
+       pppiface:=LeftStr(Memo2.Lines[j],4);
        Code_up_ppp:=True;
       end;
    end;
+  popen (f,'ifconfig '+pppiface+'|grep RX|grep bytes|awk '+chr(39)+'{print $3$4}'+chr(39),'R');
+  If eof(f) then RX:='0';
+  While not eof(f) do
+     begin
+       Readln (f,RX);
+     end;
+  PClose(f);
+  popen (f,'ifconfig '+pppiface+'|grep TX|grep bytes|awk '+chr(39)+'{print $7$8}'+chr(39),'R');
+  If eof(f) then TX:='0';
+  While not eof(f) do
+     begin
+       Readln (f,TX);
+     end;
+  PClose(f);
+  TX:=DeleteSym ('(',TX);
+  TX:=DeleteSym (')',TX);
+  RX:=DeleteSym ('(',RX);
+  RX:=DeleteSym (')',RX);
+  If ObnullRX then RX:='>4GiB';
+  If ObnullTX then TX:='>4GiB';
+  str:='';
   If Memo_Config.Lines[39]<>'l2tp' then
                                    begin
-  If Code_up_ppp then TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN PPTP)'+message7
-                    else TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN PPTP)'+message8;
+  If Code_up_ppp then str:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')'
+                    else str:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                    end;
   If Memo_Config.Lines[39]='l2tp' then
                                    begin
-  If Code_up_ppp then TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN L2TP)'+message7
-                    else TrayIcon1.Hint:=message6+Memo_Config.Lines[0]+' (VPN L2TP)'+message8;
+  If Code_up_ppp then str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')'
+                    else str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                    end;
-
+  TrayIcon1.Hint:=str;
+  Application.ProcessMessages;
 end;
 
 
