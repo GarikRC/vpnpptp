@@ -157,7 +157,6 @@ type
     Tmpnostart: TMemo;
     procedure AutostartpppdChange(Sender: TObject);
     procedure Autostart_ponoffChange(Sender: TObject);
-    procedure balloonChange(Sender: TObject);
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonHidePassClick(Sender: TObject);
     procedure ButtonRestartClick(Sender: TObject);
@@ -169,10 +168,6 @@ type
     procedure Button_next1Click(Sender: TObject);
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
-    procedure CheckBox_no128Change(Sender: TObject);
-    procedure CheckBox_requiredChange(Sender: TObject);
-    procedure CheckBox_rmschapv2Change(Sender: TObject);
-    procedure CheckBox_rpapChange(Sender: TObject);
     procedure ComboBoxVPNChange(Sender: TObject);
     procedure ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -180,19 +175,9 @@ type
     procedure etc_hostsChange(Sender: TObject);
     procedure networktestChange(Sender: TObject);
     procedure pppnotdefaultChange(Sender: TObject);
-    procedure routeDNSautoChange(Sender: TObject);
     procedure routevpnautoChange(Sender: TObject);
-    procedure CheckBox_no40Change(Sender: TObject);
-    procedure CheckBox_no56Change(Sender: TObject);
-    procedure CheckBox_rchapChange(Sender: TObject);
-    procedure CheckBox_reapChange(Sender: TObject);
-    procedure CheckBox_rmschapChange(Sender: TObject);
-    procedure CheckBox_shorewallChange(Sender: TObject);
-    procedure CheckBox_statelessChange(Sender: TObject);
     procedure dhcp_routeChange(Sender: TObject);
-    procedure Mii_tool_noChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Pppd_logChange(Sender: TObject);
     procedure Reconnect_pptpChange(Sender: TObject);
     procedure Sudo_configureChange(Sender: TObject);
     procedure Sudo_ponoffChange(Sender: TObject);
@@ -200,6 +185,10 @@ type
     { private declarations }
   public
     { public declarations }
+  end;
+
+  TMyHintWindow = class(THintWindow)
+    constructor Create(AOwner: TComponent); override;
   end;
 
     { TTranslator }
@@ -215,8 +204,8 @@ end;
 
 var
   Form1: TForm1;
-  POFileName : String;
-  Lang,FallbackLang:String;
+  POFileName : String; //файл перевода
+  Lang,FallbackLang:String; //язык системы
   Translate:boolean; // переведено или еще не переведено
   dhclient:boolean; // запущен ли и установлен ли dhclient
   IPS: boolean; // если true, то в поле vpn-сервера введен ip; если false - то имя
@@ -226,8 +215,8 @@ var
   More:boolean; //отслеживает, что кнопку Button_more уже нажимали
   DNS_auto:boolean; //если false, то DNS провайдер выдает для ручного ввода
   DNSA,DNSB,DNSdopC,DNSC,DNSD:string; //автоопределенные конфигуратором DNS
-  Stroowriter:string;
-  AProcess: TProcess;
+  Stroowriter:string; //текстовый редактор
+  AProcess: TProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
 
 const
@@ -260,31 +249,31 @@ resourcestring
   message24='Для того, чтобы разрешить автозапуск интернета при старте системы сначала установите пакет sudo.';
   message25='Не установлен и не запущен dhclient (то есть пакет dhcp-client). Возможны проблемы в работе сети.';
   message26='Не удалось определить IP-адрес VPN-сервера. VPN-сервер не пингуется. Или он введен неправильно, или проблема с DNS.';
-  message27='Маршруты не могут приходить через dhcp, так как не установлен и не запущен dhclient (то есть пакет dhcp-client).';
+  message27='Маршруты не могут приходить через DHCP, так как не установлен и не запущен dhclient (то есть пакет dhcp-client).';
   message28='Нельзя определить IP-адрес VPN-сервера, так как строка для ввода не заполнена.';
   message29='Его установка необязательна, но она ускорит механизм программного добавления маршрута к VPN-серверу.';
   message30='Используйте опцию отключения контроля state сетевого кабеля если только по другому не работает (об этом попросит сама программа).';
   message31='Встроенный в демон pppd(xl2tpd) механизм реконнекта не умеет контролировать state сетевого кабеля, поэтому он не желателен к использованию.';
   message32='Ведите лог pppd(xl2tpd) для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
-  message33='Получение маршрутов через dhcp необходимо для одновременной работы локальной сети и интернета, но провайдер не всегда их присылает.';
+  message33='Получение маршрутов через DHCP необходимо для одновременной работы локальной сети и интернета, но провайдер не всегда их присылает.';
   message34='Эта опция настраивает файервол лишь для интернета, но не для p2p и не для других соединений.';
-  message35='Отменив получение маршрутов через dhcp, не будут одновременно работать интернет и локальная сеть, а будет работать только интернет.';
+  message35='Отменив получение маршрутов через DHCP, не будут одновременно работать интернет и локальная сеть, а будет работать только интернет.';
   message36='Отменить настройку файервола программой стоит только если файервол отключен, или файервол Вами самостоятельно настраивается.';
   message37='Если интернет хорошо работает без опции программного добавления маршрута к VPN-серверу, то не стоит нагружать систему.';
   message38='При выборе этой опции проверяется пинг VPN-, DNS-сервера, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные проблемы, выводя сообщения.';
   message39='Отменить эту опцию стоит только если у Вас стабильные локальная сеть и интернет, и они никогда не падают.';
   message40='Эта опция блокирует все всплывающие сообщения из трея, а также отключает проверку DNS-, VPN-сервера, шлюза локальной сети и есть ли интернет.';
-  message41='Проверка показала, что маршруты через dhcp не приходят. Одновременная работа интернета и лок. сети не настроена.';
-  message42='Получение маршрутов через dhcp будет отменено, так как маршруты через dhcp не приходят.';
+  message41='Проверка показала, что маршруты через DHCP не приходят. Одновременная работа интернета и лок. сети не настроена.';
+  message42='Получение маршрутов через DHCP будет отменено, так как маршруты через DHCP не приходят.';
   message43='VPN-сервер не пингуется. Устраните проблему и заново запустите конфигуратор.';
   message44='Шлюз локальной сети не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
   message45='Пингуется VPN-сервер. Ожидайте...';
   message46='Определяется IP-адрес VPN-сервера через команду ping. Ожидайте...';
   message47='Пингуется шлюз локальной сети. Ожидайте...';
-  message48='Осуществляется подготовка сети для проверки приходят ли маршруты через dhcp. Ожидайте...';
-  message49='Сеть подготовлена для проверки приходят ли маршруты через dhcp. Вызывается dhclient. Ожидайте...';
+  message48='Осуществляется подготовка сети для проверки приходят ли маршруты через DHCP. Ожидайте...';
+  message49='Сеть подготовлена для проверки приходят ли маршруты через DHCP. Вызывается dhclient. Ожидайте...';
   message50='Определяются IP-адреса VPN-сервера через команду host из пакета bind-utils. Ожидайте...';
-  message51='Отменяется получение маршрутов через dhcp. Ожидайте...';
+  message51='Отменяется получение маршрутов через DHCP. Ожидайте...';
   message52='Пинг проверен';
   message53='Минуточку...';
   message54='Не определилось ни одного IP-адреса VPN-сервера.';
@@ -359,11 +348,32 @@ resourcestring
   message123='Да';
   message124='Нет';
   message125='Отмена';
+  message126='Тип VPN';
+  message127='Внимательно читаем инструкцию и не забываем писать пожелания и замечания';
+  message128='Здесь также можно указать команды, которые выполнятся сразу, как только соединение VPN PPTP/L2TP будет установлено.';
+  message129='Значения MTU/MRU можно не вводить, тогда если не указана опция default-mru, то провайдер пришлет их сам (но не всегда).';
+  message130='Шаблон: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
+  message131='Шаблон: от eth0 до eth9 или от wlan0 до wlan9.';
+  message132='Эта кнопка вызывает справку, но при условиях, что она есть, и что установлено офисное приложение';
+  message133='Перейти к следующей странице настройки';
+  message134='Выйти из программы';
+  message135='Эта кнопка настраивает (перенастраивает) соединение';
+  message136='Эта кнопка позволяет изменить предложенные по умолчанию или дополнить опции демона pppd';
+  message137='Эта кнопка позволяет проверить правильно ли было настроено соединение';
 
 implementation
 
 uses
 LCLProc;
+
+constructor TMyHintWindow.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  with Canvas.Font do
+  begin
+    Size := AFont;
+  end;
+end;
 
 { TTranslator }
 
@@ -415,6 +425,23 @@ begin
             end;
      closefile(Fileoowriter_find);
      Shell('rm -f /tmp/oowriter_find');
+end;
+
+Function MakeHint(str:string;n:byte):string;
+//создает многострочный хинт
+var
+  i,j:integer;
+  str0:string;
+ begin
+   str0:='';
+   j:=0;
+   For i:=1 to Length(str) do
+            begin
+               str0:=str0+str[i];
+               If str[i]=' ' then j:=j+1;
+               if j=n then begin str0:=str0+#13#10;j:=0;end;
+            end;
+   MakeHint:=str0;
 end;
 
 Function DeleteSym(d, s: string): string;
@@ -656,9 +683,9 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Memo_gate.Lines.Clear;
                           If FileSize('/tmp/dhclienttest2')<=FileSize('/tmp/dhclienttest1') then
                                                                                                begin
-                                                                                                 Label14.Caption:=message41;
+                                                                                                 Label14.Caption:=message41+' '+message42;
                                                                                                  Application.ProcessMessages;
-                                                                                                 Form3.MyMessageBox(message0,message42,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                                                                 Form3.MyMessageBox(message0,message41+' '+message42,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                                                                  StartMessage:=false;
                                                                                                  dhcp_route.Checked:=false;
                                                                                                  StartMessage:=true;
@@ -813,13 +840,13 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                                                begin
                                                                                                   Memo_bindutilshost.Lines[i]:=DeleteSym(')',Memo_bindutilshost.Lines[i]);
                                                                                                   Memo_bindutilshost.Lines[i]:=DeleteSym('(',Memo_bindutilshost.Lines[i]);
-                                                                                                  If Memo_bindutilshost.Lines[i]<>'none' then Memo_ip_up.Lines.Add('/sbin/route add -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+                                                                                                  If Memo_bindutilshost.Lines[i]<>'none' then If Memo_bindutilshost.Lines[i]<>'' then Memo_ip_up.Lines.Add('/sbin/route add -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
                                                                                                end;
                                                                                          if not BindUtils then
                                                                                                               begin //просто перезаписать файл /opt/vpnpptp/hosts
                                                                                                                 Shell('rm -f /opt/vpnpptp/hosts');
                                                                                                                 Str:=Memo_bindutilshost.Lines[0];
-                                                                                                                Shell('printf "'+Str+'\n" >> /opt/vpnpptp/hosts');
+                                                                                                                If Str<>'' then If Str<>'none' then Shell('printf "'+Str+'\n" >> /opt/vpnpptp/hosts');
                                                                                                               end;
                                                                                          end;
                                                   If FileSize('/opt/vpnpptp/hosts')=0 then
@@ -888,7 +915,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                         begin
                                                            For i:=0 to Memo_bindutilshost.Lines.Count-1 do
                                                              begin
-                                                               If LeftStr(Memo_bindutilshost.Lines[i],4)<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
+                                                               If LeftStr(Memo_bindutilshost.Lines[i],4)<>'none' then If Memo_bindutilshost.Lines[i]<>'' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + Memo_bindutilshost.Lines[i] + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
                                                              end;
                                                         end;
  If not pppnotdefault.Checked then Memo_ip_down.Lines.Add('/sbin/route del default');
@@ -1431,9 +1458,9 @@ end;
               PageControl1.ActivePageIndex:=3;
               Button_next2.Visible:=False;
  Memo_create.Clear;
- If FallbackLang='ru' then  begin Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.ru'); Translate:=true; end;
- If FallbackLang='uk' then  begin Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.uk'); Translate:=true; end;
- If not Translate then  Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.en');
+ If FallbackLang='ru' then If FileExists ('/opt/vpnpptp/lang/success.ru') then begin Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.ru'); Translate:=true; end;
+ If FallbackLang='uk' then If FileExists ('/opt/vpnpptp/lang/success.uk') then begin Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.uk'); Translate:=true; end;
+ If not Translate then If FileExists ('/opt/vpnpptp/lang/success.en') then Memo_create.Lines.LoadFromFile('/opt/vpnpptp/lang/success.en');
  Button_create.Visible:=False;
  Shell('rm -f /tmp/users');
  Button_exit.Enabled:=true;
@@ -1483,22 +1510,6 @@ ButtonVPN.Caption:=str0;
 Application.ProcessMessages;
 end;
 
-procedure TForm1.balloonChange(Sender: TObject);
-begin
- If balloon.Checked then
-                         balloon.Checked:=true
-                                                   else
-                                                       balloon.Checked:=false;
-  If StartMessage then If balloon.Checked then
-                       begin
-                          StartMessage:=false;
-                          networktest.Checked:=false;
-                          StartMessage:=true;
-                          Form3.MyMessageBox(message0,message40,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
 procedure TForm1.ButtonHelpClick(Sender: TObject);
 begin
     If LeftStr(Stroowriter,17)='/usr/bin/oowriter' then
@@ -1532,9 +1543,9 @@ begin
 end;
 
 procedure TForm1.ButtonRestartClick(Sender: TObject);
+//рестарт сети
 var i:integer;
     a:boolean;
-//рестарт сети
 begin
 a:=ButtonHelp.Enabled;
 ButtonRestart.Caption:=message53;
@@ -1659,13 +1670,7 @@ end;
 procedure TForm1.Autostart_ponoffChange(Sender: TObject);
 begin
 //проверка установлен ли пакет Sudo
-If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-   If Autostart_ponoff.Checked then Autostart_ponoff.Checked:=true else Autostart_ponoff.Checked:=false;
-   If StartMessage then If Autostart_ponoff.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message21,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
+   If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Autostart_ponoff.Checked then If not Sudo then
                        begin
                           Form3.MyMessageBox(message0,message24,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -1695,13 +1700,7 @@ end;
 
 procedure TForm1.AutostartpppdChange(Sender: TObject);
 begin
-   If Autostartpppd.Checked then Autostartpppd.Checked:=true else Autostartpppd.Checked:=false;
-   If StartMessage then If Autostartpppd.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message62,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-   If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
+If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
                        begin
                           Form3.MyMessageBox(message0,message63,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
@@ -1747,43 +1746,6 @@ begin
                 Button_create.Visible:=True;
                 Button_next1.Visible:=False;
                 Button_next2.Visible:=False;
-end;
-
-procedure TForm1.CheckBox_no128Change(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_no128.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message92+' '+message88,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_requiredChange(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_required.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message79+' '+message88,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_rmschapv2Change(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_rmschapv2.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message78+' '+message55,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-
-end;
-
-procedure TForm1.CheckBox_rpapChange(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_rpap.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message77+' '+message55,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
 end;
 
 procedure TForm1.ComboBoxVPNChange(Sender: TObject);
@@ -1844,16 +1806,6 @@ begin
                           Application.ProcessMessages;
                           exit;
                        end;
-  If StartMessage then If etc_hosts.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message112,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-  If StartMessage then If not etc_hosts.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message113,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
    If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
    If StartMessage then If etc_hosts.Checked then If not BindUtils then
                        begin
@@ -1864,32 +1816,16 @@ end;
 
 procedure TForm1.networktestChange(Sender: TObject);
 begin
- If networktest.Checked then
-                         networktest.Checked:=true
-                                                   else
-                                                       networktest.Checked:=false;
   If StartMessage then If networktest.Checked then
                        begin
                           StartMessage:=false;
                           balloon.Checked:=false;
                           StartMessage:=true;
-                          Form3.MyMessageBox(message0,message38,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-  If StartMessage then If not networktest.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message39,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
                        end;
 end;
 
 procedure TForm1.pppnotdefaultChange(Sender: TObject);
 begin
-   If StartMessage then If pppnotdefault.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message64,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
 If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
                        begin
                           Form3.MyMessageBox(message0,message65,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -1900,19 +1836,9 @@ If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
                        end;
 end;
 
-procedure TForm1.routeDNSautoChange(Sender: TObject);
-begin
-   If StartMessage then If routeDNSauto.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message71,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
 procedure TForm1.routevpnautoChange(Sender: TObject);
 begin
    If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
-   If routevpnauto.Checked then routevpnauto.Checked:=true else routevpnauto.Checked:=false;
    If StartMessage then If not IPS then If etc_hosts.Checked then If not routevpnauto.Checked then
                        begin
                           Form3.MyMessageBox(message0,message116,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -1922,11 +1848,6 @@ begin
                           Application.ProcessMessages;
                           exit;
                        end;
-   If StartMessage then If routevpnauto.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message37,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
    If StartMessage then If routevpnauto.Checked then If not BindUtils then
                        begin
                           Form3.MyMessageBox(message0,message121+' '+message29,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -1934,89 +1855,8 @@ begin
                        end;
 end;
 
-procedure TForm1.CheckBox_no40Change(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_no40.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message90+' '+message88,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_no56Change(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_no56.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message91+' '+message88,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_rchapChange(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_rchap.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message58+' '+message55,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_reapChange(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_reap.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message70+' '+message55,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_rmschapChange(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_rmschap.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message72+' '+message55,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_shorewallChange(Sender: TObject);
-begin
-  If CheckBox_shorewall.Checked then
-                         CheckBox_shorewall.Checked:=true
-                                                   else
-                                                       CheckBox_shorewall.Checked:=false;
-  If StartMessage then If CheckBox_shorewall.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message34,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-  If StartMessage then If not CheckBox_shorewall.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message36,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.CheckBox_statelessChange(Sender: TObject);
-begin
-  If StartMessage then If CheckBox_stateless.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message89+' '+message88,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
 procedure TForm1.dhcp_routeChange(Sender: TObject);
 begin
-  If dhcp_route.Checked then
-                         dhcp_route.Checked:=true
-                                                   else
-                                                       dhcp_route.Checked:=false;
-  If StartMessage then If dhcp_route.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message33,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
   If StartMessage then If dhcp_route.Checked then if not dhclient then
                        begin
                           Form3.MyMessageBox(message0,message27,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -2025,24 +1865,6 @@ begin
                           StartMessage:=true;
                           Application.ProcessMessages;
                           exit;
-                       end;
-  If StartMessage then If not dhcp_route.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message35,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
-procedure TForm1.Mii_tool_noChange(Sender: TObject);
-begin
-  If Mii_tool_no.Checked then
-                         Mii_tool_no.Checked:=true
-                                                   else
-                                                       Mii_tool_no.Checked:=false;
-   If StartMessage then If Mii_tool_no.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message30,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
                        end;
 end;
 
@@ -2220,6 +2042,14 @@ If not y then IPS:=true else IPS:=false;
   If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no40.Enabled:=false; CheckBox_no40.Checked:=false; StartMessage:=true; end;
   If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no56.Enabled:=false; CheckBox_no56.Checked:=false; StartMessage:=true; end;
   If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
+  If ComboBoxVPN.Text='VPN L2TP' then
+                           begin
+                                CheckBox_required.Hint:='';
+                                CheckBox_stateless.Hint:='';
+                                CheckBox_no40.Hint:='';
+                                CheckBox_no56.Hint:='';
+                                CheckBox_no128.Hint:='';
+                           end;
   Application.ProcessMessages;
 end;
 
@@ -2274,11 +2104,12 @@ If not FileExists('/opt/vpnpptp/config') then if LeftStr(Edit_eth.Text,4)='wlan'
                                                                                    Mii_tool_no.Checked:=true;
                                                                                    StartMessage:=true;
                                                                                  end;
-//VmWare не поддерживает mii-tool при использовании NAT
+//VmWare не поддерживает mii-tool, получение маршрутов через dhcp при использовании NAT
 If not FileExists('/opt/vpnpptp/config') then if (Edit_gate.Text=EditDNS3.Text) then
                                                                                  begin
                                                                                    StartMessage:=false;
                                                                                    Mii_tool_no.Checked:=true;
+                                                                                   dhcp_route.Checked:=false;
                                                                                    StartMessage:=true;
                                                                                  end;
 //проверка корректности ввода шлюза локальной сети
@@ -2545,6 +2376,64 @@ If not FileExists('/etc/resolv.conf') then //отмена реализации �
        Shell ('rm -f /var/run/ppp/resolv.conf');
        Shell ('resolvconf -u');
     end;
+HintWindowClass := TMyHintWindow;
+Application.HintColor:=$0092FFF8;
+Application.ShowHint := False;
+Application.ShowHint := True;
+//присваивание хинтов элементам формы
+Edit_IPS.Hint:=MakeHint(message1,7);
+ButtonVPN.Hint:=ButtonVPN.Caption;
+Edit_peer.Hint:=MakeHint(message1,7);
+ButtonRestart.Hint:=message93;
+Edit_user.Hint:=MakeHint(message1,7);
+ComboBoxVPN.Hint:=message126;
+Edit_passwd.Hint:=MakeHint(message1,7);
+ButtonHidePass.Hint:=message86+' / '+message87;
+Edit_MaxTime.Hint:=MakeHint(message8,8);
+Edit_MinTime.Hint:=MakeHint(message10,8);
+Button_exit.Hint:=MakeHint(message134,6);
+Button_next1.Hint:=message133;
+Button_next2.Hint:=message133;
+Button_create.Hint:=MakeHint(message135,3);
+Button_more.Hint:=MakeHint(message136,4);
+ButtonHelp.Hint:=MakeHint(message132,6);
+ButtonTest.Hint:=MakeHint(message137,4);
+Edit_eth.Hint:=MakeHint(message131,5);
+Edit_gate.Hint:=MakeHint(message130,5);
+EditDNS1.Hint:=MakeHint(message130,5);
+EditDNS2.Hint:=MakeHint(message130,5);
+EditDNS3.Hint:=MakeHint(message130,5);
+EditDNS4.Hint:=MakeHint(message130,5);
+Edit_mtu.Hint:=MakeHint(message129,5);
+Edit_mru.Hint:=MakeHint(message129,5);
+Memo_route.Hint:=MakeHint((LeftStr(Label_route.Caption,Length(Label_route.Caption)-1)+'. '+message128),5);
+ChecKBox_desktop.Hint:=ChecKBox_desktop.Caption;
+CheckBox_rchap.Hint:=MakeHint(message58+' '+message55,6);
+CheckBox_reap.Hint:=MakeHint(message70+' '+message55,6);
+CheckBox_rmschap.Hint:=MakeHint(message72+' '+message55,6);
+CheckBox_rpap.Hint:=MakeHint(message77+' '+message55,6);
+CheckBox_rmschapv2.Hint:=MakeHint(message78+' '+message55,6);
+CheckBox_required.Hint:=MakeHint(message79+' '+message88,6);
+CheckBox_stateless.Hint:=MakeHint(message89+' '+message88,6);
+CheckBox_no40.Hint:=MakeHint(message90+' '+message88,6);
+CheckBox_no56.Hint:=MakeHint(message91+' '+message88,6);
+CheckBox_no128.Hint:=MakeHint(message92+' '+message88,6);
+Mii_tool_no.Hint:=MakeHint(message30,6);
+Reconnect_pptp.Hint:=MakeHint(message31,6);
+Pppd_log.Hint:=MakeHint(message32,5);
+dhcp_route.Hint:=MakeHint(message33+' '+message35,6);
+CheckBox_shorewall.Hint:=MakeHint(message34+' '+message36,6);
+routevpnauto.Hint:=MakeHint(message37,7);
+etc_hosts.Hint:=MakeHint(message112+' '+message113,7);
+routeDNSauto.Hint:=MakeHint(message71,7);
+networktest.Hint:=MakeHint(message38+' '+message39,6);
+balloon.Hint:=MakeHint(message40,7);
+Sudo_ponoff.Hint:=MakeHint(message56,7);
+Sudo_configure.Hint:=MakeHint(message9,7);
+Autostart_ponoff.Hint:=MakeHint(message21,6);
+Autostartpppd.Hint:=MakeHint(message62,6);
+pppnotdefault.Hint:=MakeHint(message64,6);
+Memo_create.Hint:=MakeHint(message127,5);
 Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
@@ -2571,6 +2460,7 @@ ButtonHelp.Enabled:=false;
    Form1.Left:=0;
    If Screen.Height<440 then
                             begin
+                             Form1.Position:=poScreenCenter;
                              AFont:=6;
                              Form1.Height:=Screen.Height-50;
                              Form1.Width:=Screen.Width;
@@ -2606,6 +2496,7 @@ ButtonHelp.Enabled:=false;
                             end;
    If Screen.Height<=480 then
                         begin
+                             Form1.Position:=poScreenCenter;
                              AFont:=6;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
@@ -2630,6 +2521,7 @@ ButtonHelp.Enabled:=false;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
+                             Form1.Position:=poScreenCenter;
                              AFont:=6;
                              Label1.BorderSpacing.Around:=0;
                              Edit_IPS.BorderSpacing.Around:=0;
@@ -2655,6 +2547,7 @@ ButtonHelp.Enabled:=false;
                          end;
 If Screen.Height>550 then   //разрешение в основном нетбуков
                         begin
+                             Form1.Position:=poScreenCenter;
                              AFont:=8;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
@@ -2878,19 +2771,6 @@ StartMessage:=true;
   Memo_gate.Lines.Clear;
 end;
 
-procedure TForm1.Pppd_logChange(Sender: TObject);
-begin
-    If Pppd_log.Checked then
-                         Pppd_log.Checked:=true
-                                                   else
-                                                       Pppd_log.Checked:=false;
-    If StartMessage then If Pppd_log.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message32,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-end;
-
 procedure TForm1.Reconnect_pptpChange(Sender: TObject);
 begin
     //проверка версии пакета xl2tpd
@@ -2907,28 +2787,13 @@ begin
                                                                  end;
                                  Shell ('rm -f /tmp/ver_xl2tpd');
                                end;
-    If Reconnect_pptp.Checked then
-                         Reconnect_pptp.Checked:=true
-                                                   else
-                                                       Reconnect_pptp.Checked:=false;
-    If StartMessage then If Reconnect_pptp.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message31,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
 end;
 
 procedure TForm1.Sudo_configureChange(Sender: TObject);
 begin
 //проверка установлен ли пакет Sudo
 If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-   If Sudo_configure.Checked then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
-   If StartMessage then If Sudo_configure.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message9,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
-   If StartMessage then If Sudo_configure.Checked then If not Sudo then
+If StartMessage then If Sudo_configure.Checked then If not Sudo then
                        begin
                           Form3.MyMessageBox(message0,message6,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
@@ -2942,13 +2807,7 @@ end;
 procedure TForm1.Sudo_ponoffChange(Sender: TObject);
 begin
 //проверка установлен ли пакет Sudo
-If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-   If Sudo_ponoff.Checked then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
-   If StartMessage then If Sudo_ponoff.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message56,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          Application.ProcessMessages;
-                       end;
+   If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
                        begin
                           Form3.MyMessageBox(message0,message57,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -2978,21 +2837,28 @@ initialization
   If FallbackLang='ru' then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/vpnpptp.ru.po';
-                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
-                               Translate:=true;
+                               If FileExists (POFileName) then
+                               begin
+                                    Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                                    Translate:=true;
+                               end;
                             end;
   If FallbackLang='uk' then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/vpnpptp.uk.po';
-                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
-                               Translate:=true;
+                               If FileExists (POFileName) then
+                               begin
+                                    Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                                    Translate:=true;
+                               end;
                             end;
   If not Translate then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/vpnpptp.en.po';
-                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                               If FileExists (POFileName) then
+                                          Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
                             end;
-LRSTranslator := TTranslator.Create(POFileName); //перевод (локализация) всей формы приложения
+If FileExists (POFileName) then LRSTranslator := TTranslator.Create(POFileName); //перевод (локализация) всей формы приложения
 end.
 
 end.

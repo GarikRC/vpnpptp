@@ -4,6 +4,7 @@ object Form2: TForm2
   Top = 495
   Width = 457
   ActiveControl = CheckBoxlock
+  BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Опции демона pppd'
   ClientHeight = 307
   ClientWidth = 457
