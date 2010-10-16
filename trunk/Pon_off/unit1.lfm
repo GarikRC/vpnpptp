@@ -1,15 +1,13 @@
 object Form1: TForm1
-  Left = 937
-  Height = 424
-  Top = 119
-  Width = 287
+  Left = 691
+  Height = 153
+  Top = 188
+  Width = 533
   ActiveControl = Memo_Config
-  BorderIcons = []
-  BorderStyle = bsNone
-  Caption = 'Соединение pptp'
-  ClientHeight = 424
-  ClientWidth = 287
-  FormStyle = fsSplash
+  BorderIcons = [biSystemMenu]
+  Caption = 'ponoff'
+  ClientHeight = 153
+  ClientWidth = 533
   Icon.Data = {
     3E08010000000100010080800000010020002808010016000000280000008000
     0000000100000100200000000000000001006400000064000000000000000000
@@ -2128,6 +2126,8 @@ object Form1: TForm1
     0000
   }
   OnCreate = FormCreate
+  Position = poScreenCenter
+  ShowHint = True
   ShowInTaskBar = stNever
   LCLVersion = '0.9.28.2'
   WindowState = wsMinimized
@@ -2143,9 +2143,9 @@ object Form1: TForm1
     Visible = False
   end
   object Memo2: TMemo
-    Left = 49
+    Left = 170
     Height = 37
-    Top = 40
+    Top = 0
     Width = 112
     Lines.Strings = (
       'Memo2'
@@ -2154,9 +2154,9 @@ object Form1: TForm1
     Visible = False
   end
   object Memo3: TMemo
-    Left = 48
+    Left = 288
     Height = 37
-    Top = 83
+    Top = 0
     Width = 113
     Lines.Strings = (
       'Memo3'
@@ -2165,9 +2165,9 @@ object Form1: TForm1
     Visible = False
   end
   object Memo4: TMemo
-    Left = 48
+    Left = 408
     Height = 37
-    Top = 128
+    Top = 0
     Width = 113
     Lines.Strings = (
       'Memo4'
@@ -2176,9 +2176,9 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_gate1: TMemo
-    Left = 51
-    Height = 42
-    Top = 174
+    Left = 232
+    Height = 37
+    Top = 136
     Width = 110
     Lines.Strings = (
       'Memo_gate1'
@@ -2187,9 +2187,9 @@ object Form1: TForm1
     Visible = False
   end
   object tmpnostart: TMemo
-    Left = 169
+    Left = 96
     Height = 42
-    Top = 174
+    Top = 136
     Width = 111
     Lines.Strings = (
       'tmp'
@@ -2198,7 +2198,7 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_ip_down: TMemo
-    Left = 169
+    Left = 51
     Height = 40
     Top = 40
     Width = 110
@@ -2209,9 +2209,9 @@ object Form1: TForm1
     Visible = False
   end
   object tmp_pppd: TMemo
-    Left = 168
+    Left = 289
     Height = 38
-    Top = 0
+    Top = 40
     Width = 112
     Lines.Strings = (
       'tmp_pppd'
@@ -2220,9 +2220,9 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_gatevpn: TMemo
-    Left = 167
+    Left = 170
     Height = 40
-    Top = 83
+    Top = 40
     Width = 112
     Lines.Strings = (
       'Memo_gatevpn'
@@ -2231,9 +2231,9 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_gate: TMemo
-    Left = 169
+    Left = 408
     Height = 40
-    Top = 128
+    Top = 40
     Width = 112
     Lines.Strings = (
       'Memo_gate'
@@ -2242,10 +2242,10 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_bindutilshost0: TMemo
-    Left = 51
+    Left = 208
     Height = 40
-    Top = 272
-    Width = 228
+    Top = 88
+    Width = 156
     Lines.Strings = (
       'Memo_bindutilshost0'
     )
@@ -2253,10 +2253,10 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_testonstart: TMemo
-    Left = 51
+    Left = 376
     Height = 40
-    Top = 320
-    Width = 229
+    Top = 88
+    Width = 142
     Lines.Strings = (
       'Memo_testonstart'
     )
@@ -2264,10 +2264,10 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_networktest: TMemo
-    Left = 51
+    Left = 52
     Height = 40
-    Top = 224
-    Width = 231
+    Top = 88
+    Width = 148
     Lines.Strings = (
       'Memo_networktest'
     )
@@ -2275,15 +2275,43 @@ object Form1: TForm1
     Visible = False
   end
   object Memo_etc_ppp_ip_up: TMemo
-    Left = 52
+    Left = 365
     Height = 43
-    Top = 368
-    Width = 227
+    Top = 135
+    Width = 156
     Lines.Strings = (
       'Memo_etc_ppp_ip_up'
     )
     TabOrder = 13
     Visible = False
+  end
+  object Panel1: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 0
+    Height = 152
+    Top = 1
+    Width = 533
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Top = 1
+    ClientHeight = 152
+    ClientWidth = 533
+    TabOrder = 14
+    object Image1: TImage
+      AnchorSideLeft.Control = Owner
+      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Side = asrBottom
+      Left = 0
+      Height = 138
+      Top = 14
+      Width = 127
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Right = 10
+    end
   end
   object TrayIcon1: TTrayIcon
     BalloonTimeout = 0
@@ -2370,12 +2398,13 @@ object Form1: TForm1
     }
     Visible = True
     OnMouseMove = TrayIcon1MouseMove
-    left = 8
+    left = 32
     top = 8
   end
   object PopupMenu1: TPopupMenu
-    left = 8
-    top = 48
+    OnPopup = PopupMenu1Popup
+    left = 32
+    top = 56
     object MenuItem1: TMenuItem
       Caption = 'Подключить'
       Visible = False
@@ -2396,12 +2425,12 @@ object Form1: TForm1
   object Timer1: TTimer
     Interval = 20000
     OnTimer = Timer1Timer
-    left = 8
-    top = 104
+    left = 88
+    top = 56
   end
   object Timer2: TTimer
     OnTimer = Timer2Timer
-    left = 8
-    top = 160
+    left = 88
+    top = 8
   end
 end

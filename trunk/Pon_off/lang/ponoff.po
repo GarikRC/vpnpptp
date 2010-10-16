@@ -2,7 +2,7 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: TFORM1.CAPTION
-msgid "Соединение pptp"
+msgid "ponoff"
 msgstr ""
 
 #: TFORM1.MENUITEM1.CAPTION
@@ -38,7 +38,7 @@ msgid "Устанавливается соединение "
 msgstr ""
 
 #: unit1.message13
-msgid "Получены ма#209�ш#209�уты по dhcp. "
+msgid "Получены ма#209�ш#209�уты че#209�ез DHCP. "
 msgstr ""
 
 #: unit1.message14
@@ -74,7 +74,7 @@ msgid "Обна#209�ужено совпадение remote ip address с IP-ад
 msgstr ""
 
 #: unit1.message21
-msgid "Ошибка получения ма#209�ш#209�утов по dhcp. "
+msgid "Ошибка получения ма#209�ш#209�утов че#209�ез DHCP. "
 msgstr ""
 
 #: unit1.message22
@@ -143,6 +143,14 @@ msgstr ""
 #: unit1.message36
 msgctxt "unit1.message36"
 msgid "Отмена"
+msgstr ""
+
+#: unit1.message37
+msgid "Минуточку..."
+msgstr ""
+
+#: unit1.message38
+msgid "Запускается п#209�иложение ponoff..."
 msgstr ""
 
 #: unit1.message4

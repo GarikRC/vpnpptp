@@ -34,12 +34,14 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    Image1: TImage;
     Memo_etc_ppp_ip_up: TMemo;
     Memo_networktest: TMemo;
     Memo_bindutilshost0: TMemo;
     Memo_gate: TMemo;
     Memo_gatevpn: TMemo;
     Memo_testonstart: TMemo;
+    Panel1: TPanel;
     tmp_pppd: TMemo;
     Memo_ip_down: TMemo;
     Memo_Config: TMemo;
@@ -61,9 +63,11 @@ type
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure TrayIcon1MouseMove(Sender: TObject);
+    procedure BalloonMessage (i:integer;str1:string);
   private
     { private declarations }
   public
@@ -72,28 +76,28 @@ type
 
 var
   Form1: TForm1;
-  Lang,FallbackLang:string;
+  Lang,FallbackLang:string; // язык системы
   Translate:boolean; // переведено или еще не переведено
-  POFileName : String;
+  POFileName : String; //файл перевода
   BindUtils:boolean; //установлен ли пакет bind-utils
-  StartMessage:boolean;
+  StartMessage:boolean; //запускать ли сообщения
   NewIPS:boolean; //найден новый, неизвестный ранее ip-адрес vpn-сервера
-  NoPingIPS, NoDNS, NoPingGW, NoPingDNS1, NoPingDNS2:boolean;
-  NoInternet:boolean;
-  Filenetworktest, FileRemoteIPaddress, FileEtc_hosts:textfile;
-  DhclientStart:boolean;
+  NoPingIPS, NoDNS, NoPingGW, NoPingDNS1, NoPingDNS2:boolean;//события
+  NoInternet:boolean;//есть ли интернет
+  Filenetworktest, FileRemoteIPaddress, FileEtc_hosts:textfile;//текстовые файлы
+  DhclientStart:boolean; //стартанул ли dhclient
   RemoteIPaddress:string;
   Scripts:boolean;//отслеживает невыполнение скриптов поднятия и опускания
-  Welcome:boolean;
-  f: text;
-  RX,TX:string;
-  RXbyte,TXbyte:string;
-  //DateStart,DateStop:string;
-  DateStart,DateStop:int64;
-  RXSpeed,TXSpeed:string;
-  Count:byte;
+  Welcome:boolean;//необходимость в параметре welcome для pppd
+  f: text;//текстовый поток
+  RX,TX:string;//объем загруженного/отданного
+  RXbyte,TXbyte:string;//объем загруженного/отданного в байтах
+  DateStart,DateStop:int64;//время запуска/время текущее
+  RXSpeed,TXSpeed:string;//скорсть загрузки/отдачи
+  Count:byte;//счетчик времени
   ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
   AFont:integer; //шрифт приложения
+  YesConfig:boolean; //прочитан ли config-файл
 
 const
   Config_n=42;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -112,7 +116,7 @@ resourcestring
   message10='Выход без аварии';
   message11='Выход при аварии';
   message12='Устанавливается соединение ';
-  message13='Получены маршруты по dhcp. ';
+  message13='Получены маршруты через DHCP. ';
   message14='Обнаружен новый IP-адрес VPN-сервера. Соединение перенастраивается... ';
   message15='VPN-сервер не пингуется. ';
   message16='Доступ в интернет отсутствует...';
@@ -120,7 +124,7 @@ resourcestring
   message18='Шлюз локальной сети не пингуется. ';
   message19='Проверено! Интернет работает!';
   message20='Обнаружено совпадение remote ip address с IP-адресом самого VPN-сервера. Соединение было перенастроено.';
-  message21='Ошибка получения маршрутов по dhcp. ';
+  message21='Ошибка получения маршрутов через DHCP. ';
   message22='Статус:';
   message23='DNS1-сервер до поднятия VPN не пингуется. ';
   message24='DNS2-сервер до поднятия VPN не пингуется. ';
@@ -136,6 +140,8 @@ resourcestring
   message34='Да';
   message35='Нет';
   message36='Отмена';
+  message37='Минуточку...';
+  message38='Запускается приложение ponoff...';
 
 implementation
 
@@ -147,15 +153,6 @@ Begin
 While pos(d, s) <> 0 do
 Delete(s, (pos(d, s)), 1); result := s;
 End;
-
-procedure BalloonMessage (i:integer;str1:string);
-begin
-Form1.TrayIcon1.BalloonTimeout:=i;
-Form1.TrayIcon1.BalloonHint:=str1;
-Application.ProcessMessages;
-If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
-Application.ProcessMessages;
-end;
 
 function CompareFiles(const FirstFile, SecondFile: string): Boolean;
 //сравнение файлов
@@ -196,6 +193,15 @@ If FileExists ('/etc/hosts') then
         Shell('rm -f /tmp/hosts.tmp');
         Shell('chmod 0644 /etc/hosts');
     end;
+end;
+
+procedure TForm1.BalloonMessage (i:integer;str1:string);
+begin
+Form1.TrayIcon1.BalloonTimeout:=i;
+Form1.TrayIcon1.BalloonHint:=str1;
+Application.ProcessMessages;
+If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
+Application.ProcessMessages;
 end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
@@ -402,6 +408,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
                                  If Memo_networktest.Lines[0]='none' then NoPingGW:=true;
                                  Shell('rm -f /tmp/networktest');
                             end;
+If not Code_up_ppp then DhclientStart:=false;
 If not Code_up_ppp then If link=1 then //старт dhclient
                            begin
                               Application.ProcessMessages;
@@ -409,11 +416,10 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               begin
                                 Shell ('route del default');
                                 Shell ('ifup '+Memo_Config.Lines[3]);
-                                If not DhclientStart then Shell ('dhclient '+Memo_Config.Lines[3]);
+                                If not DhclientStart then begin Shell ('dhclient '+Memo_Config.Lines[3]);Application.ProcessMessages;sleep(1000);end;
                                 DhclientStart:=true;
                               //Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
                               end;
-                              Application.ProcessMessages;
                               If link=1 then If NoInternet then //проверка поднялся ли интерфейс после dhclient
                               begin
                                  Shell ('rm -f /tmp/gate');
@@ -423,8 +429,17 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
                                  If Memo_gate.Lines[0]='none' then
                                     begin
-                                         Shell ('ifup '+Memo_Config.Lines[3]);
-                                         DhclientStart:=false;
+                                         sleep (2000);
+                                         Shell ('rm -f /tmp/gate');
+                                         Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > /tmp/gate');
+                                         Shell('printf "none" >> /tmp/gate');
+                                         Memo_gate.Clear;
+                                         If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+                                         If Memo_gate.Lines[0]='none' then
+                                         begin
+                                              Shell ('ifup '+Memo_Config.Lines[3]);
+                                              DhclientStart:=false;
+                                         end;
                                     end;
                                  Shell ('rm -f /tmp/gate');
                                  Memo_gate.Lines.Clear;
@@ -490,7 +505,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
 If Code_up_ppp then If link<>1 then //когда связи по факту нет, но в NetApplet и в ifconfig ppp0 числится, а pppd продолжает сидеть в процессах
                                begin
                                  MenuItem2Click(Self);
-                                 TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                                 If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                  exit;
                                end;
 
@@ -500,7 +515,7 @@ If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 If not Code_up_ppp then If link=3 then
                                   begin
                                    MenuItem2Click(Self);
-                                   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                                   If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
@@ -523,7 +538,7 @@ If not Code_up_ppp then If link=3 then
 If not Code_up_ppp then If link=2 then
                                   begin
                                    MenuItem2Click(Self);
-                                   TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                                   If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
@@ -615,21 +630,33 @@ var
   i:integer;
   FilePeers:textfile;
   str:string;
+  AHintInfo:tHintInfo;
 begin
-  Form1.Left:=-1000; //спрятать запущенную форму за пределы экрана
   Application.CreateForm(TForm3, Form3);
+  Application.ShowMainForm:=false;
+  Application.Minimize;
+  If FileExists ('/opt/vpnpptp/ponoff.png') then Image1.Picture.LoadFromFile('/opt/vpnpptp/ponoff.png');
   If Screen.Height<440 then AFont:=6;
   If Screen.Height<=480 then AFont:=6;
   If Screen.Height<550 then If not (Screen.Height<=480) then AFont:=6;
   If Screen.Height>550 then AFont:=8;
   If Screen.Height>1000 then AFont:=10;
+  Panel1.Caption:=message37+' '+message38;
+  Form1.Height:=152;
+  Form1.Width:=670;
+  Form1.Font.Size:=AFont;
   DateStart:=0;
   RXbyte:='0';
   TXbyte:='0';
   RXSpeed:='0b/s';
   TXSpeed:='0b/s';
   Count:=0;
+  Form1.Visible:=false;
+  Form1.WindowState:=wsMinimized;
   Form1.Hide;
+  Application.ProcessMessages;
+  TrayIcon1.Show;
+  Application.ProcessMessages;
   Scripts:=true;
   NoInternet:=true;
   DhclientStart:=false;
@@ -638,13 +665,7 @@ begin
   MenuItem3.Caption:=message10;
   MenuItem4.Caption:=message11;
   TrayIcon1.BalloonTitle:=message0;
-  TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
-  StartMessage:=true;
-  Application.ProcessMessages;
-  Memo_Config.Clear;
-  Application.ProcessMessages;
-  TrayIcon1.Show;
-  Application.ProcessMessages;
+  YesConfig:=false;
 //проверка ponoff в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep ponoff | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart1');
    Shell('printf "none" >> /tmp/tmpnostart1');
@@ -655,6 +676,7 @@ begin
                                                              //запуск не под root
                                                              Timer1.Enabled:=False;
                                                              Timer2.Enabled:=False;
+                                                             Form1.Hide;
                                                              Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                              Shell('rm -f /tmp/tmpnostart1');
                                                              halt;
@@ -664,6 +686,7 @@ begin
                                                                                                       //двойной запуск
                                                                                                       Timer1.Enabled:=False;
                                                                                                       Timer2.Enabled:=False;
+                                                                                                      Form1.Hide;
                                                                                                       Form3.MyMessageBox(message0,message2,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                                                       Shell('rm -f /tmp/tmpnostart1');
                                                                                                       halt;
@@ -679,13 +702,13 @@ If FileExists('/opt/vpnpptp/config') then
                                                   Shell('printf "none\n" >> /opt/vpnpptp/config');
                                             end;
      end;
-  If FileExists('/opt/vpnpptp/config') then Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config')
+  If FileExists('/opt/vpnpptp/config') then begin Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config');YesConfig:=true;end
   else
    begin
     Timer1.Enabled:=False;
-    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
-    Timer1.Enabled:=False;
     Timer2.Enabled:=False;
+    Form1.Hide;
+    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
     halt;
    end;
    Shell('rm -f /etc/resolv.conf.old');
@@ -823,7 +846,7 @@ begin
                                                                             end;
                                             end;
   MenuItem2Click(Self);
-  TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Application.ProcessMessages;
   //определяем текущий шлюз, и если он не восстановлен скриптом ip-down, то восстанавливаем его сами
   Shell ('rm -f /tmp/gate');
@@ -875,7 +898,7 @@ begin
                                                                              end;
                                             end;
   MenuItem2Click(Self);
-  TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Application.ProcessMessages;
   For i:=0 to 9 do
       begin
@@ -911,6 +934,21 @@ begin
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
   halt;
+end;
+
+procedure TForm1.PopupMenu1Popup(Sender: TObject);
+begin
+ If not YesConfig then
+                  begin
+                       MenuItem3.Enabled:=false;
+                       MenuItem4.Enabled:=false;
+                       exit;
+                  end;
+ If YesConfig then
+                  begin
+                       MenuItem3.Enabled:=true;
+                       MenuItem4.Enabled:=true;
+                  end;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
@@ -987,7 +1025,7 @@ begin
   If Code_up_ppp then
                            begin
                              Application.ProcessMessages;
-                             TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
+                             If FileExists ('/opt/vpnpptp/on.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
                              If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
   If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
   If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
@@ -1016,10 +1054,10 @@ begin
                              If not StartMessage then
                                     begin
                                          BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
-                                         DhclientStart:=false;
+                                         //DhclientStart:=false;
                                          NoInternet:=true;
                                     end;
-                             TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                             If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                              StartMessage:=true;
                            end;
   Application.ProcessMessages;
@@ -1039,6 +1077,7 @@ var
   Time:string;
   TV : timeval;
 begin
+  If not YesConfig then exit;
   SecondsPastRun:=0;
   fpGettimeofday(@TV,nil);
   DateStop:=TV.tv_sec;
@@ -1116,18 +1155,25 @@ initialization
   If FallbackLang='ru' then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/ponoff.ru.po';
-                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
-                               Translate:=true;
+                               If FileExists (POFileName) then
+                               begin
+                                    Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                                    Translate:=true;
+                               end;
                             end;
   If FallbackLang='uk' then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/ponoff.uk.po';
-                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
-                               Translate:=true;
+                               If FileExists (POFileName) then
+                               begin
+                                    Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                                    Translate:=true;
+                               end;
                             end;
   If not Translate then
                             begin
                                POFileName:= '/opt/vpnpptp/lang/ponoff.en.po';
-                               Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
+                               If FileExists (POFileName) then
+                                             Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
                             end;
 end.
