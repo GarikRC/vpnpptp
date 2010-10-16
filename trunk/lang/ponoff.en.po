@@ -66,8 +66,8 @@ msgid "Запуск этой п#209�ог#209�аммы возможен то�
 msgstr "The start of this program is possible only as root or with root's permission. Press <OK> for exit."
 
 #: unit1.message13
-msgid "Получены ма#209�ш#209�уты по dhcp. "
-msgstr "Get routes via dhcp. "
+msgid "Получены ма#209�ш#209�уты через DHCP. "
+msgstr "Get routes via DHCP. "
 
 #: unit1.message14
 msgid "Обна#209�ужен новый IP-ад#209�ес VPN-се#209�ве#209�а. Соединение пе#209�енаст#209�аивается... "
@@ -98,8 +98,8 @@ msgid "Обна#209�ужено совпадение remote ip address с IP-а
 msgstr "Found to match with the remote ip address IP-address of the VPN-server. The connection has been reconfigured."
 
 #: unit1.message21
-msgid "Ошибка получения ма#209�ш#209�утов по dhcp. "
-msgstr "Failed to get routes via dhcp. "
+msgid "Ошибка получения ма#209�ш#209�утов через DHCP. "
+msgstr "Failed to get routes via DHCP. "
 
 #: unit1.message23
 msgid "DNS1-се#209�ве#209� до поднятия VPN не пингуется. "
@@ -165,3 +165,10 @@ msgctxt "unit1.message36"
 msgid "Отмена"
 msgstr "Cancel"
 
+#: unit1.message37
+msgid "Минуточку..."
+msgstr "Please, wait..."
+
+#: unit1.message38
+msgid "Запускается п#209�иложение ponoff..."
+msgstr "Application ponoff runs..."

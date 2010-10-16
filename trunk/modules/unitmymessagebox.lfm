@@ -1,105 +1,120 @@
 object Form3: TForm3
   AnchorSideBottom.Side = asrBottom
-  Left = 428
+  Left = 460
   Height = 152
-  Top = 154
-  Width = 670
-  ActiveControl = Kod
-  BorderIcons = []
+  Top = 131
+  Width = 756
+  ActiveControl = Panel1
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Form3'
   ClientHeight = 152
-  ClientWidth = 670
+  ClientWidth = 756
   OnCreate = FormCreate
   Position = poDesktopCenter
   LCLVersion = '0.9.28.2'
-  object Image1: TImage
+  object Panel1: TPanel
     AnchorSideLeft.Control = Owner
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 0
-    Height = 138
-    Top = 14
-    Width = 127
-    Anchors = [akLeft, akBottom]
-    BorderSpacing.Right = 10
-  end
-  object Label1: TLabel
-    AnchorSideLeft.Control = Image1
-    AnchorSideLeft.Side = asrBottom
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Button3
-    Left = 137
-    Height = 107
-    Top = 5
-    Width = 528
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 0
+    Height = 151
+    Top = 1
+    Width = 756
     Anchors = [akTop, akLeft, akRight, akBottom]
-    BorderSpacing.Top = 5
-    BorderSpacing.Right = 5
-    BorderSpacing.Bottom = 5
-    ParentColor = False
-    WordWrap = True
-  end
-  object Button1: TButton
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideRight.Control = Button2
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 381
-    Height = 25
-    Top = 117
-    Width = 87
-    Anchors = [akRight, akBottom]
-    BorderSpacing.Right = 10
-    BorderSpacing.Bottom = 10
-    OnClick = Button1Click
+    BorderSpacing.Top = 1
+    ClientHeight = 151
+    ClientWidth = 756
     TabOrder = 0
-  end
-  object Button2: TButton
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideRight.Control = Button3
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 478
-    Height = 25
-    Top = 117
-    Width = 86
-    Anchors = [akRight, akBottom]
-    BorderSpacing.Right = 10
-    BorderSpacing.Bottom = 10
-    OnClick = Button2Click
-    TabOrder = 1
-  end
-  object Button3: TButton
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 574
-    Height = 25
-    Top = 117
-    Width = 86
-    Anchors = [akRight, akBottom]
-    BorderSpacing.Right = 10
-    BorderSpacing.Bottom = 10
-    OnClick = Button3Click
-    TabOrder = 2
-  end
-  object Kod: TEdit
-    AnchorSideLeft.Control = Image1
-    AnchorSideLeft.Side = asrBottom
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
-    Left = 137
-    Height = 25
-    Top = 117
-    Width = 80
-    Anchors = [akLeft, akBottom]
-    BorderSpacing.Bottom = 10
-    TabOrder = 3
-    Visible = False
+    object Image1: TImage
+      AnchorSideLeft.Control = Owner
+      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Side = asrBottom
+      Left = 0
+      Height = 138
+      Top = 13
+      Width = 127
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Right = 10
+    end
+    object Label1: TLabel
+      AnchorSideLeft.Control = Image1
+      AnchorSideTop.Control = Panel1
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Button3
+      Left = 136
+      Height = 95
+      Top = 10
+      Width = 615
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Top = 10
+      BorderSpacing.Right = 5
+      ParentColor = False
+      WordWrap = True
+    end
+    object Button2: TButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideRight.Control = Button3
+      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Side = asrBottom
+      Left = 564
+      Height = 25
+      Top = 116
+      Width = 86
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 10
+      OnClick = Button2Click
+      TabOrder = 0
+    end
+    object Button3: TButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideRight.Control = Owner
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Side = asrBottom
+      Left = 665
+      Height = 25
+      Top = 116
+      Width = 86
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 10
+      OnClick = Button3Click
+      TabOrder = 1
+    end
+    object Kod: TEdit
+      AnchorSideLeft.Control = Image1
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Side = asrBottom
+      Left = 137
+      Height = 25
+      Top = 116
+      Width = 80
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Bottom = 10
+      TabOrder = 2
+      Visible = False
+    end
+    object Button1: TButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideRight.Control = Button2
+      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Side = asrBottom
+      Left = 467
+      Height = 25
+      Top = 116
+      Width = 87
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 10
+      OnClick = Button1Click
+      TabOrder = 3
+    end
   end
 end

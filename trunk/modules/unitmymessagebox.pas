@@ -21,6 +21,7 @@ type
                 //возвращает 3 - нажата 3-ая кнопка,
     Image1: TImage;
     Label1: TLabel;
+    Panel1: TPanel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -65,6 +66,10 @@ end;
 procedure TForm3.FormCreate(Sender: TObject);
 begin
    Form3.Kod.Text:='0';
+   Form3.Constraints.MaxHeight:=Form3.Height;
+   Form3.Constraints.MinHeight:=Form3.Height;
+   Form3.Constraints.MaxWidth:=Form3.Width;
+   Form3.Constraints.MinWidth:=Form3.Width;
 end;
 
 procedure TForm3.Button1Click(Sender: TObject);
