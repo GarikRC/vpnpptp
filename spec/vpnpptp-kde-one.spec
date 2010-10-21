@@ -1,4 +1,4 @@
-%define rel 5
+%define rel 1
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control VPN via PPTP/L2TP
 Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
 Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-kde-one
-Version: 0.1.8
+Version: 0.1.9
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -63,23 +63,15 @@ rm -f %{_datadir}/applications/vpnpptp.desktop.old
 %post
 ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
 ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
+ln -s /opt/vpnpptp/ponoff.png %{_datadir}/pixmaps
+ln -s /opt/vpnpptp/vpnpptp.png %{_datadir}/pixmaps
 
 %pre
 
 %preun
 
 %build
-cd ./modules
-/usr/bin/fpc $(cat ./MyMessageBox.compiled | grep "Params Value" | cut -d\" -f2)
-/usr/bin/strip -s ./mymessagebox
-cd ..
-cd ./vpnpptp
-/usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
-/usr/bin/strip -s ./vpnpptp
-cd ..
-cd ./ponoff
-/usr/bin/fpc $( cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
-/usr/bin/strip -s ./ponoff
+./compile.sh
 
 %install
 mkdir $RPM_BUILD_ROOT/opt
@@ -107,6 +99,8 @@ cp -rf ./lang $RPM_BUILD_ROOT/opt/vpnpptp/
 
 install -dm 755 %{buildroot}%{_datadir}/applications
 cat > ponoff.desktop << EOF
+#!/usr/bin/env xdg-open
+
 [Desktop Entry]
 Encoding=UTF-8
 GenericName=VPN PPTP/L2TP Control
@@ -131,6 +125,8 @@ install -m 0644 ponoff.desktop \
 
 install -dm 755 %{buildroot}%{_datadir}/applications
 cat > vpnpptp.desktop << EOF
+#!/usr/bin/env xdg-open
+
 [Desktop Entry]
 Encoding=UTF-8
 GenericName=VPN PPTP/L2TP Setup

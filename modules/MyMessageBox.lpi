@@ -48,7 +48,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UnitMyMessageBox"/>
         <CursorPos X="44" Y="72"/>
-        <TopLine Value="45"/>
+        <TopLine Value="44"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
@@ -60,19 +60,19 @@
         <UsageCount Value="10"/>
       </Unit2>
       <Unit3>
-        <Filename Value="../../../usr/lib/lazarus/lcl/include/application.inc"/>
+        <Filename Value="../../usr/lib/lazarus/lcl/include/application.inc"/>
         <CursorPos X="1" Y="1258"/>
         <TopLine Value="1240"/>
         <UsageCount Value="10"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../../../usr/lib/lazarus/lcl/include/customform.inc"/>
+        <Filename Value="../../usr/lib/lazarus/lcl/include/customform.inc"/>
         <CursorPos X="1" Y="694"/>
         <TopLine Value="676"/>
         <UsageCount Value="10"/>
       </Unit4>
       <Unit5>
-        <Filename Value="../../../usr/lib/lazarus/lcl/include/icon.inc"/>
+        <Filename Value="../../usr/lib/lazarus/lcl/include/icon.inc"/>
         <CursorPos X="1" Y="735"/>
         <TopLine Value="717"/>
         <UsageCount Value="10"/>

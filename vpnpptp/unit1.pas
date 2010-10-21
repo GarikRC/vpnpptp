@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, UnitMyMessageBox,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Gettext, Typinfo, Unit2, Process;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Unit2, Process,Typinfo,Gettext;
 
 type
 
@@ -157,6 +157,7 @@ type
     Tmpnostart: TMemo;
     procedure AutostartpppdChange(Sender: TObject);
     procedure Autostart_ponoffChange(Sender: TObject);
+    procedure balloonChange(Sender: TObject);
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonHidePassClick(Sender: TObject);
     procedure ButtonRestartClick(Sender: TObject);
@@ -168,6 +169,7 @@ type
     procedure Button_next1Click(Sender: TObject);
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
+    procedure CheckBox_shorewallChange(Sender: TObject);
     procedure ComboBoxVPNChange(Sender: TObject);
     procedure ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -218,6 +220,7 @@ var
   Stroowriter:string; //текстовый редактор
   AProcess: TProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
+  ubuntu:boolean; //используется ли дистрибутив ubuntu
 
 const
   Config_n=42;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -360,6 +363,12 @@ resourcestring
   message135='Эта кнопка настраивает (перенастраивает) соединение';
   message136='Эта кнопка позволяет изменить предложенные по умолчанию или дополнить опции демона pppd';
   message137='Эта кнопка позволяет проверить правильно ли было настроено соединение';
+  message138='Для VPN L2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
+  message139='Вести подробный лог pppd(xl2tpd) в /var/log/syslog';
+  message140='В Вашем дистрибутиве не используется shorewall, поэтому его настройка не требуется.';
+  message141='В Вашем дистрибутиве получение маршрутов через DHCP настроено по-умолчанию, или оно настраивается средствами Вашего дистрибутива.';
+  message142='Нельзя отключить всплывающие сообщения и одновременно выводить через отключенные всплывающие сообщения результаты проверок.';
+  message143='При низких разрешениях экрана одновременное нажатие клавиши Alt и левой кнопки мыши поможет переместить окно.';
 
 implementation
 
@@ -372,6 +381,7 @@ begin
   with Canvas.Font do
   begin
     Size := AFont;
+    Color:=clBlack;
   end;
 end;
 
@@ -425,6 +435,36 @@ begin
             end;
      closefile(Fileoowriter_find);
      Shell('rm -f /tmp/oowriter_find');
+end;
+
+procedure Create_Log (log_str:string);
+var
+ str:string;
+ FileSyslog:textfile;
+begin
+ If not FileExists (log_str) then exit;
+ Shell ('rm -f /tmp/log.conf.tmp');
+ AssignFile (FileSyslog,log_str);
+ reset (FileSyslog);
+ While not eof (FileSyslog) do
+     begin
+         readln(FileSyslog, str);
+         If LeftStr(str,5)<>'!pppd' then if LeftStr(str,4)<>'!ppp' then
+                     if RightStr(str,17)<>'/var/log/pppd.log' then
+                                    if RightStr(str,16)<>'/var/log/ppp.log' then
+                                          if LeftStr(str,7)<>'!xl2tpd' then if RightStr(str,19)<>'/var/log/xl2tpd.log' then
+                                                       Shell ('printf "'+str+'\n" >> /tmp/log.conf.tmp');
+      end;
+ closefile(FileSyslog);
+ Shell ('cp -f /tmp/log.conf.tmp '+log_str);
+ Shell ('rm -f /tmp/log.conf.tmp');
+ If Form1.Pppd_log.Checked then If FileExists (log_str) then
+                          begin
+                              If Form1.ComboBoxVPN.Text='VPN PPTP' then Shell ('sed -i '+chr(39)+'$ a !pppd\n*.*\t\t\t\t\t\t/var/log/pppd.log'+chr(39)+' '+log_str);
+                              If Form1.ComboBoxVPN.Text='VPN L2TP' then Shell ('sed -i '+chr(39)+'$ a !xl2tpd\n*.*\t\t\t\t\t\t/var/log/xl2tpd.log'+chr(39)+' '+log_str);
+                          end;
+ Shell ('service syslog restart');
+ Shell ('service rsyslog restart');
 end;
 
 Function MakeHint(str:string;n:byte):string;
@@ -481,6 +521,7 @@ var mppe_string:string;
     EditDNS1ping, EditDNS2ping:boolean;
     endprint:boolean;
     N:byte;
+    exit0find:boolean;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
@@ -512,7 +553,7 @@ Label43.Caption:=' ';
 Application.ProcessMessages;
 //проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
    If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-   If IPS then
+   If IPS then If etc_hosts.Checked then
                      begin
                           Label14.Caption:=message114;
                           Form3.MyMessageBox(message0,message114,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -661,10 +702,15 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           //проверка получаются ли маршруты по dhcp и настройка - если получаются или отмена - если не получаются
                           Label14.Caption:=message48;
                           Application.ProcessMessages;
-                          Shell ('ifdown '+Edit_eth.Text);
-                          Shell ('ifup '+Edit_eth.Text);
+                          If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Edit_eth.Text);
+                          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' down');
+                          Application.ProcessMessages;
+                          If FileExists ('/etc/init.d/network-manager') then sleep(10000);
+                          If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
+                          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' up');
                           Application.ProcessMessages;
                           Shell ('rm -f /tmp/dhclienttest1');
+                          If FileExists ('/etc/init.d/network-manager') then sleep(10000);
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest1');
                           Shell ('rm -f /tmp/dhclienttest2');
                           Label14.Caption:=message49;
@@ -678,7 +724,8 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Shell('printf "none" >> /tmp/gate');
                           Memo_gate.Clear;
                           If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-                          If Memo_gate.Lines[0]='none' then Shell ('ifup '+Edit_eth.Text);
+                          If Memo_gate.Lines[0]='none' then If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
+                          If Memo_gate.Lines[0]='none' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' up');
                           Shell ('rm -f /tmp/gate');
                           Memo_gate.Lines.Clear;
                           If FileSize('/tmp/dhclienttest2')<=FileSize('/tmp/dhclienttest1') then
@@ -702,9 +749,12 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                           Shell('rm -f /etc/dhclient-exit-hooks.old');
                           Label14.Caption:=message51;
                           Application.ProcessMessages;
-                          Shell ('ifdown '+Edit_eth.Text);
-                          Shell ('ifup '+Edit_eth.Text);
+                          If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Edit_eth.Text);
+                          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' down');
+                          If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
+                          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+ 'up');
                           Application.ProcessMessages;
+                          If not FileExists ('/etc/init.d/network') then begin Shell ('service network-manager restart');sleep(3000);end;
                        end;
  If CheckBox_shorewall.Checked then If not FileExists('/etc/shorewall/interfaces.old') then
                        begin
@@ -737,7 +787,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                         Shell('printf "net    ppp9    detect\n" >> /etc/shorewall/interfaces');
                                                                         Str:='printf "'+Str+'\n" >> /etc/shorewall/interfaces';
                                                                         Shell (Str);
-                                                                        Shell ('/etc/init.d/shorewall restart');
+                                                                        Shell ('service shorewall restart');
                                                                         Shell ('chmod 600 /etc/shorewall/interfaces');
                                                                      end;
                        end;
@@ -745,7 +795,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                   begin
                                                                         Shell('cp -f /etc/shorewall/interfaces.old /etc/shorewall/interfaces');
                                                                         Shell('rm -f /etc/shorewall/interfaces.old');
-                                                                        Shell ('/etc/init.d/shorewall restart');
+                                                                        Shell ('service shorewall restart');
                                                                   end;
  If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
@@ -879,8 +929,16 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                        end;
  If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
  If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
- Memo_ip_up.Lines.Add('cp -f /etc/resolv.conf /etc/resolv.conf.lock');
- Memo_ip_up.Lines.Add('cp -f /var/run/ppp/resolv.conf /etc/resolv.conf');
+ If (not Unit2.Form2.CheckBoxusepeerdns.Checked and ubuntu) or (not ubuntu) then
+            begin
+                 Memo_ip_up.Lines.Add('cp -f /etc/resolv.conf /etc/resolv.conf.lock');
+                 Memo_ip_up.Lines.Add('cp -f /var/run/ppp/resolv.conf /etc/resolv.conf');
+            end;
+ If FileExists ('/usr/bin/net_monitor') then If FileExists ('/usr/bin/vnstat') then
+                                        begin
+                                              Memo_ip_up.Lines.Add('vnstat -u -i $PPP_IFACE');
+                                              Memo_ip_up.Lines.Add('service vnstat restart');
+                                        end;
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
@@ -931,8 +989,11 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                           Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
                                                           Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
                                                        end;
- Memo_ip_down.Lines.Add('cp -f /etc/resolv.conf.lock /etc/resolv.conf');
- Memo_ip_down.Lines.Add('rm -f /etc/resolv.conf.lock');
+ If (not Unit2.Form2.CheckBoxusepeerdns.Checked and ubuntu) or (not ubuntu) then
+            begin
+                 Memo_ip_down.Lines.Add('cp -f /etc/resolv.conf.lock /etc/resolv.conf');
+                 Memo_ip_down.Lines.Add('rm -f /etc/resolv.conf.lock');
+            end;
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля
@@ -1106,12 +1167,12 @@ If FileExists ('/etc/rc.d/rc.local') then If (Autostartpppd.Checked) then
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
-                                     Memo_Autostartpppd.Lines.Add(str);
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
+                                                                     Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
                                  If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
-                                                                     else Memo_Autostartpppd.Lines.Add('/etc/init.d/xl2tpd restart');
+                                                                     else If not ubuntu then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f /etc/rc.d/rc.local');
                                  Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
@@ -1125,15 +1186,57 @@ If FileExists ('/etc/rc.d/rc.local') then If not Autostartpppd.Checked then  //�
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
-                                     Memo_Autostartpppd.Lines.Add(str);
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
+                                                                     Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f /etc/rc.d/rc.local');
                                  Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
                                  Shell ('chmod +x /etc/rc.d/rc.local');
                               end;
+//настройка /etc/rc.local
+exit0find:=false;
+If not FileExists ('/etc/rc.d/rc.local') then If FileExists ('/etc/rc.local') then If (Autostartpppd.Checked) then
+                              begin
+                                AssignFile (FileAutostartpppd,'/etc/rc.local');
+                                reset (FileAutostartpppd);
+                                Memo_Autostartpppd.Lines.Clear;
+                                If not FileExists ('/etc/rc.local.old') then Shell('cp -f /etc/rc.local /etc/rc.local.old');
+                                While not eof (FileAutostartpppd) do
+                                   begin
+                                     readln(FileAutostartpppd, str);
+                                     if str='exit 0' then exit0find:=true;
+                                     If (str<>'exit 0') and (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
+                                                                    Memo_Autostartpppd.Lines.Add(str);
+                                   end;
+                                 If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
+                                 If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
+                                                                     else If not ubuntu then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
+                                 if exit0find then Memo_Autostartpppd.Lines.Add(str);
+                                 closefile(FileAutostartpppd);
+                                 Shell('rm -f /etc/rc.local');
+                                 Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.local');
+                                 Shell ('chmod +x /etc/rc.local');
+                              end;
+If not FileExists ('/etc/rc.d/rc.local') then If FileExists ('/etc/rc.local') then If not Autostartpppd.Checked then  //очистка от старых записей
+                              begin
+                                AssignFile (FileAutostartpppd,'/etc/rc.local');
+                                reset (FileAutostartpppd);
+                                Memo_Autostartpppd.Lines.Clear;
+                                While not eof (FileAutostartpppd) do
+                                   begin
+                                     readln(FileAutostartpppd, str);
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
+                                                                     Memo_Autostartpppd.Lines.Add(str);
+                                   end;
+                                 closefile(FileAutostartpppd);
+                                 Shell('rm -f /etc/rc.local');
+                                 Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.local');
+                                 Shell ('chmod +x /etc/rc.local');
+                              end;
  //настраиваем /var/run/ppp/resolv.conf
+ if not DirectoryExists('/var/run/ppp/') then If ubuntu then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('mkdir /var/run/ppp/');
+ if DirectoryExists('/var/run/ppp/') then If ubuntu then If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -rf /var/run/ppp');
  endprint:=false;
  i:=0;
  N:=0;
@@ -1179,32 +1282,12 @@ If FileExists('/etc/ppp/chap-secrets.old') then
                                        If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then Shell('printf "'+'redial = no'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        If Reconnect_pptp.Checked then If Edit_MinTime.Text<>'0' then Shell('printf "'+'redial timeout = '+LeftStr(Edit_MinTime.Text,Length(Edit_MinTime.Text)-3)+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        Shell('printf "'+'pppoptfile = /etc/ppp/peers/'+Edit_peer.Text+'\n" >> /etc/xl2tpd/xl2tpd.conf');
-                                       Shell('printf "'+'autodial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
+                                       If Autostartpppd.Checked then Shell('printf "'+'autodial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        If Pppd_log.Checked then Shell('printf "'+'ppp debug = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                   end;
  //настройка ведения логов
- Shell ('rm -f /etc/syslog.conf.tmp');
- AssignFile (FileSyslog,'/etc/syslog.conf');
- reset (FileSyslog);
- While not eof (FileSyslog) do
-     begin
-         readln(FileSyslog, str);
-         If LeftStr(str,5)<>'!pppd' then if LeftStr(str,4)<>'!ppp' then
-                     if RightStr(str,17)<>'/var/log/pppd.log' then
-                                    if RightStr(str,16)<>'/var/log/ppp.log' then
-                                          if LeftStr(str,7)<>'!xl2tpd' then if RightStr(str,19)<>'/var/log/xl2tpd.log' then
-                                                       Shell ('printf "'+str+'\n" >> /etc/syslog.conf.tmp');
-     end;
- closefile(FileSyslog);
- Shell ('cp -f /etc/syslog.conf.tmp /etc/syslog.conf');
- Shell ('rm -f /etc/syslog.conf.tmp');
- If Pppd_log.Checked then If FileExists ('/etc/syslog.conf') then
-                          begin
-                              If ComboBoxVPN.Text='VPN PPTP' then Shell ('sed -i '+chr(39)+'$ a !pppd\n*.*\t\t\t\t\t\t/var/log/pppd.log'+chr(39)+' /etc/syslog.conf');
-                              If ComboBoxVPN.Text='VPN L2TP' then Shell ('sed -i '+chr(39)+'$ a !xl2tpd\n*.*\t\t\t\t\t\t/var/log/xl2tpd.log'+chr(39)+' /etc/syslog.conf');
-                          end;
- Shell ('/etc/rc.d/init.d/syslog restart');
- Shell ('/etc/rc.d/init.d/rsyslog restart');
+ Create_log ('/etc/syslog.conf');
+ Create_log ('/etc/rsyslog.conf');
  //настройка /etc/ppp/options
  if not FileExists('/etc/ppp/options.old') then Shell('cp -f /etc/ppp/options /etc/ppp/options.old');
  Shell('echo "#Clear config file" > /etc/ppp/options');
@@ -1214,7 +1297,8 @@ EditDNS2ping:=true;
    //тест EditDNS1-сервера
 If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
   begin
-     If EditDNS1.Text='127.0.0.1' then Shell ('ifup lo');
+     If EditDNS1.Text='127.0.0.1' then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+     If EditDNS1.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS1.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
      Label14.Caption:=message73;
@@ -1230,7 +1314,8 @@ If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
    //тест EditDNS2-сервера
 If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
   begin
-     If EditDNS2.Text='127.0.0.1' then Shell ('ifup lo');
+     If EditDNS2.Text='127.0.0.1' then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+     If EditDNS2.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS2.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
      Label14.Caption:=message75;
@@ -1332,6 +1417,8 @@ If not flag then
  If CheckBox_desktop.Checked then
 begin
   Memo_create.Clear;
+  Memo_create.Lines.Add('#!/usr/bin/env xdg-open');
+  Memo_create.Lines.Add('');
   Memo_create.Lines.Add('[Desktop Entry]');
   Memo_create.Lines.Add('Encoding=UTF-8');
   Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP/L2TP');
@@ -1376,6 +1463,8 @@ begin
        if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+message7+'/') then Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop'+'"');
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop');
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop'+'"');
+       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/Desktop/ponoff.desktop');
+       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
        link_on_desktop:=true;
       end;
       i:=i+1;
@@ -1392,6 +1481,8 @@ begin
        if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+message7+'/') then Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop'+'"');
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop');
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop'+'"');
+       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/Desktop/ponoff.desktop');
+       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
        link_on_desktop:=true;
       end;
       i:=i+1;
@@ -1465,8 +1556,11 @@ end;
  Shell('rm -f /tmp/users');
  Button_exit.Enabled:=true;
  ButtonTest.Caption:=message109;
- ButtonTest.Visible:=true;
+ If not ubuntu then ButtonTest.Visible:=true;
  Application.ProcessMessages;
+ Shell ('ln -s /opt/vpnpptp/ponoff.png /usr/share/pixmaps');
+ Shell ('ln -s /opt/vpnpptp/vpnpptp.png /usr/share/pixmaps');
+ if not(FileExists('/bin/ip')) then Shell('ln -s /sbin/ip /bin/ip');
 end;
 
 procedure TForm1.ButtonVPNClick(Sender: TObject);
@@ -1565,17 +1659,23 @@ ComboBoxVPN.Enabled:=false;
 Application.ProcessMessages;
     For i:=0 to 9 do
         begin
-          Shell ('ifdown eth'+IntToStr(i));
-          Shell ('ifdown wlan'+IntToStr(i));
+          If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
+          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' down');
+          If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
+          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' down');
         end;
-    Shell ('/etc/init.d/network stop');
-    Shell ('/etc/init.d/network start');
+    If FileExists ('/etc/init.d/network') then Shell ('service network stop');
+    If FileExists ('/etc/init.d/network') then Shell ('service network start');
+    If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
     For i:=0 to 9 do
         begin
-          Shell ('ifup eth'+IntToStr(i));
-          Shell ('ifup wlan'+IntToStr(i));
+          If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
+          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' up');
+          If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
+          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' up');
         end;
-    Shell ('ifup lo');
+    If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+    If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
 ButtonRestart.Caption:=message93;
 Button_exit.Enabled:=true;
 Button_next1.Enabled:=true;
@@ -1598,6 +1698,7 @@ procedure TForm1.ButtonTestClick(Sender: TObject);
 var
  i,j,k:integer;
  flag:boolean;
+ str_log:string;
 begin
  Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,'/opt/vpnpptp/vpnpptp.png',true,true,true,AFont,Form1.Icon);
  Application.ProcessMessages;
@@ -1615,9 +1716,18 @@ begin
                                        If not Pppd_log.Checked then Memo_create.Lines.Add(message109+' VPN L2TP (/var/log/xl2tpd.log)');
                                        If Pppd_log.Checked then If Form3.Kod.Text='1' then Shell('printf "'+message111+' /opt/vpnpptp/ponoff'+'\n" >> /var/log/xl2tpd.log');
                                        If not Pppd_log.Checked then if Form3.Kod.Text='1' then Memo_create.Lines.Add (message111+' /opt/vpnpptp/ponoff');
-                                       If Pppd_log.Checked then if Form3.Kod.Text='2' then Shell('printf "'+message111+' /etc/init.d/xl2tpd restart'+'\n" >> /var/log/xl2tpd.log');
-                                       If not Pppd_log.Checked then if Form3.Kod.Text='2' then Memo_create.Lines.Add (message111+' /etc/init.d/xl2tpd restart');
-                                       if Form3.Kod.Text='2' then Shell ('/etc/init.d/xl2tpd restart');
+                                       If Pppd_log.Checked then if Form3.Kod.Text='2' then
+                                                                 begin
+                                                                      Shell('printf "'+message111+'service xl2tpd stop'+'\n" >> /var/log/xl2tpd.log');
+                                                                      Shell('printf "'+message111+'service xl2tpd start'+'\n" >> /var/log/xl2tpd.log');
+                                                                 end;
+                                       If not Pppd_log.Checked then if Form3.Kod.Text='2' then Memo_create.Lines.Add (message111+'service xl2tpd restart');
+                                       if Form3.Kod.Text='2' then
+                                                                 begin
+                                                                      Shell ('service xl2tpd stop');
+                                                                      Shell ('service xl2tpd start');
+                                                                      Shell ('echo "c '+Edit_peer.Text+'" > /var/run/xl2tpd/l2tp-control');
+                                                                 end;
                                     end;
  If ComboBoxVPN.Text='VPN PPTP' then
                                     begin
@@ -1631,13 +1741,15 @@ begin
                                         if Form3.Kod.Text='2' then Shell ('pppd call '+Edit_peer.Text);
                                     end;
 If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
+Memo_create.Hint:=message109;
 Application.ProcessMessages;
+If ComboBoxVPN.Text='VPN PPTP' then str_log:='/var/log/pppd.log';
+If ComboBoxVPN.Text='VPN L2TP' then str_log:='/var/log/xl2tpd.log';
 If Pppd_log.Checked then
 begin
  While true do
     begin
-       If ComboBoxVPN.Text='VPN PPTP' then Shell ('tail -40 /var/log/pppd.log > /tmp/test_vpn');
-       If ComboBoxVPN.Text='VPN L2TP' then Shell ('tail -40 /var/log/xl2tpd.log > /tmp/test_vpn');
+       Shell ('tail -40 '+str_log+' > /tmp/test_vpn');
        If FileExists ('/tmp/test_vpn') then MemoTest.Lines.LoadFromFile('/tmp/test_vpn');
        j:=0;
        While j<=MemoTest.Lines.Count-1 do
@@ -1698,6 +1810,18 @@ begin
                        end;
 end;
 
+procedure TForm1.balloonChange(Sender: TObject);
+begin
+  If StartMessage then If balloon.Checked then if networktest.Checked then
+                       begin
+                          Form3.MyMessageBox(message0,message142,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          StartMessage:=false;
+                          networktest.Checked:=false;
+                          StartMessage:=true;
+                       end;
+Application.ProcessMessages;
+end;
+
 procedure TForm1.AutostartpppdChange(Sender: TObject);
 begin
 If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
@@ -1746,6 +1870,16 @@ begin
                 Button_create.Visible:=True;
                 Button_next1.Visible:=False;
                 Button_next2.Visible:=False;
+end;
+
+procedure TForm1.CheckBox_shorewallChange(Sender: TObject);
+begin
+   If StartMessage then If CheckBox_shorewall.Checked then if not FileExists('/etc/init.d/shorewall') then
+                                             begin
+                                                Form3.MyMessageBox(message0,message140,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                CheckBox_shorewall.Checked:=false;
+                                             end;
+   Application.ProcessMessages;
 end;
 
 procedure TForm1.ComboBoxVPNChange(Sender: TObject);
@@ -1816,12 +1950,14 @@ end;
 
 procedure TForm1.networktestChange(Sender: TObject);
 begin
-  If StartMessage then If networktest.Checked then
+  If StartMessage then If networktest.Checked then If balloon.Checked then
                        begin
+                          Form3.MyMessageBox(message0,message142,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           balloon.Checked:=false;
                           StartMessage:=true;
                        end;
+Application.ProcessMessages;
 end;
 
 procedure TForm1.pppnotdefaultChange(Sender: TObject);
@@ -1865,6 +2001,14 @@ begin
                           StartMessage:=true;
                           Application.ProcessMessages;
                           exit;
+                       end;
+  If StartMessage then if ubuntu then
+                       begin
+                          Form3.MyMessageBox(message0,message141,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          StartMessage:=false;
+                          dhcp_route.Checked:=false;
+                          StartMessage:=true;
+                          Application.ProcessMessages;
                        end;
 end;
 
@@ -2044,12 +2188,25 @@ If not y then IPS:=true else IPS:=false;
   If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
   If ComboBoxVPN.Text='VPN L2TP' then
                            begin
-                                CheckBox_required.Hint:='';
-                                CheckBox_stateless.Hint:='';
-                                CheckBox_no40.Hint:='';
-                                CheckBox_no56.Hint:='';
-                                CheckBox_no128.Hint:='';
+                                CheckBox_required.Hint:=MakeHint(message138,5);
+                                CheckBox_stateless.Hint:=MakeHint(message138,5);
+                                CheckBox_no40.Hint:=MakeHint(message138,5);
+                                CheckBox_no56.Hint:=MakeHint(message138,5);
+                                CheckBox_no128.Hint:=MakeHint(message138,5);
                            end;
+  If ubuntu then Pppd_log.Caption:=message139;
+  if not FileExists('/etc/init.d/shorewall') then
+                                             begin
+                                                StartMessage:=false;
+                                                CheckBox_shorewall.Checked:=false;
+                                                StartMessage:=true;
+                                             end;
+  If ubuntu then
+                begin
+                     StartMessage:=false;
+                     dhcp_route.Checked:=false;
+                     StartMessage:=true;
+                end;
   Application.ProcessMessages;
 end;
 
@@ -2369,18 +2526,31 @@ var i:integer;
     len:integer;
 begin
 Application.CreateForm(TForm3, Form3);
+ubuntu:=false;
+//определение дистрибутива
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
+If FileSize ('/tmp/version')<>0 then ubuntu:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/*release* /etc/*_version|grep Ubuntu > /tmp/version');
+If FileSize ('/tmp/version')<>0 then ubuntu:=true;
+Shell('rm -f /tmp/version');
+//отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf
 Shell ('rm -f /var/run/ppp/resolv.conf');
-If not FileExists('/etc/resolv.conf') then //отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf
+If not FileExists('/etc/resolv.conf') then
     begin
        Shell ('rm -f /etc/resolv.conf');
        Shell ('rm -f /var/run/ppp/resolv.conf');
        Shell ('resolvconf -u');
     end;
+//присваивание хинтов элементам формы и их настройка
 HintWindowClass := TMyHintWindow;
 Application.HintColor:=$0092FFF8;
 Application.ShowHint := False;
 Application.ShowHint := True;
-//присваивание хинтов элементам формы
+TabSheet1.Hint:=MakeHint(message143,4);
+TabSheet2.Hint:=MakeHint(message143,4);
+TabSheet3.Hint:=MakeHint(message143,4);
 Edit_IPS.Hint:=MakeHint(message1,7);
 ButtonVPN.Hint:=ButtonVPN.Caption;
 Edit_peer.Hint:=MakeHint(message1,7);
@@ -2600,7 +2770,7 @@ If Screen.Height>1000 then
                                            Application.ProcessMessages;
                                            Shell ('killall ponoff');
                                            Shell('killall pppd');
-                                           Shell ('/etc/init.d/xl2tpd stop');
+                                           Shell ('service xl2tpd stop');
                                            Shell ('killall xl2tpd');
                                            Shell ('killall openl2tpd');
                                            Shell ('killall l2tpd');
@@ -2766,7 +2936,8 @@ StartMessage:=true;
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If Memo_gate.Lines[0]='none' then Shell ('/etc/init.d/network restart');
+  If Memo_gate.Lines[0]='none' then If FileExists ('/etc/init.d/network') then Shell ('service network restart');
+  If Memo_gate.Lines[0]='none' then If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
 end;
@@ -2774,10 +2945,11 @@ end;
 procedure TForm1.Reconnect_pptpChange(Sender: TObject);
 begin
     //проверка версии пакета xl2tpd
-    If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then If FileExists ('/bin/rpm') then
+    If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then
                                begin
                                  Shell ('rm -f /tmp/ver_xl2tpd');
-                                 Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd');
+                                 If FileExists ('/bin/rpm') then Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd') else
+                                                                 Shell ('dpkg --list |grep xl2tpd |grep edm >> /tmp/ver_xl2tpd');
                                  If FileSize ('/tmp/ver_xl2tpd') = 0 then If StartMessage then
                                                                  begin
                                                                       Form3.MyMessageBox(message0,message106,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -2826,7 +2998,6 @@ begin
                           Application.ProcessMessages;
                        end;
 end;
-
 
 initialization
 

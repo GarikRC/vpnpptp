@@ -172,3 +172,7 @@ msgstr "Please, wait..."
 #: unit1.message38
 msgid "Запускается п#209�иложение ponoff..."
 msgstr "Application ponoff runs..."
+
+#: unit1.message39
+msgid "Наблюдать"
+msgstr "Watch"

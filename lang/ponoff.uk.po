@@ -172,3 +172,7 @@ msgstr "Хвилиночку..."
 #: unit1.message38
 msgid "Запускается п#209�иложение ponoff..."
 msgstr "Запускається додаток ponoff..."
+
+#: unit1.message39
+msgid "Наблюдать"
+msgstr "Спостерігати"

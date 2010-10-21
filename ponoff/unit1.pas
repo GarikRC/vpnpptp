@@ -26,7 +26,7 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, Process,
   ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox;
 
 type
@@ -41,6 +41,7 @@ type
     Memo_gate: TMemo;
     Memo_gatevpn: TMemo;
     Memo_testonstart: TMemo;
+    MenuItem5: TMenuItem;
     Panel1: TPanel;
     tmp_pppd: TMemo;
     Memo_ip_down: TMemo;
@@ -63,11 +64,13 @@ type
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem5Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
+    procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure TrayIcon1MouseMove(Sender: TObject);
-    procedure BalloonMessage (i:integer;str1:string);
   private
     { private declarations }
   public
@@ -98,6 +101,8 @@ var
   ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
   AFont:integer; //шрифт приложения
   YesConfig:boolean; //прочитан ли config-файл
+  AProcess: TProcess; //для запуска внешних приложений
+  ubuntu:boolean; // используется ли дистрибутив ubuntu
 
 const
   Config_n=42;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -142,6 +147,7 @@ resourcestring
   message36='Отмена';
   message37='Минуточку...';
   message38='Запускается приложение ponoff...';
+  message39='Наблюдать';
 
 implementation
 
@@ -195,13 +201,48 @@ If FileExists ('/etc/hosts') then
     end;
 end;
 
-procedure TForm1.BalloonMessage (i:integer;str1:string);
+//procedure TForm1.BalloonMessage (i:integer;str1:string);
+procedure BalloonMessage (i:integer;str1:string);
 begin
+Form1.TrayIcon1.BalloonHint:='';
 Form1.TrayIcon1.BalloonTimeout:=i;
 Form1.TrayIcon1.BalloonHint:=str1;
 Application.ProcessMessages;
 If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
 Application.ProcessMessages;
+end;
+
+procedure MakeDefaultGW;
+begin
+       Shell ('rm -f /tmp/gate');
+       Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
+       Shell('printf "none" >> /tmp/gate');
+       Form1.Memo_gate.Clear;
+       If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
+       If Form1.Memo_gate.Lines[0]='none' then if not FileExists ('/etc/init.d/network-manager') then
+                               begin
+                                 If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
+                                 If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
+                                 Shell ('resolvconf -u');
+                                 If FileExists ('/sbin/ifup') then Shell ('ifup '+Form1.Memo_Config.Lines[3]);
+                                 If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' up');
+                                 If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+                                 If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+                               end;
+       If Form1.Memo_gate.Lines[0]='none' then if FileExists ('/etc/init.d/network-manager') then
+                               begin
+                                 If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+                                 If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
+                                 If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
+                                 sleep (3000);
+                                 If FileExists ('/sbin/ifup') then Shell ('ifup '+Form1.Memo_Config.Lines[3]);
+                                 If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' up');
+                                 If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+                                 If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+                                 sleep (3000);
+                               end;
+       Shell ('rm -f /tmp/gate');
+       Form1.Memo_gate.Lines.Clear;
 end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
@@ -251,6 +292,7 @@ If Code_up_ppp then
                                   If Memo_Config.Lines[29]<>'pppnotdefault-yes' then
                                        begin
                                             Shell ('/sbin/route del default');
+                                            Shell ('/sbin/route del default'); // удивительно, но требуется дважды, особенно в GNOME и связано с наличием двух одинаковых строк в таблице маршрутизации
                                             Shell ('/sbin/route add default dev '+Memo_gate.Lines[0]);
                                        end;
                                end;
@@ -259,6 +301,7 @@ If Code_up_ppp then
                                   If Memo_Config.Lines[29]='pppnotdefault-yes' then
                                            begin
                                              Shell ('/sbin/route del default dev '+Memo_gate.Lines[0]);
+                                             Shell ('/sbin/route del default dev '+Memo_gate.Lines[0]); //тоже дважды
                                              Shell ('/sbin/route add default gw '+Memo_config.Lines[2]+' dev '+Memo_config.Lines[3]);
                                              NoInternet:=false;//считаем, что типа при этом есть интернет
                                              Shell ('/etc/ppp/ip-up.d/ip.up'); //повторно указываем где искать vpn-сервер
@@ -267,7 +310,8 @@ If Code_up_ppp then
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
  end;
-If Code_up_ppp then If not FileExists ('/etc/resolv.conf.lock') then Scripts:= false;//скрипты опускания и поднятия не были выполнены
+If Code_up_ppp then If not FileExists ('/etc/resolv.conf.lock') then Scripts:=false;//скрипты опускания и поднятия не были выполнены
+If not Scripts then If ubuntu then Scripts:=true;
 If not Scripts then If not Welcome then
                  begin
                     Shell ('killall pppd');
@@ -340,23 +384,7 @@ If link=4 then
      If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
    end;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN PPTP
-If link=1 then If NoInternet then
-  begin
-       Shell ('rm -f /tmp/gate');
-       Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
-       Shell('printf "none" >> /tmp/gate');
-       Memo_gate.Clear;
-       If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-       If Memo_gate.Lines[0]='none' then
-                               begin
-                                 Shell ('ifdown '+Memo_Config.Lines[3]);
-                                 Shell ('resolvconf -u');
-                                 Shell ('ifup '+Memo_Config.Lines[3]);
-                                 Shell ('ifup lo');
-                               end;
-       Shell ('rm -f /tmp/gate');
-       Memo_gate.Lines.Clear;
-  end;
+If link=1 then If NoInternet then MakeDefaultGW;
   //проверка технической возможности поднятия соединения
 {If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_Config.Lines[34]<>'usepeerdns-yes' then
        if not FileExists('/var/run/ppp/resolv.conf') then
@@ -387,7 +415,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
  If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindUtils)) or ((Memo_Config.Lines[23]='networktest-yes') and (Memo_config.Lines[22]='routevpnauto-no')) then
                             begin //тест vpn-сервера
                                  Shell('rm -f /tmp/networktest');
-                                 Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
+                                 Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
                                  Application.ProcessMessages;
                                  Shell(str);
                                  Application.ProcessMessages;
@@ -414,13 +442,15 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
-                                Shell ('route del default');
-                                Shell ('ifup '+Memo_Config.Lines[3]);
-                                If not DhclientStart then begin Shell ('dhclient '+Memo_Config.Lines[3]);Application.ProcessMessages;sleep(1000);end;
+                                if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
+                                If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
+                                If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
+                                If not DhclientStart then begin Shell ('dhclient '+Memo_Config.Lines[3]);Application.ProcessMessages;end;
                                 DhclientStart:=true;
-                              //Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
+                              //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
+                              //If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
                               end;
-                              If link=1 then If NoInternet then //проверка поднялся ли интерфейс после dhclient
+                              If link=1 then If NoInternet then If Memo_Config.Lines[9]='dhcp-route-yes' then //проверка поднялся ли интерфейс после dhclient
                               begin
                                  Shell ('rm -f /tmp/gate');
                                  Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > /tmp/gate');
@@ -437,7 +467,8 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                          If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
                                          If Memo_gate.Lines[0]='none' then
                                          begin
-                                              Shell ('ifup '+Memo_Config.Lines[3]);
+                                              If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
+                                              If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                               DhclientStart:=false;
                                          end;
                                     end;
@@ -448,7 +479,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
   If not FileExists('/opt/vpnpptp/hosts') then NewIPS:=false;
   if BindUtils then Str:='host '+Memo_config.Lines[1]+'|grep address|grep '+Memo_config.Lines[1]+'|awk '+ chr(39)+'{print $4}'+chr(39);
-  if not BindUtils then Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39);
+  if not BindUtils then Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39);
   If not Code_up_ppp then If link=1 then
                If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                             if Memo_config.Lines[21]='IPS-no' then
@@ -598,9 +629,11 @@ If not Code_up_ppp then If link=1 then
                                   Application.ProcessMessages;
                                   If NoPingIPS or NoDNS then
                                                    begin
-                                                      Shell ('route del default');
-                                                      Shell ('ifdown '+Memo_Config.Lines[3]);
-                                                      Shell ('ifup '+Memo_Config.Lines[3]);
+                                                      if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
+                                                      If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
+                                                      If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
+                                                      If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
+                                                      If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
@@ -608,15 +641,22 @@ If not Code_up_ppp then If link=1 then
                                                       ObnullTX:=false;
                                                       DateStart:=0;
                                                       Shell ('resolvconf -u');
-                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Shell ('ifup lo');
-                                                      If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('route del default');
-                                                      If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('ifup '+Memo_Config.Lines[3]);
-                                                      If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('route del default');
-                                                      If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('ifup '+Memo_Config.Lines[3]);
+                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+                                                      if not FileExists ('/etc/init.d/network-manager') then If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('route del default');
+                                                      If Memo_Config.Lines[9]<>'dhcp-route-yes' then If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
+                                                      If Memo_Config.Lines[9]<>'dhcp-route-yes' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
+                                                      if not FileExists ('/etc/init.d/network-manager') then If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('route del default');
+                                                      If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
+                                                      If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                                       Shell ('resolvconf -u');
                                                       If Memo_Config.Lines[39]<>'l2tp' then
                                                                                     Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
-                                                                                                              Shell ('/etc/init.d/xl2tpd restart')
+                                                                                                              begin
+                                                                                                                  Shell ('service xl2tpd stop');
+                                                                                                                  Shell ('service xl2tpd start');
+                                                                                                                  Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
+                                                                                                              end;
                                                    end;
                            end;
 Application.ProcessMessages;
@@ -630,8 +670,16 @@ var
   i:integer;
   FilePeers:textfile;
   str:string;
-  AHintInfo:tHintInfo;
 begin
+  ubuntu:=false;
+  //определение дистрибутива
+  Shell('rm -f /tmp/version');
+  Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
+  If FileSize ('/tmp/version')<>0 then ubuntu:=true;
+  Shell('rm -f /tmp/version');
+  Shell ('cat /etc/*release* /etc/*_version|grep Ubuntu > /tmp/version');
+  If FileSize ('/tmp/version')<>0 then ubuntu:=true;
+  Shell('rm -f /tmp/version');
   Application.CreateForm(TForm3, Form3);
   Application.ShowMainForm:=false;
   Application.Minimize;
@@ -664,10 +712,11 @@ begin
   If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
   MenuItem3.Caption:=message10;
   MenuItem4.Caption:=message11;
+  MenuItem5.Caption:=message39;
   TrayIcon1.BalloonTitle:=message0;
   YesConfig:=false;
 //проверка ponoff в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
-   Shell('ps -u root | grep ponoff | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmpnostart1');
+   Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart1');
    Shell('printf "none" >> /tmp/tmpnostart1');
    Form1.tmpnostart.Clear;
    If FileExists('/tmp/tmpnostart1') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
@@ -746,11 +795,14 @@ If FileExists('/opt/vpnpptp/config') then
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
-                   Shell ('/etc/init.d/network restart');
-                   Shell ('route del default');
-                   Shell ('ifdown '+Memo_Config.Lines[3]);
+                   If FileExists ('/etc/init.d/network') then Shell ('service network restart');
+                   If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+                   if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
+                   If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
+                   If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
                    Shell ('resolvconf -u');
-                   Shell ('ifup '+Memo_Config.Lines[3]);
+                   If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
+                   If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                    Shell ('resolvconf -u');
                    //повторная проверка состояния сетевого интерфейса
                    Shell('rm -f /tmp/gate2');
@@ -803,14 +855,14 @@ procedure TForm1.MenuItem2Click(Sender: TObject);
  //просто убивает pppd, xl2tpd и других демонов и удаляет временные файлы
 begin
 //проверка наличия в процессах демона pppd
- Shell('ps -u root | grep pppd | awk '+chr(39)+'{ print $4 }'+chr(39)+' > /tmp/tmp_pppd');
+ Shell('ps -u root | grep pppd | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmp_pppd');
  Shell('printf "none" >> /tmp/tmp_pppd');
  Form1.tmp_pppd.Clear;
  If FileExists('/tmp/tmp_pppd') then tmp_pppd.Lines.LoadFromFile('/tmp/tmp_pppd');
  Application.ProcessMessages;
  If LeftStr(tmp_pppd.Lines[0],4)='pppd' then
                                         Shell('killall pppd');
- Shell ('/etc/init.d/xl2tpd stop');
+ Shell ('service xl2tpd stop');
  Shell ('killall xl2tpd');
  Shell ('killall openl2tpd');
  Shell ('killall l2tpd');
@@ -832,6 +884,7 @@ procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
  Timer1.Enabled:=False;
  Timer2.Enabled:=False;
+ Shell ('killall net_monitor');
  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
  If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
@@ -855,7 +908,10 @@ begin
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then
-                               Shell ('/etc/ppp/ip-down.d/ip-down');
+                               begin
+                                    Shell ('/etc/ppp/ip-down.d/ip-down');
+                                    if FileExists ('/etc/init.d/network-manager') then MakeDefaultGW;
+                               end;
   Shell ('rm -f /tmp/gate');
   If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
                                       begin
@@ -864,21 +920,25 @@ begin
                                       end;
   If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
   Shell('rm -f /etc/resolv.conf.lock');
-  Shell ('route del default');
+  if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
   Shell ('resolvconf -u');
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Shell ('ifup lo');
-  Shell ('ifup '+Memo_Config.Lines[3]);
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+  If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
+  If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
   Shell ('resolvconf -u');
+  Shell('rm -f /tmp/xl2tpd.conf');
   halt;
 end;
 
 procedure TForm1.MenuItem4Click(Sender: TObject);
-var
-i:integer;
 //выход при аварии
+var
+ i:integer;
 begin
   Timer1.Enabled:=False;
   Timer2.Enabled:=False;
+  Shell ('killall net_monitor');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
                                       begin
@@ -902,11 +962,15 @@ begin
   Application.ProcessMessages;
   For i:=0 to 9 do
       begin
-        Shell ('ifdown eth'+IntToStr(i));
-        Shell ('ifdown wlan'+IntToStr(i));
+        If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
+        If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' down');
+        If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
+        If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' down');
       end;
-  Shell ('/etc/init.d/network restart'); // организация конкурса интерфейсов
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Shell ('ifup lo');
+  If FileExists ('/etc/init.d/network') then Shell ('service network restart'); // организация конкурса интерфейсов
+  If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -917,23 +981,62 @@ begin
      begin
          For i:=0 to 9 do
              begin
-              Shell ('ifdown eth'+IntToStr(i));
-              Shell ('ifdown wlan'+IntToStr(i));
+              If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
+              If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' down');
+              If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
+              If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' down');
              end;
-            Shell ('/etc/init.d/network stop');
-            Shell ('/etc/init.d/network start');
+            If FileExists ('/etc/init.d/network') then Shell ('service network stop');
+            If FileExists ('/etc/init.d/network') then Shell ('service network start');
+            If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
             For i:=0 to 9 do
                  begin
-                    Shell ('ifup eth'+IntToStr(i));
-                    Shell ('ifup wlan'+IntToStr(i));
+                    If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
+                    If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' up');
+                    If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
+                    If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' up');
                  end;
-           Shell ('ifup lo');
+           If FileExists ('/sbin/ifup') then Shell ('ifup lo');
+           If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
      end;
   If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
   Shell('rm -f /etc/resolv.conf.lock');
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
   halt;
+end;
+
+procedure TForm1.MenuItem5Click(Sender: TObject);
+var
+  j:integer;
+  Code_up_ppp:boolean;
+  pppiface:string;
+begin
+  //Проверяем поднялось ли соединение
+  Application.ProcessMessages;
+  TrayIcon1.Show;
+  Application.ProcessMessages;
+  Shell('rm -f /tmp/status.ppp');
+  Memo2.Clear;
+  Shell('ifconfig | grep Link > /tmp/status.ppp');
+  Code_up_ppp:=False;
+  If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+  Memo2.Lines.Add(' ');
+  For j:=0 to Memo2.Lines.Count-1 do
+   begin
+     If LeftStr(Memo2.Lines[j],3)='ppp' then
+      begin
+       pppiface:=LeftStr(Memo2.Lines[j],4);
+       Code_up_ppp:=True;
+      end;
+   end;
+  If Code_up_ppp then
+             begin
+                AProcess := TProcess.Create(nil);
+                AProcess.CommandLine := '/usr/bin/net_monitor -i '+pppiface;
+                AProcess.Execute;
+                AProcess.Free;
+             end;
 end;
 
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
@@ -1023,16 +1126,17 @@ begin
                            DateStart:=TV.tv_sec;
                       end;
   If Code_up_ppp then
-                           begin
+                     begin
                              Application.ProcessMessages;
                              If FileExists ('/opt/vpnpptp/on.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
                              If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
-  If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
-  If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
-  If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
+                             If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
+                             If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
+                             If FileExists ('/usr/bin/vnstat') then Shell ('vnstat -u -i '+pppiface);
+                             If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                             begin //тест интернета
                                  Shell('rm -f /tmp/networktest');
-                                 Str:='ping -c1 yandex.ru|grep yandex.ru|awk '+chr(39)+'{ print $3 }'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
+                                 Str:='ping -c1 yandex.ru|grep yandex.ru|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
                                  Application.ProcessMessages;
                                  Shell(str);
                                  Application.ProcessMessages;
@@ -1047,7 +1151,7 @@ begin
                                  Application.ProcessMessages;
                             end;
                              StartMessage:=false;
-                           end;
+                     end;
   If not Code_up_ppp then
                            begin
                              Application.ProcessMessages;
@@ -1063,6 +1167,50 @@ begin
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
+end;
+
+procedure TForm1.TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  j:integer;
+  Code_up_ppp,find_net_monitor:boolean;
+begin
+  If Button=MBLEFT then exit;
+  If not FileExists ('/usr/bin/net_monitor') then begin MenuItem5.Visible:=false; exit;end;
+  If not FileExists ('/usr/bin/vnstat') then begin MenuItem5.Visible:=false; exit;end;
+  //Проверяем поднялось ли соединение
+  Application.ProcessMessages;
+  TrayIcon1.Show;
+  Application.ProcessMessages;
+  Shell('rm -f /tmp/status.ppp');
+  Memo2.Clear;
+  Shell('ifconfig | grep Link > /tmp/status.ppp');
+  Code_up_ppp:=False;
+  If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+  Memo2.Lines.Add(' ');
+  For j:=0 to Memo2.Lines.Count-1 do
+   begin
+     If LeftStr(Memo2.Lines[j],3)='ppp' then
+      begin
+       Code_up_ppp:=True;
+      end;
+   end;
+  find_net_monitor:=false;
+  If Code_up_ppp then If FileExists ('/usr/bin/net_monitor') then if FileExists ('/usr/bin/vnstat') then
+                    begin
+                         //проверка net_monitor в процессах root, игнорируя зомби
+                         Shell('ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39)+' > /tmp/tmpnostart1');
+                         Shell('printf "none" >> /tmp/tmpnostart1');
+                         Form1.tmpnostart.Clear;
+                         If FileExists('/tmp/tmpnostart1') then
+                              begin
+                                   tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
+                                   For j:=0 to tmpnostart.Lines.Count-1 do
+                                            If tmpnostart.Lines[j]='net_monitor' then find_net_monitor:=true;
+                              end;
+                    end;
+  If not find_net_monitor then MenuItem5.Enabled:=true else MenuItem5.Enabled:=false;
+  If not Code_up_ppp then MenuItem5.Enabled:=false;
 end;
 
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
