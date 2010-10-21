@@ -62,7 +62,7 @@ var
 File_peer:textfile;
 str:string;
 begin
-if not FileExists ('/etc/ppp/peers/'+str_peer) then if not more then
+if ((not FileExists ('/etc/ppp/peers/'+str_peer)) and (not more)) or (not FileExists ('/opt/vpnpptp/config')) then
                                         begin
                                              CheckBoxlock.Checked:=true;
                                              CheckBoxusepeerdns.Checked:=true;

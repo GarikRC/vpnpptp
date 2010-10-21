@@ -1,3 +1,5 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TForm1','FORMDATA',[
   'TPF0'#6'TForm1'#5'Form1'#4'Left'#3#179#2#6'Height'#3#153#0#3'Top'#3#188#0#5
   +'Width'#3#21#2#13'ActiveControl'#7#11'Memo_Config'#11'BorderIcons'#11#12'biS'
@@ -2535,15 +2537,16 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#255#255'iii'#255'fff'#255#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0
   +'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0
   +#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0'A'#0#0#0
-  +'A'#0#0#0'A'#7'Visible'#9#11'OnMouseMove'#7#18'TrayIcon1MouseMove'#4'left'#2
-  +' '#3'top'#2#8#0#0#10'TPopupMenu'#10'PopupMenu1'#7'OnPopup'#7#15'PopupMenu1P'
-  +'opup'#4'left'#2' '#3'top'#2'8'#0#9'TMenuItem'#9'MenuItem1'#7'Caption'#6#20
-  +#208#159#208#190#208#180#208#186#208#187#209#142#209#135#208#184#209#130#209
-  +#140#7'Visible'#8#7'OnClick'#7#14'MenuItem1Click'#0#0#9'TMenuItem'#9'MenuIte'
-  +'m2'#7'Caption'#6#18#208#158#209#130#208#186#208#187#209#142#209#135#208#184
-  +#209#130#209#140#7'Visible'#8#7'OnClick'#7#14'MenuItem2Click'#0#0#9'TMenuIte'
-  +'m'#9'MenuItem3'#7'OnClick'#7#14'MenuItem3Click'#0#0#9'TMenuItem'#9'MenuItem'
-  +'4'#7'OnClick'#7#14'MenuItem4Click'#0#0#0#6'TTimer'#6'Timer1'#8'Interval'#3
-  +' N'#7'OnTimer'#7#11'Timer1Timer'#4'left'#2'X'#3'top'#2'8'#0#0#6'TTimer'#6'T'
-  +'imer2'#7'OnTimer'#7#11'Timer2Timer'#4'left'#2'X'#3'top'#2#8#0#0#0
+  +'A'#0#0#0'A'#7'Visible'#9#11'OnMouseDown'#7#18'TrayIcon1MouseDown'#11'OnMous'
+  +'eMove'#7#18'TrayIcon1MouseMove'#4'left'#2' '#3'top'#2#8#0#0#10'TPopupMenu'
+  +#10'PopupMenu1'#7'OnPopup'#7#15'PopupMenu1Popup'#4'left'#2' '#3'top'#2'8'#0#9
+  +'TMenuItem'#9'MenuItem5'#7'Caption'#6#4'Look'#7'OnClick'#7#14'MenuItem5Click'
+  +#0#0#9'TMenuItem'#9'MenuItem1'#7'Caption'#6#2'On'#7'Visible'#8#7'OnClick'#7
+  +#14'MenuItem1Click'#0#0#9'TMenuItem'#9'MenuItem2'#7'Caption'#6#3'Off'#7'Visi'
+  +'ble'#8#7'OnClick'#7#14'MenuItem2Click'#0#0#9'TMenuItem'#9'MenuItem4'#7'Capt'
+  +'ion'#6#8'Exit_bad'#7'OnClick'#7#14'MenuItem4Click'#0#0#9'TMenuItem'#9'MenuI'
+  +'tem3'#7'Caption'#6#9'Exit_well'#7'OnClick'#7#14'MenuItem3Click'#0#0#0#6'TTi'
+  +'mer'#6'Timer1'#8'Interval'#3' N'#7'OnTimer'#7#11'Timer1Timer'#4'left'#2'X'#3
+  +'top'#2'8'#0#0#6'TTimer'#6'Timer2'#7'OnTimer'#7#11'Timer2Timer'#4'left'#2'X'
+  +#3'top'#2#8#0#0#0
 ]);

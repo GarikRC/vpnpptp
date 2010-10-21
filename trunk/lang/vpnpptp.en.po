@@ -888,3 +888,28 @@ msgstr "This button allows you to change the defaults or to add options daemon p
 #: unit1.message137
 msgid "Эта кнопка позволяет п#209�ове#209�ить п#209�авильно ли было наст#209�оено соединение"
 msgstr "This button allows you to check the connection settings with help test"
+
+#: unit1.message138
+msgid "Для VPN L2TP шиф#209�ование mppe не используется, оно используется только для VPN PPTP."
+msgstr "For VPN L2TP encryption mppe is not used, it is used only for VPN PPTP."
+
+#: unit1.message139
+msgid "Вести под#209�обный лог pppd(xl2tpd) в /var/log/syslog"
+msgstr "pppd(xl2tpd) detailed log on /var/log/syslog"
+
+#: unit1.message140
+msgid "В Вашем дист#209�ибутиве не используется shorewall, поэтому его наст#209�ойка не т#209�ебуется."
+msgstr "Your distribution is not used shorewall, so its configure is not required."
+
+#: unit1.message141
+msgctxt "unit1.message141"
+msgid "В Вашем дист#209�ибутиве получение ма#209�ш#209�утов че#209�ез DHCP наст#209�оено по-умолчанию, или оно наст#209�аивается с#209�едствами Вашего дист#209�ибутива."
+msgstr "Your distribution to get route via DHCP configured by default, or it is configure by means of your distribution."
+
+#: unit1.message142
+msgid "Нельзя отключить всплывающие сообщения и однов#209�еменно выводить че#209�ез отключенные всплывающие сообщения #209�езультаты п#209�ове#209�ок."
+msgstr "You can not disable pop-up and simultaneously display a disabled pop-ups results of the tests."
+
+#: unit1.message143
+msgid "П#209�и низких #209�аз#209�ешениях эк#209�ана однов#209�еменное нажатие клавиши Alt и левой кнопки мыши поможет пе#209�еместить окно."
+msgstr "At low screen resolutions simultaneously pressing the Alt key and left mouse button will move the window."

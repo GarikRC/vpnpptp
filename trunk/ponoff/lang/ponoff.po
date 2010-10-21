@@ -6,11 +6,23 @@ msgid "ponoff"
 msgstr ""
 
 #: TFORM1.MENUITEM1.CAPTION
-msgid "Подключить"
+msgid "On"
 msgstr ""
 
 #: TFORM1.MENUITEM2.CAPTION
-msgid "Отключить"
+msgid "Off"
+msgstr ""
+
+#: TFORM1.MENUITEM3.CAPTION
+msgid "Exit_well"
+msgstr ""
+
+#: TFORM1.MENUITEM4.CAPTION
+msgid "Exit_bad"
+msgstr ""
+
+#: TFORM1.MENUITEM5.CAPTION
+msgid "Look"
 msgstr ""
 
 #: TFORM3.CAPTION
@@ -151,6 +163,10 @@ msgstr ""
 
 #: unit1.message38
 msgid "Запускается п#209�иложение ponoff..."
+msgstr ""
+
+#: unit1.message39
+msgid "Наблюдать"
 msgstr ""
 
 #: unit1.message4
