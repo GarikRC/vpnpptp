@@ -1,4 +1,4 @@
-%define rel 1
+%define rel 2
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -71,7 +71,7 @@ ln -s /opt/vpnpptp/vpnpptp.png %{_datadir}/pixmaps
 %preun
 
 %build
-./compile.sh
+./rpmcompile.sh
 
 %install
 mkdir $RPM_BUILD_ROOT/opt
