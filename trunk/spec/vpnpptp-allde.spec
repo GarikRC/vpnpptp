@@ -71,7 +71,7 @@ ln -s /opt/vpnpptp/vpnpptp.png %{_datadir}/pixmaps
 %preun
 
 %build
-./rmpcompile.sh
+./rpmcompile.sh
 
 %install
 mkdir $RPM_BUILD_ROOT/opt
