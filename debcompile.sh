@@ -1,4 +1,5 @@
-cat > /tmp/vpnpptp-allde-edm/opt/vpnpptp/ponoff.desktop << EOF
+cd ./opt/vpnpptp
+cat > ponoff.desktop << EOF
 #!/usr/bin/env xdg-open
 
 [Desktop Entry]
@@ -10,7 +11,7 @@ Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
 Exec=gksu -u root -l /opt/vpnpptp/ponoff
-Comment=Control MS VPN via PPTP/L2TP
+Comment=Control VPN via PPTP/L2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP
 Icon=/opt/vpnpptp/ponoff.png
@@ -21,9 +22,9 @@ X-KDE-Username=root
 X-KDE-autostart-after=kdesktop
 StartupNotify=false
 EOF
-chmod 0644 /tmp/vpnpptp-allde-edm/opt/vpnpptp/ponoff.desktop
+chmod 0644 ponoff.desktop
 
-cat > /tmp/vpnpptp-allde-edm/opt/vpnpptp/vpnpptp.desktop << EOF
+cat > vpnpptp.desktop << EOF
 #!/usr/bin/env xdg-open
 
 [Desktop Entry]
@@ -45,32 +46,42 @@ X-KDE-SubstituteUID=true
 X-KDE-Username=root
 StartupNotify=false
 EOF
-chmod 0644 /tmp/vpnpptp-allde-edm/opt/vpnpptp/vpnpptp.desktop
+chmod 0644 vpnpptp.desktop
 
-cd /tmp/vpnpptp-allde-edm/src/modules
+cd ..
+cd ..
+
+cd ./src/modules
 /usr/bin/fpc $(cat ./MyMessageBox.compiled | grep "Params Value" | cut -d\" -f2)
 /usr/bin/strip -s ./mymessagebox
 
-cd /tmp/vpnpptp-allde-edm/src/vpnpptp
+cd ..
+cd ..
+
+cd ./src/vpnpptp
 /usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
 /usr/bin/strip -s ./vpnpptp
 
-cd /tmp/vpnpptp-allde-edm/src/ponoff
+cd ..
+cd ..
+
+cd ./src/ponoff
 /usr/bin/fpc $( cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
 /usr/bin/strip -s ./ponoff
 
-cp -f /tmp/vpnpptp-allde-edm/src/ponoff/ponoff /tmp/vpnpptp-allde-edm/opt/vpnpptp/ponoff
-cp -f /tmp/vpnpptp-allde-edm/src/vpnpptp/vpnpptp /tmp/vpnpptp-allde-edm/opt/vpnpptp/vpnpptp
-mkdir /tmp/vpnpptp-allde-edm/usr
-mkdir /tmp/vpnpptp-allde-edm/usr/bin
-cp -f /tmp/vpnpptp-allde-edm/src/vpnpptp/vpnpptp /tmp/vpnpptp-allde-edm/usr/bin
-cp -f /tmp/vpnpptp-allde-edm/src/ponoff/ponoff /tmp/vpnpptp-allde-edm/usr/bin
-mkdir /tmp/vpnpptp-allde-edm/usr/share
-mkdir /tmp/vpnpptp-allde-edm/usr/share/pixmaps
-cp -f /tmp/vpnpptp-allde-edm/opt/vpnpptp/vpnpptp.png /tmp/vpnpptp-allde-edm/usr/share/pixmaps
-cp -f /tmp/vpnpptp-allde-edm/opt/vpnpptp/ponoff.png /tmp/vpnpptp-allde-edm/usr/share/pixmaps
-mkdir /tmp/vpnpptp-allde-edm/usr/share/applications
-cp -f /tmp/vpnpptp-allde-edm/opt/vpnpptp/vpnpptp.desktop /tmp/vpnpptp-allde-edm/usr/share/applications
-cp -f /tmp/vpnpptp-allde-edm/opt/vpnpptp/ponoff.desktop /tmp/vpnpptp-allde-edm/usr/share/applications
-rm -rf /tmp/vpnpptp-allde-edm/src
-rm -f /tmp/vpnpptp-allde-edm/debcompile.sh
+cd ..
+cd ..
+
+cp -f ./src/ponoff/ponoff ./opt/vpnpptp/ponoff
+cp -f ./src/vpnpptp/vpnpptp ./opt/vpnpptp/vpnpptp
+mkdir ./usr
+mkdir ./usr/bin
+mkdir ./usr/share
+mkdir ./usr/share/pixmaps
+mkdir ./usr/share/applications
+cp -f ./opt/vpnpptp/vpnpptp.desktop ./usr/share/applications
+cp -f ./opt/vpnpptp/ponoff.desktop ./usr/share/applications
+rm -f ./opt/vpnpptp/vpnpptp.desktop
+rm -f ./opt/vpnpptp/ponoff.desktop
+rm -rf ./src
+rm -f ./debcompile.sh
