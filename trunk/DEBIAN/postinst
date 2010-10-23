@@ -1,0 +1,6 @@
+#! /bin/bash
+
+sudo ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
+sudo ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
+sudo ln -s /opt/vpnpptp/ponoff.png /usr/share/pixmaps
+sudo ln -s /opt/vpnpptp/vpnpptp.png /usr/share/pixmaps
