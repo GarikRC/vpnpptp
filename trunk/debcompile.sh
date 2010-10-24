@@ -1,4 +1,7 @@
+#!/bin/sh
+
 cd ./opt/vpnpptp
+
 cat > ponoff.desktop << EOF
 #!/usr/bin/env xdg-open
 
