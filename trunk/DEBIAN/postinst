@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
 ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp

@@ -7,7 +7,7 @@ Summary: Tools for setup and control VPN via PPTP/L2TP
 Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
 Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-allde
-Version: 0.1.9
+Version: 0.2.0
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -57,8 +57,14 @@ mkdir -p $RPM_BUILD_ROOT
 %endif
 
 %postun
-rm -f %{_datadir}/applications/ponoff.desktop.old
-rm -f %{_datadir}/applications/vpnpptp.desktop.old
+if [ -a %{_datadir}/applications/ponoff.desktop.old ]
+then
+	rm -f %{_datadir}/applications/ponoff.desktop.old
+fi
+if [ -a %{_datadir}/applications/vpnpptp.desktop.old ]
+then
+	rm -f %{_datadir}/applications/vpnpptp.desktop.old
+fi
 
 %post
 ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff

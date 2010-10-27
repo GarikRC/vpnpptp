@@ -103,6 +103,8 @@ var
   YesConfig:boolean; //прочитан ли config-файл
   AProcess: TProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
+  CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
+  CountKillallpppd:integer; //счетчик сколько раз убивался pppd
 
 const
   Config_n=42;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -201,7 +203,29 @@ If FileExists ('/etc/hosts') then
     end;
 end;
 
-//procedure TForm1.BalloonMessage (i:integer;str1:string);
+Procedure DoCountInterface;
+//считает максимальное кол-во default
+var
+   str:string;
+   i:integer;
+   FileInterface:textfile;
+begin
+   i:=0;
+   Shell ('rm -f /tmp/CountInterface');
+   Shell ('ifconfig |grep eth >>/tmp/CountInterface & ifconfig |grep wlan >>/tmp/CountInterface');
+   AssignFile (FileInterface,'/tmp/CountInterface');
+   reset (FileInterface);
+   While not eof (FileInterface) do
+   begin
+        readln(FileInterface, str);
+        i:=i+1;
+   end;
+   closefile(FileInterface);
+   Shell ('rm -f /tmp/CountInterface');
+   if i=0 then i:=1;
+   CountInterface:=i;
+end;
+
 procedure BalloonMessage (i:integer;str1:string);
 begin
 Form1.TrayIcon1.BalloonHint:='';
@@ -247,7 +271,7 @@ end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
 var
-    i,j:integer;
+    i,j,h:integer;
     Code_up_ppp:boolean;
     link:1..4;//1-link ok, 2-no link, 3-none, 4-еще не определено
     str:string;
@@ -262,6 +286,7 @@ begin
   NoPingGW:=false;
   NoPingDNS1:=false;
   NoPingDNS2:=false;
+  DoCountInterface;
   //Проверяем поднялось ли соединение
   Shell('rm -f /tmp/status.ppp');
   Memo2.Clear;
@@ -291,8 +316,8 @@ If Code_up_ppp then
                                begin
                                   If Memo_Config.Lines[29]<>'pppnotdefault-yes' then
                                        begin
-                                            Shell ('/sbin/route del default');
-                                            Shell ('/sbin/route del default'); // удивительно, но требуется дважды, особенно в GNOME и связано с наличием двух одинаковых строк в таблице маршрутизации
+                                            For h:=1 to CountInterface do
+                                                Shell ('/sbin/route del default');
                                             Shell ('/sbin/route add default dev '+Memo_gate.Lines[0]);
                                        end;
                                end;
@@ -300,11 +325,11 @@ If Code_up_ppp then
                                begin
                                   If Memo_Config.Lines[29]='pppnotdefault-yes' then
                                            begin
-                                             Shell ('/sbin/route del default dev '+Memo_gate.Lines[0]);
-                                             Shell ('/sbin/route del default dev '+Memo_gate.Lines[0]); //тоже дважды
+                                             For h:=1 to CountInterface do
+                                                 Shell ('/sbin/route del default dev '+Memo_gate.Lines[0]);
                                              Shell ('/sbin/route add default gw '+Memo_config.Lines[2]+' dev '+Memo_config.Lines[3]);
                                              NoInternet:=false;//считаем, что типа при этом есть интернет
-                                             Shell ('/etc/ppp/ip-up.d/ip.up'); //повторно указываем где искать vpn-сервер
+                                             //Shell ('/etc/ppp/ip-up.d/ip.up'); //повторно указываем где искать vpn-сервер
                                            end;
                                end;
   Shell ('rm -f /tmp/gate');
@@ -442,7 +467,11 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
-                                if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
+                                if not FileExists ('/etc/init.d/network-manager') then
+                                                                                  begin
+                                                                                  For h:=1 to CountInterface do
+                                                                                       Shell ('route del default');
+                                                                                  end;
                                 If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
                                 If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                 If not DhclientStart then begin Shell ('dhclient '+Memo_Config.Lines[3]);Application.ProcessMessages;end;
@@ -629,7 +658,11 @@ If not Code_up_ppp then If link=1 then
                                   Application.ProcessMessages;
                                   If NoPingIPS or NoDNS then
                                                    begin
-                                                      if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
+                                                      if not FileExists ('/etc/init.d/network-manager') then
+                                                                                                            begin
+                                                                                                            For h:=1 to CountInterface do
+                                                                                                                Shell ('route del default');
+                                                                                                            end;
                                                       If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
                                                       If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
                                                       If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
@@ -643,10 +676,18 @@ If not Code_up_ppp then If link=1 then
                                                       Shell ('resolvconf -u');
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
-                                                      if not FileExists ('/etc/init.d/network-manager') then If Memo_Config.Lines[9]<>'dhcp-route-yes' then Shell ('route del default');
+                                                      if not FileExists ('/etc/init.d/network-manager') then If Memo_Config.Lines[9]<>'dhcp-route-yes' then
+                                                                                                                                                           begin
+                                                                                                                                                           For h:=1 to CountInterface do
+                                                                                                                                                               Shell ('route del default');
+                                                                                                                                                           end;
                                                       If Memo_Config.Lines[9]<>'dhcp-route-yes' then If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[9]<>'dhcp-route-yes' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
-                                                      if not FileExists ('/etc/init.d/network-manager') then If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then Shell ('route del default');
+                                                      if not FileExists ('/etc/init.d/network-manager') then If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then
+                                                                                                                                                              begin
+                                                                                                                                                              For h:=1 to CountInterface do
+                                                                                                                                                                  Shell ('route del default');
+                                                                                                                                                              end;
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                                       Shell ('resolvconf -u');
@@ -667,7 +708,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   link:1..3; //1-link ok, 2-no link, 3-none
-  i:integer;
+  i,h:integer;
   FilePeers:textfile;
   str:string;
 begin
@@ -699,6 +740,8 @@ begin
   RXSpeed:='0b/s';
   TXSpeed:='0b/s';
   Count:=0;
+  CountInterface:=1;
+  CountKillallpppd:=0;
   Form1.Visible:=false;
   Form1.WindowState:=wsMinimized;
   Form1.Hide;
@@ -797,7 +840,11 @@ If FileExists('/opt/vpnpptp/config') then
                 begin
                    If FileExists ('/etc/init.d/network') then Shell ('service network restart');
                    If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
-                   if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
+                   if not FileExists ('/etc/init.d/network-manager') then
+                                                                         begin
+                                                                         For h:=1 to CountInterface do
+                                                                             Shell ('route del default');
+                                                                         end;
                    If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
                    If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
                    Shell ('resolvconf -u');
@@ -861,7 +908,11 @@ begin
  If FileExists('/tmp/tmp_pppd') then tmp_pppd.Lines.LoadFromFile('/tmp/tmp_pppd');
  Application.ProcessMessages;
  If LeftStr(tmp_pppd.Lines[0],4)='pppd' then
-                                        Shell('killall pppd');
+                                        begin
+                                             Shell('killall pppd');
+                                             CountKillallpppd:=CountKillallpppd+1;
+                                             If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+                                        end;
  Shell ('service xl2tpd stop');
  Shell ('killall xl2tpd');
  Shell ('killall openl2tpd');
@@ -881,6 +932,7 @@ end;
 
 procedure TForm1.MenuItem3Click(Sender: TObject);
 //выход без аварии
+var h:integer;
 begin
  Timer1.Enabled:=False;
  Timer2.Enabled:=False;
@@ -907,20 +959,20 @@ begin
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If Memo_gate.Lines[0]='none' then
-                               begin
-                                    Shell ('/etc/ppp/ip-down.d/ip-down');
-                                    if FileExists ('/etc/init.d/network-manager') then MakeDefaultGW;
-                               end;
+  If Memo_gate.Lines[0]='none' then MakeDefaultGW;
   Shell ('rm -f /tmp/gate');
   If FileExists('/etc/resolv.conf.old') then If FileExists('/etc/resolv.conf') then //возврат к DNS до поднятия соединения
-                                      begin
+                                        begin
                                          Shell('cp -f /etc/resolv.conf.old /etc/resolv.conf');
                                          Shell('rm -f /etc/resolv.conf.old');
                                       end;
   If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
   Shell('rm -f /etc/resolv.conf.lock');
-  if not FileExists ('/etc/init.d/network-manager') then Shell ('route del default');
+  if not FileExists ('/etc/init.d/network-manager') then
+                                                        begin
+                                                        For h:=1 to CountInterface do
+                                                            Shell ('route del default');
+                                                        end;
   Shell ('resolvconf -u');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
@@ -928,6 +980,7 @@ begin
   If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
   Shell ('resolvconf -u');
   Shell('rm -f /tmp/xl2tpd.conf');
+  If CountKillallpppd=2 then If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
   halt;
 end;
 

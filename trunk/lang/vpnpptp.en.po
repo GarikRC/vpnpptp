@@ -205,10 +205,6 @@ msgstr "User name:"
 msgid "Не контролировать state сетевого кабеля"
 msgstr "Do not control network cable state"
 
-#: TFORM1.PPPD_LOG.CAPTION
-msgid "Вести лог pppd в /var/log/pppd.log"
-msgstr "pppd logging on /var/log/pppd.log"
-
 #: TFORM1.RECONNECT_PPTP.CAPTION
 msgid "Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)"
 msgstr "Use internak mechanism of pppd daemon for reconnect (not useful if more than one NIC's)"
@@ -752,10 +748,6 @@ msgstr "Set test connection VPN PPTP/L2TP in graphics/without graphics now?"
 msgid "Тестовый запуск"
 msgstr "Test Run"
 
-#: unit1.message110
-msgid "Лог не ведется, так как Вы не выб#209�али опцию ведения лога pppd в /var/log/pppd.log (лога xl2tpd в /var/log/xl2tpd.log)."
-msgstr "Log is not being, because you have not chosen the option logging pppd in /var/log/pppd.log (log xl2tpd in /var/log/xl2tpd.log)."
-
 #: unit1.message111
 msgid "Команда запуска:"
 msgstr "Command run:"
@@ -893,10 +885,6 @@ msgstr "This button allows you to check the connection settings with help test"
 msgid "Для VPN L2TP шиф#209�ование mppe не используется, оно используется только для VPN PPTP."
 msgstr "For VPN L2TP encryption mppe is not used, it is used only for VPN PPTP."
 
-#: unit1.message139
-msgid "Вести под#209�обный лог pppd(xl2tpd) в /var/log/syslog"
-msgstr "pppd(xl2tpd) detailed log on /var/log/syslog"
-
 #: unit1.message140
 msgid "В Вашем дист#209�ибутиве не используется shorewall, поэтому его наст#209�ойка не т#209�ебуется."
 msgstr "Your distribution is not used shorewall, so its configure is not required."
@@ -913,3 +901,11 @@ msgstr "You can not disable pop-up and simultaneously display a disabled pop-ups
 #: unit1.message143
 msgid "П#209�и низких #209�аз#209�ешениях эк#209�ана однов#209�еменное нажатие клавиши Alt и левой кнопки мыши поможет пе#209�еместить окно."
 msgstr "At low screen resolutions simultaneously pressing the Alt key and left mouse button will move the window."
+
+#: unit1.message110
+msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd) в /var/log/syslog."
+msgstr "The log is incomplete or is not being, because you have not chosen the option logging pppd on /var/log/syslog."
+
+#: TFORM1.PPPD_LOG.CAPTION
+msgid "Вести подробный лог pppd(xl2tpd) в /var/log/syslog"
+msgstr "pppd(xl2tpd) detailed log on /var/log/syslog"

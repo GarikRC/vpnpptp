@@ -221,6 +221,7 @@ var
   AProcess: TProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
   ubuntu:boolean; //используется ли дистрибутив ubuntu
+  CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
 
 const
   Config_n=42;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -322,7 +323,7 @@ resourcestring
   message94='Невозможно выбрать VPN L2TP, так как не установлен пакет xl2tpd.';
   message95='Соединение будет сконфигурировано по протоколу VPN PPTP.';
   message96='Использовать встроенный в демон xl2tpd механизм реконнекта (не рекомендуется если несколько сетевых карт)';
-  message97='Вести лог xl2tpd в /var/log/xl2tpd.log';
+  //message97='Вести лог xl2tpd в /var/log/xl2tpd.log';
   message98='Автозапуск интернета при старте системы демоном xl2tpd без графики (не рекомендуется использовать)';
   message99='I) Введите адрес VPN-сервера... (например, vpn.internet.beeline.ru)';
   message100='I) Введите адрес VPN-сервера... (например, tp.internet.beeline.ru)';
@@ -335,7 +336,7 @@ resourcestring
   message107='Запустить конфигуратор VPN PPTP/L2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
   message108='Установить тестовое соединение VPN PPTP/L2TP в графике/без графики сейчас?';
   message109='Тестовый запуск';
-  message110='Лог не ведется, так как Вы не выбрали опцию ведения лога pppd в /var/log/pppd.log (лога xl2tpd в /var/log/xl2tpd.log).';
+  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd) в /var/log/syslog.';
   message111='Команда запуска:';
   message112='Выбор этой опции позволяет установить соединение со случайным адресом VPN-сервера, заданного по имени, устанавливая соединение мгновенно.';
   message113='При отмене этой опции соединение не всегда сможет установиться мгновенно с еще неизвестным адресом VPN-сервера, особенно если их много.';
@@ -364,7 +365,7 @@ resourcestring
   message136='Эта кнопка позволяет изменить предложенные по умолчанию или дополнить опции демона pppd';
   message137='Эта кнопка позволяет проверить правильно ли было настроено соединение';
   message138='Для VPN L2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
-  message139='Вести подробный лог pppd(xl2tpd) в /var/log/syslog';
+  //message139='Вести подробный лог pppd(xl2tpd) в /var/log/syslog';
   message140='В Вашем дистрибутиве не используется shorewall, поэтому его настройка не требуется.';
   message141='В Вашем дистрибутиве получение маршрутов через DHCP настроено по-умолчанию, или оно настраивается средствами Вашего дистрибутива.';
   message142='Нельзя отключить всплывающие сообщения и одновременно выводить через отключенные всплывающие сообщения результаты проверок.';
@@ -458,11 +459,11 @@ begin
  closefile(FileSyslog);
  Shell ('cp -f /tmp/log.conf.tmp '+log_str);
  Shell ('rm -f /tmp/log.conf.tmp');
- If Form1.Pppd_log.Checked then If FileExists (log_str) then
+ {If Form1.Pppd_log.Checked then If FileExists (log_str) then
                           begin
                               If Form1.ComboBoxVPN.Text='VPN PPTP' then Shell ('sed -i '+chr(39)+'$ a !pppd\n*.*\t\t\t\t\t\t/var/log/pppd.log'+chr(39)+' '+log_str);
                               If Form1.ComboBoxVPN.Text='VPN L2TP' then Shell ('sed -i '+chr(39)+'$ a !xl2tpd\n*.*\t\t\t\t\t\t/var/log/xl2tpd.log'+chr(39)+' '+log_str);
-                          end;
+                          end;}
  Shell ('service syslog restart');
  Shell ('service rsyslog restart');
 end;
@@ -491,6 +492,29 @@ While pos(d, s) <> 0 do
 Delete(s, (pos(d, s)), 1); result := s;
 End;
 
+Procedure DoCountInterface;
+//считает максимальное кол-во default
+var
+   str:string;
+   i:integer;
+   FileInterface:textfile;
+begin
+   i:=0;
+   Shell ('rm -f /tmp/CountInterface');
+   Shell ('ifconfig |grep eth >>/tmp/CountInterface & ifconfig |grep wlan >>/tmp/CountInterface');
+   AssignFile (FileInterface,'/tmp/CountInterface');
+   reset (FileInterface);
+   While not eof (FileInterface) do
+   begin
+        readln(FileInterface, str);
+        i:=i+1;
+   end;
+   closefile(FileInterface);
+   Shell ('rm -f /tmp/CountInterface');
+   if i=0 then i:=1;
+   CountInterface:=i;
+end;
+
 function CompareFiles(const FirstFile, SecondFile: string): Boolean;
 //сравнение файлов
 var
@@ -516,7 +540,7 @@ var mppe_string:string;
     gksu, link_on_desktop:boolean;
     Str,Str1:string;
     flag:boolean;
-    FileSudoers,FileAutostartpppd,FileResolvConf,FileSyslog:textfile;
+    FileSudoers,FileAutostartpppd,FileResolvConf:textfile;
     FlagAutostartPonoff:boolean;
     EditDNS1ping, EditDNS2ping:boolean;
     endprint:boolean;
@@ -551,6 +575,7 @@ If Unit2.Form2.CheckBoxusepeerdns.Checked then
 Label42.Caption:=' ';
 Label43.Caption:=' ';
 Application.ProcessMessages;
+DoCountInterface;
 //проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
    If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
    If IPS then If etc_hosts.Checked then
@@ -927,7 +952,8 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                           Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
                                                           Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
                                                        end;
- If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
+ For i:=1 to CountInterface do
+     If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
  If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
  If (not Unit2.Form2.CheckBoxusepeerdns.Checked and ubuntu) or (not ubuntu) then
             begin
@@ -1285,15 +1311,15 @@ If FileExists('/etc/ppp/chap-secrets.old') then
                                        If Autostartpppd.Checked then Shell('printf "'+'autodial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        If Pppd_log.Checked then Shell('printf "'+'ppp debug = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                   end;
- //настройка ведения логов
+ //настройка ведения логов для совместимости с предыдущими версиями
  Create_log ('/etc/syslog.conf');
  Create_log ('/etc/rsyslog.conf');
  //настройка /etc/ppp/options
  if not FileExists('/etc/ppp/options.old') then Shell('cp -f /etc/ppp/options /etc/ppp/options.old');
  Shell('echo "#Clear config file" > /etc/ppp/options');
-//проверка технической возможности поднятия соединения
-EditDNS1ping:=true;
-EditDNS2ping:=true;
+ //проверка технической возможности поднятия соединения
+ EditDNS1ping:=true;
+ EditDNS2ping:=true;
    //тест EditDNS1-сервера
 If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
   begin
@@ -1556,11 +1582,13 @@ end;
  Shell('rm -f /tmp/users');
  Button_exit.Enabled:=true;
  ButtonTest.Caption:=message109;
- If not ubuntu then ButtonTest.Visible:=true;
+ ButtonTest.Visible:=true;
  Application.ProcessMessages;
  Shell ('ln -s /opt/vpnpptp/ponoff.png /usr/share/pixmaps');
  Shell ('ln -s /opt/vpnpptp/vpnpptp.png /usr/share/pixmaps');
  if not(FileExists('/bin/ip')) then Shell('ln -s /sbin/ip /bin/ip');
+ Shell ('service syslog restart');
+ Shell ('service rsyslog restart');
 end;
 
 procedure TForm1.ButtonVPNClick(Sender: TObject);
@@ -1711,15 +1739,15 @@ begin
  if Form3.Kod.Text='1' then AProcess.Execute;
  If ComboBoxVPN.Text='VPN L2TP' then
                                     begin
-                                       If Pppd_log.Checked then Shell('printf "\n" >> /var/log/xl2tpd.log');
-                                       If Pppd_log.Checked then Shell('printf "'+message109+' VPN L2TP (/var/log/xl2tpd.log)\n" >> /var/log/xl2tpd.log');
-                                       If not Pppd_log.Checked then Memo_create.Lines.Add(message109+' VPN L2TP (/var/log/xl2tpd.log)');
-                                       If Pppd_log.Checked then If Form3.Kod.Text='1' then Shell('printf "'+message111+' /opt/vpnpptp/ponoff'+'\n" >> /var/log/xl2tpd.log');
+                                       If Pppd_log.Checked then Shell('printf "\n" >> /var/log/syslog');
+                                       If Pppd_log.Checked then Shell('printf "'+message109+' VPN L2TP (/var/log/syslog)\n" >> /var/log/syslog');
+                                       If not Pppd_log.Checked then Memo_create.Lines.Add(message109+' VPN L2TP (/var/log/syslog)');
+                                       If Pppd_log.Checked then If Form3.Kod.Text='1' then Shell('printf "'+message111+' /opt/vpnpptp/ponoff'+'\n" >> /var/log/syslog');
                                        If not Pppd_log.Checked then if Form3.Kod.Text='1' then Memo_create.Lines.Add (message111+' /opt/vpnpptp/ponoff');
                                        If Pppd_log.Checked then if Form3.Kod.Text='2' then
                                                                  begin
-                                                                      Shell('printf "'+message111+'service xl2tpd stop'+'\n" >> /var/log/xl2tpd.log');
-                                                                      Shell('printf "'+message111+'service xl2tpd start'+'\n" >> /var/log/xl2tpd.log');
+                                                                      Shell('printf "'+message111+'service xl2tpd stop'+'\n" >> /var/log/syslog');
+                                                                      Shell('printf "'+message111+'service xl2tpd start'+'\n" >> /var/log/syslog');
                                                                  end;
                                        If not Pppd_log.Checked then if Form3.Kod.Text='2' then Memo_create.Lines.Add (message111+'service xl2tpd restart');
                                        if Form3.Kod.Text='2' then
@@ -1731,20 +1759,19 @@ begin
                                     end;
  If ComboBoxVPN.Text='VPN PPTP' then
                                     begin
-                                        If Pppd_log.Checked then Shell('printf "\n" >> /var/log/pppd.log');
-                                        If Pppd_log.Checked then Shell('printf "'+message109+' VPN PPTP (/var/log/pppd.log)\n" >> /var/log/pppd.log');
-                                        If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN PPTP (/var/log/pppd.log)');
-                                        If Pppd_log.Checked then if Form3.Kod.Text='1' then Shell('printf "'+message111+' /opt/vpnpptp/ponoff'+'\n" >> /var/log/pppd.log');
+                                        If Pppd_log.Checked then Shell('printf "\n" >> /var/log/syslog');
+                                        If Pppd_log.Checked then Shell('printf "'+message109+' VPN PPTP (/var/log/syslog)\n" >> /var/log/syslog');
+                                        If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN PPTP (/var/log/syslog)');
+                                        If Pppd_log.Checked then if Form3.Kod.Text='1' then Shell('printf "'+message111+' /opt/vpnpptp/ponoff'+'\n" >> /var/log/syslog');
                                         If not Pppd_log.Checked then if Form3.Kod.Text='1' then Memo_create.Lines.Add (message111+' /opt/vpnpptp/ponoff');
-                                        If Pppd_log.Checked then if Form3.Kod.Text='2' then Shell('printf "'+message111+' pppd call '+Edit_peer.Text+'\n" >> /var/log/pppd.log');
+                                        If Pppd_log.Checked then if Form3.Kod.Text='2' then Shell('printf "'+message111+' pppd call '+Edit_peer.Text+'\n" >> /var/log/syslog');
                                         If not Pppd_log.Checked then If Form3.Kod.Text='2' then Memo_create.Lines.Add (message111+' pppd call '+Edit_peer.Text);
                                         if Form3.Kod.Text='2' then Shell ('pppd call '+Edit_peer.Text);
                                     end;
 If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
 Memo_create.Hint:=message109;
 Application.ProcessMessages;
-If ComboBoxVPN.Text='VPN PPTP' then str_log:='/var/log/pppd.log';
-If ComboBoxVPN.Text='VPN L2TP' then str_log:='/var/log/xl2tpd.log';
+str_log:='/var/log/syslog';
 If Pppd_log.Checked then
 begin
  While true do
@@ -2178,7 +2205,6 @@ If not y then IPS:=true else IPS:=false;
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
   If ComboBoxVPN.Text='VPN L2TP' then Reconnect_pptp.Caption:=message96;
-  If ComboBoxVPN.Text='VPN L2TP' then Pppd_log.Caption:=message97;
   If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
   If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
   If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_required.Enabled:=false; CheckBox_required.Checked:=false; StartMessage:=true; end;
@@ -2194,7 +2220,6 @@ If not y then IPS:=true else IPS:=false;
                                 CheckBox_no56.Hint:=MakeHint(message138,5);
                                 CheckBox_no128.Hint:=MakeHint(message138,5);
                            end;
-  If ubuntu then Pppd_log.Caption:=message139;
   if not FileExists('/etc/init.d/shorewall') then
                                              begin
                                                 StartMessage:=false;
@@ -2535,6 +2560,7 @@ Shell('rm -f /tmp/version');
 Shell ('cat /etc/*release* /etc/*_version|grep Ubuntu > /tmp/version');
 If FileSize ('/tmp/version')<>0 then ubuntu:=true;
 Shell('rm -f /tmp/version');
+CountInterface:=1;
 //отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf
 Shell ('rm -f /var/run/ppp/resolv.conf');
 If not FileExists('/etc/resolv.conf') then
