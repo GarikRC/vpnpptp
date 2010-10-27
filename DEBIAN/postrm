@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 rm -f /usr/bin/ponoff
 rm -f /usr/bin/vpnpptp
