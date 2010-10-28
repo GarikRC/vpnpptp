@@ -112,10 +112,6 @@ msgstr ""
 msgid "Получать маршруты через DHCP"
 msgstr ""
 
-#: TFORM1.EDIT_IPS.HINT
-msgid "jgjhgjk"
-msgstr ""
-
 #: TFORM1.EDIT_MAXTIME.TEXT
 msgid "10"
 msgstr ""

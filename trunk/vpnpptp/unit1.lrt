@@ -21,7 +21,6 @@ TFORM1.LABEL40.CAPTION=Время реконнекта (сек.):
 TFORM1.LABEL41.CAPTION=- по умолчанию предлагаются оптимальные для большинства провайдеров время дозвона и время реконнекта
 TFORM1.LABEL44.CAPTION=(0 - без реконнекта)
 TFORM1.METKA.CAPTION=         
-TFORM1.EDIT_IPS.HINT=jgjhgjk
 TFORM1.EDIT_MAXTIME.TEXT=10
 TFORM1.EDIT_MINTIME.TEXT=3
 TFORM1.BUTTONVPN.CAPTION=Определить IP, проверить VPN-сервер

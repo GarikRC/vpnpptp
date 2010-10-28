@@ -2185,127 +2185,127 @@ object Form2: TForm2
   end
   object CheckBoxlock: TCheckBox
     Left = 8
-    Height = 24
+    Height = 21
     Top = 8
-    Width = 54
+    Width = 49
     Caption = 'lock'
     TabOrder = 1
   end
   object CheckBoxusepeerdns: TCheckBox
     Left = 8
-    Height = 24
+    Height = 21
     Top = 32
-    Width = 104
+    Width = 101
     Caption = 'usepeerdns'
     TabOrder = 2
   end
   object CheckBoxnodeflate: TCheckBox
     Left = 8
-    Height = 24
+    Height = 21
     Top = 56
-    Width = 92
+    Width = 89
     Caption = 'nodeflate'
     TabOrder = 3
   end
   object CheckBoxnobsdcomp: TCheckBox
     Left = 8
-    Height = 24
+    Height = 21
     Top = 80
-    Width = 106
+    Width = 99
     Caption = 'nobsdcomp'
     TabOrder = 4
   end
   object CheckBoxnoauth: TCheckBox
     Left = 8
-    Height = 24
+    Height = 21
     Top = 104
-    Width = 73
+    Width = 70
     Caption = 'noauth'
     TabOrder = 5
   end
   object CheckBoxnoipdefault: TCheckBox
     Left = 280
-    Height = 24
+    Height = 21
     Top = 104
-    Width = 105
+    Width = 98
     Caption = 'noipdefault'
     TabOrder = 21
   end
   object CheckBoxnomppe: TCheckBox
     Left = 8
-    Height = 24
+    Height = 21
     Top = 152
-    Width = 82
+    Width = 77
     Caption = 'nomppe'
     TabOrder = 7
   end
   object CheckBoxnomppc: TCheckBox
     Left = 280
-    Height = 24
+    Height = 21
     Top = 56
-    Width = 81
+    Width = 76
     Caption = 'nomppc'
     TabOrder = 19
   end
   object CheckBoxdefaultroute: TCheckBox
     Left = 8
-    Height = 24
+    Height = 21
     Top = 176
-    Width = 112
+    Width = 108
     Caption = 'defaultroute'
     TabOrder = 8
   end
   object CheckBoxnopcomp: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 8
-    Width = 90
+    Width = 84
     Caption = 'nopcomp'
     TabOrder = 9
   end
   object CheckBoxnoccp: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 32
-    Width = 66
+    Width = 63
     Caption = 'noccp'
     TabOrder = 10
   end
   object CheckBoxnovj: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 56
-    Width = 54
+    Width = 51
     Caption = 'novj'
     TabOrder = 11
   end
   object CheckBoxnovjccomp: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 80
-    Width = 99
+    Width = 96
     Caption = 'novjccomp'
     TabOrder = 12
   end
   object CheckBoxnoaccomp: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 104
-    Width = 96
+    Width = 92
     Caption = 'noaccomp'
     TabOrder = 13
   end
   object CheckBoxnoipv6: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 128
-    Width = 71
+    Width = 66
     Caption = 'noipv6'
     TabOrder = 14
   end
   object CheckBoxreceiveall: TCheckBox
     Left = 280
-    Height = 24
+    Height = 21
     Top = 128
     Width = 94
     Caption = 'receive-all'
@@ -2313,58 +2313,58 @@ object Form2: TForm2
   end
   object CheckBoxnodetach: TCheckBox
     Left = 280
-    Height = 24
+    Height = 21
     Top = 80
-    Width = 89
+    Width = 87
     Caption = 'nodetach'
     TabOrder = 20
   end
   object CheckBoxreplacedefaultroute: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 176
-    Width = 162
+    Width = 158
     Caption = 'replacedefaultroute'
     TabOrder = 16
   end
   object CheckBoxauth: TCheckBox
     AnchorSideLeft.Side = asrBottom
     Left = 280
-    Height = 24
+    Height = 21
     Top = 8
-    Width = 56
+    Width = 54
     Caption = 'auth'
     TabOrder = 17
   end
   object CheckBoxpassive: TCheckBox
     Left = 280
-    Height = 24
+    Height = 21
     Top = 32
-    Width = 76
+    Width = 73
     Caption = 'passive'
     TabOrder = 18
   end
   object CheckBoxpersist: TCheckBox
     Left = 9
-    Height = 24
+    Height = 21
     Top = 128
-    Width = 73
+    Width = 69
     Caption = 'persist'
     TabOrder = 6
   end
   object CheckBoxnodefaultroute: TCheckBox
     Left = 120
-    Height = 24
+    Height = 21
     Top = 152
-    Width = 129
+    Width = 124
     Caption = 'nodefaultroute'
     TabOrder = 15
   end
   object CheckBoxdefaultmru: TCheckBox
     Left = 280
-    Height = 24
+    Height = 21
     Top = 152
-    Width = 105
+    Width = 103
     Caption = 'default-mru'
     TabOrder = 23
   end

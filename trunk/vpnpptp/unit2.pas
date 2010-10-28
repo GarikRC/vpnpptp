@@ -42,7 +42,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Label1Click(Sender: TObject);
-    procedure Obrabotka (str_peer:string; more:boolean);
+    procedure Obrabotka (str_peer:string; more:boolean; AFont:integer);
   private
     { private declarations }
   public
@@ -56,12 +56,13 @@ implementation
 
 { TForm2 }
 
-procedure TForm2.Obrabotka (str_peer:string; more:boolean);
+procedure TForm2.Obrabotka (str_peer:string; more:boolean; AFont:integer);
 //восстанавливает сохраненные значения или устанавливает значения по-умолчанию
 var
 File_peer:textfile;
 str:string;
 begin
+Form2.Font.Size:=AFont;
 if ((not FileExists ('/etc/ppp/peers/'+str_peer)) and (not more)) or (not FileExists ('/opt/vpnpptp/config')) then
                                         begin
                                              CheckBoxlock.Checked:=true;
@@ -111,6 +112,7 @@ end;
 procedure TForm2.FormCreate(Sender: TObject);
 begin
    Form2.Hide;
+
 //масштабирование формы в зависимости от разрешения экрана
    Form2.Height:=300;
    Form2.Width:=397;
@@ -124,7 +126,6 @@ begin
                             end;
    If Screen.Height<=480 then
                         begin
-                             Form2.Font.Size:=6;
                              Form2.Height:=(Screen.Height div 3)*2;
                              Form2.Width:=(Screen.Width div 3)*2;
                              Form2.Constraints.MaxHeight:=(Screen.Height div 3)*2;
@@ -138,7 +139,6 @@ begin
                          end;
    If Screen.Height>550 then   //разрешение в основном нетбуков
                         begin
-                             Form2.Font.Size:=8;
                              Form2.Height:=275;
                              Form2.Width:=397;
                              Form2.Constraints.MaxHeight:=275;
@@ -149,7 +149,6 @@ begin
                         end;
    If Screen.Height>1000 then
                         begin
-                             Form2.Font.Size:=10;
                              Form2.Height:=325;
                              Form2.Width:=442;
                              Form2.Constraints.MaxHeight:=325;
