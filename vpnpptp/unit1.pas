@@ -221,6 +221,7 @@ var
   AProcess: TProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
   ubuntu:boolean; //используется ли дистрибутив ubuntu
+  debian:boolean; //используется ли дистрибутив debian
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
 
 const
@@ -824,7 +825,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                   end;
  If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
- Unit2.Form2.Obrabotka(Edit_peer.Text, more);
+ Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont);
  Shell('rm -f '+ Label_peername.Caption);
  Memo_peer.Clear;
  If ComboBoxVPN.Text<>'VPN L2TP' then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"') else
@@ -864,6 +865,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                       Memo_peer.Lines.Add('lcp-echo-failure 4');
                                     end;
  If Pppd_log.Checked then Memo_peer.Lines.Add('debug');
+ If Pppd_log.Checked then Memo_peer.Lines.Add('logfile /var/log/syslog');
  If Edit_mtu.Text <> '' then Memo_peer.Lines.Add('mtu '+Edit_mtu.Text);
  If Edit_mru.Text <> '' then Memo_peer.Lines.Add('mru '+Edit_mru.Text);
 //Разбираемся с аутентификацией
@@ -1198,7 +1200,7 @@ If FileExists ('/etc/rc.d/rc.local') then If (Autostartpppd.Checked) then
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
                                  If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
-                                                                     else If not ubuntu then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
+                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f /etc/rc.d/rc.local');
                                  Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
@@ -1237,7 +1239,7 @@ If not FileExists ('/etc/rc.d/rc.local') then If FileExists ('/etc/rc.local') th
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
                                  If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
-                                                                     else If not ubuntu then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
+                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
                                  if exit0find then Memo_Autostartpppd.Lines.Add(str);
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f /etc/rc.local');
@@ -1261,8 +1263,8 @@ If not FileExists ('/etc/rc.d/rc.local') then If FileExists ('/etc/rc.local') th
                                  Shell ('chmod +x /etc/rc.local');
                               end;
  //настраиваем /var/run/ppp/resolv.conf
- if not DirectoryExists('/var/run/ppp/') then If ubuntu then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('mkdir /var/run/ppp/');
- if DirectoryExists('/var/run/ppp/') then If ubuntu then If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -rf /var/run/ppp');
+ if not DirectoryExists('/var/run/ppp/') then If ubuntu or debian then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('mkdir /var/run/ppp/');
+ if DirectoryExists('/var/run/ppp/') then If ubuntu or debian then If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -rf /var/run/ppp');
  endprint:=false;
  i:=0;
  N:=0;
@@ -1452,7 +1454,8 @@ begin
   Memo_create.Lines.Add('Comment=Control VPN via PPTP/L2TP');
   If not Sudo_ponoff.Checked then
      begin
-         If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
+         If not debian then If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
+         If debian then If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff') else Memo_create.Lines.Add('Exec=gksu /opt/vpnpptp/ponoff');
      end;
   If Sudo_ponoff.Checked then
      begin
@@ -1694,6 +1697,8 @@ Application.ProcessMessages;
         end;
     If FileExists ('/etc/init.d/network') then Shell ('service network stop');
     If FileExists ('/etc/init.d/network') then Shell ('service network start');
+    If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking stop');
+    If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking start');
     If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
     For i:=0 to 9 do
         begin
@@ -1882,7 +1887,7 @@ end;
 
 procedure TForm1.Button_moreClick(Sender: TObject);
 begin
-     Unit2.Form2.Obrabotka(Edit_peer.Text,more);
+     Unit2.Form2.Obrabotka(Edit_peer.Text,more, AFont);
      Unit2.Form2.ShowModal;
      more:=true;
 end;
@@ -2029,7 +2034,7 @@ begin
                           Application.ProcessMessages;
                           exit;
                        end;
-  If StartMessage then if ubuntu then
+  If StartMessage then if ubuntu or debian then
                        begin
                           Form3.MyMessageBox(message0,message141,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
@@ -2226,7 +2231,7 @@ If not y then IPS:=true else IPS:=false;
                                                 CheckBox_shorewall.Checked:=false;
                                                 StartMessage:=true;
                                              end;
-  If ubuntu then
+  If ubuntu or debian then
                 begin
                      StartMessage:=false;
                      dhcp_route.Checked:=false;
@@ -2500,7 +2505,7 @@ begin
                                         exit;
                                       end;
 end;
-Unit2.Form2.Obrabotka(Edit_peer.Text, more);
+Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont);
 If ComboBoxVPN.Text='VPN L2TP' then
                                begin
                                    If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1460) then
@@ -2552,6 +2557,7 @@ var i:integer;
 begin
 Application.CreateForm(TForm3, Form3);
 ubuntu:=false;
+debian:=false;
 //определение дистрибутива
 Shell('rm -f /tmp/version');
 Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
@@ -2559,6 +2565,9 @@ If FileSize ('/tmp/version')<>0 then ubuntu:=true;
 Shell('rm -f /tmp/version');
 Shell ('cat /etc/*release* /etc/*_version|grep Ubuntu > /tmp/version');
 If FileSize ('/tmp/version')<>0 then ubuntu:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep Debian > /tmp/version');
+If FileSize ('/tmp/version')<>0 then debian:=true;
 Shell('rm -f /tmp/version');
 CountInterface:=1;
 //отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf
@@ -2658,6 +2667,7 @@ ButtonHelp.Enabled:=false;
                             begin
                              Form1.Position:=poScreenCenter;
                              AFont:=6;
+                             if debian then AFont:=4;
                              Form1.Height:=Screen.Height-50;
                              Form1.Width:=Screen.Width;
                              Label1.BorderSpacing.Around:=0;
@@ -2694,6 +2704,7 @@ ButtonHelp.Enabled:=false;
                         begin
                              Form1.Position:=poScreenCenter;
                              AFont:=6;
+                             if debian then AFont:=4;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              Form1.Height:=Screen.Height-45;
@@ -2719,6 +2730,7 @@ ButtonHelp.Enabled:=false;
                          begin
                              Form1.Position:=poScreenCenter;
                              AFont:=6;
+                             if debian then AFont:=4;
                              Label1.BorderSpacing.Around:=0;
                              Edit_IPS.BorderSpacing.Around:=0;
                              Label2.BorderSpacing.Around:=0;
@@ -2745,6 +2757,7 @@ If Screen.Height>550 then   //разрешение в основном нетб�
                         begin
                              Form1.Position:=poScreenCenter;
                              AFont:=8;
+                             if debian then AFont:=5;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              Form1.Height:=550;
@@ -2762,6 +2775,7 @@ If Screen.Height>1000 then
                         begin
                              Form1.Position:=poScreenCenter;
                              AFont:=10;
+                             if debian then AFont:=6;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              Form1.Height:=650;
@@ -2963,6 +2977,7 @@ StartMessage:=true;
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then If FileExists ('/etc/init.d/network') then Shell ('service network restart');
+  If Memo_gate.Lines[0]='none' then If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
   If Memo_gate.Lines[0]='none' then If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;

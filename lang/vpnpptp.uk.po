@@ -913,4 +913,4 @@ msgstr "Вести докладна лог pppd(xl2tpd) в /var/log/syslog"
 
 #: unit1.message110
 msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd) в /var/log/syslog."
-msgstr ""
+msgstr "Лог ведеться неповний або не ведеться, тому що Ви не вибрали опцію ведення лог pppd(xl2tpd) в /var/log/syslog."

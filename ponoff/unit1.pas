@@ -103,6 +103,7 @@ var
   YesConfig:boolean; //прочитан ли config-файл
   AProcess: TProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
+  debian:boolean; // используется ли дистрибутив debian
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
   CountKillallpppd:integer; //счетчик сколько раз убивался pppd
 
@@ -150,6 +151,7 @@ resourcestring
   message37='Минуточку...';
   message38='Запускается приложение ponoff...';
   message39='Наблюдать';
+  message40='Ожидайте появления Интернета 30 секунд';
 
 implementation
 
@@ -256,6 +258,7 @@ begin
        If Form1.Memo_gate.Lines[0]='none' then if FileExists ('/etc/init.d/network-manager') then
                                begin
                                  If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+                                 If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
                                  If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
                                  If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
                                  sleep (3000);
@@ -273,7 +276,7 @@ procedure TForm1.MenuItem1Click(Sender: TObject);
 var
     i,j,h:integer;
     Code_up_ppp:boolean;
-    link:1..4;//1-link ok, 2-no link, 3-none, 4-еще не определено
+    link:byte;//1-link ok, 2-no link, 3-none, 4-еще не определено
     str:string;
     Str_networktest, Str_RemoteIPaddress:string;
     FindRemoteIPaddress:boolean;
@@ -336,7 +339,7 @@ If Code_up_ppp then
   Memo_gate.Lines.Clear;
  end;
 If Code_up_ppp then If not FileExists ('/etc/resolv.conf.lock') then Scripts:=false;//скрипты опускания и поднятия не были выполнены
-If not Scripts then If ubuntu then Scripts:=true;
+If not Scripts then If ubuntu or debian then Scripts:=true;
 If not Scripts then If not Welcome then
                  begin
                     Shell ('killall pppd');
@@ -409,7 +412,7 @@ If link=4 then
      If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
    end;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN PPTP
-If link=1 then If NoInternet then MakeDefaultGW;
+If link=1 then If NoInternet or debian then MakeDefaultGW;
   //проверка технической возможности поднятия соединения
 {If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_Config.Lines[34]<>'usepeerdns-yes' then
        if not FileExists('/var/run/ppp/resolv.conf') then
@@ -437,7 +440,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
                                  If Memo_networktest.Lines[0]='none' then NoPingDNS2:=true;
                                  Shell('rm -f /tmp/networktest');
                             end;}
- If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindUtils)) or ((Memo_Config.Lines[23]='networktest-yes') and (Memo_config.Lines[22]='routevpnauto-no')) then
+If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindUtils)) or ((Memo_Config.Lines[23]='networktest-yes') and (Memo_config.Lines[22]='routevpnauto-no')) then
                             begin //тест vpn-сервера
                                  Shell('rm -f /tmp/networktest');
                                  Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
@@ -467,7 +470,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
-                                if not FileExists ('/etc/init.d/network-manager') then
+                                if not FileExists ('/etc/init.d/network-manager') then //if not debian then
                                                                                   begin
                                                                                   For h:=1 to CountInterface do
                                                                                        Shell ('route del default');
@@ -691,6 +694,7 @@ If not Code_up_ppp then If link=1 then
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                                       Shell ('resolvconf -u');
+                                                      If debian then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[39]<>'l2tp' then
                                                                                     Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
                                                                                                               begin
@@ -707,12 +711,13 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
-  link:1..3; //1-link ok, 2-no link, 3-none
+  link:byte; //1-link ok, 2-no link, 3-none
   i,h:integer;
   FilePeers:textfile;
   str:string;
 begin
   ubuntu:=false;
+  debian:=false;
   //определение дистрибутива
   Shell('rm -f /tmp/version');
   Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
@@ -721,15 +726,38 @@ begin
   Shell ('cat /etc/*release* /etc/*_version|grep Ubuntu > /tmp/version');
   If FileSize ('/tmp/version')<>0 then ubuntu:=true;
   Shell('rm -f /tmp/version');
+  Shell ('cat /etc/issue|grep Debian > /tmp/version');
+  If FileSize ('/tmp/version')<>0 then debian:=true;
+  Shell('rm -f /tmp/version');
   Application.CreateForm(TForm3, Form3);
   Application.ShowMainForm:=false;
   Application.Minimize;
   If FileExists ('/opt/vpnpptp/ponoff.png') then Image1.Picture.LoadFromFile('/opt/vpnpptp/ponoff.png');
-  If Screen.Height<440 then AFont:=6;
-  If Screen.Height<=480 then AFont:=6;
-  If Screen.Height<550 then If not (Screen.Height<=480) then AFont:=6;
-  If Screen.Height>550 then AFont:=8;
-  If Screen.Height>1000 then AFont:=10;
+  If Screen.Height<440 then
+                           begin
+                                AFont:=6;
+                                if debian then AFont:=4;
+                           end;
+  If Screen.Height<=480 then
+                            begin
+                                 AFont:=6;
+                                 if debian then AFont:=4;
+                            end;
+  If Screen.Height<550 then If not (Screen.Height<=480) then
+                                                        begin
+                                                             AFont:=6;
+                                                             if debian then AFont:=4;
+                                                        end;
+  If Screen.Height>550 then
+                           begin
+                                AFont:=8;
+                                if debian then AFont:=5;
+                           end;
+  If Screen.Height>1000 then
+                        begin
+                             AFont:=10;
+                             if debian then AFont:=6;
+                        end;
   Panel1.Caption:=message37+' '+message38;
   Form1.Height:=152;
   Form1.Width:=670;
@@ -839,6 +867,7 @@ If FileExists('/opt/vpnpptp/config') then
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
                    If FileExists ('/etc/init.d/network') then Shell ('service network restart');
+                   If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
                    If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
                    if not FileExists ('/etc/init.d/network-manager') then
                                                                          begin
@@ -981,6 +1010,7 @@ begin
   Shell ('resolvconf -u');
   Shell('rm -f /tmp/xl2tpd.conf');
   If CountKillallpppd=2 then If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+  If debian then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;
 end;
 
@@ -1021,6 +1051,7 @@ begin
         If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' down');
       end;
   If FileExists ('/etc/init.d/network') then Shell ('service network restart'); // организация конкурса интерфейсов
+  If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
   If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
@@ -1041,6 +1072,7 @@ begin
              end;
             If FileExists ('/etc/init.d/network') then Shell ('service network stop');
             If FileExists ('/etc/init.d/network') then Shell ('service network start');
+            If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
             If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
             For i:=0 to 9 do
                  begin
@@ -1182,12 +1214,14 @@ begin
                      begin
                              Application.ProcessMessages;
                              If FileExists ('/opt/vpnpptp/on.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
-                             If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
+                             If StartMessage then if not debian then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
+                             If StartMessage then if debian then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'... '+message40+'...');
                              If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
                              If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
                              If FileExists ('/usr/bin/vnstat') then Shell ('vnstat -u -i '+pppiface);
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                             begin //тест интернета
+                                 if debian then sleep (30000);
                                  Shell('rm -f /tmp/networktest');
                                  Str:='ping -c1 yandex.ru|grep yandex.ru|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
                                  Application.ProcessMessages;

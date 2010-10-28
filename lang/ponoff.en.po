@@ -176,3 +176,7 @@ msgstr "Application ponoff runs..."
 #: unit1.message39
 msgid "Наблюдать"
 msgstr "Watch"
+
+#: unit1.message40
+msgid "Ожидайте появления Инте#209�нета 30 секунд"
+msgstr "Please, wait the Internet 30 seconds"
