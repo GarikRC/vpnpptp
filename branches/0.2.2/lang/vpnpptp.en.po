@@ -1,0 +1,955 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: TFORM1.BUTTON_CREATE.CAPTION
+msgid "Создать подключение"
+msgstr "Create connection"
+
+#: TFORM1.BUTTON_EXIT.CAPTION
+msgid "Выход"
+msgstr "Exit"
+
+#: TFORM1.BUTTON_NEXT1.CAPTION
+msgctxt "TFORM1.BUTTON_NEXT1.CAPTION"
+msgid "Далее"
+msgstr "Next"
+
+#: TFORM1.BUTTON_NEXT2.CAPTION
+msgctxt "TFORM1.BUTTON_NEXT2.CAPTION"
+msgid "Далее"
+msgstr "Next"
+
+#: TFORM1.CAPTION
+msgid "Настройка VPN PPTP"
+msgstr "Configure VPN PPTP"
+
+#: TFORM1.CHECKBOX_DESKTOP.CAPTION
+msgid "Создать ярлык на рабочем столе"
+msgstr "Create link on Desktop"
+
+#: TFORM1.CHECKBOX_NO40.CAPTION
+msgid "no40"
+msgstr ""
+
+#: TFORM1.CHECKBOX_NO56.CAPTION
+msgid "no56"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RCHAP.CAPTION
+msgid "refuse-chap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_REAP.CAPTION
+msgid "refuse-eap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RMSCHAP.CAPTION
+msgid "refuse-mschap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_SHIFR.CAPTION
+msgid "Включить шифрование"
+msgstr "Enable encription"
+
+#: TFORM1.CHECKBOX_STATELESS.CAPTION
+msgid "stateless"
+msgstr ""
+
+#: TFORM1.DHCP_ROUTE.CAPTION
+msgid "Получать маршруты через DHCP"
+msgstr "Get routes via DHCP"
+
+#: TFORM1.EDIT_MAXTIME.TEXT
+msgctxt "TFORM1.EDIT_MAXTIME.TEXT"
+msgid "20"
+msgstr ""
+
+#: TFORM1.EDIT_MINTIME.TEXT
+msgctxt "TFORM1.EDIT_MINTIME.TEXT"
+msgid "1"
+msgstr ""
+
+#: TFORM1.LABEL1.CAPTION
+msgid "I) Введите адрес VPN-сервера... (например, vpn.internet.beeline.ru)"
+msgstr "I) Enter VPN-server adress... (for example vpn.internet.beeline.ru)"
+
+#: TFORM1.LABEL10.CAPTION
+msgid "/sbin/route add -host [ip] netmask [маска] gw [шлюз] dev [устройство]"
+msgstr "/sbin/route add -host [ip] netmask [mask] gw [gate] dev [device]"
+
+#: TFORM1.LABEL11.CAPTION
+msgid "- указывайте IP VPN-сервера, тогда соединение может стать стабильнее"
+msgstr "- set VPN-server IP, so connection may be stable"
+
+#: TFORM1.LABEL12.CAPTION
+msgctxt "TFORM1.LABEL12.CAPTION"
+msgid "Примечания:"
+msgstr "Notes:"
+
+#: TFORM1.LABEL19.CAPTION
+msgid "и/или аутентификацию"
+msgstr "and/or authentication"
+
+#: TFORM1.LABEL2.CAPTION
+msgid "II) Введите любое название соединения... (например, beeline)"
+msgstr "II) Enter connection name... (for example beeline)"
+
+#: TFORM1.LABEL25.CAPTION
+msgid "Сетевой интерфейс по умолчанию (определяется автоматически):"
+msgstr "Default network interface (define automaticaly):"
+
+#: TFORM1.LABEL3.CAPTION
+msgid "III) Введите Ваш логин..."
+msgstr "III) Enter your login..."
+
+#: TFORM1.LABEL35.CAPTION
+msgid "Время дозвона (сек.):"
+msgstr "Dial time (sec.):"
+
+#: TFORM1.LABEL36.CAPTION
+msgid "V) Введите максимальное время ожидания ответа провайдера на звонок..."
+msgstr "V) Enter maximum of wait response ISP for dial..."
+
+#: TFORM1.LABEL37.CAPTION
+msgid "- по истечении максимального времени ожидания ответа провайдера на звонок звонок повторяется вновь"
+msgstr "- if max wait time over the dial is repeat"
+
+#: TFORM1.LABEL38.CAPTION
+msgid "VI) Введите интервал времени для проверки состояния VPN-соединения и сет. интерфейса..."
+msgstr "VI) Enter time interval for check VPN connection state and net interface state..."
+
+#: TFORM1.LABEL39.CAPTION
+msgid "- чем меньше время реконнекта, тем выше нагрузка на систему"
+msgstr "- small reconnection time have more stress for system"
+
+#: TFORM1.LABEL4.CAPTION
+msgid "IV) Введите Ваш пароль..."
+msgstr "IV) Enter your password..."
+
+#: TFORM1.LABEL40.CAPTION
+msgid "Время реконнекта (сек.):"
+msgstr "Reconnection time (sec.):"
+
+#: TFORM1.LABEL41.CAPTION
+msgid "- по умолчанию предлагаются оптимальные для большинства провайдеров время дозвона и время реконнекта"
+msgstr "- for default set optimal for more ISP dial time and reconnect time"
+
+#: TFORM1.LABEL42.CAPTION
+msgid "Нажмите на кнопку \"Создать подключение\" для сохранения сконфигурированных настроек"
+msgstr "Press button \"Create connection\" for save configured options"
+
+#: TFORM1.LABEL43.CAPTION
+msgid "или нажмите на кнопку \"Выход\" для выхода из программы и сброса сконфигурированных настроек..."
+msgstr "or press button \"Exit\" for program exit and drop all options..."
+
+#: TFORM1.LABEL5.CAPTION
+msgid "/sbin/route add -net [ip] netmask [маска] gw [шлюз] dev [устройство]"
+msgstr "/sbin/route add -net [ip] netmask [mask] gw [gate] dev [device]"
+
+#: TFORM1.LABEL6.CAPTION
+msgctxt "TFORM1.LABEL6.CAPTION"
+msgid "Примечания:"
+msgstr "Notes:"
+
+#: TFORM1.LABEL8.CAPTION
+msgid "- адрес VPN-сервера, логин и пароль уточняйте у провайдера"
+msgstr "- ask you ISP for VPN-server adress, login and password"
+
+#: TFORM1.LABEL_GATE.CAPTION
+msgid "Шлюз локал. сети по умолчанию (определяется автоматически):"
+msgstr "Default network gateway (define automatically):"
+
+#: TFORM1.LABEL_IPS.CAPTION
+msgid "Провайдер (IP или имя):"
+msgstr "ISP (IP or name):"
+
+#: TFORM1.LABEL_IP_DOWN.CAPTION
+msgid "/etc/ppp/ip-down.d/ip-down"
+msgstr ""
+
+#: TFORM1.LABEL_IP_UP.CAPTION
+msgctxt "TFORM1.LABEL_IP_UP.CAPTION"
+msgid "/etc/ppp/ip-up.d/ip-up"
+msgstr ""
+
+#: TFORM1.LABEL_MTU.CAPTION
+msgid "MTU (если задано):"
+msgstr "MTU (if set):"
+
+#: TFORM1.LABEL_PEER.CAPTION
+msgid "Имя соединения:"
+msgstr "Connection name:"
+
+#: TFORM1.LABEL_PEERNAME.CAPTION
+msgctxt "TFORM1.LABEL_PEERNAME.CAPTION"
+msgid "Label_peername"
+msgstr ""
+
+#: TFORM1.LABEL_PSWD.CAPTION
+msgid "Пароль:"
+msgstr "Password:"
+
+#: TFORM1.LABEL_ROUTE.CAPTION
+msgid "Дополнительные маршруты (необязательно, но желательно):"
+msgstr "Additional routes (unnecessary, but desirably):"
+
+#: TFORM1.LABEL_USER.CAPTION
+msgid "Пользователь:"
+msgstr "User name:"
+
+#: TFORM1.MII_TOOL_NO.CAPTION
+msgid "Не контролировать state сетевого кабеля"
+msgstr "Do not control network cable state"
+
+#: TFORM1.RECONNECT_PPTP.CAPTION
+msgid "Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)"
+msgstr "Use internak mechanism of pppd daemon for reconnect (not useful if more than one NIC's)"
+
+#: TFORM1.TABSHEET1.CAPTION
+msgid "Этап 1"
+msgstr "Stage 1"
+
+#: TFORM1.TABSHEET2.CAPTION
+msgid "Этап 2"
+msgstr "Stage 2"
+
+#: TFORM1.TABSHEET3.CAPTION
+msgid "Этап 3"
+msgstr "Stage 3"
+
+#: TFORM1.TABSHEET4.CAPTION
+msgid "Этап 4"
+msgstr "Stage 4"
+
+#: unit1.message0
+msgid "Внимание!"
+msgstr "Attention!"
+
+#: unit1.message1
+msgctxt "unit1.message1"
+msgid "Поля \"П#209�овайде#209� (IP или имя)\", \"Имя соединения\", \"Пользователь\", \"Па#209�оль\" обязательны к заполнению."
+msgstr "Fields \"ISP (IP or Name)\", \"Connection name\", \"User name\", \"Password\" is required."
+
+#: unit1.message10
+msgid "В поле \"В#209�емя #209�еконнекта\" можно ввести лишь число в п#209�еделах от 0 до 255 сек."
+msgstr "Field \"Reconnect time\" must be a number with limit from 5 to 255 sec."
+
+#: unit1.message12
+msgid "Сетевой инте#209�фейс не оп#209�еделился."
+msgstr "The network interface was not identified."
+
+#: unit1.message13
+msgid "Сетевой кабель для автоматического оп#209�еделения шлюза локальной сети не подключен."
+msgstr "Network cable to automatically detect the network gateway is not connected."
+
+#: unit1.message14
+msgid "Не удалось автоматически оп#209�еделить шлюз локальной сети."
+msgstr "Could not automatically determine the network gateway."
+
+#: unit1.message15
+msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9 или от wlan0 до wlan9."
+msgstr "Field \"Network interface\" is wrong. Must be eth0 to eth9 or wlan0 to wlan9."
+
+#: unit1.message16
+msgid "Поле \"Шлюз локальной сети\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "Field \"Local network gate\" is wrong. Must be xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message17
+msgid "Поле \"MTU\" заполнено неве#209�но. Раз#209�ешен лишь диапазон [576..1460..1492..1500]."
+msgstr "Field \"MTU\" is wrong. Required limit is [576..1460..1492..1500]."
+
+#: unit1.message18
+msgid "Запуск этой п#209�ог#209�аммы возможен только под админист#209�ато#209�ом или с #209�аз#209�ешения админист#209�ато#209�а. Нажмите <ОК> для отказа от запуска."
+msgstr "Run this program requires root user rights or root's permission. Press <OK> for exit."
+
+#: unit1.message19
+msgid "Д#209�угая такая же п#209�ог#209�амма уже пытается сконфигу#209�и#209�овать VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска."
+msgstr "Another copy of program try to configure VPN PPTP/L2TP. Press <OK> for cancel double run."
+
+#: unit1.message2
+msgid "Так как Вы отказались от конт#209�оля state сетевого кабеля, то в целях снижения наг#209�узки на систему в#209�емя дозвона установлено в 20 сек."
+msgstr "Since you didn't selected control of state network cable, then dial time set to 20 seconds to reduce the load on the system."
+
+#: unit1.message3
+msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd(xl2tpd) #209�еконнекта п#209�оигно#209�и#209�ован."
+msgstr "Select internal pppd(xl2tpd) daemon reconnect is ignore since you have not selected reconnect option."
+
+#: unit1.message7
+msgid "Рабочий стол"
+msgstr "Desktop"
+
+#: unit1.message8
+msgctxt "unit1.message8"
+msgid "В поле \"В#209�емя дозвона\" можно ввести лишь число в п#209�еделах от 5 до 255 сек."
+msgstr "Field \"Dial time\" must be a number with limit from 5 to 255 sec."
+
+#: TFORM1.CHECKBOX_SHOREWALL.CAPTION
+msgid "Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола"
+msgstr "Adding network interfaces [ppp0..ppp9] for firewall exclusion rules"
+
+#: unit1.message22
+msgid "Невозможно создать я#209�лык на #209�абочем столе, так как используется нестанда#209�тный идентификато#209� пользователя и/или локализация."
+msgstr "Unable to create link on the Desktop, as it uses a non-standard user ID and/or localization."
+
+#: unit1.message23
+msgid "Невозможно создать я#209�лык на #209�абочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop."
+msgstr "Unable to create link on the Desktop, as there is no file /usr/share/applications/ponoff.desktop."
+
+#: TFORM1.BUTTON1.CAPTION
+msgid "Определить IP, проверить VPN-сервер"
+msgstr "Determine IP, check VPN-server"
+
+#: TFORM1.ROUTEVPNAUTO.CAPTION
+msgid "Программно добавлять маршрут к VPN-серверу"
+msgstr "Programm adding VPN-server route"
+
+#: unit1.message25
+msgid "Не установлен и не запущен dhclient (то есть пакет dhcp-client). Возможны п#209�облемы в #209�аботе сети."
+msgstr "Dhclient (packet dhcp-client) not installed and not started. May be trouble for network work."
+
+#: unit1.message26
+msgid "Не удалось оп#209�еделить IP-ад#209�ес VPN-се#209�ве#209�а. VPN-се#209�ве#209� не пингуется. Или он введен неп#209�авильно, или п#209�облема с DNS."
+msgstr "Unable to determine the IP-address of the VPN-server. VPN-server is not pinging. May be IP incorrect or DNS problem."
+
+#: unit1.message27
+msgid "Ма#209�ш#209�уты не могут п#209�иходить че#209�ез DHCP, так как не установлен и не запущен dhclient (то есть пакет dhcp-client)."
+msgstr "You can not get the routes via DHCP, because dhclient (packet dhcp-client) is not installed and not started."
+
+#: unit1.message28
+msgid "Нельзя оп#209�еделить IP-ад#209�ес VPN-се#209�ве#209�а, так как ст#209�ока для ввода не заполнена."
+msgstr "It is impossible to determine the IP-address of the VPN-server, since the line input is not filled."
+
+#: unit1.message29
+msgid "Его установка необязательна, но она уско#209�ит механизм п#209�ог#209�аммного добавления ма#209�ш#209�ута к VPN-се#209�ве#209�у."
+msgstr "Its installation is optional, but it will accelerate the mechanism of software add route to VPN-server."
+
+#: unit1.message30
+msgid "Используйте опцию отключения конт#209�оля state сетевого кабеля если только по д#209�угому не #209�аботает (об этом поп#209�осит сама п#209�ог#209�амма)."
+msgstr "Use the disable control state network cable if other way not works (program will say you if needed)."
+
+#: unit1.message31
+msgid "Вст#209�оенный в демон pppd(xl2tpd) механизм #209�еконнекта не умеет конт#209�оли#209�овать state сетевого кабеля, поэтому он не желателен к использованию."
+msgstr "Built-in pppd(xl2tpd) daemon's reconnect mechanism can not control the state network cable, so it is not desirable to use."
+
+#: unit1.message32
+msgid "Ведите лог pppd(xl2tpd) для того, чтобы выяснить ошибки наст#209�ойки соединения, ошибки п#209�и соединении и т.д."
+msgstr "Use a log of pppd(xl2tpd) in order to identify the connection setup errors, errors when connecting, etc."
+
+#: unit1.message33
+msgid "Получение ма#209�ш#209�утов че#209�ез DHCP необходимо для однов#209�еменной #209�аботы локальной сети и инте#209�нета, но п#209�овайде#209� не всегда их п#209�исылает."
+msgstr "Get route via DHCP need for simultaneous operation of the local network and the Internet, but the IPS does not always sends them."
+
+#: unit1.message34
+msgid "Эта опция наст#209�аивает файе#209�вол лишь для инте#209�нета, но не для p2p и не для д#209�угих соединений."
+msgstr "This option configures the firewall only for the Internet, but not for p2p and not for other networking."
+
+#: unit1.message35
+msgid "Отменив получение ма#209�ш#209�утов че#209�ез DHCP, не будут однов#209�еменно #209�аботать инте#209�нет и локальная сеть, а будет #209�аботать только инте#209�нет."
+msgstr "When receiving routes via DHCP will stop, simultaneously work the Internet and the local network not posible, but the Internet will work."
+
+#: unit1.message36
+msgid "Отменить наст#209�ойку файе#209�вола п#209�ог#209�аммой стоит только если файе#209�вол отключен, или файе#209�вол Вами самостоятельно наст#209�аивается."
+msgstr "Canceling setting firewall by this program is only if the firewall is disabled, or your own firewall is configured."
+
+#: unit1.message37
+msgid "Если инте#209�нет хо#209�ошо #209�аботает без опции п#209�ог#209�аммного добавления ма#209�ш#209�ута к VPN-се#209�ве#209�у, то не стоит наг#209�ужать систему."
+msgstr "If the Internet works fine without the software options add a route to VPN-server, then you should not load the system."
+
+#: unit1.message38
+msgid "П#209�и выбо#209�е этой опции п#209�ове#209�яется пинг VPN-, DNS-се#209�ве#209�а, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные п#209�облемы, выводя сообщения."
+msgstr "In case of choosing this option, ping of DNS-, VPN-server, ping of local network gateway, ping of yandex.ru are checked, main problems are discovered, taping messages."
+
+#: unit1.message39
+msgid "Отменить эту опцию стоит только если у Вас стабильные локальная сеть и инте#209�нет, и они никогда не падают."
+msgstr "You may cancel this option only if you have stable local network and the Internet and they never falls."
+
+#: unit1.message40
+msgid "Эта опция блоки#209�ует все всплывающие сообщения из т#209�ея, а также отключает п#209�ове#209�ку DNS-, VPN-се#209�ве#209�а, шлюза локальной сети и есть ли инте#209�нет."
+msgstr "This option blocks all pop-up messages from tray, besides switches off checking DNS-, VPN-server, local network gateway and the Internet availability."
+
+#: unit1.message41
+msgid "П#209�ове#209�ка показала, что ма#209�ш#209�уты че#209�ез DHCP не п#209�иходят. Однов#209�еменная #209�абота инте#209�нета и лок. сети не наст#209�оена."
+msgstr "The test showed that routes don't come via DHCP. Simultaneous work of the Internet and local network is not configured."
+
+#: unit1.message42
+msgid "Получение ма#209�ш#209�утов че#209�ез DHCP будет отменено, так как ма#209�ш#209�уты че#209�ез DHCP не п#209�иходят."
+msgstr "The receiving of routes via DHCP will be cancelled since the routes via DHCP don't come."
+
+#: unit1.message43
+msgid "VPN-се#209�ве#209� не пингуется. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "VPN-server is not pinged. Correct the problem and start configurator again."
+
+#: unit1.message44
+msgid "Шлюз локальной сети не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "The local network gateway in not pinged or the packets are lost. Correct the problem and start configurator again."
+
+#: unit1.message45
+msgid "Пингуется VPN-се#209�ве#209�. Ожидайте..."
+msgstr "VPN-server is being pinged. Please, wait..."
+
+#: unit1.message46
+msgid "Оп#209�еделяется IP-ад#209�ес VPN-се#209�ве#209�а че#209�ез команду ping. Ожидайте..."
+msgstr "IP-address of VPN server is being defined with a command ping. Please, wait..."
+
+#: unit1.message47
+msgid "Пингуется шлюз локальной сети. Ожидайте..."
+msgstr "The local network gateway is being pinged. Please, wait..."
+
+#: unit1.message48
+msgid "Осуществляется подготовка сети для п#209�ове#209�ки п#209�иходят ли ма#209�ш#209�уты че#209�ез DHCP. Ожидайте..."
+msgstr "The preparation of the network is implementing for testing of routes-coming via DHCP. Please, wait..."
+
+#: unit1.message49
+msgid "Сеть подготовлена для п#209�ове#209�ки п#209�иходят ли ма#209�ш#209�уты че#209�ез DHCP. Вызывается dhclient. Ожидайте..."
+msgstr "The network is ready for testing of route-comings via DHCP. dhclient is starting. Please, wait..."
+
+#: unit1.message50
+msgctxt "unit1.message50"
+msgid "Оп#209�еделяются IP-ад#209�еса VPN-се#209�ве#209�а че#209�ез команду host из пакета bind-utils. Ожидайте..."
+msgstr "IP-addresses of VPN-server are being defined with help command host from packet bind-utils. Please, wait..."
+
+#: unit1.message51
+msgid "Отменяется получение ма#209�ш#209�утов че#209�ез DHCP. Ожидайте..."
+msgstr "The receiving of routes via DHCP is cancelling. Please, wait..."
+
+#: unit1.message52
+msgctxt "unit1.message52"
+msgid "Пинг п#209�ове#209�ен"
+msgstr "The ping is checked"
+
+#: unit1.message53
+msgid "Минуточку..."
+msgstr "Please, wait..."
+
+#: unit1.message54
+msgctxt "unit1.message54"
+msgid "Не оп#209�еделилось ни одного IP-ад#209�еса VPN-се#209�ве#209�а."
+msgstr "No IP-addresses of VPN-server is defined."
+
+#: unit1.message55
+msgid "Часто используется аутентификация mschap v2 - это однов#209�еменный выбо#209� refuse-eap, refuse-chap, refuse-mschap, refuse-pap."
+msgstr "Authentication of mschap v2 is used frequently - this is a simultaneous choice of refuse-eap, refuse-chap, refuse-mschap, refuse-pap."
+
+#: unit1.message56
+msgid "Эта опция создает я#209�лык ponoff на Рабочем столе для доступа в инте#209�нет пользователю, позволяя ему уп#209�авлять соединением че#209�ез иконку в т#209�ее."
+msgstr "This option creates link ponoff on Desktop for access to the Internet for a user, allowing him or her operate connection with a icon in tray."
+
+#: unit1.message57
+msgid "Для того, чтобы #209�аз#209�ешить пользователям уп#209�авлять подключением сначала установите пакет sudo."
+msgstr "In order to let users operate the connection, at first install packet sudo."
+
+#: TFORM1.NETWORKTEST.CAPTION
+msgid "Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет"
+msgstr "To check VPN-server, DNS-server, local network gateway and the Internet"
+
+#: TFORM1.BALLOON.CAPTION
+msgid "Блокировать все всплывающие сообщения из трея"
+msgstr "Block all pop-up messages from tray"
+
+#: TFORM1.SUDO_SUDOERS.CAPTION
+msgid "Разрешить пользователям управлять подключением"
+msgstr "Let users operate the connection"
+
+#: TFORM1.LABEL45.CAPTION
+msgid "- желательно вписать маршруты для VPN-сервера, DNS-серверов, особенно если включенных сетевых интерфейсов в системе более одного, а также вписать другие маршруты"
+msgstr "- need set VPN-server route, DNS-server route, especiality if enable net system interfaces more than one and set another route"
+
+#: TFORM1.LABEL46.CAPTION
+msgid "- если сетевой интерфейс и/или шлюз определились неправильно, то сделайте требующийся сетевой интерфейс основным и настройте все заново или введите эти значения вручную"
+msgstr "- if network interface and/or gateway defined not correct, do useful net interface is main and reconfigure all or enter this parameters manually"
+
+#: TFORM1.LABEL47.CAPTION
+msgid "- без занесения маршрутов не гарантируется одновременная работа интернета и локальной сети, но интернет в любом случае будет работать"
+msgstr "- not add routes not garanted simultaneously works the Internet and local network, but the Internet will works on all ways"
+
+#: unit1.message6
+msgid "Для того, чтобы #209�аз#209�ешить пользователям конфигу#209�и#209�овать соединение сначала установите пакет sudo."
+msgstr "In order to allow users to configure the connection, first install the packet sudo."
+
+#: unit1.message9
+msgid "Эта опция позволяет пользователям запускать конфигу#209�ато#209� VPN PPTP/L2TP без па#209�оля админист#209�ато#209�а и конфигу#209�и#209�овать соединение."
+msgstr "This option allows users to run VPN PPTP/L2TP configuration without root password and configure the connection."
+
+#: unit1.message59
+msgid "Выбо#209� опции автозапуска инте#209�нета п#209�и ста#209�те системы возможен только п#209�и выбо#209�е опции #209�аз#209�ешения пользователям уп#209�авлять подключением."
+msgstr "Selecting the Internet autostart at startup is possible only when you select options allow users to manage the connection."
+
+#: unit1.message60
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы не наст#209�оен. Отсутствует ~/.config/autostart/ или используется нестанда#209�тный идентификато#209� пользователя."
+msgstr "Autostart the Internet at startup is not configured. There is no ~/.config/autostart/ or used non-standard user ID."
+
+#: unit1.message61
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы не наст#209�оен. Отсутствует файл /usr/share/applications/ponoff.desktop."
+msgstr "Autostart the Internet at startup is not configured. There is no file /usr/share/applications/ponoff.desktop."
+
+#: TFORM1.SUDO_CONFIGURE.CAPTION
+msgid "Разрешить пользователям конфигурировать соединение"
+msgstr "Allow users to configure the connection"
+
+#: TFORM1.AUTOSTART_PONOFF.CAPTION
+msgid "Автозапуск интернета при старте системы (графический)"
+msgstr "Autostart the Internet at startup (graphical)"
+
+#: TFORM1.AUTOSTARTPPPD.CAPTION
+msgid "Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)"
+msgstr "Autostart the Internet at startup with help pppd-daemon whithout graphics (do not use)"
+
+#: unit1.message62
+msgid "Эта опция осуществляет автозапуск инте#209�нета п#209�и ста#209�те системы без использования ponoff. Рекомендуется использовать с pppd(xl2tpd)-#209�еконнектом."
+msgstr "This option configures Autostart the Internet at system startup without using ponoff. It is recommended to use with pppd(xl2tpd)-reconnect."
+
+#: unit1.message63
+msgid "Не допустим однов#209�еменный выбо#209� г#209�афического автозапуска инте#209�нета п#209�и ста#209�те системы и автозапуск демоном pppd(xl2tpd) без г#209�афики."
+msgstr "Can not choose the simultaneous selection of graphical Autostart the Internet at system startup and autostart with help ppdd(xl2tpd)-daemon without graphics."
+
+#: unit1.message64
+msgid "Эта опция полезна если VPN PPTP/L2TP не должно быть главным."
+msgstr "This option is useful if the VPN PPTP/L2TP should not be main."
+
+#: TFORM1.PPPNOTDEFAULT.CAPTION
+msgid "Не изменять дефолтный шлюз, запустив VPN PPTP в фоне"
+msgstr "Do not change default gateway, VPN PPTP running in the background"
+
+#: unit1.message65
+msgid "Пока нельзя однов#209�еменно выб#209�ать автозапуск инте#209�нета демоном pppd(xl2tpd) и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP в фоне."
+msgstr "Not yet simultaneously select autostart Internet daemon pppd(xl2tpd) and no change the default gateway, VPN PPTP/L2TP running in the background."
+
+#: TFORM2.CAPTION
+msgid "Опции демона pppd"
+msgstr "Options daemon pppd"
+
+#: TFORM1.BUTTON_MORE.CAPTION
+msgid "Дополнительно"
+msgstr "Advanced"
+
+#: TFORM1.ROUTEDNSAUTO.CAPTION
+msgid "Программно маршрутизировать DNS-сервера"
+msgstr "Software to route the DNS-server"
+
+#: unit1.message66
+msgid "Не удалось автоматически оп#209�еделить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN."
+msgstr "Failed to automatically detect any DNS1 before raise VPN, nor DNS2 before raise VPN."
+
+#: unit1.message71
+msgid "Эта опция часто позволяет достичь уско#209�ения инте#209�нета, но не у всех п#209�овайде#209�ов и невсегда."
+msgstr "This option is often speed the Internet, but not for all IPS and not always."
+
+#: unit1.message73
+msgid "Пингуется DNS1-се#209�ве#209� до поднятия VPN. Ожидайте..."
+msgstr "Pinging DNS1-server before raise VPN. Please wait..."
+
+#: unit1.message74
+msgid "DNS1-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "DNS1-server before raise VPN does not ping or lost packets. Correct the problem and restart the configurator."
+
+#: unit1.message75
+msgid "Пингуется DNS2-се#209�ве#209� до поднятия VPN. Ожидайте..."
+msgstr "Pinging DNS2-server before raise VPN. Please wait..."
+
+#: unit1.message76
+msgid "DNS2-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
+msgstr "DNS2-server before raise VPN does not ping or lost packets. Correct the problem and restart the configurator."
+
+#: TFORM1.LABELDNS1.CAPTION
+msgctxt "TFORM1.LABELDNS1.CAPTION"
+msgid "DNS1 до поднятия VPN (определяется автоматически):"
+msgstr "DNS1 before raise VPN (define automaticaly):"
+
+#: TFORM1.LABELDNS2.CAPTION
+msgctxt "TFORM1.LABELDNS2.CAPTION"
+msgid "DNS2 до поднятия VPN (определяется автоматически):"
+msgstr "DNS2 before raise VPN (define automaticaly):"
+
+#: TFORM1.LABELDNS3.CAPTION
+msgid "DNS1 при поднятом VPN (для детей введите 81.176.72.82):"
+msgstr "DNS1 at elevated VPN (for children enter 81.176.72.82):"
+
+#: TFORM1.LABELDNS4.CAPTION
+msgid "DNS2 при поднятом VPN (для детей введите 81.176.72.83):"
+msgstr "DNS2 at elevated VPN (for children enter 81.176.72.83):"
+
+#: unit1.message67
+msgid "Поле \"DNS1 до поднятия VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS1 before raise VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message68
+msgid "Поле \"DNS2 до поднятия VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS2 before raise VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message69
+msgid "Необходимо ввести хотя бы одно DNS1 до поднятия VPN или DNS2 до поднятия VPN."
+msgstr "You must enter at least one DNS1 before raise VPN or DNS2 before raise VPN."
+
+#: unit1.message81
+msgid "Поле \"DNS1 п#209�и поднятом VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS1 at elevated VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message82
+msgid "Поле \"DNS2 п#209�и поднятом VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "The field \"DNS2 at elevated VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message83
+msgid "Необходимо ввести хотя бы одно DNS1 п#209�и поднятом VPN или DNS2 п#209�и поднятом VPN."
+msgstr "You must enter DNS1 at elevated VPN or DNS2 at elevated VPN."
+
+#: unit1.message84
+msgid "DNS2-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты, но пингуется DNS1-се#209�ве#209� до поднятия VPN, поэтому это нек#209�итично."
+msgstr "DNS2-server before raise VPN does not ping or lost packets, but ping DNS1-server before raise VPN, so it's not critical."
+
+#: unit1.message85
+msgid "DNS1-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты, но пингуется DNS2-се#209�ве#209� до поднятия VPN, поэтому будут то#209�моза."
+msgstr "DNS1-server before raise VPN does not ping or lost packets, but ping DNS2-server before raise VPN, so will slow down."
+
+#: unit1.message80
+msgid "Выб#209�ана опция usepeerdns: если VPN-се#209�ве#209� п#209�едоставит свои DNS, то будут использоваться они, невзи#209�ая на д#209�угие наст#209�ойки DNS."
+msgstr "Option is selected usepeerdns: if VPN-server will provide for you your DNS, then they will be used, ignoring of other settings DNS."
+
+#: unit1.message86
+msgid "Показать па#209�оль"
+msgstr "Show password"
+
+#: unit1.message87
+msgid "Ск#209�ыть па#209�оль"
+msgstr "Hide password"
+
+#: TFORM1.BUTTONHELP.CAPTION
+msgid "Справка"
+msgstr "Help"
+
+#: TFORM1.LABEL9.CAPTION
+msgid "Аутентификация:"
+msgstr "Authentication:"
+
+#: TFORM1.LABEL13.CAPTION
+msgid "Шифрование mppe:"
+msgstr "Encription mppe:"
+
+#: unit1.message58
+msgid "П#209�и использовании опции refuse-chap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу CHAP."
+msgstr "With option refuse-chap, pppd will not agree to authenticate itself to the peer using CHAP."
+
+#: unit1.message70
+msgid "П#209�и использовании опции refuse-eap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу EAP."
+msgstr "With option refuse-eap, pppd will not agree to authenticate itself to the peer using EAP."
+
+#: unit1.message72
+msgid "П#209�и использовании опции refuse-mschap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу MS-CHAP."
+msgstr "With option refuse-mschap, pppd will not agree to authenticate itself to the peer using MS-CHAP."
+
+#: unit1.message77
+msgid "П#209�и использовании опции refuse-pap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу PAP."
+msgstr "With option refuse-pap, pppd will not agree to authenticate itself to the peer using PAP."
+
+#: unit1.message78
+msgid "П#209�и использовании опции refuse-mschap-v2 демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу MS-CHAPv2."
+msgstr "With option refuse-mschap-v2, pppd will not agree to authenticate itself to the peer using MS-CHAPv2."
+
+#: unit1.message79
+msgid "Опция required делает шиф#209�ование mppe обязательным и т#209�ебует его использовать - не соединяться если п#209�овайде#209� не подде#209�живает шиф#209�ование mppe."
+msgstr "required - require mppe; disconnect if peer doesn't support it."
+
+#: unit1.message88
+msgid "Часто используется шиф#209�ование т#209�афика mppe с 128-битным шиф#209�ованием - это однов#209�еменный выбо#209� required, stateless, no40, no56."
+msgstr "Encryption mppe often used with 128-bit encryption - is the simultaneous selection of required, stateless, no40, no56."
+
+#: unit1.message89
+msgid "Опция stateless пытается #209�еализовать шиф#209�ование mppe в #209�ежиме без подде#209�жки состояний."
+msgstr "stateless - try to negotiate stateless mode."
+
+#: unit1.message90
+msgid "Опция no40 отключает 40-битное шиф#209�ование mppe."
+msgstr "no40 - disable 40 bit keys."
+
+#: unit1.message91
+msgid "Опция no56 отключает 56-битное шиф#209�ование mppe."
+msgstr "no56 - disable 56 bit keys."
+
+#: unit1.message92
+msgid "Опция no128 отключает 128-битное шиф#209�ование mppe."
+msgstr "no128 - disable 128 bit keys."
+
+#: unit1.message93
+msgid "П#209�инудительный #209�еста#209�т сети"
+msgstr "Forced restart the network"
+
+#: unit1.message21
+msgid "Эта опция позволяет запустить модуль ponoff п#209�и ста#209�те опе#209�ационной системы и установить соединение VPN PPTP/L2TP автозаг#209�узкой."
+msgstr "This option allows to run the program ponoff on start operating system and connect to VPN PPTP/L2TP with help autostart."
+
+#: unit1.message94
+msgid "Невозможно выб#209�ать VPN L2TP, так как не установлен пакет xl2tpd."
+msgstr "Unable to select VPN L2TP, so as not installed xl2tpd."
+
+#: unit1.message95
+msgid "Соединение будет сконфигу#209�и#209�овано по п#209�отоколу VPN PPTP."
+msgstr "The connection will be configured on the protocol VPN PPTP."
+
+#: unit1.message96
+msgid "Использовать вст#209�оенный в демон xl2tpd механизм #209�еконнекта (не #209�екомендуется если несколько сетевых ка#209�т)"
+msgstr "Use internak mechanism of xl2tpd daemon for reconnect (not useful if more than one network interface controller)"
+
+#: unit1.message98
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном xl2tpd без г#209�афики (не #209�екомендуется использовать)"
+msgstr "Autostart the Internet at startup with help xl2tpd-daemon whithout graphics (not recommended for use)"
+
+#: unit1.message99
+msgid "I) Введите ад#209�ес VPN-се#209�ве#209�а... (нап#209�име#209�, vpn.internet.beeline.ru)"
+msgstr "I) Enter VPN-server adress... (for example vpn.internet.beeline.ru)"
+
+#: unit1.message100
+msgid "I) Введите ад#209�ес VPN-се#209�ве#209�а... (нап#209�име#209�, tp.internet.beeline.ru)"
+msgstr "I) Enter VPN-server adress... (for example tp.internet.beeline.ru)"
+
+#: unit1.message101
+msgid "Для VPN L2TP значение MTU должно быть меньше, чем для VPN PPTP как минимум на 20 байт, но не более чем 1460 байт."
+msgstr "For VPN L2TP MTU value must be less than for VPN PPTP at least 20 bytes, but not more than 1460 bytes."
+
+#: unit1.message102
+msgid "Рекомендуется значение MTU 1400 байт."
+msgstr "It is recommended MTU value 1400 bytes."
+
+#: unit1.message103
+msgid "Наст#209�ойка VPN PPTP/L2TP"
+msgstr "Configure VPN PPTP/L2TP"
+
+#: unit1.message104
+msgid "Поле \"MRU\" заполнено неве#209�но. Раз#209�ешен лишь диапазон [576..1460..1492..1500]."
+msgstr "Field \"MRU\" is wrong. Required limit is [576..1460..1492..1500]."
+
+#: unit1.message105
+msgid "Обна#209�ужено, что VPN PPTP/L2TP поднято. <ОК> - п#209�одолжить, убив VPN PPTP/L2TP и пе#209�езапустив сеть. <Отмена> - отмена запуска конфигу#209�ато#209�а."
+msgstr "Found that the VPN PPTP/L2TP works. <OK>  - continue, killing VPN PPTP/L2TP and restarting the network. <Cancel> - to cancel the start of this program."
+
+#: unit1.message106
+msgid "Обна#209�ужено, что используется пакет xl2tpd не из #209�епозито#209�ия EduMandriva, поэтому вст#209�оенный в демон xl2tpd механизм #209�еконнекта выб#209�ать нельзя."
+msgstr "Found that the package xl2tpd is used not from the repository EduMandriva, so the built-in daemon xl2tpd reconnect mechanism can not be selected."
+
+#: unit1.message107
+msgid "Запустить конфигу#209�ато#209� VPN PPTP/L2TP можно также из Цент#209�а Уп#209�авления->Сеть и Инте#209�нет->Наст#209�ойка VPN-соединений->VPN PPTP/L2TP."
+msgstr "To run the configurator VPN PPTP/L2TP can also from the Control Center-> Network and Internet> Setting up VPN-connections-> VPN PPTP/L2TP."
+
+#: unit1.message108
+msgid "Установить тестовое соединение VPN PPTP/L2TP в г#209�афике/без г#209�афики сейчас?"
+msgstr "Set test connection VPN PPTP/L2TP in graphics/without graphics now?"
+
+#: unit1.message109
+msgid "Тестовый запуск"
+msgstr "Test Run"
+
+#: unit1.message111
+msgid "Команда запуска:"
+msgstr "Command run:"
+
+#: TFORM1.LABEL_MRU.CAPTION
+msgid "MRU (если задано):"
+msgstr "MRU (if set):"
+
+#: unit1.message4
+msgid "Модуль ponoff еще не заве#209�шил свою #209�аботу. Дождитесь заве#209�шения #209�аботы модуля ponoff и повто#209�но запустите конфигу#209�ато#209� vpnpptp."
+msgstr "Program ponoff not yet completed its work. Wait for the program ponoff quits and re-run the program vpnpptp."
+
+#: unit1.message5
+msgid "Не изменять дефолтный шлюз, запустив VPN L2TP в фоне"
+msgstr "Do not change default gateway, VPN L2TP running in the background"
+
+#: unit1.message112
+msgid "Выбо#209� этой опции позволяет установить соединение со случайным ад#209�есом VPN-се#209�ве#209�а, заданного по имени, устанавливая соединение мгновенно."
+msgstr "Choosing this option allows you to connect with a random address VPN-server, specified by name, establishing the connection instantly."
+
+#: unit1.message113
+msgid "П#209�и отмене этой опции соединение не всегда сможет установиться мгновенно с еще неизвестным ад#209�есом VPN-се#209�ве#209�а, особенно если их много."
+msgstr "If you cancel this option, the connection will not always be able to establish immediately a yet-unknown address VPN-server, especially if many of them."
+
+#: unit1.message114
+msgid "Ад#209�ес VPN-се#209�ве#209�а задан по IP, поэтому опцию использования /etc/hosts выб#209�ать нельзя."
+msgstr "The address VPN-server specified by IP, so the option of using /etc/hosts can not be selected."
+
+#: unit1.message115
+msgid "Его установка необязательна, но она уско#209�ит механизм оп#209�еделения IP-ад#209�еса VPN-се#209�ве#209�а, и быст#209�ее соединится."
+msgstr "Installation of this package is optional, but it will speed up the mechanism for determining IP-addresses of VPN-server, and quickly connect."
+
+#: unit1.message116
+msgid "Так как использование /etc/hosts является методом п#209�ог#209�аммной ма#209�ш#209�утизации VPN-се#209�ве#209�а, дополнительным к основному, то выбо#209� будет исп#209�авлен."
+msgstr "As the use /etc/hosts is a method of routing software VPN-server, additional to the core, then the choice will be corrected."
+
+#: unit1.message117
+msgid "Значения MTU, MRU должны быть заданы в#209�учную, так как выб#209�ана опция default-mru."
+msgstr "The values of the MTU, MRU should be set manually, as selected default-mru."
+
+#: unit1.message118
+msgid "Рекомендуется значение MTU 1460 байт."
+msgstr "Recommended MTU of 1460 bytes."
+
+#: unit1.message119
+msgid "Так как значения MTU, MRU не заданы в#209�учную, то #209�екомендуется отключить опцию default-mru."
+msgstr "Since the value of MTU, MRU is not set manually, it is recommended to disable the default-mru."
+
+#: TFORM1.ETC_HOSTS.CAPTION
+msgid "Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)"
+msgstr "Use /etc/hosts dynamically for VPN-server's address specified by name (only works in the graphic)"
+
+#: unit1.message120
+msgid "<ОК> - игно#209�и#209�овать это п#209�едуп#209�еждение и п#209�одолжить. <Отменаl> - поп#209�авить."
+msgstr "<OK> - ignore this warning and continue. <Cancel> - Correct."
+
+#: unit1.message121
+msgid "Не установлен пакет bind-utils."
+msgstr "Not installed bind-utils packet."
+
+#: unit1.message122
+msgid "ОК"
+msgstr "OK"
+
+#: unit1.message123
+msgid "Да"
+msgstr "Yes"
+
+#: unit1.message124
+msgid "Нет"
+msgstr "No"
+
+#: unit1.message125
+msgid "Отмена"
+msgstr "Cancel"
+
+#: TFORM1.LABEL7.CAPTION
+msgid "- имя соединения может содержать только латинские буквы и цифры и начинаться с буквы"
+msgstr "- the connection name can only contain letters and numbers and must start with the letter"
+
+#: unit1.message11
+msgid "<Да> - установить в г#209�афике, <Нет> - установить без г#209�афики, <Отмена> - отмена."
+msgstr "<Yes> - set in graphics, <No> - set without graphics, <Cancel> - cancel."
+
+#: unit1.message126
+msgid "Тип VPN"
+msgstr "Type of VPN"
+
+#: unit1.message127
+msgctxt "unit1.message127"
+msgid "Внимательно читаем инст#209�укцию и не забываем писать пожелания и замечания"
+msgstr "Carefully read instructions and do not forget to emailed comments and bugs"
+
+#: unit1.message128
+msgid "Здесь также можно указать команды, кото#209�ые выполнятся с#209�азу, как только соединение VPN PPTP/L2TP будет установлено."
+msgstr "Here you can also wtite the commands that are executed as soon as the connection VPN PPTP/L2TP will be connected."
+
+#: unit1.message129
+msgid "Значения MTU/MRU можно не вводить, тогда если не указана опция default-mru, то п#209�овайде#209� п#209�ишлет их сам (но не всегда)."
+msgstr "The values of the MTU/MRU can't write, then if the option is not specified default-mru, the IPS will send them (but not always)."
+
+#: unit1.message130
+msgid "Шаблон: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
+msgstr "Template: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
+
+#: unit1.message131
+msgid "Шаблон: от eth0 до eth9 или от wlan0 до wlan9."
+msgstr "Template: eth0 to eth9 or wlan0 to wlan9."
+
+#: unit1.message132
+msgid "Эта кнопка вызывает сп#209�авку, но п#209�и условиях, что она есть, и что установлено офисное п#209�иложение"
+msgstr "This button shows the help, but under the conditions that it is, and that installed an office application"
+
+#: unit1.message133
+msgid "Пе#209�ейти к следующей ст#209�анице наст#209�ойки"
+msgstr "Go to next page settings"
+
+#: unit1.message134
+msgid "Выйти из п#209�ог#209�аммы"
+msgstr "Quit"
+
+#: unit1.message135
+msgid "Эта кнопка наст#209�аивает (пе#209�енаст#209�аивает) соединение"
+msgstr "This button sets (resets) the connection"
+
+#: unit1.message136
+msgid "Эта кнопка позволяет изменить п#209�едложенные по умолчанию или дополнить опции демона pppd"
+msgstr "This button allows you to change the defaults or to add options daemon pppd"
+
+#: unit1.message137
+msgid "Эта кнопка позволяет п#209�ове#209�ить п#209�авильно ли было наст#209�оено соединение"
+msgstr "This button allows you to check the connection settings with help test"
+
+#: unit1.message138
+msgid "Для VPN L2TP шиф#209�ование mppe не используется, оно используется только для VPN PPTP."
+msgstr "For VPN L2TP encryption mppe is not used, it is used only for VPN PPTP."
+
+#: unit1.message140
+msgid "В Вашем дист#209�ибутиве не используется shorewall, поэтому его наст#209�ойка не т#209�ебуется."
+msgstr "Your distribution is not used shorewall, so its configure is not required."
+
+#: unit1.message141
+msgctxt "unit1.message141"
+msgid "В Вашем дист#209�ибутиве получение ма#209�ш#209�утов че#209�ез DHCP наст#209�оено по-умолчанию, или оно наст#209�аивается с#209�едствами Вашего дист#209�ибутива."
+msgstr "Your distribution to get route via DHCP configured by default, or it is configure by means of your distribution."
+
+#: unit1.message142
+msgid "Нельзя отключить всплывающие сообщения и однов#209�еменно выводить че#209�ез отключенные всплывающие сообщения #209�езультаты п#209�ове#209�ок."
+msgstr "You can not disable pop-up and simultaneously display a disabled pop-ups results of the tests."
+
+#: unit1.message143
+msgid "П#209�и низких #209�аз#209�ешениях эк#209�ана однов#209�еменное нажатие клавиши Alt и левой кнопки мыши поможет пе#209�еместить окно."
+msgstr "At low screen resolutions simultaneously pressing the Alt key and left mouse button will move the window."
+
+#: unit1.message110
+msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd) в /var/log/syslog."
+msgstr "The log is incomplete or is not being, because you have not chosen the option logging pppd on /var/log/syslog."
+
+#: TFORM1.PPPD_LOG.CAPTION
+msgid "Вести подробный лог pppd(xl2tpd) в /var/log/syslog"
+msgstr "pppd(xl2tpd) detailed log on /var/log/syslog"
+
+#: unit1.message20
+msgid "Невозможно наст#209�оить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
+msgstr "Unable find pptp-linux packet or pptp packet. VPN PPTP/L2TP can not be configured."
+
+#: unit1.message139
+msgid "В Вашем дист#209�ибутиве выб#209�ать эту опцию нельзя."
+msgstr "In your distribution you can not select this option."
+
+#: unit1.message97
+msgid "Дист#209�ибутив оп#209�еделяется автоматически, но если этого не п#209�оизошло, то выбе#209�ите наиболее подходящий из списка."
+msgstr "Distribution is determined automatically, but if it did not happen, then select the most appropriate from the list."
+
+#: unit1.message144
+msgid "Отсутствует дефолтный шлюз, и это невозможно исп#209�авить автоматически."
+msgstr "No default gateway, and it can not be corrected automatically."
+
+#: unit1.message145
+msgid "Укажите в#209�учную сетевой инте#209�фейс и шлюз локальной сети - п#209�ог#209�амма сама сделает его дефолтным."
+msgstr "Enter manually the network interface and gateway - the program itself will make its default."
+
+#: unit1.message146
+msgid "Для #209�еализации этой опции подлежит использовать п#209�опатченный xl2tpd с суффиксом edm в имени пакета."
+msgstr "To implement this option will be to use a patched l2tpd containing the suffix edm package name."
+
+#: unit1.message147
+msgid "Наст#209�ойте sudo с#209�едствами Вашего дист#209�ибутива."
+msgstr "Configure sudo with help your distribution."
+
+#: unit1.message148
+msgid "Обна#209�ужено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска."
+msgstr "Detect an active connection dsl. Disable it with the command ifdown dsl0. Press <OK> for exit."
+
+#: unit1.message149
+msgid "Нажатие левой/п#209�авой кнопкой мыши на пустом месте окна изменяет ш#209�ифт."
+msgstr "Pressing the left/right click on the window changes the font."
+
+#: unit1.message150
+msgid "Mandriva и аналоги"
+msgstr "Mandriva and analogues"
+
+#: unit1.message151
+msgid "Выбе#209�ите дист#209�ибутив..."
+msgstr "Choose a distribution..."
+
+#: unit1.message152
+msgid "Выбо#209� дист#209�ибутива обязателен, но неп#209�авильный выбо#209� опасен!"
+msgstr "Choice of distribution is required, but the wrong choice is dangerous!"
+
+#: unit1.message153
+msgid "Для того чтобы инте#209�нет был наст#209�оен для детей, опция usepeerdns была автоматически отключена."
+msgstr "In order that the Internet was configured for children, the option usepeerdns has been automatically disabled."
+
+#: unit1.message154
+msgid "Если ввести 0, то #209�еконнекта не будет."
+msgstr "If you enter 0, then will not reconnect."
