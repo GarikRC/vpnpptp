@@ -183,4 +183,4 @@ msgstr "Please, wait the Internet 30 seconds"
 
 #: unit1.message41
 msgid "Обна#209�ужено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска."
-msgstr ""
+msgstr "Detect an active connection dsl. Disable it with the command ifdown dsl0. Press <OK> for exit."
