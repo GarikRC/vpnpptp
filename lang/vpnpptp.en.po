@@ -142,10 +142,6 @@ msgstr "Press button \"Create connection\" for save configured options"
 msgid "или нажмите на кнопку \"Выход\" для выхода из программы и сброса сконфигурированных настроек..."
 msgstr "or press button \"Exit\" for program exit and drop all options..."
 
-#: TFORM1.LABEL44.CAPTION
-msgid "(0 - без реконнекта)"
-msgstr "(0 - no reconnect)"
-
 #: TFORM1.LABEL5.CAPTION
 msgid "/sbin/route add -net [ip] netmask [маска] gw [шлюз] dev [устройство]"
 msgstr "/sbin/route add -net [ip] netmask [mask] gw [gate] dev [device]"
@@ -273,10 +269,6 @@ msgstr "Another copy of program try to configure VPN PPTP/L2TP. Press <OK> for c
 #: unit1.message2
 msgid "Так как Вы отказались от конт#209�оля state сетевого кабеля, то в целях снижения наг#209�узки на систему в#209�емя дозвона установлено в 20 сек."
 msgstr "Since you didn't selected control of state network cable, then dial time set to 20 seconds to reduce the load on the system."
-
-#: unit1.message20
-msgid "Невозможно наст#209�оить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux."
-msgstr "Unable find ppptp-linux packet. VPN PPTP/L2TP can not be configured."
 
 #: unit1.message3
 msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd(xl2tpd) #209�еконнекта п#209�оигно#209�и#209�ован."
@@ -696,10 +688,6 @@ msgstr "The connection will be configured on the protocol VPN PPTP."
 msgid "Использовать вст#209�оенный в демон xl2tpd механизм #209�еконнекта (не #209�екомендуется если несколько сетевых ка#209�т)"
 msgstr "Use internak mechanism of xl2tpd daemon for reconnect (not useful if more than one network interface controller)"
 
-#: unit1.message97
-msgid "Вести лог xl2tpd в /var/log/xl2tpd.log"
-msgstr "xl2tpd logging on /var/log/xl2tpd.log"
-
 #: unit1.message98
 msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном xl2tpd без г#209�афики (не #209�екомендуется использовать)"
 msgstr "Autostart the Internet at startup with help xl2tpd-daemon whithout graphics (not recommended for use)"
@@ -909,3 +897,59 @@ msgstr "The log is incomplete or is not being, because you have not chosen the o
 #: TFORM1.PPPD_LOG.CAPTION
 msgid "Вести подробный лог pppd(xl2tpd) в /var/log/syslog"
 msgstr "pppd(xl2tpd) detailed log on /var/log/syslog"
+
+#: unit1.message20
+msgid "Невозможно наст#209�оить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
+msgstr "Unable find pptp-linux packet or pptp packet. VPN PPTP/L2TP can not be configured."
+
+#: unit1.message139
+msgid "В Вашем дист#209�ибутиве выб#209�ать эту опцию нельзя."
+msgstr "In your distribution you can not select this option."
+
+#: unit1.message97
+msgid "Дист#209�ибутив оп#209�еделяется автоматически, но если этого не п#209�оизошло, то выбе#209�ите наиболее подходящий из списка."
+msgstr "Distribution is determined automatically, but if it did not happen, then select the most appropriate from the list."
+
+#: unit1.message144
+msgid "Отсутствует дефолтный шлюз, и это невозможно исп#209�авить автоматически."
+msgstr "No default gateway, and it can not be corrected automatically."
+
+#: unit1.message145
+msgid "Укажите в#209�учную сетевой инте#209�фейс и шлюз локальной сети - п#209�ог#209�амма сама сделает его дефолтным."
+msgstr "Enter manually the network interface and gateway - the program itself will make its default."
+
+#: unit1.message146
+msgid "Для #209�еализации этой опции подлежит использовать п#209�опатченный xl2tpd с суффиксом edm в имени пакета."
+msgstr "To implement this option will be to use a patched l2tpd containing the suffix edm package name."
+
+#: unit1.message147
+msgid "Наст#209�ойте sudo с#209�едствами Вашего дист#209�ибутива."
+msgstr "Configure sudo with help your distribution."
+
+#: unit1.message148
+msgid "Обна#209�ужено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска."
+msgstr "Detect an active connection dsl. Disable it with the command ifdown dsl0. Press <OK> for exit."
+
+#: unit1.message149
+msgid "Нажатие левой/п#209�авой кнопкой мыши на пустом месте окна изменяет ш#209�ифт."
+msgstr "Pressing the left/right click on the window changes the font."
+
+#: unit1.message150
+msgid "Mandriva и аналоги"
+msgstr "Mandriva and analogues"
+
+#: unit1.message151
+msgid "Выбе#209�ите дист#209�ибутив..."
+msgstr "Choose a distribution..."
+
+#: unit1.message152
+msgid "Выбо#209� дист#209�ибутива обязателен, но неп#209�авильный выбо#209� опасен!"
+msgstr "Choice of distribution is required, but the wrong choice is dangerous!"
+
+#: unit1.message153
+msgid "Для того чтобы инте#209�нет был наст#209�оен для детей, опция usepeerdns была автоматически отключена."
+msgstr "In order that the Internet was configured for children, the option usepeerdns has been automatically disabled."
+
+#: unit1.message154
+msgid "Если ввести 0, то #209�еконнекта не будет."
+msgstr "If you enter 0, then will not reconnect."

@@ -42,7 +42,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Label1Click(Sender: TObject);
-    procedure Obrabotka (str_peer:string; more:boolean; AFont:integer);
+    procedure Obrabotka (str_peer:string; more:boolean; var AFont:integer);
   private
     { private declarations }
   public
@@ -56,7 +56,7 @@ implementation
 
 { TForm2 }
 
-procedure TForm2.Obrabotka (str_peer:string; more:boolean; AFont:integer);
+procedure TForm2.Obrabotka (str_peer:string; more:boolean; var AFont:integer);
 //восстанавливает сохраненные значения или устанавливает значения по-умолчанию
 var
 File_peer:textfile;

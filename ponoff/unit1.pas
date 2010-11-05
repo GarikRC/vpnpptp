@@ -65,7 +65,6 @@ type
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
-    procedure PopupMenu1Popup(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -100,15 +99,16 @@ var
   Count:byte;//счетчик времени
   ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
   AFont:integer; //шрифт приложения
-  YesConfig:boolean; //прочитан ли config-файл
   AProcess: TProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
   debian:boolean; // используется ли дистрибутив debian
+  suse:boolean; // используется ли дистрибутив suse
+  mandriva:boolean; // используется ли дистрибутив mandriva
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
   CountKillallpppd:integer; //счетчик сколько раз убивался pppd
 
 const
-  Config_n=42;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=44;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 
 resourcestring
   message0='Внимание!';
@@ -152,6 +152,7 @@ resourcestring
   message38='Запускается приложение ponoff...';
   message39='Наблюдать';
   message40='Ожидайте появления Интернета 30 секунд';
+  message41='Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска.';
 
 implementation
 
@@ -240,11 +241,30 @@ end;
 
 procedure MakeDefaultGW;
 begin
-       Shell ('rm -f /tmp/gate');
-       Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
-       Shell('printf "none" >> /tmp/gate');
-       Form1.Memo_gate.Clear;
-       If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
+            Shell ('rm -f /tmp/gate');
+            Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
+            Shell('printf "none" >> /tmp/gate');
+            Form1.Memo_gate.Clear;
+            If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
+       If suse then If Form1.Memo_gate.Lines[0]='none' then
+            begin
+                Shell ('netconfig update -f');
+                If FileExists ('/etc/resolv.conf.netconfig') then
+                              begin
+                                 Shell ('cp -f /etc/resolv.conf.netconfig /etc/resolv.conf');
+                                 Shell ('rm -f /etc/resolv.conf.netconfig');
+                              end;
+            end;
+       If Form1.Memo_gate.Lines[0]='none' then
+                                          begin
+       //исправление default и повторная проверка
+                                               Shell ('route add default gw '+Form1.Memo_Config.Lines[2]+' dev '+Form1.Memo_Config.Lines[3]);
+                                               Shell ('rm -f /tmp/gate');
+                                               Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
+                                               Shell('printf "none" >> /tmp/gate');
+                                               Form1.Memo_gate.Clear;
+                                               If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
+                                          end;
        If Form1.Memo_gate.Lines[0]='none' then if not FileExists ('/etc/init.d/network-manager') then
                                begin
                                  If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
@@ -387,12 +407,21 @@ If Code_up_ppp then
                                                                                                             If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
                                                                                                             //изменение скрипта ip-up
                                                                                                             If FileExists('/etc/ppp/ip-up.d/ip-up') then
-                                                                                                                                                    Shell ('printf "'+'/sbin/route add -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
+                                                                                                                                                    begin
+                                                                                                                                                         If not suse then Shell ('printf "'+'/sbin/route add -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
+                                                                                                                                                         If suse then Shell ('printf "'+'/sbin/route add -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
+                                                                                                                                                    end;
                                                                                                             //изменение скрипта ip-down
                                                                                                             If Memo_Config.Lines[7]='reconnect-pptp' then if FileExists('/etc/ppp/ip-down.d/ip-down') then
-                                                                                                                                                    Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                                                                                                                     begin
+                                                                                                                                                          If not suse then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                                                                                                                          If suse then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                                                                                                                     end;
                                                                                                             If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/tmp/ip-down') then
-                                                                                                                                                    Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                                                                                                                     begin
+                                                                                                                                                          If not suse then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                                                                                                                          If suse then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                                                                                                                      end;
                                                                                                           end;
                                                                                  end;
                                       end;
@@ -412,7 +441,16 @@ If link=4 then
      If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
    end;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN PPTP
-If link=1 then If NoInternet or debian then MakeDefaultGW;
+If link=1 then If NoInternet or debian or suse then MakeDefaultGW;
+If suse then
+   begin
+        Shell ('netconfig update -f');
+        If FileExists ('/etc/resolv.conf.netconfig') then
+                                                     begin
+                                                          Shell ('cp -f /etc/resolv.conf.netconfig /etc/resolv.conf');
+                                                          Shell ('rm -f /etc/resolv.conf.netconfig');
+                                                     end;
+   end;
   //проверка технической возможности поднятия соединения
 {If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_Config.Lines[34]<>'usepeerdns-yes' then
        if not FileExists('/var/run/ppp/resolv.conf') then
@@ -470,7 +508,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
-                                if not FileExists ('/etc/init.d/network-manager') then //if not debian then
+                                if not FileExists ('/etc/init.d/network-manager') then
                                                                                   begin
                                                                                   For h:=1 to CountInterface do
                                                                                        Shell ('route del default');
@@ -581,6 +619,9 @@ If not Code_up_ppp then If link=3 then
                                    If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
+                                                                Timer1.Enabled:=False;
+                                                                Timer2.Enabled:=False;
+                                                                TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
@@ -604,6 +645,9 @@ If not Code_up_ppp then If link=2 then
                                    If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
+                                                                Timer1.Enabled:=False;
+                                                                Timer2.Enabled:=False;
+                                                                TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
@@ -694,7 +738,16 @@ If not Code_up_ppp then If link=1 then
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[9]='dhcp-route-yes' then if not DhclientStart then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                                       Shell ('resolvconf -u');
-                                                      If debian then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+                                                      If suse then
+                                                      begin
+                                                           Shell ('netconfig update -f');
+                                                           If FileExists ('/etc/resolv.conf.netconfig') then
+                                                                                                        begin
+                                                                                                             Shell ('cp -f /etc/resolv.conf.netconfig /etc/resolv.conf');
+                                                                                                             Shell ('rm -f /etc/resolv.conf.netconfig');
+                                                                                                        end;
+                                                      end;
+                                                      If debian or suse then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
                                                       If Memo_Config.Lines[39]<>'l2tp' then
                                                                                     Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
                                                                                                               begin
@@ -718,46 +771,12 @@ var
 begin
   ubuntu:=false;
   debian:=false;
-  //определение дистрибутива
-  Shell('rm -f /tmp/version');
-  Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
-  If FileSize ('/tmp/version')<>0 then ubuntu:=true;
-  Shell('rm -f /tmp/version');
-  Shell ('cat /etc/*release* /etc/*_version|grep Ubuntu > /tmp/version');
-  If FileSize ('/tmp/version')<>0 then ubuntu:=true;
-  Shell('rm -f /tmp/version');
-  Shell ('cat /etc/issue|grep Debian > /tmp/version');
-  If FileSize ('/tmp/version')<>0 then debian:=true;
-  Shell('rm -f /tmp/version');
+  suse:=false;
+  mandriva:=false;
   Application.CreateForm(TForm3, Form3);
   Application.ShowMainForm:=false;
   Application.Minimize;
   If FileExists ('/opt/vpnpptp/ponoff.png') then Image1.Picture.LoadFromFile('/opt/vpnpptp/ponoff.png');
-  If Screen.Height<440 then
-                           begin
-                                AFont:=6;
-                                if debian then AFont:=4;
-                           end;
-  If Screen.Height<=480 then
-                            begin
-                                 AFont:=6;
-                                 if debian then AFont:=4;
-                            end;
-  If Screen.Height<550 then If not (Screen.Height<=480) then
-                                                        begin
-                                                             AFont:=6;
-                                                             if debian then AFont:=4;
-                                                        end;
-  If Screen.Height>550 then
-                           begin
-                                AFont:=8;
-                                if debian then AFont:=5;
-                           end;
-  If Screen.Height>1000 then
-                        begin
-                             AFont:=10;
-                             if debian then AFont:=6;
-                        end;
   Panel1.Caption:=message37+' '+message38;
   Form1.Height:=152;
   Form1.Width:=670;
@@ -785,7 +804,38 @@ begin
   MenuItem4.Caption:=message11;
   MenuItem5.Caption:=message39;
   TrayIcon1.BalloonTitle:=message0;
-  YesConfig:=false;
+  If Screen.Height<440 then AFont:=6;
+  If Screen.Height<=480 then AFont:=6;
+  If Screen.Height<550 then If not (Screen.Height<=480) then AFont:=6;
+  If Screen.Height>550 then AFont:=8;
+  If Screen.Height>1000 then AFont:=10;
+  //обеспечение совместимости старого config с новым
+  If FileExists('/opt/vpnpptp/config') then
+     begin
+        Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
+        If Memo_config.Lines.Count<Config_n then
+                                            begin
+                                               for i:=Memo_config.Lines.Count to Config_n do
+                                                  Shell('printf "none\n" >> /opt/vpnpptp/config');
+                                            end;
+     end;
+  If FileExists('/opt/vpnpptp/config') then begin Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config');end
+  else
+   begin
+    Timer1.Enabled:=False;
+    Timer2.Enabled:=False;
+    Form1.Hide;
+    TrayIcon1.Hide;
+    If not ubuntu then if not debian then if not suse then Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon)
+                          else Form3.MyMessageBox(message0,message3,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+    halt;
+   end;
+  If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
+  If Memo_Config.Lines[43]='ubuntu' then ubuntu:=true;
+  If Memo_Config.Lines[43]='debian' then debian:=true;
+  If Memo_Config.Lines[43]='suse' then suse:=true;
+  If Memo_Config.Lines[43]='mandriva' then mandriva:=true;
+  Form1.Font.Size:=AFont;
 //проверка ponoff в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
    Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart1');
    Shell('printf "none" >> /tmp/tmpnostart1');
@@ -797,6 +847,7 @@ begin
                                                              Timer1.Enabled:=False;
                                                              Timer2.Enabled:=False;
                                                              Form1.Hide;
+                                                             TrayIcon1.Hide;
                                                              Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                              Shell('rm -f /tmp/tmpnostart1');
                                                              halt;
@@ -807,30 +858,27 @@ begin
                                                                                                       Timer1.Enabled:=False;
                                                                                                       Timer2.Enabled:=False;
                                                                                                       Form1.Hide;
+                                                                                                      TrayIcon1.Hide;
                                                                                                       Form3.MyMessageBox(message0,message2,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                                                       Shell('rm -f /tmp/tmpnostart1');
                                                                                                       halt;
                                                                                                   end;
-  Shell('rm -f /tmp/tmpnostart1');
-//обеспечение совместимости старого config с новым
-If FileExists('/opt/vpnpptp/config') then
-     begin
-        Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
-        If Memo_config.Lines.Count<Config_n then
-                                            begin
-                                               for i:=Memo_config.Lines.Count to Config_n do
-                                                  Shell('printf "none\n" >> /opt/vpnpptp/config');
-                                            end;
-     end;
-  If FileExists('/opt/vpnpptp/config') then begin Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config');YesConfig:=true;end
-  else
-   begin
-    Timer1.Enabled:=False;
-    Timer2.Enabled:=False;
-    Form1.Hide;
-    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
-    halt;
-   end;
+//учитывание особенностей openSUSE
+If suse then
+        begin
+             Shell('/sbin/ip r|grep dsl > /tmp/gate');
+             If FileExists ('/tmp/gate') then if FileSize('/tmp/gate')<>0 then
+                                         begin
+                                           Timer1.Enabled:=False;
+                                           Timer2.Enabled:=False;
+                                           Form1.Hide;
+                                           TrayIcon1.Hide;
+                                           Form3.MyMessageBox(message0,message41,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+                                           Shell('rm -f /tmp/gate');
+                                           halt;
+                                         end;
+        end;
+   Shell('rm -f /tmp/tmpnostart1');
    Shell('rm -f /etc/resolv.conf.old');
    If FileExists ('/etc/resolv.conf') then Shell('cp -f /etc/resolv.conf /etc/resolv.conf.old');
    If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
@@ -898,6 +946,7 @@ If FileExists('/opt/vpnpptp/config') then
                  MenuItem4.Visible:=false;
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
+                 TrayIcon1.Hide;
                  Form3.MyMessageBox(message0,message4,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                  halt;
                 end;
@@ -905,6 +954,8 @@ If FileExists('/opt/vpnpptp/config') then
                 begin
                  Form3.MyMessageBox(message0,message5,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                  Timer1.Enabled:=False;
+                 Timer2.Enabled:=False;
+                 TrayIcon1.Hide;
                  halt;
                 end;
   Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
@@ -929,14 +980,15 @@ end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
  //просто убивает pppd, xl2tpd и других демонов и удаляет временные файлы
+var i:integer;
 begin
 //проверка наличия в процессах демона pppd
  Shell('ps -u root | grep pppd | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmp_pppd');
- Shell('printf "none" >> /tmp/tmp_pppd');
  Form1.tmp_pppd.Clear;
  If FileExists('/tmp/tmp_pppd') then tmp_pppd.Lines.LoadFromFile('/tmp/tmp_pppd');
  Application.ProcessMessages;
- If LeftStr(tmp_pppd.Lines[0],4)='pppd' then
+ For i:=0 to tmp_pppd.Lines.Count-1 do
+ If (LeftStr(tmp_pppd.Lines[i],4)='pppd') then
                                         begin
                                              Shell('killall pppd');
                                              CountKillallpppd:=CountKillallpppd+1;
@@ -1010,7 +1062,7 @@ begin
   Shell ('resolvconf -u');
   Shell('rm -f /tmp/xl2tpd.conf');
   If CountKillallpppd=2 then If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
-  If debian then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+  If debian or suse then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;
 end;
 
@@ -1055,6 +1107,7 @@ begin
   If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+  If suse then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -1122,21 +1175,6 @@ begin
                 AProcess.Execute;
                 AProcess.Free;
              end;
-end;
-
-procedure TForm1.PopupMenu1Popup(Sender: TObject);
-begin
- If not YesConfig then
-                  begin
-                       MenuItem3.Enabled:=false;
-                       MenuItem4.Enabled:=false;
-                       exit;
-                  end;
- If YesConfig then
-                  begin
-                       MenuItem3.Enabled:=true;
-                       MenuItem4.Enabled:=true;
-                  end;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
@@ -1222,6 +1260,7 @@ begin
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                             begin //тест интернета
                                  if debian then sleep (30000);
+                                 if suse then sleep (20000);
                                  Shell('rm -f /tmp/networktest');
                                  Str:='ping -c1 yandex.ru|grep yandex.ru|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
                                  Application.ProcessMessages;
@@ -1312,7 +1351,6 @@ var
   Time:string;
   TV : timeval;
 begin
-  If not YesConfig then exit;
   SecondsPastRun:=0;
   fpGettimeofday(@TV,nil);
   DateStop:=TV.tv_sec;
@@ -1380,7 +1418,6 @@ begin
   TrayIcon1.Hint:=str;
   Application.ProcessMessages;
 end;
-
 
 initialization
   {$I unit1.lrs}
