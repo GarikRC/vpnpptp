@@ -1,0 +1,26 @@
+Establishing a VPN PPTP/L2TP is complete!
+
+You can connect to the Internet:
+1) Using the shortcut on the Desktop;
+2) Start Menu-> Internet-> ponoff (Manage connection VPN PPTP/L2TP) or Menu-> Utilities-> System-> ponoff (Manage connection VPN PPTP/L2TP);
+3) After completing an administrator under the command ponoff;
+This configuration can also be called by root of command vpnpptp or from the Menu-> Internet-> vpnpptp (Setting up connection VPN PPTP/L2TP) or from Menu-> Utilities-> System-> vpnpptp (Setting up connection VPN PPTP/L2TP);
+4) Holds under root of the command /usr/sbin/pppd call connection_name (in this case, the VPN will work without a GUI).
+
+If the connection is properly configured - run this configuration again. Make sure the data.
+If you do not see the shortcut icon on the Desktop, then refresh the desktop (F5).
+
+Manage connections to the Internet you can use the icon in the system tray by clicking the right mouse button.
+Proposed 2 options out of the program:
+1) to return to the state, which was originally to run the VPN, you can only if there are no accidents on the line;
+2) if the accident on the line, you should just quit and stay in the current network status.
+The connection is automatically installed during the time of dialing. If it is during this time is not established, then made a second attempt to establish a connection during the time of dial-up etc. The program can automatically restore the connection in case of accidents, but also temporarily switch to other network interfaces in the accident.
+If the connection is established, but the Internet does not work, check your firewall (or disable it altogether).
+
+The comments and ideas on the program contact: loginov_alex@inbox.ru
+
+Links:
+http://code.google.com/p/vpnpptp/ - project home page.
+http://unixforum.org/index.php?showtopic=89669 - forum.
+http://linuxforum.ru/viewtopic.php?id=147 - forum.
+http://forum.edumandriva.ru/forum/viewtopic.php?f=25&t=26&start=0 - forum.
