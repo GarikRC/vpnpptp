@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 691
+  Left = 609
   Height = 153
-  Top = 188
+  Top = 92
   Width = 533
   ActiveControl = Memo_Config
   BorderIcons = [biSystemMenu]
@@ -2379,7 +2379,6 @@ object Form1: TForm1
     top = 8
   end
   object PopupMenu1: TPopupMenu
-    OnPopup = PopupMenu1Popup
     left = 32
     top = 56
     object MenuItem5: TMenuItem

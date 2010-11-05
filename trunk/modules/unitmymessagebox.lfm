@@ -93,8 +93,8 @@ object Form3: TForm3
       AnchorSideBottom.Control = Owner
       AnchorSideBottom.Side = asrBottom
       Left = 137
-      Height = 27
-      Top = 114
+      Height = 38
+      Top = 103
       Width = 80
       Anchors = [akLeft, akBottom]
       BorderSpacing.Bottom = 10
