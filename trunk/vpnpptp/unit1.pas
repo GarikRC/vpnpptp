@@ -191,14 +191,16 @@ type
     { private declarations }
   public
     { public declarations }
-  end;
-
-
-  TMyHintWindow = class(THintWindow)
-    constructor Create(AOwner: TComponent); override;
+    procedure ApplicationHint(var HintStr: String; var CanShow: Boolean; var HintInfo: THintInfo);
   end;
 
     { TTranslator }
+
+  TMyHintWindow = class(THintWindow)
+  public
+    procedure ActivateHint(Rect: TRect; const AHint: string); override;
+  end;
+
 TTranslator = class(TAbstractTranslator)
 private
   FFormClassName : String;
@@ -397,14 +399,11 @@ implementation
 uses
 LCLProc;
 
-constructor TMyHintWindow.Create(AOwner: TComponent);
+procedure TMyHintWindow.ActivateHint(Rect: TRect; const AHint: string);
 begin
-  inherited Create(AOwner);
-  with Canvas.Font do
-  begin
-    Size := AFont;
-    Color:=clBlack;
-  end;
+  Canvas.Font.Size:=AFont;
+  Canvas.Font.Color := clBlack;
+  inherited;
 end;
 
 { TTranslator }
@@ -3357,6 +3356,12 @@ begin
    AFont:=Form1.Font.Size;
    Form1.Repaint;
    Application.ProcessMessages;
+end;
+
+procedure TForm1.ApplicationHint(var HintStr: String;
+  var CanShow: Boolean; var HintInfo: THintInfo);
+begin
+  HintInfo.HintWindowClass := TMyHintWindow;
 end;
 
 initialization
