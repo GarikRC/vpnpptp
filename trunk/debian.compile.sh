@@ -78,9 +78,7 @@ cd ..
 cp -f ./src/ponoff/ponoff ./opt/vpnpptp/ponoff
 cp -f ./src/vpnpptp/vpnpptp ./opt/vpnpptp/vpnpptp
 mkdir ./usr
-#mkdir ./usr/bin
 mkdir ./usr/share
-#mkdir ./usr/share/pixmaps
 mkdir ./usr/share/applications
 cp -f ./opt/vpnpptp/vpnpptp.desktop ./usr/share/applications
 cp -f ./opt/vpnpptp/ponoff.desktop ./usr/share/applications
@@ -88,3 +86,4 @@ rm -f ./opt/vpnpptp/vpnpptp.desktop
 rm -f ./opt/vpnpptp/ponoff.desktop
 rm -rf ./src
 rm -f ./debian.compile.sh
+rm -f ./ubuntu.compile.sh

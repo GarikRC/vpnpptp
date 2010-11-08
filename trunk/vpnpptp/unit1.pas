@@ -191,7 +191,6 @@ type
     { private declarations }
   public
     { public declarations }
-    procedure ApplicationHint(var HintStr: String; var CanShow: Boolean; var HintInfo: THintInfo);
   end;
 
     { TTranslator }
@@ -566,12 +565,15 @@ var mppe_string:string;
     endprint:boolean;
     N:byte;
     exit0find:boolean;
+    Children:boolean;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
+Children:=false;
 If Unit2.Form2.CheckBoxusepeerdns.Checked then If ((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') or (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) then
                                          begin //автоматическая поправка на детские DNS
                                             Form3.MyMessageBox(message0,message153,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                            Children:=true;
                                             Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
                                             Application.ProcessMessages;
                                          end;
@@ -858,6 +860,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
  Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont);
+ If Children then Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
  Shell('rm -f '+ Label_peername.Caption);
  Memo_peer.Clear;
  If ComboBoxVPN.Text<>'VPN L2TP' then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"') else
@@ -1100,6 +1103,9 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                 Memo_ip_down.Lines.Add('     rm -f /etc/resolv.conf.netconfig');
                 Memo_ip_down.Lines.Add('fi');
          end;
+ Memo_ip_down.Lines.Add('rm -f /tmp/DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
+ Memo_ip_down.Lines.Add('rm -f /tmp/ObnullRX');
+ Memo_ip_down.Lines.Add('rm -f /tmp/vpnpptp/ObnullTX');
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля
@@ -1207,10 +1213,12 @@ If FileExists ('/etc/sudoers') then If ((Sudo_ponoff.Checked) or (Sudo_configure
                                      readln(FileSudoers, str);
                                      If (Sudo_ponoff.Checked) or (Sudo_configure.Checked) then //очистка от старых записей
                                            begin
-                                             If ((str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff') and (str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp') and (RightStr(str,10)<>'!env_reset')) then
-                                             Memo_sudo.Lines.Add(str);
+                                             If ((str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff') and (str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp')) then
+                                             If (RightStr(str,10)<>'requiretty') then Memo_sudo.Lines.Add(str);
+                                             If (RightStr(str,10)='requiretty') then Memo_sudo.Lines.Add('# Defaults requiretty');
                                            end;
                                    end;
+                                 If not FileExists('/usr/bin/xsudo') then Memo_sudo.Lines.Add('Defaults env_keep += "DISPLAY XAUTHORITY XAUTHLOCALHOSTNAME"');
                                  If Sudo_ponoff.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff');
                                  If Sudo_configure.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp');
                                  closefile(FileSudoers);
@@ -1226,7 +1234,7 @@ If FileExists ('/etc/sudoers') then If (not(Sudo_ponoff.Checked) and (not Sudo_c
                                 While not eof (FileSudoers) do
                                    begin
                                      readln(FileSudoers, str);
-                                     If ((str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff') and (str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp') and (RightStr(str,10)<>'!env_reset')) then
+                                     If ((str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/ponoff') and (str<>'ALL ALL=NOPASSWD:/opt/vpnpptp/vpnpptp')) then
                                           Memo_sudo.Lines.Add(str);
                                    end;
                                  closefile(FileSudoers);
@@ -1242,7 +1250,7 @@ If Sudo_configure.Checked then If not FileExists('/usr/share/applications/vpnppt
                             Memonew1.Lines.Clear;
                             For i:=0 to Memo_vpnpptp_ponoff_desktop.Lines.Count-1 do
                               begin
-                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)='Exec=' then Memonew1.Lines.Add('Exec=sudo /opt/vpnpptp/vpnpptp');
+                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)='Exec=' then Memonew1.Lines.Add('Exec=xsudo /opt/vpnpptp/vpnpptp');
                                  If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)<>'Exec=' then
                                     If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-SubstituteUID=true' then
                                        If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-Username=root' then
@@ -1259,7 +1267,7 @@ If Sudo_ponoff.Checked then If not FileExists('/usr/share/applications/ponoff.de
                             Memonew2.Lines.Clear;
                             For i:=0 to Memo_vpnpptp_ponoff_desktop.Lines.Count-1 do
                               begin
-                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)='Exec=' then Memonew2.Lines.Add('Exec=sudo /opt/vpnpptp/ponoff');
+                                 If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)='Exec=' then Memonew2.Lines.Add('Exec=xsudo /opt/vpnpptp/ponoff');
                                  If LeftStr(Memo_vpnpptp_ponoff_desktop.Lines[i],5)<>'Exec=' then
                                     If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-SubstituteUID=true' then
                                        If Memo_vpnpptp_ponoff_desktop.Lines[i]<>'X-KDE-Username=root' then
@@ -1267,6 +1275,16 @@ If Sudo_ponoff.Checked then If not FileExists('/usr/share/applications/ponoff.de
                               end;
                             Memonew2.Lines.SaveToFile('/usr/share/applications/ponoff.desktop');
                         end;
+If FileExists ('/etc/sudoers') then If ((Sudo_ponoff.Checked) or (Sudo_configure.Checked)) then If not FileExists ('/usr/bin/xsudo') then
+                              begin // создание скрипта xsudo
+                                 Memo_sudo.Lines.Clear;
+                                 Memo_sudo.Lines.Add('#!/bin/bash');
+                                 Memo_sudo.Lines.Add('[ -n "$XAUTHORITY" ] || XAUTHORITY="$HOME/.Xauthority"');
+                                 Memo_sudo.Lines.Add('export XAUTHORITY');
+                                 Memo_sudo.Lines.Add('exec sudo "$@"');
+                                 Memo_sudo.Lines.SaveToFile('/usr/bin/xsudo');
+                                 Shell ('chmod a+x /usr/bin/xsudo');
+                              end;
 //настройка /etc/rc.d/rc.local
 If FileExists ('/etc/rc.d/rc.local') then If (Autostartpppd.Checked) then If not suse then
                               begin
@@ -1535,6 +1553,8 @@ If not flag then
                                                 Application.ProcessMessages;
                                          end;
      Shell('rm -f /tmp/networktest');
+//запоминаем текущий /etc/resolv.conf
+Shell ('cp -f /etc/resolv.conf /opt/vpnpptp/resolv.conf');
 //Создаем ярлык для подключения
  gksu:=false;
  link_on_desktop:=false;
@@ -1575,7 +1595,7 @@ begin
      end;
   If Sudo_ponoff.Checked then
      begin
-         Memo_create.Lines.Add('Exec=sudo /opt/vpnpptp/ponoff');
+         Memo_create.Lines.Add('Exec=xsudo /opt/vpnpptp/ponoff');
      end;
   Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP/L2TP');
   Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP/L2TP');
@@ -1609,7 +1629,7 @@ begin
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop');
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop'+'"');
        Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/Desktop/ponoff.desktop');
-       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
+       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/'+chr(39)+message7+chr(39)+'/ponoff.desktop');
        link_on_desktop:=true;
       end;
       i:=i+1;
@@ -1627,7 +1647,7 @@ begin
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop');
        If message7<>'Desktop' then if DirectoryExists('/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/') then Shell ('chmod a+x '+'"'+'/home/'+Memo_users.Lines[i]+'/'+'Desktop'+'/ponoff.desktop'+'"');
        Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/Desktop/ponoff.desktop');
-       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/'+message7+'/ponoff.desktop');
+       Shell ('chown '+Memo_users.Lines[i]+' /home/'+Memo_users.Lines[i]+'/'+chr(39)+message7+chr(39)+'/ponoff.desktop');
        link_on_desktop:=true;
       end;
       i:=i+1;
@@ -1708,6 +1728,7 @@ end;
  if not(FileExists('/bin/ip')) then Shell('ln -s /sbin/ip /bin/ip');
  Shell ('service syslog restart');
  Shell ('service rsyslog restart');
+ Shell('rm -f /etc/resolv.conf.old');
 end;
 
 procedure TForm1.ButtonVPNClick(Sender: TObject);
@@ -1860,7 +1881,6 @@ Edit_passwd.Enabled:=true;
 Edit_MaxTime.Enabled:=true;
 Edit_MinTime.Enabled:=true;
 ComboBoxVPN.Enabled:=true;
-ComboBoxDistr.Enabled:=true;
 Application.ProcessMessages;
 end;
 
@@ -2455,6 +2475,18 @@ if y then
                           Application.ProcessMessages;
                           exit;
                     end;
+//проверка поддержки mii-tool
+If not FileExists('/opt/vpnpptp/config') then
+                 begin
+                      Shell ('/sbin/mii-tool '+Edit_eth.Text+' >/tmp/mii');
+                      If FileSize('/tmp/mii')=0 then
+                              begin
+                                   StartMessage:=false;
+                                   Mii_tool_no.Checked:=true;
+                                   StartMessage:=true;
+                              end;
+                      Shell('rm -f /tmp/mii');
+                 end;
 //wlanN не поддерживается mii-tool
 If not FileExists('/opt/vpnpptp/config') then if LeftStr(Edit_eth.Text,4)='wlan' then
                                                                                  begin
@@ -3020,7 +3052,19 @@ If Screen.Height>1000 then
                              Button_more.BorderSpacing.Left:=350;
                              Memo_route.Width:=650;
                          end;
-  //обеспечение совместимости старого config с новым
+//проверка vpnpptp в процессах root, исключение запуска под иными пользователями
+   Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
+   Shell('printf "none" >> /tmp/tmpnostart');
+   Form1.tmpnostart.Clear;
+   If FileExists('/tmp/tmpnostart') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart');
+   If not (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') then
+                                                       begin
+                                                         Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                         Shell('rm -f /tmp/tmpnostart');
+                                                         Application.ProcessMessages;
+                                                         halt;
+                                                       end;
+//обеспечение совместимости старого config с новым
  If FileExists('/opt/vpnpptp/config') then
      begin
         Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
@@ -3119,6 +3163,15 @@ If Screen.Height>1000 then
   if ComboBoxDistr.Text<>message151 then ComboBoxDistr.Enabled:=false;
   If FileExists ('/opt/vpnpptp/route') then Memo_route.Lines.LoadFromFile('/opt/vpnpptp/route'); //восстановление маршрутов
   Form1.Font.Size:=AFont;
+//проверка vpnpptp в процессах root, исключение двойного запуска программы
+  If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then
+                                                                                                    begin
+                                                                                                      //двойной запуск
+                                                                                                      Form3.MyMessageBox(message0,message19,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                                                                      Shell('rm -f /tmp/tmpnostart');
+                                                                                                      Application.ProcessMessages;
+                                                                                                      halt;
+                                                                                                    end;
 //учитывание особенностей openSUSE
 If suse then
             begin
@@ -3141,7 +3194,7 @@ If suse then
   If FileExists ('/tmp/gate') then if FileSize('/tmp/gate')<>0 then
                                          begin
                                            Form3.MyMessageBox(message0,message105,'',message122,message125,'/opt/vpnpptp/vpnpptp.png',false,true,true,AFont,Form1.Icon);
-                                           if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; halt; end;
+                                           //if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; halt; end;
                                            Application.ProcessMessages;
                                            Shell ('killall ponoff');
                                            Shell('killall pppd');
@@ -3165,26 +3218,6 @@ If Stroowriter<> 'none' then If FileExists(Stroowriter) then If FallbackLang='ru
 If Stroowriter<> 'none' then If FileExists(Stroowriter) then If FallbackLang='uk' then If FileExists('/opt/vpnpptp/wiki/Help_uk.doc') then ButtonHelp.Enabled:=true;
 DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получаются автоматически пока не будет доказано обратного
 If not Translate then Label25.Caption:='              '+Label25.Caption;
-//проверка vpnpptp в процессах root, исключение двойного запуска программы, исключение запуска под иными пользователями
-   Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
-   Shell('printf "none" >> /tmp/tmpnostart');
-   Form1.tmpnostart.Clear;
-   If FileExists('/tmp/tmpnostart') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart');
-   If not (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') then
-                                                       begin
-                                                         Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                         Shell('rm -f /tmp/tmpnostart');
-                                                         Application.ProcessMessages;
-                                                         halt;
-                                                       end;
-   If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then
-                                                                                                    begin
-                                                                                                      //двойной запуск
-                                                                                                      Form3.MyMessageBox(message0,message19,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                                                                      Shell('rm -f /tmp/tmpnostart');
-                                                                                                      Application.ProcessMessages;
-                                                                                                      halt;
-                                                                                                    end;
 //проверка ponoff в процессах root
    Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
    Shell('printf "none" >> /tmp/tmpnostart');
@@ -3245,8 +3278,9 @@ DefaultError:=false;
   If Memo_gate.Lines[0]='none' then If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
   If Memo_gate.Lines[0]='none' then If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
   Shell ('rm -f /tmp/gate');
-  Memo_gate.Lines.Clear;
 //повторная проверка дефолтного шлюза
+  If Memo_gate.Lines[0]='none' then if mandriva then Sleep (3000);
+  Memo_gate.Lines.Clear;
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
   Shell('printf "none" >> /tmp/gate');
@@ -3356,12 +3390,6 @@ begin
    AFont:=Form1.Font.Size;
    Form1.Repaint;
    Application.ProcessMessages;
-end;
-
-procedure TForm1.ApplicationHint(var HintStr: String;
-  var CanShow: Boolean; var HintInfo: THintInfo);
-begin
-  HintInfo.HintWindowClass := TMyHintWindow;
 end;
 
 initialization
