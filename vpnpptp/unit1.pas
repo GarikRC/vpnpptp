@@ -63,6 +63,7 @@ type
     Label_mru: TLabel;
     Memo2: TMemo;
     MemoTest: TMemo;
+    nobuffer: TCheckBox;
     routeDNSauto: TCheckBox;
     EditDNSdop3: TEdit;
     EditDNS1: TEdit;
@@ -233,9 +234,10 @@ var
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
   DefaultError:boolean; //ошибка определения дефолтного шлюза
   PressCreate:boolean; //нажата ли кнопка Create, запущен процесс создания подключения
+  PingInternetStr:string; //адрес внешнего пингуемого сайта
 
 const
-  Config_n=44;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
@@ -376,7 +378,7 @@ resourcestring
   message136='Эта кнопка позволяет изменить предложенные по умолчанию или дополнить опции демона pppd';
   message137='Эта кнопка позволяет проверить правильно ли было настроено соединение';
   message138='Для VPN L2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
-  message139='В Вашем дистрибутиве выбрать эту опцию нельзя.';
+  message139='Иногда может помочь принудительный рестарт сети.';
   message140='В Вашем дистрибутиве не используется shorewall, поэтому его настройка не требуется.';
   message141='В Вашем дистрибутиве получение маршрутов через DHCP настроено по-умолчанию, или оно настраивается средствами Вашего дистрибутива.';
   message142='Нельзя отключить всплывающие сообщения и одновременно выводить через отключенные всплывающие сообщения результаты проверок.';
@@ -392,6 +394,9 @@ resourcestring
   message152='Выбор дистрибутива обязателен, но неправильный выбор опасен!';
   message153='Для того чтобы интернет был настроен для детей, опция usepeerdns была автоматически отключена.';
   message154='Если ввести 0, то реконнекта не будет.';
+  message155='Если у Вас низкоскоростное соединение, то отключите эту опцию.';
+  message156='Но ее отключение при средне- или высокоскоростном соединении замедлит интернет.';
+  message157='Эта опция используется только с VPN PPTP.';
 
 implementation
 
@@ -478,13 +483,7 @@ begin
  closefile(FileSyslog);
  Shell ('cp -f /tmp/log.conf.tmp '+log_str);
  Shell ('rm -f /tmp/log.conf.tmp');
- {If Form1.Pppd_log.Checked then If FileExists (log_str) then
-                          begin
-                              If Form1.ComboBoxVPN.Text='VPN PPTP' then Shell ('sed -i '+chr(39)+'$ a !pppd\n*.*\t\t\t\t\t\t/var/log/pppd.log'+chr(39)+' '+log_str);
-                              If Form1.ComboBoxVPN.Text='VPN L2TP' then Shell ('sed -i '+chr(39)+'$ a !xl2tpd\n*.*\t\t\t\t\t\t/var/log/xl2tpd.log'+chr(39)+' '+log_str);
-                          end;}
  Shell ('service syslog restart');
- //Shell ('service rsyslog restart');
 end;
 
 Function MakeHint(str:string;n:byte):string;
@@ -863,8 +862,12 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  If Children then Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
  Shell('rm -f '+ Label_peername.Caption);
  Memo_peer.Clear;
- If ComboBoxVPN.Text<>'VPN L2TP' then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"') else
-                                 Memo_peer.Lines.Add('#pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
+ If ComboBoxVPN.Text='VPN PPTP' then
+                                begin
+                                     if nobuffer.Checked then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
+                                     if not nobuffer.Checked then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd"');
+                                end;
+ If ComboBoxVPN.Text='VPN L2TP' then Memo_peer.Lines.Add('#pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
  Memo_peer.Lines.Add('remotename '+Edit_peer.Text);
  Memo_peer.Lines.Add('user "'+Edit_user.Text+'"');
  Memo_peer.Lines.Add('password "'+Edit_passwd.Text+'"');
@@ -1034,6 +1037,13 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
  Shell('chmod a+x '+ Label_ip_up.Caption);
+//поправка на debian
+If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
+                                                       begin
+                                                            Shell ('cp -f /etc/ppp/ip-up.d/exim4 /opt/vpnpptp/scripts');
+                                                            Shell ('rm -f /etc/ppp/ip-up.d/exim4');
+                                                            Shell ('printf "Program vpnpptp moved script exim4 in directory /opt/vpnpptp/scripts\n" > /etc/ppp/ip-up.d/exim4.move');
+                                                       end;
 //перезаписываем скрипт опускания соединения ip-down
  Shell('rm -f '+ Label_ip_down.Caption);
  Memo_ip_down.Clear;
@@ -1105,7 +1115,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
          end;
  Memo_ip_down.Lines.Add('rm -f /tmp/DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
  Memo_ip_down.Lines.Add('rm -f /tmp/ObnullRX');
- Memo_ip_down.Lines.Add('rm -f /tmp/vpnpptp/ObnullTX');
+ Memo_ip_down.Lines.Add('rm -f /tmp/ObnullTX');
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля
@@ -1190,6 +1200,9 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  If ComboBoxDistr.Text='Debian' then Shell('printf "debian\n" >> /opt/vpnpptp/config');
  If ComboBoxDistr.Text='openSUSE' then Shell('printf "suse\n" >> /opt/vpnpptp/config');
  If ComboBoxDistr.Text=message150 then Shell('printf "mandriva\n" >> /opt/vpnpptp/config');
+ Shell('printf "'+PingInternetStr+'\n" >> /opt/vpnpptp/config');
+ If nobuffer.Checked then Shell('printf "nobuffer-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "nobuffer-no\n" >> /opt/vpnpptp/config');
  Shell ('chmod 600 /opt/vpnpptp/config');
 //настройка sudoers
 If FileExists('/usr/share/applications/ponoff.desktop.old') then //восстанавливаем ярлык запуска ponoff
@@ -1449,7 +1462,6 @@ If FileExists('/etc/ppp/chap-secrets.old') then
                                   end;
  //настройка ведения логов для совместимости с предыдущими версиями
  Create_log ('/etc/syslog.conf');
- //Create_log ('/etc/rsyslog.conf');
  //настройка /etc/ppp/options
  if not FileExists('/etc/ppp/options.old') then Shell('cp -f /etc/ppp/options /etc/ppp/options.old');
  Shell('echo "#Clear config file" > /etc/ppp/options');
@@ -1857,15 +1869,6 @@ If suse then
         end;
     If FileExists ('/sbin/ifup') then Shell ('ifup lo');
     If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
-If suse then  //повтор
-            begin
-                Shell ('netconfig update -f');
-                If FileExists ('/etc/resolv.conf.netconfig') then
-                              begin
-                                 Shell ('cp -f /etc/resolv.conf.netconfig /etc/resolv.conf');
-                                 Shell ('rm -f /etc/resolv.conf.netconfig');
-                              end;
-            end;
 ButtonRestart.Caption:=message93;
 Button_exit.Enabled:=true;
 Button_next1.Enabled:=true;
@@ -1984,14 +1987,13 @@ begin
                        end;
    If StartMessage then If Autostart_ponoff.Checked then If not Sudo_ponoff.Checked then
                        begin
-                          If not suse then Form3.MyMessageBox(message0,message59,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          If suse then Form3.MyMessageBox(message0,message59+' '+message139,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message59,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Sudo_ponoff.Checked:=true;
                           StartMessage:=true;
                           Application.ProcessMessages;
                        end;
-   If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then If not suse then
+   If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
                        begin
                           Form3.MyMessageBox(message0,message63,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
@@ -1999,7 +2001,6 @@ begin
                           StartMessage:=true;
                           Application.ProcessMessages;
                        end;
-   If suse then Autostart_ponoff.Checked:=false;
 end;
 
 procedure TForm1.balloonChange(Sender: TObject);
@@ -2420,14 +2421,6 @@ If not y then IPS:=true else IPS:=false;
                      dhcp_route.Checked:=false;
                      StartMessage:=true;
                 end;
-  If suse then If not FileExists('/opt/vpnpptp/config') then
-                begin
-                     StartMessage:=false;
-                     Sudo_ponoff.Checked:=false;
-                     Sudo_configure.Checked:=false;
-                     Autostart_ponoff.Checked:=false;
-                     StartMessage:=true;
-                end;
   Application.ProcessMessages;
 end;
 
@@ -2711,6 +2704,8 @@ end;
 Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont);
 If ComboBoxVPN.Text='VPN L2TP' then
                                begin
+                                   nobuffer.Enabled:=false;
+                                   nobuffer.Checked:=true;
                                    If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1460) then
                                       begin
                                         Form3.MyMessageBox(message0,message101+' '+message102+' '+message120,'',message122,message125,'/opt/vpnpptp/vpnpptp.png',false,true,true,AFont,Form1.Icon);
@@ -2898,6 +2893,7 @@ Autostart_ponoff.Hint:=MakeHint(message21,6);
 Autostartpppd.Hint:=MakeHint(message62,6);
 pppnotdefault.Hint:=MakeHint(message64,6);
 Memo_create.Hint:=MakeHint(message127,5);
+nobuffer.Hint:=MakeHint(message155+' '+message156+' '+message157,6);
 Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
@@ -2919,7 +2915,6 @@ ButtonHelp.Enabled:=false;
    Form1.Height:=600;
    Form1.Width:=794;
    PageControl1.Top:=-31;
-   if suse then PageControl1.Top:=-40;
    Form1.Position:=poDefault;
    Form1.Top:=0;
    Form1.Left:=0;
@@ -3138,6 +3133,9 @@ If Screen.Height>1000 then
                                                 If suse then ComboBoxDistr.Text:='openSUSE';
                                                 If mandriva then ComboBoxDistr.Text:=message150;
                                              end;
+        PingInternetStr:=Memo_config.Lines[44];
+        If (PingInternetStr='') or (PingInternetStr='none') then PingInternetStr:='yandex.ru';
+        If Memo_config.Lines[45]='nobuffer-no' then nobuffer.Checked:=false else nobuffer.Checked:=true;
         If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
@@ -3182,19 +3180,13 @@ If suse then
                                            Shell('rm -f /tmp/gate');
                                            halt;
                                          end;
-                Shell ('netconfig update -f');
-                If FileExists ('/etc/resolv.conf.netconfig') then
-                              begin
-                                 Shell ('cp -f /etc/resolv.conf.netconfig /etc/resolv.conf');
-                                 Shell ('rm -f /etc/resolv.conf.netconfig');
-                              end;
             end;
 //определяем произошел ли запуск при поднятом pppN
   Shell('/sbin/ip r|grep ppp > /tmp/gate');
   If FileExists ('/tmp/gate') then if FileSize('/tmp/gate')<>0 then
                                          begin
                                            Form3.MyMessageBox(message0,message105,'',message122,message125,'/opt/vpnpptp/vpnpptp.png',false,true,true,AFont,Form1.Icon);
-                                           //if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; halt; end;
+                                           if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; halt; end;
                                            Application.ProcessMessages;
                                            Shell ('killall ponoff');
                                            Shell('killall pppd');
@@ -3288,7 +3280,7 @@ DefaultError:=false;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then
                                    begin
-                                        Form3.MyMessageBox(message0,message144+' '+message145,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Shell ('rm -f /tmp/gate');
                                         Application.ProcessMessages;
                                         DefaultError:=true;
@@ -3310,6 +3302,7 @@ begin
                                                                       Form3.MyMessageBox(message0,message106+' '+message146,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                                       Reconnect_pptp.Checked:=false;
                                                                       Application.ProcessMessages;
+                                                                      Shell ('rm -f /tmp/ver_xl2tpd');
                                                                       exit;
                                                                  end;
                                  Shell ('rm -f /tmp/ver_xl2tpd');
@@ -3318,18 +3311,9 @@ end;
 
 procedure TForm1.Sudo_configureChange(Sender: TObject);
 begin
-If StartMessage then If suse then
-                        begin
-                          Form3.MyMessageBox(message0,message139+' '+message147,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          StartMessage:=false;
-                          Sudo_configure.Checked:=false;
-                          StartMessage:=true;
-                          Application.ProcessMessages;
-                          exit;
-                        end;
-//проверка установлен ли пакет Sudo
-If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-If StartMessage then If Sudo_configure.Checked then If not Sudo then
+   //проверка установлен ли пакет Sudo
+   If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
+   If StartMessage then If Sudo_configure.Checked then If not Sudo then
                        begin
                           Form3.MyMessageBox(message0,message6,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
@@ -3342,16 +3326,6 @@ end;
 
 procedure TForm1.Sudo_ponoffChange(Sender: TObject);
 begin
-   If StartMessage then If suse then
-                        begin
-                          Form3.MyMessageBox(message0,message139+' '+message147,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                          StartMessage:=false;
-                          Sudo_ponoff.Checked:=false;
-                          StartMessage:=true;
-                          Application.ProcessMessages;
-                          exit;
-                        end;
-   If suse then Sudo_ponoff.Checked:=false;
    //проверка установлен ли пакет Sudo
    If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
