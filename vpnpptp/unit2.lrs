@@ -1,7 +1,7 @@
 { Это - файл ресурсов, автоматически созданный lazarus }
 
 LazarusResources.Add('TForm2','FORMDATA',[
-  'TPF0'#6'TForm2'#5'Form2'#4'Left'#3#22#3#6'Height'#3'3'#1#3'Top'#3#239#1#5'Wi'
+  'TPF0'#6'TForm2'#5'Form2'#4'Left'#3#177#1#6'Height'#3'3'#1#3'Top'#3'N'#1#5'Wi'
   +'dth'#3#201#1#13'ActiveControl'#7#12'CheckBoxlock'#11'BorderIcons'#11#12'biS'
   +'ystemMenu'#10'biMaximize'#0#7'Caption'#6#28#208#158#208#191#209#134#208#184
   +#208#184' '#208#180#208#181#208#188#208#190#208#189#208#176' pppd'#12'Client'
@@ -2881,47 +2881,47 @@ LazarusResources.Add('TForm2','FORMDATA',[
   +'ner'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#3#176#0#6'Height'#2#26
   +#3'Top'#3#20#1#5'Width'#2'g'#7'Anchors'#11#7'akRight'#8'akBottom'#0#20'Borde'
   +'rSpacing.Bottom'#2#5#7'Caption'#6#2'OK'#7'OnClick'#7#12'Button1Click'#8'Tab'
-  ,'Order'#2#0#0#0#9'TCheckBox'#12'CheckBoxlock'#4'Left'#2#8#6'Height'#2#21#3'T'
+  ,'Order'#2#0#0#0#9'TCheckBox'#12'CheckBoxlock'#4'Left'#2#8#6'Height'#2#22#3'T'
   +'op'#2#8#5'Width'#2'1'#7'Caption'#6#4'lock'#8'TabOrder'#2#1#0#0#9'TCheckBox'
-  +#18'CheckBoxusepeerdns'#4'Left'#2#8#6'Height'#2#21#3'Top'#2' '#5'Width'#2'e'
+  +#18'CheckBoxusepeerdns'#4'Left'#2#8#6'Height'#2#22#3'Top'#2' '#5'Width'#2'c'
   +#7'Caption'#6#10'usepeerdns'#8'TabOrder'#2#2#0#0#9'TCheckBox'#17'CheckBoxnod'
-  +'eflate'#4'Left'#2#8#6'Height'#2#21#3'Top'#2'8'#5'Width'#2'Y'#7'Caption'#6#9
+  +'eflate'#4'Left'#2#8#6'Height'#2#22#3'Top'#2'8'#5'Width'#2'T'#7'Caption'#6#9
   +'nodeflate'#8'TabOrder'#2#3#0#0#9'TCheckBox'#17'CheckBoxnobsdcomp'#4'Left'#2
-  +#8#6'Height'#2#21#3'Top'#2'P'#5'Width'#2'c'#7'Caption'#6#9'nobsdcomp'#8'TabO'
-  +'rder'#2#4#0#0#9'TCheckBox'#14'CheckBoxnoauth'#4'Left'#2#8#6'Height'#2#21#3
-  +'Top'#2'h'#5'Width'#2'F'#7'Caption'#6#6'noauth'#8'TabOrder'#2#5#0#0#9'TCheck'
-  +'Box'#19'CheckBoxnoipdefault'#4'Left'#3#24#1#6'Height'#2#21#3'Top'#2'h'#5'Wi'
-  +'dth'#2'b'#7'Caption'#6#11'noipdefault'#8'TabOrder'#2#21#0#0#9'TCheckBox'#14
-  +'CheckBoxnomppe'#4'Left'#2#8#6'Height'#2#21#3'Top'#3#152#0#5'Width'#2'M'#7'C'
+  +#8#6'Height'#2#22#3'Top'#2'P'#5'Width'#2'c'#7'Caption'#6#9'nobsdcomp'#8'TabO'
+  +'rder'#2#4#0#0#9'TCheckBox'#14'CheckBoxnoauth'#4'Left'#2#8#6'Height'#2#22#3
+  +'Top'#2'h'#5'Width'#2'E'#7'Caption'#6#6'noauth'#8'TabOrder'#2#5#0#0#9'TCheck'
+  +'Box'#19'CheckBoxnoipdefault'#4'Left'#3#24#1#6'Height'#2#22#3'Top'#2'h'#5'Wi'
+  +'dth'#2'_'#7'Caption'#6#11'noipdefault'#8'TabOrder'#2#21#0#0#9'TCheckBox'#14
+  +'CheckBoxnomppe'#4'Left'#2#8#6'Height'#2#22#3'Top'#3#152#0#5'Width'#2'M'#7'C'
   +'aption'#6#6'nomppe'#8'TabOrder'#2#7#0#0#9'TCheckBox'#14'CheckBoxnomppc'#4'L'
-  +'eft'#3#24#1#6'Height'#2#21#3'Top'#2'8'#5'Width'#2'L'#7'Caption'#6#6'nomppc'
+  +'eft'#3#24#1#6'Height'#2#22#3'Top'#2'8'#5'Width'#2'L'#7'Caption'#6#6'nomppc'
   +#8'TabOrder'#2#19#0#0#9'TCheckBox'#20'CheckBoxdefaultroute'#4'Left'#2#8#6'He'
-  +'ight'#2#21#3'Top'#3#176#0#5'Width'#2'l'#7'Caption'#6#12'defaultroute'#8'Tab'
-  +'Order'#2#8#0#0#9'TCheckBox'#15'CheckBoxnopcomp'#4'Left'#2'x'#6'Height'#2#21
+  +'ight'#2#22#3'Top'#3#176#0#5'Width'#2'f'#7'Caption'#6#12'defaultroute'#8'Tab'
+  +'Order'#2#8#0#0#9'TCheckBox'#15'CheckBoxnopcomp'#4'Left'#2'x'#6'Height'#2#22
   +#3'Top'#2#8#5'Width'#2'T'#7'Caption'#6#7'nopcomp'#8'TabOrder'#2#9#0#0#9'TChe'
-  +'ckBox'#13'CheckBoxnoccp'#4'Left'#2'x'#6'Height'#2#21#3'Top'#2' '#5'Width'#2
-  +'?'#7'Caption'#6#5'noccp'#8'TabOrder'#2#10#0#0#9'TCheckBox'#12'CheckBoxnovj'
-  +#4'Left'#2'x'#6'Height'#2#21#3'Top'#2'8'#5'Width'#2'3'#7'Caption'#6#4'novj'#8
+  +'ckBox'#13'CheckBoxnoccp'#4'Left'#2'x'#6'Height'#2#22#3'Top'#2' '#5'Width'#2
+  +'>'#7'Caption'#6#5'noccp'#8'TabOrder'#2#10#0#0#9'TCheckBox'#12'CheckBoxnovj'
+  +#4'Left'#2'x'#6'Height'#2#22#3'Top'#2'8'#5'Width'#2'2'#7'Caption'#6#4'novj'#8
   +'TabOrder'#2#11#0#0#9'TCheckBox'#17'CheckBoxnovjccomp'#4'Left'#2'x'#6'Height'
-  +#2#21#3'Top'#2'P'#5'Width'#2'`'#7'Caption'#6#9'novjccomp'#8'TabOrder'#2#12#0
-  +#0#9'TCheckBox'#16'CheckBoxnoaccomp'#4'Left'#2'x'#6'Height'#2#21#3'Top'#2'h'
-  +#5'Width'#2'\'#7'Caption'#6#8'noaccomp'#8'TabOrder'#2#13#0#0#9'TCheckBox'#14
-  +'CheckBoxnoipv6'#4'Left'#2'x'#6'Height'#2#21#3'Top'#3#128#0#5'Width'#2'B'#7
+  +#2#22#3'Top'#2'P'#5'Width'#2']'#7'Caption'#6#9'novjccomp'#8'TabOrder'#2#12#0
+  +#0#9'TCheckBox'#16'CheckBoxnoaccomp'#4'Left'#2'x'#6'Height'#2#22#3'Top'#2'h'
+  +#5'Width'#2'['#7'Caption'#6#8'noaccomp'#8'TabOrder'#2#13#0#0#9'TCheckBox'#14
+  +'CheckBoxnoipv6'#4'Left'#2'x'#6'Height'#2#22#3'Top'#3#128#0#5'Width'#2'B'#7
   +'Caption'#6#6'noipv6'#8'TabOrder'#2#14#0#0#9'TCheckBox'#18'CheckBoxreceiveal'
-  +'l'#4'Left'#3#24#1#6'Height'#2#21#3'Top'#3#128#0#5'Width'#2'^'#7'Caption'#6
+  +'l'#4'Left'#3#24#1#6'Height'#2#22#3'Top'#3#128#0#5'Width'#2'Y'#7'Caption'#6
   +#11'receive-all'#8'TabOrder'#2#22#0#0#9'TCheckBox'#16'CheckBoxnodetach'#4'Le'
-  +'ft'#3#24#1#6'Height'#2#21#3'Top'#2'P'#5'Width'#2'W'#7'Caption'#6#8'nodetach'
+  +'ft'#3#24#1#6'Height'#2#22#3'Top'#2'P'#5'Width'#2'T'#7'Caption'#6#8'nodetach'
   +#8'TabOrder'#2#20#0#0#9'TCheckBox'#27'CheckBoxreplacedefaultroute'#4'Left'#2
-  +'x'#6'Height'#2#21#3'Top'#3#176#0#5'Width'#3#158#0#7'Caption'#6#19'replacede'
+  +'x'#6'Height'#2#22#3'Top'#3#176#0#5'Width'#3#149#0#7'Caption'#6#19'replacede'
   +'faultroute'#8'TabOrder'#2#16#0#0#9'TCheckBox'#12'CheckBoxauth'#19'AnchorSid'
-  +'eLeft.Side'#7#9'asrBottom'#4'Left'#3#24#1#6'Height'#2#21#3'Top'#2#8#5'Width'
-  +#2'6'#7'Caption'#6#4'auth'#8'TabOrder'#2#17#0#0#9'TCheckBox'#15'CheckBoxpass'
-  +'ive'#4'Left'#3#24#1#6'Height'#2#21#3'Top'#2' '#5'Width'#2'I'#7'Caption'#6#7
+  +'eLeft.Side'#7#9'asrBottom'#4'Left'#3#24#1#6'Height'#2#22#3'Top'#2#8#5'Width'
+  +#2'5'#7'Caption'#6#4'auth'#8'TabOrder'#2#17#0#0#9'TCheckBox'#15'CheckBoxpass'
+  +'ive'#4'Left'#3#24#1#6'Height'#2#22#3'Top'#2' '#5'Width'#2'H'#7'Caption'#6#7
   +'passive'#8'TabOrder'#2#18#0#0#9'TCheckBox'#15'CheckBoxpersist'#4'Left'#2#9#6
-  +'Height'#2#21#3'Top'#3#128#0#5'Width'#2'E'#7'Caption'#6#7'persist'#8'TabOrde'
+  +'Height'#2#22#3'Top'#3#128#0#5'Width'#2'C'#7'Caption'#6#7'persist'#8'TabOrde'
   +'r'#2#6#0#0#9'TCheckBox'#22'CheckBoxnodefaultroute'#4'Left'#2'x'#6'Height'#2
-  +#21#3'Top'#3#152#0#5'Width'#2'|'#7'Caption'#6#14'nodefaultroute'#8'TabOrder'
-  +#2#15#0#0#9'TCheckBox'#18'CheckBoxdefaultmru'#4'Left'#3#24#1#6'Height'#2#21#3
-  +'Top'#3#152#0#5'Width'#2'g'#7'Caption'#6#11'default-mru'#8'TabOrder'#2#23#0#0
+  +#22#3'Top'#3#152#0#5'Width'#2'v'#7'Caption'#6#14'nodefaultroute'#8'TabOrder'
+  +#2#15#0#0#9'TCheckBox'#18'CheckBoxdefaultmru'#4'Left'#3#24#1#6'Height'#2#22#3
+  +'Top'#3#152#0#5'Width'#2'c'#7'Caption'#6#11'default-mru'#8'TabOrder'#2#23#0#0
   +#0
 ]);

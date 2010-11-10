@@ -47,8 +47,8 @@
         <ComponentName Value="Form3"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UnitMyMessageBox"/>
-        <CursorPos X="44" Y="72"/>
-        <TopLine Value="41"/>
+        <CursorPos X="27" Y="12"/>
+        <TopLine Value="1"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>

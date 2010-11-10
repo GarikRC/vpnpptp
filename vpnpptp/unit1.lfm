@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 464
-  Height = 575
-  Top = 71
-  Width = 793
+  Left = 433
+  Height = 580
+  Top = 367
+  Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
   VertScrollBar.Page = 540
@@ -10,8 +10,8 @@ object Form1: TForm1
   ActiveControl = PageControl1
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Настройка VPN PPTP'
-  ClientHeight = 575
-  ClientWidth = 793
+  ClientHeight = 580
+  ClientWidth = 816
   Font.Height = -10
   Font.Name = 'Sans'
   Icon.Data = {
@@ -2145,11 +2145,11 @@ object Form1: TForm1
     Left = 0
     Height = 536
     Top = 0
-    Width = 793
-    ActivePage = TabSheet1
+    Width = 816
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -2157,7 +2157,7 @@ object Form1: TForm1
       AnchorSideBottom.Side = asrBottom
       Caption = 'Этап 1'
       ClientHeight = 509
-      ClientWidth = 791
+      ClientWidth = 814
       OnMouseDown = TabSheet1MouseDown
       object Label_IPS: TLabel
         AnchorSideLeft.Control = Label40
@@ -2166,10 +2166,10 @@ object Form1: TForm1
         AnchorSideRight.Control = Edit_IPS
         AnchorSideBottom.Control = Edit_IPS
         AnchorSideBottom.Side = asrBottom
-        Left = 14
+        Left = 19
         Height = 14
-        Top = 38
-        Width = 135
+        Top = 39
+        Width = 143
         Anchors = [akTop, akRight]
         Caption = 'Провайдер (IP или имя):'
         ParentColor = False
@@ -2184,10 +2184,10 @@ object Form1: TForm1
         AnchorSideRight.Control = Edit_user
         AnchorSideBottom.Control = Edit_user
         AnchorSideBottom.Side = asrBottom
-        Left = 64
+        Left = 73
         Height = 14
-        Top = 140
-        Width = 85
+        Top = 145
+        Width = 89
         Anchors = [akTop, akRight]
         Caption = 'Пользователь:'
         ParentColor = False
@@ -2200,10 +2200,10 @@ object Form1: TForm1
         AnchorSideRight.Control = Edit_passwd
         AnchorSideBottom.Control = Edit_passwd
         AnchorSideBottom.Side = asrBottom
-        Left = 103
+        Left = 114
         Height = 14
-        Top = 191
-        Width = 46
+        Top = 198
+        Width = 48
         Anchors = [akTop, akRight]
         Caption = 'Пароль:'
         ParentColor = False
@@ -2216,10 +2216,10 @@ object Form1: TForm1
         AnchorSideRight.Control = Edit_peer
         AnchorSideBottom.Control = Edit_peer
         AnchorSideBottom.Side = asrBottom
-        Left = 53
+        Left = 60
         Height = 14
-        Top = 89
-        Width = 96
+        Top = 92
+        Width = 102
         Anchors = [akTop, akRight]
         Caption = 'Имя соединения:'
         ParentColor = False
@@ -2230,10 +2230,10 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = TabSheet1
         AnchorSideBottom.Control = Edit_IPS
-        Left = 157
+        Left = 170
         Height = 14
         Top = 13
-        Width = 369
+        Width = 398
         BorderSpacing.Top = 5
         BorderSpacing.Around = 8
         Caption = 'I) Введите адрес VPN-сервера... (например, vpn.internet.beeline.ru)'
@@ -2246,10 +2246,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_IPS
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Edit_peer
-        Left = 157
+        Left = 170
         Height = 14
-        Top = 64
-        Width = 343
+        Top = 66
+        Width = 370
         BorderSpacing.Around = 8
         Caption = 'II) Введите любое название соединения... (например, beeline)'
         ParentColor = False
@@ -2261,10 +2261,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_peer
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Edit_user
-        Left = 157
+        Left = 170
         Height = 14
-        Top = 115
-        Width = 135
+        Top = 119
+        Width = 149
         BorderSpacing.Around = 8
         Caption = 'III) Введите Ваш логин...'
         ParentColor = False
@@ -2276,10 +2276,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_user
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Edit_passwd
-        Left = 157
+        Left = 170
         Height = 14
-        Top = 166
-        Width = 144
+        Top = 172
+        Width = 158
         BorderSpacing.Around = 8
         Caption = 'IV) Введите Ваш пароль...'
         ParentColor = False
@@ -2291,8 +2291,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label8
         Left = 7
         Height = 14
-        Top = 340
-        Width = 75
+        Top = 351
+        Width = 77
         BorderSpacing.Top = 10
         BorderSpacing.Around = 8
         Caption = 'Примечания:'
@@ -2305,8 +2305,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label11
         Left = 7
         Height = 14
-        Top = 384
-        Width = 524
+        Top = 395
+        Width = 561
         BorderSpacing.Around = 8
         Caption = '- имя соединения может содержать только латинские буквы и цифры и начинаться с буквы'
         ParentColor = False
@@ -2318,8 +2318,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label7
         Left = 7
         Height = 14
-        Top = 362
-        Width = 351
+        Top = 373
+        Width = 372
         BorderSpacing.Around = 8
         Caption = '- адрес VPN-сервера, логин и пароль уточняйте у провайдера'
         ParentColor = False
@@ -2331,8 +2331,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label37
         Left = 7
         Height = 14
-        Top = 406
-        Width = 414
+        Top = 417
+        Width = 442
         BorderSpacing.Around = 8
         Caption = '- указывайте IP VPN-сервера, тогда соединение может стать стабильнее'
         ParentColor = False
@@ -2345,10 +2345,10 @@ object Form1: TForm1
         AnchorSideRight.Control = Edit_MaxTime
         AnchorSideBottom.Control = Edit_MaxTime
         AnchorSideBottom.Side = asrBottom
-        Left = 29
+        Left = 31
         Height = 14
-        Top = 242
-        Width = 120
+        Top = 251
+        Width = 131
         Anchors = [akTop, akRight]
         Caption = 'Время дозвона (сек.):'
         ParentColor = False
@@ -2360,10 +2360,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_passwd
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Edit_MaxTime
-        Left = 157
+        Left = 170
         Height = 14
-        Top = 217
-        Width = 426
+        Top = 225
+        Width = 456
         BorderSpacing.Around = 8
         Caption = 'V) Введите максимальное время ожидания ответа провайдера на звонок...'
         ParentColor = False
@@ -2375,8 +2375,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label39
         Left = 7
         Height = 14
-        Top = 428
-        Width = 612
+        Top = 439
+        Width = 650
         BorderSpacing.Around = 8
         Caption = '- по истечении максимального времени ожидания ответа провайдера на звонок звонок повторяется вновь'
         ParentColor = False
@@ -2388,10 +2388,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_MaxTime
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Edit_MinTime
-        Left = 157
+        Left = 170
         Height = 14
-        Top = 268
-        Width = 525
+        Top = 278
+        Width = 563
         BorderSpacing.Around = 8
         Caption = 'VI) Введите интервал времени для проверки состояния VPN-соединения и сет. интерфейса...'
         ParentColor = False
@@ -2403,8 +2403,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label41
         Left = 7
         Height = 14
-        Top = 450
-        Width = 363
+        Top = 461
+        Width = 390
         BorderSpacing.Around = 8
         Caption = '- чем меньше время реконнекта, тем выше нагрузка на систему'
         ParentColor = False
@@ -2419,8 +2419,8 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 10
         Height = 14
-        Top = 293
-        Width = 139
+        Top = 304
+        Width = 152
         BorderSpacing.Left = 10
         BorderSpacing.Bottom = 15
         Caption = 'Время реконнекта (сек.):'
@@ -2434,8 +2434,8 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 7
         Height = 14
-        Top = 472
-        Width = 636
+        Top = 483
+        Width = 675
         BorderSpacing.Around = 8
         Caption = '- по умолчанию предлагаются оптимальные для большинства провайдеров время дозвона и время реконнекта'
         ParentColor = False
@@ -2447,8 +2447,8 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 7
         Height = 14
-        Top = 308
-        Width = 28
+        Top = 319
+        Width = 37
         BorderSpacing.Top = 15
         Caption = '         '
         ParentColor = False
@@ -2459,10 +2459,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Label1
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Label2
-        Left = 157
-        Height = 21
+        Left = 170
+        Height = 23
         Top = 35
-        Width = 283
+        Width = 293
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 100
@@ -2476,10 +2476,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Label2
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Label3
-        Left = 157
-        Height = 21
-        Top = 86
-        Width = 283
+        Left = 170
+        Height = 23
+        Top = 88
+        Width = 293
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 25
@@ -2492,10 +2492,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Label3
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Label4
-        Left = 157
-        Height = 21
-        Top = 137
-        Width = 283
+        Left = 170
+        Height = 23
+        Top = 141
+        Width = 293
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 100
@@ -2507,10 +2507,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Label4
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Label36
-        Left = 157
-        Height = 21
-        Top = 188
-        Width = 283
+        Left = 170
+        Height = 23
+        Top = 194
+        Width = 293
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         EchoMode = emPassword
@@ -2524,10 +2524,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Label36
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Control = Label38
-        Left = 157
-        Height = 21
-        Top = 239
-        Width = 283
+        Left = 170
+        Height = 23
+        Top = 247
+        Width = 293
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 10
@@ -2542,10 +2542,10 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label40
         AnchorSideBottom.Side = asrBottom
-        Left = 157
-        Height = 21
-        Top = 290
-        Width = 283
+        Left = 170
+        Height = 23
+        Top = 300
+        Width = 293
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 10
@@ -2558,8 +2558,8 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_IPS
         AnchorSideBottom.Control = Label_IPS
         AnchorSideBottom.Side = asrCenter
-        Left = 448
-        Height = 19
+        Left = 471
+        Height = 21
         Top = 35
         Width = 342
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -2573,9 +2573,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_passwd
         AnchorSideBottom.Control = Label_pswd
         AnchorSideBottom.Side = asrCenter
-        Left = 448
-        Height = 19
-        Top = 188
+        Left = 471
+        Height = 21
+        Top = 194
         Width = 342
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = 'ButtonHidePass'
@@ -2588,9 +2588,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_peer
         AnchorSideBottom.Control = Label_peer
         AnchorSideBottom.Side = asrCenter
-        Left = 448
-        Height = 19
-        Top = 86
+        Left = 471
+        Height = 21
+        Top = 88
         Width = 343
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = 'ButtonRestart'
@@ -2603,9 +2603,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_user
         AnchorSideBottom.Control = Edit_user
         AnchorSideBottom.Side = asrCenter
-        Left = 448
-        Height = 20
-        Top = 137
+        Left = 471
+        Height = 21
+        Top = 141
         Width = 342
         Anchors = [akTop, akLeft, akBottom]
         ItemHeight = 0
@@ -2624,9 +2624,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_MaxTime
         AnchorSideBottom.Control = Edit_MaxTime
         AnchorSideBottom.Side = asrCenter
-        Left = 448
-        Height = 20
-        Top = 239
+        Left = 471
+        Height = 21
+        Top = 247
         Width = 342
         Anchors = [akTop, akLeft, akBottom]
         ItemHeight = 0
@@ -2638,7 +2638,7 @@ object Form1: TForm1
     object TabSheet2: TTabSheet
       Caption = 'Этап 2'
       ClientHeight = 509
-      ClientWidth = 791
+      ClientWidth = 814
       OnMouseDown = TabSheet1MouseDown
       object Label_gate: TLabel
         AnchorSideLeft.Control = Edit_gate
@@ -2712,7 +2712,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrCenter
         Left = 5
         Height = 14
-        Top = 13
+        Top = 14
         Width = 378
         Anchors = [akLeft]
         BorderSpacing.Left = 5
@@ -2729,9 +2729,9 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrCenter
         Left = 581
-        Height = 94
+        Height = 78
         Top = 177
-        Width = 210
+        Width = 233
         Anchors = [akTop, akLeft, akRight]
         Caption = '- желательно вписать маршруты для VPN-сервера, DNS-серверов, особенно если включенных сетевых интерфейсов в системе более одного, а также вписать другие маршруты'
         ParentColor = False
@@ -2746,9 +2746,9 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrCenter
         Left = 581
-        Height = 94
-        Top = 271
-        Width = 210
+        Height = 78
+        Top = 255
+        Width = 233
         Anchors = [akTop, akLeft, akRight]
         Caption = '- если сетевой интерфейс и/или шлюз определились неправильно, то сделайте требующийся сетевой интерфейс основным и настройте все заново или введите эти значения вручную'
         ParentColor = False
@@ -2764,9 +2764,9 @@ object Form1: TForm1
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrBottom
         Left = 581
-        Height = 123
-        Top = 365
-        Width = 210
+        Height = 155
+        Top = 333
+        Width = 233
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = '- без занесения маршрутов не гарантируется одновременная работа интернета и локальной сети, но интернет в любом случае будет работать'
         ParentColor = False
@@ -3191,14 +3191,14 @@ object Form1: TForm1
     object TabSheet3: TTabSheet
       Caption = 'Этап 3'
       ClientHeight = 509
-      ClientWidth = 791
+      ClientWidth = 814
       OnMouseDown = TabSheet1MouseDown
       object Label42: TLabel
         AnchorSideLeft.Control = TabSheet3
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = Label43
-        Left = 134
+        Left = 146
         Height = 14
         Top = 481
         Width = 522
@@ -3213,7 +3213,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet3
         AnchorSideBottom.Side = asrBottom
-        Left = 108
+        Left = 120
         Height = 14
         Top = 495
         Width = 575
@@ -3259,7 +3259,7 @@ object Form1: TForm1
         Left = 0
         Height = 28
         Top = 481
-        Width = 791
+        Width = 814
         Anchors = [akTop, akLeft, akRight, akBottom]
         ParentColor = False
         WordWrap = True
@@ -3655,11 +3655,24 @@ object Form1: TForm1
         State = cbChecked
         TabOrder = 6
       end
+      object nobuffer: TCheckBox
+        AnchorSideTop.Control = pppnotdefault
+        AnchorSideTop.Side = asrBottom
+        Left = 8
+        Height = 21
+        Top = 321
+        Width = 294
+        Caption = 'Средне- или высокоскоростная линия (nobuffer)'
+        Checked = True
+        OnChange = pppnotdefaultChange
+        State = cbChecked
+        TabOrder = 35
+      end
     end
     object TabSheet4: TTabSheet
       Caption = 'Этап 4'
       ClientHeight = 509
-      ClientWidth = 791
+      ClientWidth = 814
       object Memo_create: TMemo
         AnchorSideLeft.Control = TabSheet4
         AnchorSideTop.Control = TabSheet4
@@ -3670,7 +3683,7 @@ object Form1: TForm1
         Left = 3
         Height = 503
         Top = 3
-        Width = 785
+        Width = 808
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 3
         BorderStyle = bsNone
@@ -3688,7 +3701,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 0
     Height = 24
-    Top = 541
+    Top = 546
     Width = 176
     Anchors = [akLeft, akBottom]
     BorderSpacing.Bottom = 10
@@ -3702,7 +3715,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 300
     Height = 24
-    Top = 541
+    Top = 546
     Width = 192
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 300
@@ -3717,7 +3730,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 300
     Height = 24
-    Top = 541
+    Top = 546
     Width = 192
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 300
@@ -3733,7 +3746,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 616
     Height = 24
-    Top = 541
+    Top = 546
     Width = 176
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 616
@@ -3748,7 +3761,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 300
     Height = 24
-    Top = 541
+    Top = 546
     Width = 192
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 300
@@ -3764,7 +3777,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 616
     Height = 24
-    Top = 541
+    Top = 546
     Width = 176
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 616
@@ -3780,7 +3793,7 @@ object Form1: TForm1
     AnchorSideBottom.Side = asrBottom
     Left = 616
     Height = 24
-    Top = 541
+    Top = 546
     Width = 176
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 616
