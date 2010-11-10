@@ -1,4 +1,4 @@
-%define rel 1
+%define rel 2
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control VPN via PPTP/L2TP
 Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
 Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-allde
-Version: 0.2.3
+Version: 0.2.4
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -17,12 +17,6 @@ Vendor: Mandriva Russia, http://www.mandriva.ru
 
 Source0: vpnpptp-%{distsuffix}-src-%{version}.tar.gz
 Source1: vpnpptp_allde.pm
-%ifarch x86_64
-Patch0: ponoff.patch
-Patch1: vpnpptp.patch
-Patch2: ponoff_project1.patch
-Patch3: vpnpptp_project1.patch
-%endif
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: fpc-src >= 2.2.4, fpc >= 2.2.4, gdk-pixbuf, gtk+, glibc, gdb, lazarus
@@ -49,12 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
 %setup -n vpnpptp-%{distsuffix}-src-%{version}
-%ifarch x86_64
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%endif
+
 
 %postun
 if [ -a %{_datadir}/applications/ponoff.desktop.old ]
