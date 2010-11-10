@@ -7,6 +7,6 @@ echo Linking vpnpptp
 OFS=$IFS
 IFS="
 "
-/usr/bin/ld -b elf32-i386 -m elf_i386  --dynamic-linker=/lib/ld-linux.so.2    -L. -o vpnpptp link.res
+/usr/bin/ld -b elf32-i386 -m elf_i386  --build-id -z noexecstack --dynamic-linker=/lib/ld-linux.so.2    -L. -o vpnpptp link.res
 if [ $? != 0 ]; then DoExitLink vpnpptp; fi
 IFS=$OFS

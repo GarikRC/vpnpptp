@@ -902,10 +902,6 @@ msgstr "pppd(xl2tpd) detailed log on /var/log/syslog"
 msgid "Невозможно наст#209�оить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
 msgstr "Unable find pptp-linux packet or pptp packet. VPN PPTP/L2TP can not be configured."
 
-#: unit1.message139
-msgid "В Вашем дист#209�ибутиве выб#209�ать эту опцию нельзя."
-msgstr "In your distribution you can not select this option."
-
 #: unit1.message97
 msgid "Дист#209�ибутив оп#209�еделяется автоматически, но если этого не п#209�оизошло, то выбе#209�ите наиболее подходящий из списка."
 msgstr "Distribution is determined automatically, but if it did not happen, then select the most appropriate from the list."
@@ -953,3 +949,23 @@ msgstr "In order that the Internet was configured for children, the option usepe
 #: unit1.message154
 msgid "Если ввести 0, то #209�еконнекта не будет."
 msgstr "If you enter 0, then will not reconnect."
+
+#: unit1.message139
+msgid "Иногда может помочь п#209�инудительный #209�еста#209�т сети."
+msgstr "Can sometimes help to force restart the network."
+
+#: unit1.message155
+msgid "Если у Вас низкоско#209�остное соединение, то отключите эту опцию."
+msgstr "If you have a slow connection, then disable this option."
+
+#: unit1.message156
+msgid "Но ее отключение п#209�и с#209�едне- или высокоско#209�остном соединении замедлит инте#209�нет."
+msgstr "But disabling it at medium or high speed internet connection will slow down."
+
+#: unit1.message157
+msgid "Эта опция используется только с VPN PPTP."
+msgstr "This option is only used with the VPN PPTP."
+
+#: TFORM1.NOBUFFER.CAPTION
+msgid "Средне- или высокоскоростная линия (nobuffer)"
+msgstr "Medium-or high-speed line (nobuffer)"
