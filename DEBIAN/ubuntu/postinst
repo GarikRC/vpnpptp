@@ -1,6 +1,0 @@
-#! /bin/sh
-
-ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
-ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
-ln -s /opt/vpnpptp/ponoff.png /usr/share/pixmaps
-ln -s /opt/vpnpptp/vpnpptp.png /usr/share/pixmaps

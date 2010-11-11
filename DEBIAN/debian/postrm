@@ -1,6 +1,0 @@
-#! /bin/sh
-
-rm -f /usr/bin/ponoff
-rm -f /usr/bin/vpnpptp
-rm -f /usr/share/pixmaps/ponoff.png
-rm -f /usr/share/pixmaps/vpnpptp.png
