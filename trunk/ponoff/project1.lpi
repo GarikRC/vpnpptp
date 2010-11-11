@@ -16,7 +16,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <CurrentBuildNr Value="309"/>
+      <CurrentBuildNr Value="310"/>
       <Language Value="0419"/>
     </VersionInfo>
     <PublishOptions>
@@ -53,8 +53,8 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <CursorPos X="4" Y="1457"/>
-        <TopLine Value="1440"/>
+        <CursorPos X="42" Y="1250"/>
+        <TopLine Value="1231"/>
         <EditorIndex Value="0"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>

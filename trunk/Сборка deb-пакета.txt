@@ -5,9 +5,10 @@
 5) перекомпилировать в Lazarus (команда из консоли sudo lazarus-ide, затем "Запуск"->"Собрать все") содержимое этих папок modules, vpnpptp, ponoff (сначала modules), иначе пакет не соберется если писалось в другой версии,
 6) скопировать в папку /tmp/vpnpptp-allde скрипт X.compile.sh, где X в зависимости от дистрибутива,
 7) скопировать в папку /tmp/vpnpptp-allde/DEBIAN содержимое папки DEBIAN исходников,
-8) выполнить скрипт X.compile.sh командой sudo sh ./X.compile.sh, находясь в папке /tmp/vpnpptp-allde; после выполнения этого скрипта будут созданы исполняемые файлы ponoff, vpnpptp и помещены в /tmp/vpnpptp-allde/vpnpptp/opt, сам же скрипт X.compile.sh и директория src с содержимым будут удалены,
+8) выполнить скрипт X.compile.sh командой sudo sh ./X.compile.sh, находясь в папке /tmp/vpnpptp-allde; после выполнения этого скрипта будут созданы исполняемые файлы ponoff, vpnpptp и помещены в /tmp/vpnpptp-allde/vpnpptp/opt, также создадутся файлы ponoff.desktop, vpnpptp.desktop в /tmp/vpnpptp-allde/usr/share/applications, сам же скрипт X.compile.sh и директория src с содержимым будут удалены,
 9) права на скрипты в папке DEBIAN должны быть 0775,
 10) находясь в папке /tpm выполнить команду sudo dpkg -b ./vpnpptp-allde vpnpptp-allde-0.1.9-ubuntu.deb, где вместо 0.1.9 указать версию, а вместо ubuntu - дистрибутив,
 11) в папке /tmp находится собранный пакет.
 
 Примечание: вместо папки /tmp можно использовать другую папку
+Скрипт debian.compile.sh используется в Ubuntu и в Debian.
