@@ -1247,7 +1247,7 @@ begin
                              If FileExists ('/usr/bin/vnstat') then Shell ('vnstat -u -i '+pppiface);
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                              begin
-                                 if suse then sleep (20000);
+                                 sleep (1000);
                                 //определение dns, на которых поднято vpn
                                  DNS3:='none';
                                  DNS4:='none';

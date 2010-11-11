@@ -3198,11 +3198,14 @@ If suse then
                                            if ComboBoxDistr.Text<>message151 then ComboBoxDistr.Enabled:=false;
                                          end;
 Shell ('killall ponoff');
-Shell('killall pppd');
+Shell ('killall pppd');
 Shell ('service xl2tpd stop');
 Shell ('killall xl2tpd');
 Shell ('killall openl2tpd');
 Shell ('killall l2tpd');
+Shell ('rm -f /tmp/ObnullRX');
+Shell ('rm -f /tmp/ObnullTX');
+Shell ('rm -f /tmp/DateStart');
 Stroowriter:='none';
 FindStroowriter ('oowriter',17);
 If Stroowriter='none' then FindStroowriter ('openoffice.org',23);
