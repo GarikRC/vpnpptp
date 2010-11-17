@@ -102,6 +102,7 @@ var
   AProcess: TProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
   debian:boolean; // используется ли дистрибутив debian
+  fedora:boolean; // используется ли дистрибутив fedora
   suse:boolean; // используется ли дистрибутив suse
   mandriva:boolean; // используется ли дистрибутив mandriva
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
@@ -260,7 +261,7 @@ begin
                                                Form1.Memo_gate.Clear;
                                                If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
                                           end;
-       If Form1.Memo_gate.Lines[0]='none' then if not FileExists ('/etc/init.d/network-manager') then
+       If Form1.Memo_gate.Lines[0]='none' then if not FileExists ('/etc/init.d/network-manager') then if not FileExists ('/etc/init.d/NetworkManager') then
                                begin
                                  If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
                                  If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
@@ -269,9 +270,13 @@ begin
                                  If FileExists ('/sbin/ifup') then Shell ('ifup lo');
                                  If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
                                end;
-       If Form1.Memo_gate.Lines[0]='none' then if FileExists ('/etc/init.d/network-manager') then
+       If Form1.Memo_gate.Lines[0]='none' then if FileExists ('/etc/init.d/network-manager') or FileExists ('/etc/init.d/NetworkManager') then
                                begin
-                                 If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+                                 If not FileExists ('/etc/init.d/network') or fedora then
+                                                                           begin
+                                                                                Shell ('service network-manager restart');
+                                                                                Shell ('service NetworkManager restart');
+                                                                           end;
                                  If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
                                  If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
                                  If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
@@ -401,19 +406,19 @@ If Code_up_ppp then
                                                                                                             //изменение скрипта ip-up
                                                                                                             If FileExists('/etc/ppp/ip-up.d/ip-up') then
                                                                                                                                                     begin
-                                                                                                                                                         If not suse then Shell ('printf "'+'/sbin/route add -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
-                                                                                                                                                         If suse then Shell ('printf "'+'/sbin/route add -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
+                                                                                                                                                         If not suse then if not fedora then Shell ('printf "'+'/sbin/route add -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
+                                                                                                                                                         If suse or fedora then Shell ('printf "'+'/sbin/route add -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
                                                                                                                                                     end;
                                                                                                             //изменение скрипта ip-down
                                                                                                             If Memo_Config.Lines[7]='reconnect-pptp' then if FileExists('/etc/ppp/ip-down.d/ip-down') then
                                                                                                                                                      begin
-                                                                                                                                                          If not suse then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                                                                                                                          If suse then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                                                                                                                          If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                                                                                                                          If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
                                                                                                                                                      end;
                                                                                                             If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/tmp/ip-down') then
                                                                                                                                                      begin
-                                                                                                                                                          If not suse then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
-                                                                                                                                                          If suse then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                                                                                                                          If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                                                                                                                          If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
                                                                                                                                                       end;
                                                                                                             Shell('rm -f /opt/vpnpptp/hosts');
                                                                                                           end;
@@ -499,7 +504,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
-                                if not FileExists ('/etc/init.d/network-manager') then
+                                //if not FileExists ('/etc/init.d/network-manager') then if not FileExists ('/etc/init.d/NetworkManager') then
                                                                                   begin
                                                                                   For h:=1 to CountInterface do
                                                                                        Shell ('route del default');
@@ -695,7 +700,7 @@ If not Code_up_ppp then If link=1 then
                                   Application.ProcessMessages;
                                   If NoPingIPS or NoDNS then
                                                    begin
-                                                      if not FileExists ('/etc/init.d/network-manager') then
+                                                      //if not FileExists ('/etc/init.d/network-manager') then
                                                                                                             begin
                                                                                                             For h:=1 to CountInterface do
                                                                                                                 Shell ('route del default');
@@ -740,6 +745,7 @@ begin
   DoubleRunPonoff:=false;
   ubuntu:=false;
   debian:=false;
+  fedora:=false;
   suse:=false;
   mandriva:=false;
   Application.CreateForm(TForm3, Form3);
@@ -817,6 +823,7 @@ begin
   If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
   If Memo_Config.Lines[43]='ubuntu' then ubuntu:=true;
   If Memo_Config.Lines[43]='debian' then debian:=true;
+  If Memo_Config.Lines[43]='fedora' then fedora:=true;
   If Memo_Config.Lines[43]='suse' then suse:=true;
   If Memo_Config.Lines[43]='mandriva' then mandriva:=true;
   Form1.Font.Size:=AFont;
@@ -917,8 +924,12 @@ If suse then
                 begin
                    If FileExists ('/etc/init.d/network') then Shell ('service network restart');
                    If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
-                   If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
-                   if not FileExists ('/etc/init.d/network-manager') then
+                   If not FileExists ('/etc/init.d/network') or fedora then
+                                                             begin
+                                                                  Shell ('service network-manager restart');
+                                                                  Shell ('service NetworkManager restart');
+                                                             end;
+                   //if not FileExists ('/etc/init.d/network-manager') then
                                                                          begin
                                                                          For h:=1 to CountInterface do
                                                                              Shell ('route del default');
@@ -992,7 +1003,12 @@ begin
                                         begin
                                              Shell('killall pppd');
                                              CountKillallpppd:=CountKillallpppd+1;
-                                             If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+                                             If not FileExists ('/etc/init.d/network') or fedora then
+                                                                                       begin
+                                                                                            Shell ('service network-manager restart');
+                                                                                            Shell ('service NetworkManager restart');
+                                                                                            sleep (3000);
+                                                                                       end;
                                         end;
  Shell ('service xl2tpd stop');
  Shell ('killall xl2tpd');
@@ -1043,7 +1059,11 @@ begin
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
   Shell('rm -f /tmp/xl2tpd.conf');
-  If CountKillallpppd=2 then If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+  If CountKillallpppd=2 then If not FileExists ('/etc/init.d/network') or fedora then
+                                                                       begin
+                                                                            Shell ('service network-manager restart');
+                                                                            Shell ('service NetworkManager restart');
+                                                                       end;
   If FileExists('/opt/vpnpptp/resolv.conf') then Shell ('cp -f /opt/vpnpptp/resolv.conf /etc/resolv.conf');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   Shell ('rm -f /tmp/DateStart');
@@ -1088,7 +1108,11 @@ begin
       end;
   If FileExists ('/etc/init.d/network') then Shell ('service network restart'); // организация конкурса интерфейсов
   If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
-  If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+  If not FileExists ('/etc/init.d/network') or fedora then
+                                            begin
+                                                 Shell ('service network-manager restart');
+                                                 Shell ('service NetworkManager restart');
+                                            end;
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
   If suse then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
@@ -1110,7 +1134,11 @@ begin
             If FileExists ('/etc/init.d/network') then Shell ('service network stop');
             If FileExists ('/etc/init.d/network') then Shell ('service network start');
             If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
-            If not FileExists ('/etc/init.d/network') then Shell ('service network-manager restart');
+            If not FileExists ('/etc/init.d/network') or fedora then
+                                                      begin
+                                                           Shell ('service network-manager restart');
+                                                           Shell ('service NetworkManager restart');
+                                                      end;
             For i:=0 to 9 do
                  begin
                     If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
