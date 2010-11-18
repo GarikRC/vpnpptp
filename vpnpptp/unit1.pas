@@ -772,15 +772,11 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Edit_eth.Text);
                           If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' down');
                           Application.ProcessMessages;
-                          //If FileExists ('/etc/init.d/network-manager') then sleep(10000);
-                          //If FileExists ('/etc/init.d/NetworkManager') then sleep(10000);
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
                           If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
                           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' up');
                           Application.ProcessMessages;
                           Shell ('rm -f /tmp/dhclienttest1');
-                          //If FileExists ('/etc/init.d/network-manager') then sleep(10000);
-                          //If FileExists ('/etc/init.d/NetworkManager') then sleep(10000);
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest1');
                           Shell ('rm -f /tmp/dhclienttest2');
@@ -832,12 +828,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                           Application.ProcessMessages;
                           Shell ('service '+NetServiceStr+' restart');
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
-                          {If not FileExists ('/etc/init.d/network') or fedora then
-                                                                    begin
-                                                                         Shell ('service network-manager restart');
-                                                                         Shell ('service NetworkManager restart');
-                                                                         sleep(3000);
-                                                                    end;}
                        end;
  If CheckBox_shorewall.Checked then If not FileExists('/etc/shorewall/interfaces.old') then
                        begin
@@ -964,7 +954,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Shell ('rm -f /etc/ppp/ip-down.d/ip-down.old');
 //перезаписываем скрипт поднятия соединения ip-up
  If not DirectoryExists('/etc/ppp/ip-up.d/') then Shell ('mkdir /etc/ppp/ip-up.d/');
- //If fedora then Shell ('ln -s /etc/ppp/ip-up.d /etc/ppp/ip-up.local');
  If fedora then Shell ('ln -s /etc/ppp/ip-up.d/ip-up /etc/ppp/ip-up.local');
  Shell('rm -f '+ Label_ip_up.Caption);
  Memo_ip_up.Clear;
@@ -1038,9 +1027,10 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
      If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
  If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
  If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
+ If fedora or mandriva then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.copy /var/run/ppp/resolv.conf');
  If suse then
             begin
-                If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /var/run/ppp/resolv.conf.copy /var/run/ppp/resolv.conf');
+                If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.copy /var/run/ppp/resolv.conf');
                 Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
                 Memo_ip_up.Lines.Add('then');
                 Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /var/run/ppp/resolv.conf');
@@ -1073,7 +1063,6 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
                                                        end;
 //перезаписываем скрипт опускания соединения ip-down
  If not DirectoryExists('/etc/ppp/ip-down.d/') then Shell ('mkdir /etc/ppp/ip-down.d/');
- //If fedora then Shell ('ln -s /etc/ppp/ip-down.d /etc/ppp/ip-down.local');
  If fedora then Shell ('ln -s /etc/ppp/ip-down.d/ip-down /etc/ppp/ip-down.local');
  Shell('rm -f '+ Label_ip_down.Caption);
  Memo_ip_down.Clear;
@@ -1462,10 +1451,10 @@ If suse then if not Autostartpppd.Checked then
         if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
      end;
  closefile(FileResolvConf);
-If suse then
+If suse or fedora or mandriva then
         begin
-             Shell ('cp -f /var/run/ppp/resolv.conf /var/run/ppp/resolv.conf.copy');
-             If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -f /var/run/ppp/resolv.conf.copy');
+             Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.copy');
+             If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -f /opt/vpnpptp/resolv.conf.copy');
         end;
 //настройка /etc/ppp/chap-secrets
 If FileExists('/etc/ppp/chap-secrets.old') then
@@ -1637,7 +1626,6 @@ begin
      begin
          If not gksu then if not beesu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff');
          If not debian then if gksu then Memo_create.Lines.Add('Exec=gksu -u root -l /opt/vpnpptp/ponoff');
-         //If not gksu then Memo_create.Lines.Add('Exec=/opt/vpnpptp/ponoff');
          If debian then if gksu then Memo_create.Lines.Add('Exec=gksu /opt/vpnpptp/ponoff');
          If beesu then Memo_create.Lines.Add('Exec=beesu /opt/vpnpptp/ponoff');
      end;
@@ -1892,16 +1880,6 @@ If suse then
           If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
         end;
     Shell ('service '+NetServiceStr+' restart');
-    //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
-    {If FileExists ('/etc/init.d/network') then Shell ('service network stop');
-    If FileExists ('/etc/init.d/network') then Shell ('service network start');
-    If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking stop');
-    If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking start');
-    If not FileExists ('/etc/init.d/network') or fedora then
-                                              begin
-                                                   Shell ('service network-manager restart');
-                                                   Shell ('service NetworkManager restart');
-                                              end;}
     For i:=0 to 9 do
         begin
           If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
@@ -3328,17 +3306,8 @@ DefaultError:=false;
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then Shell ('service '+NetServiceStr+' restart');
-  //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
-  {If Memo_gate.Lines[0]='none' then If FileExists ('/etc/init.d/network') then Shell ('service network restart');
-  If Memo_gate.Lines[0]='none' then If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
-  If Memo_gate.Lines[0]='none' then If not FileExists ('/etc/init.d/network') or fedora then
-                                                                              begin
-                                                                                   Shell ('service network-manager restart');
-                                                                                   Shell ('service NetworkManager restart');
-                                                                              end;}
   Shell ('rm -f /tmp/gate');
 //повторная проверка дефолтного шлюза
-  //If Memo_gate.Lines[0]='none' then if mandriva or ubuntu then Sleep (3000);
   If Memo_gate.Lines[0]='none' then Sleep(3000);
   Memo_gate.Lines.Clear;
   Shell ('rm -f /tmp/gate');
