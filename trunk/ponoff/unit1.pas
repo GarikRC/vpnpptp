@@ -108,6 +108,7 @@ var
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
   CountKillallpppd:integer; //счетчик сколько раз убивался pppd
   DoubleRunPonoff:boolean; //многократный запуск ponoff
+  NetServiceStr:string; //какой сервис управляет сетью
 
 const
   Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -244,7 +245,7 @@ Application.ProcessMessages;
 end;
 
 procedure MakeDefaultGW;
-//определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN PPTP
+//определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN
 begin
        Shell ('rm -f /tmp/gate');
        Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -261,7 +262,7 @@ begin
                                                Form1.Memo_gate.Clear;
                                                If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
                                           end;
-       If Form1.Memo_gate.Lines[0]='none' then if not FileExists ('/etc/init.d/network-manager') then if not FileExists ('/etc/init.d/NetworkManager') then
+      { If Form1.Memo_gate.Lines[0]='none' then if not FileExists ('/etc/init.d/network-manager') then if not FileExists ('/etc/init.d/NetworkManager') then
                                begin
                                  If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
                                  If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
@@ -269,23 +270,26 @@ begin
                                  If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' up');
                                  If FileExists ('/sbin/ifup') then Shell ('ifup lo');
                                  If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
-                               end;
-       If Form1.Memo_gate.Lines[0]='none' then if FileExists ('/etc/init.d/network-manager') or FileExists ('/etc/init.d/NetworkManager') then
+                               end;}
+       If Form1.Memo_gate.Lines[0]='none' then //if FileExists ('/etc/init.d/network-manager') or FileExists ('/etc/init.d/NetworkManager') then
                                begin
-                                 If not FileExists ('/etc/init.d/network') or fedora then
+                                 {If not FileExists ('/etc/init.d/network') or fedora then
                                                                            begin
                                                                                 Shell ('service network-manager restart');
                                                                                 Shell ('service NetworkManager restart');
-                                                                           end;
-                                 If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
+                                                                           end;}
+                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networking') then
+                                                                                                Shell ('service '+NetServiceStr+' restart');
+                                 //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+                                 //If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
                                  If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
-                                 If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
-                                 sleep (3000);
+                                 If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
+                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                                  If FileExists ('/sbin/ifup') then Shell ('ifup '+Form1.Memo_Config.Lines[3]);
-                                 If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' up');
+                                 If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' up');
                                  If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-                                 If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
-                                 sleep (3000);
+                                 If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
+                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                                end;
        Shell ('rm -f /tmp/gate');
        Form1.Memo_gate.Lines.Clear;
@@ -510,8 +514,13 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                                                        Shell ('route del default');
                                                                                   end;
                                 If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                                If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
-                                If not DhclientStart then begin Shell ('dhclient '+Memo_Config.Lines[3]);Application.ProcessMessages;end;
+                                If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
+                                If not DhclientStart then
+                                                      begin
+                                                           if fedora then Shell('killall dhclient');
+                                                           Shell ('dhclient '+Memo_Config.Lines[3]);
+                                                           Application.ProcessMessages;
+                                                      end;
                                 DhclientStart:=true;
                               //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
                               end;
@@ -533,7 +542,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                          If Memo_gate.Lines[0]='none' then
                                          begin
                                               If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                                              If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
+                                              If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                               DhclientStart:=false;
                                          end;
                                     end;
@@ -706,9 +715,9 @@ If not Code_up_ppp then If link=1 then
                                                                                                                 Shell ('route del default');
                                                                                                             end;
                                                       If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
-                                                      If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
+                                                      If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
                                                       If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                                                      If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
+                                                      If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
@@ -716,7 +725,7 @@ If not Code_up_ppp then If link=1 then
                                                       If not FileExists('/tmp/ObnullTX') then ObnullTX:=false else ObnullTX:=true;
                                                       If not FileExists ('/tmp/DateStart') then DateStart:=0;
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
                                                       For h:=1 to CountInterface do
                                                                           Shell ('route del default');
                                                       Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
@@ -827,6 +836,12 @@ begin
   If Memo_Config.Lines[43]='suse' then suse:=true;
   If Memo_Config.Lines[43]='mandriva' then mandriva:=true;
   Form1.Font.Size:=AFont;
+  //определение управляющего сетью сервиса
+  NetServiceStr:='none';
+  If FileExists ('/etc/init.d/network') then NetServiceStr:='network';
+  If FileExists ('/etc/init.d/networking') then NetServiceStr:='networking';
+  If FileExists ('/etc/init.d/network-manager') then NetServiceStr:='network-manager';
+  If FileExists ('/etc/init.d/NetworkManager') then NetServiceStr:='NetworkManager';
   //Проверяем поднялось ли соединение
   Shell('rm -f /tmp/status.ppp');
   Memo2.Clear;
@@ -922,23 +937,26 @@ If suse then
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
-                   If FileExists ('/etc/init.d/network') then Shell ('service network restart');
+                   Shell ('service '+NetServiceStr+' restart');
+                   //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+                   {If FileExists ('/etc/init.d/network') then Shell ('service network restart');
                    If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
                    If not FileExists ('/etc/init.d/network') or fedora then
                                                              begin
                                                                   Shell ('service network-manager restart');
                                                                   Shell ('service NetworkManager restart');
-                                                             end;
+                                                             end;}
                    //if not FileExists ('/etc/init.d/network-manager') then
                                                                          begin
                                                                          For h:=1 to CountInterface do
                                                                              Shell ('route del default');
                                                                          end;
                    If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
-                   If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
+                   If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
                    If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                   If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
+                   If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                    //повторная проверка состояния сетевого интерфейса
+                   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                    Shell('rm -f /tmp/gate2');
                    Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> /tmp/gate2');
                    Shell('printf "none" >> /tmp/gate2');
@@ -1003,12 +1021,17 @@ begin
                                         begin
                                              Shell('killall pppd');
                                              CountKillallpppd:=CountKillallpppd+1;
-                                             If not FileExists ('/etc/init.d/network') or fedora then
+                                             If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
+                                                                                  begin
+                                                                                       Shell ('service '+NetServiceStr+' restart');
+                                                                                       sleep (3000);
+                                                                                  end;
+                                             {If not FileExists ('/etc/init.d/network') or fedora then
                                                                                        begin
                                                                                             Shell ('service network-manager restart');
                                                                                             Shell ('service NetworkManager restart');
                                                                                             sleep (3000);
-                                                                                       end;
+                                                                                       end;}
                                         end;
  Shell ('service xl2tpd stop');
  Shell ('killall xl2tpd');
@@ -1057,13 +1080,14 @@ begin
   For h:=1 to CountInterface do
               Shell ('route del default');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
   Shell('rm -f /tmp/xl2tpd.conf');
-  If CountKillallpppd=2 then If not FileExists ('/etc/init.d/network') or fedora then
+{  If CountKillallpppd=2 then If not FileExists ('/etc/init.d/network') or fedora then
                                                                        begin
                                                                             Shell ('service network-manager restart');
                                                                             Shell ('service NetworkManager restart');
-                                                                       end;
+                                                                       end; }
+  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Shell ('service '+NetServiceStr+' restart');
   If FileExists('/opt/vpnpptp/resolv.conf') then Shell ('cp -f /opt/vpnpptp/resolv.conf /etc/resolv.conf');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   Shell ('rm -f /tmp/DateStart');
@@ -1102,20 +1126,23 @@ begin
   For i:=0 to 9 do
       begin
         If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
-        If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' down');
+        If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
         If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
-        If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' down');
+        If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
       end;
-  If FileExists ('/etc/init.d/network') then Shell ('service network restart'); // организация конкурса интерфейсов
+{  If FileExists ('/etc/init.d/network') then Shell ('service network restart'); // организация конкурса интерфейсов
   If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
   If not FileExists ('/etc/init.d/network') or fedora then
                                             begin
                                                  Shell ('service network-manager restart');
                                                  Shell ('service NetworkManager restart');
-                                            end;
+                                            end;}
+  Shell ('service '+NetServiceStr+' restart'); // организация конкурса интерфейсов
+  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
-  If suse then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
+  //If suse then Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+  Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -1127,27 +1154,29 @@ begin
          For i:=0 to 9 do
              begin
               If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
-              If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' down');
+              If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
               If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
-              If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' down');
+              If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
              end;
-            If FileExists ('/etc/init.d/network') then Shell ('service network stop');
+            {If FileExists ('/etc/init.d/network') then Shell ('service network stop');
             If FileExists ('/etc/init.d/network') then Shell ('service network start');
             If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
             If not FileExists ('/etc/init.d/network') or fedora then
                                                       begin
                                                            Shell ('service network-manager restart');
                                                            Shell ('service NetworkManager restart');
-                                                      end;
+                                                      end;}
+            Shell ('service '+NetServiceStr+' restart');
+            //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
             For i:=0 to 9 do
                  begin
                     If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
-                    If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' up');
+                    If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' up');
                     If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
-                    If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' up');
+                    If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' up');
                  end;
            If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-           If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
      end;
   If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
   Shell('rm -f /etc/resolv.conf.lock');

@@ -236,6 +236,7 @@ var
   DefaultError:boolean; //ошибка определения дефолтного шлюза
   PressCreate:boolean; //нажата ли кнопка Create, запущен процесс создания подключения
   PingInternetStr:string; //адрес внешнего пингуемого сайта
+  NetServiceStr:string; //какой сервис управляет сетью
 
 const
   Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -759,20 +760,28 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           if FileExists('/etc/dhclient-exit-hooks') then Shell('cp -f /etc/dhclient-exit-hooks /etc/dhclient-exit-hooks.old');
                           Shell('rm -f /etc/dhclient-exit-hooks');
                           if FileExists('/opt/vpnpptp/scripts/dhclient-exit-hooks') then Shell('cp -f /opt/vpnpptp/scripts/dhclient-exit-hooks /etc/dhclient-exit-hooks');
+                          if fedora then
+                                        begin
+                                           Shell('ln -s /etc/dhclient-exit-hooks /etc/dhcp/dhclient-exit-hooks');
+                                           Shell('ln -s /etc/dhclient.conf /etc/dhcp/dhclient.conf');
+                                           Shell('killall dhclient');
+                                        end;
                           //проверка получаются ли маршруты по dhcp и настройка - если получаются или отмена - если не получаются
                           Label14.Caption:=message48;
                           Application.ProcessMessages;
                           If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Edit_eth.Text);
-                          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' down');
+                          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' down');
                           Application.ProcessMessages;
-                          If FileExists ('/etc/init.d/network-manager') then sleep(10000);
-                          If FileExists ('/etc/init.d/NetworkManager') then sleep(10000);
+                          //If FileExists ('/etc/init.d/network-manager') then sleep(10000);
+                          //If FileExists ('/etc/init.d/NetworkManager') then sleep(10000);
+                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
                           If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
-                          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' up');
+                          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' up');
                           Application.ProcessMessages;
                           Shell ('rm -f /tmp/dhclienttest1');
-                          If FileExists ('/etc/init.d/network-manager') then sleep(10000);
-                          If FileExists ('/etc/init.d/NetworkManager') then sleep(10000);
+                          //If FileExists ('/etc/init.d/network-manager') then sleep(10000);
+                          //If FileExists ('/etc/init.d/NetworkManager') then sleep(10000);
+                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest1');
                           Shell ('rm -f /tmp/dhclienttest2');
                           Label14.Caption:=message49;
@@ -787,7 +796,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Memo_gate.Clear;
                           If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
                           If Memo_gate.Lines[0]='none' then If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
-                          If Memo_gate.Lines[0]='none' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' up');
+                          If Memo_gate.Lines[0]='none' then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' up');
                           Shell ('rm -f /tmp/gate');
                           Memo_gate.Lines.Clear;
                           If FileSize('/tmp/dhclienttest2')<=FileSize('/tmp/dhclienttest1') then
@@ -809,19 +818,26 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                           Shell('rm -f /etc/dhclient.conf.old');
                           if FileExists('/etc/dhclient-exit-hooks.old') then Shell('cp -f /etc/dhclient-exit-hooks.old /etc/dhclient-exit-hooks');
                           Shell('rm -f /etc/dhclient-exit-hooks.old');
+                          if fedora then
+                                        begin
+                                           Shell('rm -f /etc/dhcp/dhclient-exit-hooks');
+                                           Shell('rm -f /etc/dhcp/dhclient.conf');
+                                        end;
                           Label14.Caption:=message51;
                           Application.ProcessMessages;
                           If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Edit_eth.Text);
-                          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+' down');
+                          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' down');
                           If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
-                          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig '+Edit_eth.Text+ 'up');
+                          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+ 'up');
                           Application.ProcessMessages;
-                          If not FileExists ('/etc/init.d/network') or fedora then
+                          Shell ('service '+NetServiceStr+' restart');
+                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+                          {If not FileExists ('/etc/init.d/network') or fedora then
                                                                     begin
                                                                          Shell ('service network-manager restart');
                                                                          Shell ('service NetworkManager restart');
                                                                          sleep(3000);
-                                                                    end;
+                                                                    end;}
                        end;
  If CheckBox_shorewall.Checked then If not FileExists('/etc/shorewall/interfaces.old') then
                        begin
@@ -1487,7 +1503,7 @@ If FileExists('/etc/ppp/chap-secrets.old') then
 If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
   begin
      If EditDNS1.Text='127.0.0.1' then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-     If EditDNS1.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+     If EditDNS1.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS1.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
      Label14.Caption:=message73;
@@ -1504,7 +1520,7 @@ If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
 If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
   begin
      If EditDNS2.Text='127.0.0.1' then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-     If EditDNS2.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+     If EditDNS2.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS2.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
      Label14.Caption:=message75;
@@ -1871,11 +1887,13 @@ If suse then
     For i:=0 to 9 do
         begin
           If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
-          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' down');
+          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
           If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
-          If (not FileExists ('/sbin/ifdown')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' down');
+          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
         end;
-    If FileExists ('/etc/init.d/network') then Shell ('service network stop');
+    Shell ('service '+NetServiceStr+' restart');
+    //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+    {If FileExists ('/etc/init.d/network') then Shell ('service network stop');
     If FileExists ('/etc/init.d/network') then Shell ('service network start');
     If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking stop');
     If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking start');
@@ -1883,16 +1901,16 @@ If suse then
                                               begin
                                                    Shell ('service network-manager restart');
                                                    Shell ('service NetworkManager restart');
-                                              end;
+                                              end;}
     For i:=0 to 9 do
         begin
           If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
-          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig eth'+IntToStr(i)+' up');
+          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' up');
           If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
-          If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig wlan'+IntToStr(i)+' up');
+          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' up');
         end;
     If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-    If (not FileExists ('/sbin/ifup')) or ubuntu then Shell ('ifconfig lo up');
+    If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
 ButtonRestart.Caption:=message93;
 Button_exit.Enabled:=true;
 Button_next1.Enabled:=true;
@@ -3259,6 +3277,12 @@ If not Translate then Label25.Caption:='              '+Label25.Caption;
                                                          Application.ProcessMessages;
                                                          halt;
                                                        end;
+//определение управляющего сетью сервиса
+NetServiceStr:='none';
+If FileExists ('/etc/init.d/network') then NetServiceStr:='network';
+If FileExists ('/etc/init.d/networking') then NetServiceStr:='networking';
+If FileExists ('/etc/init.d/network-manager') then NetServiceStr:='network-manager';
+If FileExists ('/etc/init.d/NetworkManager') then NetServiceStr:='NetworkManager';
 //проверка dhclient в процессах root и установлен ли пакет
    dhclient:=true;
    Shell('ps -u root | grep dhclient | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
@@ -3303,16 +3327,19 @@ DefaultError:=false;
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If Memo_gate.Lines[0]='none' then If FileExists ('/etc/init.d/network') then Shell ('service network restart');
+  If Memo_gate.Lines[0]='none' then Shell ('service '+NetServiceStr+' restart');
+  //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+  {If Memo_gate.Lines[0]='none' then If FileExists ('/etc/init.d/network') then Shell ('service network restart');
   If Memo_gate.Lines[0]='none' then If debian then if FileExists ('/etc/init.d/networking') then Shell ('/etc/init.d/networking restart');
   If Memo_gate.Lines[0]='none' then If not FileExists ('/etc/init.d/network') or fedora then
                                                                               begin
                                                                                    Shell ('service network-manager restart');
                                                                                    Shell ('service NetworkManager restart');
-                                                                              end;
+                                                                              end;}
   Shell ('rm -f /tmp/gate');
 //повторная проверка дефолтного шлюза
-  If Memo_gate.Lines[0]='none' then if mandriva or ubuntu then Sleep (3000);
+  //If Memo_gate.Lines[0]='none' then if mandriva or ubuntu then Sleep (3000);
+  If Memo_gate.Lines[0]='none' then Sleep(3000);
   Memo_gate.Lines.Clear;
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');

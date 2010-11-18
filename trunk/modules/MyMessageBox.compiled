@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <CONFIG>
-  <Compiler Value="/usr/bin/fpc" Date="1273091828"/>
-  <Params Value=" -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fi/trunk/modules/ -Fu/usr/lib/lazarus/lcl/units/i386-linux/ -Fu/usr/lib/lazarus/lcl/units/i386-linux/gtk2/ -Fu/usr/lib/lazarus/packager/units/i386-linux/ -Fu/trunk/modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr"/>
+  <Compiler Value="/usr/bin/fpc" Date="1263046271"/>
+  <Params Value=" -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fi/vpnpptp/trunk/modules/ -Fu/usr/lib/lazarus/lcl/units/i386-linux/ -Fu/usr/lib/lazarus/lcl/units/i386-linux/gtk2/ -Fu/usr/lib/lazarus/packager/units/i386-linux/ -Fu/vpnpptp/trunk/modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr"/>
 </CONFIG>
