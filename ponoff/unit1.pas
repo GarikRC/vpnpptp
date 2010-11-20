@@ -1450,7 +1450,8 @@ begin
   If Code_up_ppp then str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')'
                     else str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                    end;
-  TrayIcon1.Hint:=str;
+  //TrayIcon1.Hint:=str;
+  Unit2.Form2.ShowMyHint (str, 5000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
   Application.ProcessMessages;
 end;
 

@@ -37,6 +37,10 @@ msgstr ""
 msgid "Label2"
 msgstr ""
 
+#: TFORM2.LABEL3.CAPTION
+msgid "Label3"
+msgstr ""
+
 #: TFORM3.CAPTION
 msgid "Form3"
 msgstr ""
