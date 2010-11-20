@@ -27,7 +27,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, Process,
-  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox, BaseUnix;
+  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox, BaseUnix, Unit2;
 
 type
 
@@ -235,12 +235,14 @@ end;
 
 procedure BalloonMessage (i:integer;str1:string);
 begin
-Form1.TrayIcon1.BalloonHint:='';
+{Form1.TrayIcon1.BalloonHint:='';
 Form1.TrayIcon1.BalloonTimeout:=i;
 Form1.TrayIcon1.BalloonHint:=str1;
-Application.ProcessMessages;
+Application.ProcessMessages;}
 If Form1.Memo_Config.Lines[23]<>'networktest-yes' then Sleep(1000);
-If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
+{If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
+Application.ProcessMessages;}
+Unit2.Form2.ShowMyBalloonHint(message0, str1, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
 Application.ProcessMessages;
 end;
 

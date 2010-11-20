@@ -25,6 +25,18 @@ msgstr ""
 msgid "Look"
 msgstr ""
 
+#: TFORM2.CAPTION
+msgid "Form2"
+msgstr ""
+
+#: TFORM2.LABEL1.CAPTION
+msgid "Label1"
+msgstr ""
+
+#: TFORM2.LABEL2.CAPTION
+msgid "Label2"
+msgstr ""
+
 #: TFORM3.CAPTION
 msgid "Form3"
 msgstr ""
