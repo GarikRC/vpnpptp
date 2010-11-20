@@ -1,15 +1,15 @@
 object Form2: TForm2
-  Left = 914
+  Left = 928
   Height = 150
-  Top = 126
+  Top = 65
   Width = 300
+  ActiveControl = Panel1
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'Form2'
   ClientHeight = 150
   ClientWidth = 300
   OnClick = FormClick
-  OnShow = FormShow
   ShowInTaskBar = stNever
   LCLVersion = '0.9.28.2'
   object Panel1: TPanel
@@ -31,9 +31,9 @@ object Form2: TForm2
       AnchorSideLeft.Control = Label1
       AnchorSideTop.Control = Label1
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = Owner
+      AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
       Left = 10
       Height = 102
@@ -49,8 +49,10 @@ object Form2: TForm2
       OnClick = Label2Click
     end
     object Label1: TLabel
-      AnchorSideLeft.Control = Owner
-      AnchorSideTop.Control = Owner
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Side = asrBottom
       Left = 10
       Height = 18
       Top = 10
@@ -60,6 +62,24 @@ object Form2: TForm2
       Caption = 'Label1'
       ParentColor = False
       OnClick = Label1Click
+    end
+    object Label3: TLabel
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 3
+      Height = 144
+      Top = 3
+      Width = 294
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Around = 3
+      Caption = 'Label3'
+      ParentColor = False
+      WordWrap = True
+      OnClick = Label2Click
     end
   end
   object Timer1: TTimer
