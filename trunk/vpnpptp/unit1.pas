@@ -256,7 +256,7 @@ resourcestring
   message12='Сетевой интерфейс не определился.';
   message13='Сетевой кабель для автоматического определения шлюза локальной сети не подключен.';
   message14='Не удалось автоматически определить шлюз локальной сети.';
-  message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9 или от wlan0 до wlan9.';
+  message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9.';
   message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message18='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
@@ -372,7 +372,7 @@ resourcestring
   message128='Здесь также можно указать команды, которые выполнятся сразу, как только соединение VPN PPTP/L2TP будет установлено.';
   message129='Значения MTU/MRU можно не вводить, тогда если не указана опция default-mru, то провайдер пришлет их сам (но не всегда).';
   message130='Шаблон: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
-  message131='Шаблон: от eth0 до eth9 или от wlan0 до wlan9.';
+  message131='Шаблон: от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9.';
   message132='Эта кнопка вызывает справку, но при условиях, что она есть, и что установлено офисное приложение';
   message133='Перейти к следующей странице настройки';
   message134='Выйти из программы';
@@ -521,7 +521,7 @@ var
 begin
    i:=0;
    Shell ('rm -f /tmp/CountInterface');
-   Shell ('ifconfig |grep eth >>/tmp/CountInterface & ifconfig |grep wlan >>/tmp/CountInterface');
+   Shell ('ifconfig |grep eth >>/tmp/CountInterface & ifconfig |grep wlan >>/tmp/CountInterface & ifconfig |grep br >>/tmp/CountInterface');
    AssignFile (FileInterface,'/tmp/CountInterface');
    reset (FileInterface);
    While not eof (FileInterface) do
@@ -606,6 +606,11 @@ Label43.Caption:=' ';
 Application.ProcessMessages;
 DoCountInterface;
 PressCreate:=true;
+Shell ('rm -f /opt/vpnpptp/resolv.conf');
+Shell ('rm -f /opt/vpnpptp/resolv.conf.copy');
+Shell ('rm -f /opt/vpnpptp/resolv.conf.before');
+Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
+If not DirectoryExists('/opt/vpnpptp/tmp/') then Shell ('mkdir /opt/vpnpptp/tmp/');
 If DefaultError then Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
 //проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
    If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
@@ -1027,10 +1032,11 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
      If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
  If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
  If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
- If fedora or mandriva then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.copy /var/run/ppp/resolv.conf');
+ //If fedora or mandriva then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
+ If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
  If suse then
             begin
-                If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.copy /var/run/ppp/resolv.conf');
+                //If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
                 Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
                 Memo_ip_up.Lines.Add('then');
                 Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /var/run/ppp/resolv.conf');
@@ -1132,9 +1138,9 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
                 Memo_ip_down.Lines.Add('     rm -f /etc/resolv.conf.netconfig');
                 Memo_ip_down.Lines.Add('fi');
          end;
- Memo_ip_down.Lines.Add('rm -f /tmp/DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
- Memo_ip_down.Lines.Add('rm -f /tmp/ObnullRX');
- Memo_ip_down.Lines.Add('rm -f /tmp/ObnullTX');
+ Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
+ Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/ObnullRX');
+ Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/ObnullTX');
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля
@@ -1453,8 +1459,8 @@ If suse then if not Autostartpppd.Checked then
  closefile(FileResolvConf);
 If suse or fedora or mandriva then
         begin
-             Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.copy');
-             If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -f /opt/vpnpptp/resolv.conf.copy');
+             Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
+             If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
         end;
 //настройка /etc/ppp/chap-secrets
 If FileExists('/etc/ppp/chap-secrets.old') then
@@ -1586,7 +1592,7 @@ If not flag then
                                          end;
      Shell('rm -f /tmp/networktest');
 //запоминаем текущий /etc/resolv.conf
-Shell ('cp -f /etc/resolv.conf /opt/vpnpptp/resolv.conf');
+Shell ('cp -f /etc/resolv.conf /opt/vpnpptp/resolv.conf.before');
 //Создаем ярлык для подключения
  gksu:=false;
  beesu:=false;
@@ -1878,6 +1884,8 @@ If suse then
           If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
           If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
           If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
+          If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
+          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');
         end;
     Shell ('service '+NetServiceStr+' restart');
     For i:=0 to 9 do
@@ -1886,6 +1894,8 @@ If suse then
           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' up');
           If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' up');
+          If FileExists ('/sbin/ifup') then Shell ('ifup br'+IntToStr(i));
+          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' up');
         end;
     If FileExists ('/sbin/ifup') then Shell ('ifup lo');
     If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
@@ -2347,7 +2357,7 @@ If not y then IPS:=true else IPS:=false;
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   Edit_gate.Text:=Memo_gate.Lines[0];
-  If (LeftStr(Edit_gate.Text,3)='eth') or (LeftStr(Edit_gate.Text,4)='wlan') then Edit_gate.Text:='none';
+  If (LeftStr(Edit_gate.Text,3)='eth') or (LeftStr(Edit_gate.Text,4)='wlan') or (LeftStr(Edit_gate.Text,2)='br') then Edit_gate.Text:='none';
 //определяем сетевой интерфейс по умолчанию
   Shell('/sbin/ip r|grep default| awk '+chr(39)+'{print $5}'+chr(39)+' > /tmp/eth');
   Shell('printf "none" >> /tmp/eth');
@@ -2355,7 +2365,8 @@ If not y then IPS:=true else IPS:=false;
   If FileExists('/tmp/eth') then Memo_eth.Lines.LoadFromFile('/tmp/eth');
   Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
   If Edit_eth.Text='link' then Edit_eth.Text:='none';
-  If Edit_eth.Text='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+  If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+  If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
   If Edit_eth.Text='none' then
                            begin
                              Edit_gate.Text:='none';
@@ -2458,7 +2469,8 @@ If (Edit_eth.Text='none') or (Edit_eth.Text='') then
                     begin
                          Form3.MyMessageBox(message0,message15,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
-                         If Edit_eth.Text='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+                         If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+                         If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
                          If Edit_eth.Text='link' then
                                                  begin
                                                       Edit_eth.Text:='none';
@@ -2468,11 +2480,12 @@ If (Edit_eth.Text='none') or (Edit_eth.Text='') then
                          Application.ProcessMessages;
                          exit;
                     end;
-if not Length(Edit_eth.Text) in [4,5] then
+if not Length(Edit_eth.Text) in [3,4,5] then
                     begin
                          Form3.MyMessageBox(message0,message15,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
-                         If Edit_eth.Text='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+                         If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+                         If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
                          TabSheet2.TabVisible:= True;
                          Application.ProcessMessages;
                          exit;
@@ -2480,11 +2493,13 @@ if not Length(Edit_eth.Text) in [4,5] then
 if not ((Edit_eth.Text[1]='e') and  (Edit_eth.Text[2]='t') and  (Edit_eth.Text[3]='h')) then y:=true;
 if not (Edit_eth.Text[4] in ['0'..'9']) then y:=true;
 if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[3]='a') then if (Edit_eth.Text[4]='n') then if (Edit_eth.Text[5] in ['0'..'9']) then y:=false;
+if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
 if y then
                     begin
                           Form3.MyMessageBox(message0,message15,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
-                          If Edit_eth.Text='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+                          If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
+                          If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
                           TabSheet2.TabVisible:= True;
                           Application.ProcessMessages;
                           exit;
@@ -3233,9 +3248,9 @@ Shell ('service xl2tpd stop');
 Shell ('killall xl2tpd');
 Shell ('killall openl2tpd');
 Shell ('killall l2tpd');
-Shell ('rm -f /tmp/ObnullRX');
-Shell ('rm -f /tmp/ObnullTX');
-Shell ('rm -f /tmp/DateStart');
+Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
+Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
+Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
 Stroowriter:='none';
 FindStroowriter ('oowriter',17);
 If Stroowriter='none' then FindStroowriter ('openoffice.org',23);
@@ -3283,6 +3298,7 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
   Shell ('rm -f /tmp/ip-down');
+  Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
  If not FileExists('/usr/sbin/pptp') then
                                     begin
                                        Form3.MyMessageBox(message0,message20,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);

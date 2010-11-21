@@ -219,7 +219,7 @@ var
 begin
    i:=0;
    Shell ('rm -f /tmp/CountInterface');
-   Shell ('ifconfig |grep eth >>/tmp/CountInterface & ifconfig |grep wlan >>/tmp/CountInterface');
+   Shell ('ifconfig |grep eth >>/tmp/CountInterface & ifconfig |grep wlan >>/tmp/CountInterface & ifconfig |grep br >>/tmp/CountInterface');
    AssignFile (FileInterface,'/tmp/CountInterface');
    reset (FileInterface);
    While not eof (FileInterface) do
@@ -353,11 +353,11 @@ If not Scripts then If not Welcome then
                  begin
                     Shell ('killall pppd');
                     Shell ('route add default dev '+Memo_Config.Lines[3]);
-                    If FileExists('/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
+                    If FileExists('/opt/vpnpptp/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
                             begin
                                 Memo_ip_down.Clear;
                                 Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
-                                Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                 Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                 Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                             end;
@@ -405,10 +405,10 @@ If Code_up_ppp then
                                                                                                                                                           If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
                                                                                                                                                           If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
                                                                                                                                                      end;
-                                                                                                            If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/tmp/ip-down') then
+                                                                                                            If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/opt/vpnpptp/tmp/ip-down') then
                                                                                                                                                      begin
-                                                                                                                                                          If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
-                                                                                                                                                          If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                                                                                                                          If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
+                                                                                                                                                          If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
                                                                                                                                                       end;
                                                                                                             Shell('rm -f /opt/vpnpptp/hosts');
                                                                                                           end;
@@ -431,8 +431,8 @@ If link=4 then
    end;
 If link=1 then If NoInternet then MakeDefaultGW;
 If not Code_up_ppp then
-       If FileExists('/opt/vpnpptp/resolv.conf') then
-                                 Shell ('cp -f /opt/vpnpptp/resolv.conf /etc/resolv.conf');
+       If FileExists('/opt/vpnpptp/resolv.conf.before') then
+                                 Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
 //проверка технической возможности поднятия соединения
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_config.Lines[30]<>'none' then
                             begin //тест dns1-сервера
@@ -584,8 +584,8 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                         //изменение скрипта ip-down
                                                         If Memo_Config.Lines[7]='reconnect-pptp' then if FileExists('/etc/ppp/ip-down.d/ip-down') then
                                                                                         Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                        If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/tmp/ip-down') then
-                                                                                        Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /tmp/ip-down');
+                                                        If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/opt/vpnpptp/tmp/ip-down') then
+                                                                                        Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
                                                   end;
                                               end;
                                            closefile (Filenetworktest);
@@ -616,12 +616,12 @@ If not Code_up_ppp then If link=3 then
                                                                    begin
                                                                      Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                                                      Memo_ip_down.Clear;
-                                                                     If FileExists('/tmp/ip-down') then
+                                                                     If FileExists('/opt/vpnpptp/tmp/ip-down') then
                                                                                                    begin
-                                                                                                      Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                                      Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                                                                                       Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                                       Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                                      Shell ('rm -f /tmp/ip-down');
+                                                                                                      Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
                                                                                                     end;
                                                                    end;
                                                                 halt;
@@ -642,12 +642,12 @@ If not Code_up_ppp then If link=2 then
                                                                    begin
                                                                      Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                                                      Memo_ip_down.Clear;
-                                                                     If FileExists('/tmp/ip-down') then
+                                                                     If FileExists('/opt/vpnpptp/tmp/ip-down') then
                                                                                                    begin
-                                                                                                       Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                                       Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                                                                                        Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                                        Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                                       Shell ('rm -f /tmp/ip-down');
+                                                                                                       Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
                                                                                                    end;
                                                                    end;
                                                                 halt;
@@ -702,9 +702,9 @@ If not Code_up_ppp then If link=1 then
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
-                                                      If not FileExists('/tmp/ObnullRX') then ObnullRX:=false else ObnullRX:=true;
-                                                      If not FileExists('/tmp/ObnullTX') then ObnullTX:=false else ObnullTX:=true;
-                                                      If not FileExists ('/tmp/DateStart') then DateStart:=0;
+                                                      If not FileExists('/opt/vpnpptp/tmp/ObnullRX') then ObnullRX:=false else ObnullRX:=true;
+                                                      If not FileExists('/opt/vpnpptp/tmp/ObnullTX') then ObnullTX:=false else ObnullTX:=true;
+                                                      If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0;
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
                                                       For h:=1 to CountInterface do
@@ -732,6 +732,7 @@ var
   Apid:tpid;
   Code_up_ppp:boolean;
 begin
+  Application.CreateForm(TForm2, Form2);
   DoubleRunPonoff:=false;
   ubuntu:=false;
   debian:=false;
@@ -858,9 +859,9 @@ Application.ProcessMessages;
                                                   closefile (FileDoubleRun);
                                                   Shell('rm -f /tmp/doublerun')
                                              end;
-If not FileExists ('/tmp/DateStart') then DateStart:=0 else
+If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0 else
                                        begin
-                                            AssignFile (FileDateStart,'/tmp/DateStart');
+                                            AssignFile (FileDateStart,'/opt/vpnpptp/tmp/DateStart');
                                             reset (FileDateStart);
                                             While not eof(FileDateStart) do
                                             begin
@@ -886,23 +887,23 @@ If suse then
         end;
    Shell('rm -f /tmp/tmpnostart1');
    If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
-   If FileExists('/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
+   If FileExists('/opt/vpnpptp/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
                                                                               begin
                                                                                   Memo_ip_down.Clear;
                                                                                   Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
-                                                                                  Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                  Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                                                                   Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                   Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                                                               end;
    If Memo_Config.Lines[7]='noreconnect-pptp' then
                                              begin
-                                                Shell ('rm -f /tmp/ip-down');
+                                                Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
                                                 Memo_ip_down.Clear;
                                                 If FileExists('/etc/ppp/ip-down.d/ip-down') then Memo_ip_down.Lines.LoadFromFile('/etc/ppp/ip-down.d/ip-down');
-                                                Memo_ip_down.Lines.SaveToFile('/tmp/ip-down');
+                                                Memo_ip_down.Lines.SaveToFile('/opt/vpnpptp/tmp/ip-down');
                                                 Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                                 Shell ('printf "#!/bin/sh\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                Shell('chmod a+x /tmp/ip-down');
+                                                Shell('chmod a+x /opt/vpnpptp/tmp/ip-down');
                                                 Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                              end;
    //проверка состояния сетевого интерфейса
@@ -1027,12 +1028,12 @@ begin
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                               Memo_ip_down.Clear;
-                                              If FileExists('/tmp/ip-down') then
+                                              If FileExists('/opt/vpnpptp/tmp/ip-down') then
                                                                             begin
-                                                                                 Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                 Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                                                                  Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                  Shell ('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                 Shell ('rm -f /tmp/ip-down');
+                                                                                 Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
                                                                             end;
                                             end;
   MenuItem2Click(Self);
@@ -1047,11 +1048,11 @@ begin
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
   Shell('rm -f /tmp/xl2tpd.conf');
   If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Shell ('service '+NetServiceStr+' restart');
-  If FileExists('/opt/vpnpptp/resolv.conf') then Shell ('cp -f /opt/vpnpptp/resolv.conf /etc/resolv.conf');
+  If FileExists('/opt/vpnpptp/resolv.conf.before') then Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
-  Shell ('rm -f /tmp/DateStart');
-  Shell ('rm -f /tmp/ObnullRX');
-  Shell ('rm -f /tmp/ObnullTX');
+  Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
+  Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
+  Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
   MakeDefaultGW;
   halt;
 end;
@@ -1066,17 +1067,17 @@ begin
   Timer2.Enabled:=False;
   Shell ('killall net_monitor');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
-  If FileExists('/opt/vpnpptp/resolv.conf') then Shell ('cp -f /opt/vpnpptp/resolv.conf /etc/resolv.conf');
+  If FileExists('/opt/vpnpptp/resolv.conf.before') then Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
   If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                               Memo_ip_down.Clear;
-                                              If FileExists('/tmp/ip-down') then
+                                              If FileExists('/opt/vpnpptp/tmp/ip-down') then
                                                                             begin
-                                                                                 Memo_ip_down.Lines.LoadFromFile('/tmp/ip-down');
+                                                                                 Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                                                                  Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                  Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                 Shell ('rm -f /tmp/ip-down');
+                                                                                 Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
                                                                              end;
                                             end;
   MenuItem2Click(Self);
@@ -1088,6 +1089,8 @@ begin
         If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
         If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
         If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
+        If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
+        If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');
       end;
   Shell ('service '+NetServiceStr+' restart'); // организация конкурса интерфейсов
   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
@@ -1108,6 +1111,8 @@ begin
               If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
               If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
               If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
+              If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
+              If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');
              end;
             Shell ('service '+NetServiceStr+' restart');
             For i:=0 to 9 do
@@ -1116,6 +1121,8 @@ begin
                     If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' up');
                     If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
                     If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' up');
+                    If FileExists ('/sbin/ifup') then Shell ('ifup br'+IntToStr(i));
+                    If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' up');
                  end;
            If FileExists ('/sbin/ifup') then Shell ('ifup lo');
            If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
@@ -1124,9 +1131,9 @@ begin
   Shell('rm -f /etc/resolv.conf.lock');
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
-  Shell ('rm -f /tmp/DateStart');
-  Shell ('rm -f /tmp/ObnullRX');
-  Shell ('rm -f /tmp/ObnullTX');
+  Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
+  Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
+  Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
   If (NetServiceStr<>'network-manager') then if (NetServiceStr<>'NetworkManager') then if not mandriva then
                                              Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;
@@ -1217,8 +1224,8 @@ begin
   PClose(f);
   Delete(RXbyte1,1,6);
   Delete(TXbyte1,1,6);
-  If StrToInt64(RXbyte1)>=4242538496 then begin ObnullRX:=true; Shell ('touch /tmp/ObnullRX'); end;//реакция программы за 3сек до факта обнуления значений
-  If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch /tmp/ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
+  If StrToInt64(RXbyte1)>=4242538496 then begin ObnullRX:=true; Shell ('touch /opt/vpnpptp/tmp/ObnullRX'); end;//реакция программы за 3сек до факта обнуления значений
+  If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch /opt/vpnpptp/tmp/ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
   If Count=2 then
   begin
      RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
@@ -1236,7 +1243,7 @@ begin
                       begin
                            fpGettimeofday(@TV,nil);
                            DateStart:=TV.tv_sec;
-                           If not FileExists ('/tmp/DateStart') then Shell ('printf "'+IntToStr(DateStart)+'\n" > /tmp/DateStart');
+                           If not FileExists ('/opt/vpnpptp/tmp/DateStart') then Shell ('printf "'+IntToStr(DateStart)+'\n" > /opt/vpnpptp/tmp/DateStart');
                       end;
   If Code_up_ppp then
                      begin
@@ -1437,8 +1444,8 @@ begin
   TX:=DeleteSym (')',TX);
   RX:=DeleteSym ('(',RX);
   RX:=DeleteSym (')',RX);
-  If ObnullRX or FileExists('/tmp/ObnullRX')then RX:='>4GiB';
-  If ObnullTX or FileExists('/tmp/ObnullTX')then TX:='>4GiB';
+  If ObnullRX or FileExists('/opt/vpnpptp/tmp/ObnullRX')then RX:='>4GiB';
+  If ObnullTX or FileExists('/opt/vpnpptp/tmp/ObnullTX')then TX:='>4GiB';
   str:='';
   If Memo_Config.Lines[39]<>'l2tp' then
                                    begin
@@ -1451,7 +1458,7 @@ begin
                     else str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                    end;
   //TrayIcon1.Hint:=str;
-  Unit2.Form2.ShowMyHint (str, 5000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+  Unit2.Form2.ShowMyHint (str, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
   Application.ProcessMessages;
 end;
 
