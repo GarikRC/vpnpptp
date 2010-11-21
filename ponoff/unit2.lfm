@@ -1,15 +1,14 @@
 object Form2: TForm2
-  Left = 928
+  Left = 813
   Height = 150
-  Top = 65
-  Width = 300
+  Top = 121
+  Width = 436
   ActiveControl = Panel1
-  BorderIcons = []
-  BorderStyle = bsNone
   Caption = 'Form2'
   ClientHeight = 150
-  ClientWidth = 300
+  ClientWidth = 436
   OnClick = FormClick
+  OnClose = FormClose
   ShowInTaskBar = stNever
   LCLVersion = '0.9.28.2'
   object Panel1: TPanel
@@ -22,48 +21,12 @@ object Form2: TForm2
     Left = 0
     Height = 150
     Top = 0
-    Width = 300
+    Width = 436
     Anchors = [akTop, akLeft, akRight, akBottom]
     ClientHeight = 150
-    ClientWidth = 300
+    ClientWidth = 436
     TabOrder = 0
-    object Label2: TLabel
-      AnchorSideLeft.Control = Label1
-      AnchorSideTop.Control = Label1
-      AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = Panel1
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = Panel1
-      AnchorSideBottom.Side = asrBottom
-      Left = 10
-      Height = 102
-      Top = 38
-      Width = 280
-      Anchors = [akTop, akLeft, akRight, akBottom]
-      BorderSpacing.Top = 10
-      BorderSpacing.Right = 10
-      BorderSpacing.Bottom = 10
-      Caption = 'Label2'
-      ParentColor = False
-      WordWrap = True
-      OnClick = Label2Click
-    end
     object Label1: TLabel
-      AnchorSideLeft.Control = Panel1
-      AnchorSideTop.Control = Panel1
-      AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Side = asrBottom
-      Left = 10
-      Height = 18
-      Top = 10
-      Width = 45
-      BorderSpacing.Left = 10
-      BorderSpacing.Top = 10
-      Caption = 'Label1'
-      ParentColor = False
-      OnClick = Label1Click
-    end
-    object Label3: TLabel
       AnchorSideLeft.Control = Panel1
       AnchorSideTop.Control = Panel1
       AnchorSideRight.Control = Panel1
@@ -73,10 +36,10 @@ object Form2: TForm2
       Left = 3
       Height = 144
       Top = 3
-      Width = 294
+      Width = 430
       Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Around = 3
-      Caption = 'Label3'
+      Caption = 'Label1'
       ParentColor = False
       WordWrap = True
       OnClick = Label2Click
@@ -84,7 +47,12 @@ object Form2: TForm2
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    left = 264
+    left = 384
+    top = 8
+  end
+  object Timer2: TTimer
+    OnTimer = Timer2Timer
+    left = 336
     top = 8
   end
 end

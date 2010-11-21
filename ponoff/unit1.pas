@@ -242,7 +242,7 @@ Application.ProcessMessages;}
 If Form1.Memo_Config.Lines[23]<>'networktest-yes' then Sleep(1000);
 {If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
 Application.ProcessMessages;}
-Unit2.Form2.ShowMyBalloonHint(message0, str1, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
 Application.ProcessMessages;
 end;
 
