@@ -74,6 +74,7 @@ begin
    Form2.Constraints.MaxWidth:=Form2.Width;
    Form2.Constraints.MinWidth:=Form2.Width;
    Label1.BorderSpacing.Around:=5;
+   Label2.BorderSpacing.Around:=5;
    if Y-Form2.Height>=0 then Form2.Top:=Y-Form2.Height;
    if Y-Form2.Height<0 then Form2.Top:=Y+22;//22 пикселя - размер иконки в трее
    if X-Form2.Width>=0 then Form2.Left:=X-Form2.Width;
@@ -105,6 +106,7 @@ begin
    Panel1.Width:=Form2.Width;
    Panel1.Height:=Form2.Height;
    Label1.BorderSpacing.Around:=3;
+   Label2.BorderSpacing.Around:=3;
    if Y-Form2.Height>=0 then Form2.Top:=Y-Form2.Height;//22 пикселя - размер иконки в трее, 11- это пополам
    if Y-Form2.Height<0 then Form2.Top:=Y+22;
    Form2.Left:=11+X-Form2.Width div 2;

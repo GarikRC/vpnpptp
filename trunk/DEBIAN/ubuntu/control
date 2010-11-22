@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Alex Loginov <loginov_alex@inbox.ru>, <loginov.alex.valer@gmail.com>
 Build-Depends: fpc-src >= 2.2.4, fpc >= 2.2.4, lazarus
 Package: vpnpptp-allde
-Version: 0.2.5
+Version: 0.2.6
 Architecture: all
 Depends: gksu, pptp-linux, xl2tpd, network-manager
 Description: Tools for easy and quick setup and control VPN via PPTP/L2TP

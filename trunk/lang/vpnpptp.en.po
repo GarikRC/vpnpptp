@@ -247,8 +247,8 @@ msgid "Не удалось автоматически оп#209�еделить 
 msgstr "Could not automatically determine the network gateway."
 
 #: unit1.message15
-msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9 или от wlan0 до wlan9."
-msgstr "Field \"Network interface\" is wrong. Must be eth0 to eth9 or wlan0 to wlan9."
+msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9."
+msgstr "Field \"Network interface\" is wrong. Must be eth0 to eth9 or wlan0 to wlan9, or br0 to br9."
 
 #: unit1.message16
 msgid "Поле \"Шлюз локальной сети\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
@@ -842,8 +842,8 @@ msgid "Шаблон: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
 msgstr "Template: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
 
 #: unit1.message131
-msgid "Шаблон: от eth0 до eth9 или от wlan0 до wlan9."
-msgstr "Template: eth0 to eth9 or wlan0 to wlan9."
+msgid "Шаблон: от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9."
+msgstr "Template: eth0 to eth9 or wlan0 to wlan9, or br0 to br9."
 
 #: unit1.message132
 msgid "Эта кнопка вызывает сп#209�авку, но п#209�и условиях, что она есть, и что установлено офисное п#209�иложение"
@@ -969,3 +969,15 @@ msgstr "This option is only used with the VPN PPTP."
 #: TFORM1.NOBUFFER.CAPTION
 msgid "Средне- или высокоскоростная линия (nobuffer)"
 msgstr "Medium-or high-speed line (nobuffer)"
+
+#: unit1.message158
+msgid "Однов#209�еменное получение ма#209�ш#209�утов че#209�ез DHCP, автозапуск инте#209�нета п#209�и ста#209�те системы демоном pppd(xl2tpd) без г#209�афики,"
+msgstr "Simultaneous receipt of routing via DHCP, Internet autorun at system startup daemon pppd (xl2tpd) without graphics,"
+
+#: unit1.message159
+msgid "неиспользование опции usepeerdns - такое сочетание в Вашем дист#209�ибутиве может #209�аботать неко#209�#209�ектно."
+msgstr "non-use options usepeerdns - such combination of your distribution may not work correctly."
+
+#: unit1.message160
+msgid "Не обна#209�ужено ни одного се#209�виса, способного уп#209�авлять сетью. Ко#209�#209�ектная #209�абота п#209�ог#209�аммы невозможна!"
+msgstr "Did not find any service that can manage the network. Correct operation of the program is impossible!"

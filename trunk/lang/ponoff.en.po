@@ -25,10 +25,6 @@ msgstr "Exit without problem"
 msgid "Выход п#209�и ава#209�ии"
 msgstr "Exit with problem"
 
-#: unit1.message2
-msgid "Д#209�угая такая же п#209�ог#209�амма уже #209�аботает с VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска."
-msgstr "Another copy of program try configure VPN PPTP/L2TP. Press <OK> for dismiss double run."
-
 #: unit1.message3
 msgid "Сначала сконфигу#209�и#209�уйте соединение: Меню->Утилиты->Системные(или Меню->Инте#209�нет)->vpnpptp(Наст#209�ойка соединения VPN PPTP/L2TP)."
 msgstr "First configure connection: Menu->Tools->System(or Menu->Internet)->vpnpptp(Configure VPN PPTP)."
@@ -189,3 +185,7 @@ msgstr "DNS2-server at elevated VPN does not ping. "
 #: unit1.message42
 msgid "DNS1-се#209�ве#209� п#209�и поднятом VPN не пингуется. "
 msgstr "DNS1-server at elevated VPN does not ping. "
+
+#: unit1.message2
+msgid "Не обна#209�ужено ни одного се#209�виса, способного уп#209�авлять сетью. Ко#209�#209�ектная #209�абота п#209�ог#209�аммы невозможна!"
+msgstr "Did not find any service that can manage the network. Correct operation of the program is impossible!"

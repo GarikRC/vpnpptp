@@ -25,6 +25,18 @@ msgstr ""
 msgid "Look"
 msgstr ""
 
+#: TFORM2.CAPTION
+msgid "Form2"
+msgstr ""
+
+#: TFORM2.LABEL1.CAPTION
+msgid "Label1"
+msgstr ""
+
+#: TFORM2.LABEL2.CAPTION
+msgid "               Label2"
+msgstr ""
+
 #: TFORM3.CAPTION
 msgid "Form3"
 msgstr ""
@@ -75,6 +87,10 @@ msgstr ""
 
 #: unit1.message19
 msgid "П#209�ове#209�ено! Инте#209�нет #209�аботает!"
+msgstr ""
+
+#: unit1.message2
+msgid "Не обна#209�ужено ни одного се#209�виса, способного уп#209�авлять сетью. Ко#209�#209�ектная #209�абота п#209�ог#209�аммы невозможна!"
 msgstr ""
 
 #: unit1.message20
