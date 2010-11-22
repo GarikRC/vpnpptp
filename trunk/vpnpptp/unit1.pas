@@ -400,8 +400,8 @@ resourcestring
   message155='Если у Вас низкоскоростное соединение, то отключите эту опцию.';
   message156='Но ее отключение при средне- или высокоскоростном соединении замедлит интернет.';
   message157='Эта опция используется только с VPN PPTP.';
-  message158='Одновременное получение маршрутов через DHCP, автозапуск интернета при старте системы демоном pppd(xl2tpd) без графики,';
-  message159='неиспользование опции usepeerdns - такое сочетание в Вашем дистрибутиве может работать некорректно.';
+  message158='Одновременное получение маршрутов через DHCP, автозапуск интернета при старте системы демоном pppd(xl2tpd) без графики';
+  message159='- такое сочетание в Вашем дистрибутиве может работать некорректно.';
   message160='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
 
 implementation
@@ -615,7 +615,7 @@ If Unit2.Form2.CheckBoxusepeerdns.Checked then
                                                                                  end;
                                             Application.ProcessMessages;
                                          end;
-If fedora then if not Unit2.Form2.CheckBoxusepeerdns.Checked then If dhcp_route.Checked then if Autostartpppd.Checked then
+If fedora then If dhcp_route.Checked then if Autostartpppd.Checked then
                                          begin
                                             Form3.MyMessageBox(message0,message158+' '+message159+' '+message120,'',message122,message125,'/opt/vpnpptp/vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                             if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then
@@ -1398,10 +1398,11 @@ If not FileExists ('/etc/rc.d/rc.local') then If FileExists ('/etc/rc.local') th
                                    begin
                                      readln(FileAutostartpppd, str);
                                      if str='exit 0' then exit0find:=true;
-                                     If (str<>'exit 0') and (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
+                                     If (str<>'exit 0') and (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,5)<>'sleep') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
                                                                     Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
+                                 If dhcp_route.Checked then if fedora then Memo_Autostartpppd.Lines.Add('sleep 10');
                                  If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
                                                                      else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
                                  if exit0find then Memo_Autostartpppd.Lines.Add(str);
@@ -1418,7 +1419,7 @@ If not FileExists ('/etc/rc.d/rc.local') then If FileExists ('/etc/rc.local') th
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,5)<>'sleep') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>'/etc/init.d/xl2tpd restart') then
                                                                      Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  closefile(FileAutostartpppd);
