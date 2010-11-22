@@ -8,7 +8,7 @@
       <Title Value="Управление соединением VPN PPTP/L2TP"/>
       <Icon Value="0"/>
       <UseXPManifest Value="True"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <ActiveEditorIndexAtStart Value="3"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -16,7 +16,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <CurrentBuildNr Value="618"/>
+      <CurrentBuildNr Value="619"/>
       <Language Value="0419"/>
     </VersionInfo>
     <PublishOptions>
@@ -174,7 +174,7 @@
         <ComponentName Value="Form2"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit2"/>
-        <CursorPos X="45" Y="4"/>
+        <CursorPos X="10" Y="109"/>
         <TopLine Value="1"/>
         <EditorIndex Value="3"/>
         <UsageCount Value="37"/>
