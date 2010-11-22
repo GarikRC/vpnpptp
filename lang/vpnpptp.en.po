@@ -971,12 +971,12 @@ msgid "Средне- или высокоскоростная линия (nobuffe
 msgstr "Medium-or high-speed line (nobuffer)"
 
 #: unit1.message158
-msgid "Однов#209�еменное получение ма#209�ш#209�утов че#209�ез DHCP, автозапуск инте#209�нета п#209�и ста#209�те системы демоном pppd(xl2tpd) без г#209�афики,"
-msgstr "Simultaneous receipt of routing via DHCP, Internet autorun at system startup daemon pppd (xl2tpd) without graphics,"
+msgid "Однов#209�еменное получение ма#209�ш#209�утов че#209�ез DHCP, автозапуск инте#209�нета п#209�и ста#209�те системы демоном pppd(xl2tpd) без г#209�афики"
+msgstr "Simultaneous receipt of routing via DHCP, Internet autorun at system startup daemon pppd (xl2tpd) without graphics"
 
 #: unit1.message159
-msgid "неиспользование опции usepeerdns - такое сочетание в Вашем дист#209�ибутиве может #209�аботать неко#209�#209�ектно."
-msgstr "non-use options usepeerdns - such combination of your distribution may not work correctly."
+msgid "- такое сочетание в Вашем дист#209�ибутиве может #209�аботать неко#209�#209�ектно."
+msgstr "- such combination in your distribution may not work correctly."
 
 #: unit1.message160
 msgid "Не обна#209�ужено ни одного се#209�виса, способного уп#209�авлять сетью. Ко#209�#209�ектная #209�абота п#209�ог#209�аммы невозможна!"
