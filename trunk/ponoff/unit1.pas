@@ -347,8 +347,10 @@ If Code_up_ppp then
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
  end;
+If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+                                            Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
 If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
-                       If not CompareFiles('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
+                       If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
                                             Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
 If Code_up_ppp then If not FileExists ('/etc/resolv.conf.lock') then Scripts:=false;//скрипты опускания и поднятия не были выполнены
 If not Scripts then If ubuntu or debian then Scripts:=true;
@@ -1264,6 +1266,11 @@ begin
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                              begin
                                  sleep (1000);
+                                 If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+                                            Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
+                                 If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
+                                                If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
+                                                       Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
                                 //определение dns, на которых поднято vpn
                                  DNS3:='none';
                                  DNS4:='none';
