@@ -199,7 +199,7 @@ type
   TMyHintWindow = class(THintWindow)
   public
     procedure ActivateHint(Rect: TRect; const AHint: string); override;
-    //constructor Create(AOwner: TComponent); override;
+    constructor Create(AOwner: TComponent); override;
   end;
 
 TTranslator = class(TAbstractTranslator)
@@ -409,7 +409,7 @@ implementation
 uses
 LCLProc;
 
-{constructor TMyHintWindow.Create(AOwner: TComponent);
+constructor TMyHintWindow.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   with Canvas.Font do
@@ -417,7 +417,7 @@ begin
     Size := AFont;
     Color:=clBlack;
   end;
-end;   }
+end;
 
 procedure TMyHintWindow.ActivateHint(Rect: TRect; const AHint: string);
 begin
