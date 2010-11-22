@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 433
+  Left = 439
   Height = 580
-  Top = 361
+  Top = 94
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2146,10 +2146,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 816
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -3198,10 +3198,10 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = Label43
-        Left = 205
-        Height = 11
-        Top = 487
-        Width = 401
+        Left = 146
+        Height = 14
+        Top = 481
+        Width = 522
         Anchors = [akLeft, akBottom]
         Caption = 'Нажмите на кнопку "Создать подключение" для сохранения сконфигурированных настроек'
         ParentColor = False
@@ -3213,10 +3213,10 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet3
         AnchorSideBottom.Side = asrBottom
-        Left = 185
-        Height = 11
-        Top = 498
-        Width = 441
+        Left = 120
+        Height = 14
+        Top = 495
+        Width = 575
         Anchors = [akLeft, akBottom]
         Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
         ParentBidiMode = False
@@ -3224,27 +3224,27 @@ object Form1: TForm1
       end
       object Label_peername: TLabel
         Left = 279
-        Height = 11
+        Height = 14
         Top = 9
-        Width = 67
+        Width = 89
         Caption = 'Label_peername'
         ParentColor = False
         Visible = False
       end
       object Label_ip_up: TLabel
         Left = 383
-        Height = 11
+        Height = 14
         Top = 9
-        Width = 88
+        Width = 120
         Caption = '/etc/ppp/ip-up.d/ip-up'
         ParentColor = False
         Visible = False
       end
       object Label_ip_down: TLabel
         Left = 519
-        Height = 11
+        Height = 14
         Top = 9
-        Width = 112
+        Width = 150
         Caption = '/etc/ppp/ip-down.d/ip-down'
         ParentColor = False
         Visible = False
@@ -3257,8 +3257,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = TabSheet3
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 22
-        Top = 487
+        Height = 28
+        Top = 481
         Width = 814
         Anchors = [akTop, akLeft, akRight, akBottom]
         ParentColor = False
@@ -3355,9 +3355,9 @@ object Form1: TForm1
       end
       object Mii_tool_no: TCheckBox
         Left = 8
-        Height = 22
+        Height = 21
         Top = 6
-        Width = 205
+        Width = 258
         Caption = 'Не контролировать state сетевого кабеля'
         TabOrder = 0
       end
@@ -3365,9 +3365,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Mii_tool_no
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 28
-        Width = 512
+        Height = 21
+        Top = 27
+        Width = 661
         Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
         OnChange = Reconnect_pptpChange
         TabOrder = 1
@@ -3376,9 +3376,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Reconnect_pptp
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 50
-        Width = 239
+        Height = 21
+        Top = 48
+        Width = 306
         Caption = 'Вести подробный лог pppd(xl2tpd) в /var/log/syslog'
         Checked = True
         State = cbChecked
@@ -3388,9 +3388,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Pppd_log
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 72
-        Width = 165
+        Height = 21
+        Top = 69
+        Width = 209
         Caption = 'Получать маршруты через DHCP'
         Checked = True
         OnChange = dhcp_routeChange
@@ -3412,9 +3412,9 @@ object Form1: TForm1
         AnchorSideTop.Control = dhcp_route
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 94
-        Width = 325
+        Height = 21
+        Top = 90
+        Width = 420
         Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
         Checked = True
         OnChange = CheckBox_shorewallChange
@@ -3447,9 +3447,9 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_shorewall
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 116
-        Width = 230
+        Height = 21
+        Top = 111
+        Width = 293
         Caption = 'Программно добавлять маршрут к VPN-серверу'
         Checked = True
         OnChange = routevpnautoChange
@@ -3471,9 +3471,9 @@ object Form1: TForm1
         AnchorSideTop.Control = routeDNSauto
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 182
-        Width = 326
+        Height = 21
+        Top = 174
+        Width = 419
         Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
         OnChange = networktestChange
         TabOrder = 8
@@ -3482,9 +3482,9 @@ object Form1: TForm1
         AnchorSideTop.Control = networktest
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 204
-        Width = 244
+        Height = 21
+        Top = 195
+        Width = 313
         Caption = 'Блокировать все всплывающие сообщения из трея'
         OnChange = balloonChange
         TabOrder = 9
@@ -3504,9 +3504,9 @@ object Form1: TForm1
         AnchorSideTop.Control = balloon
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 226
-        Width = 253
+        Height = 21
+        Top = 216
+        Width = 326
         Caption = 'Разрешить пользователям управлять подключением'
         OnChange = Sudo_ponoffChange
         TabOrder = 10
@@ -3515,9 +3515,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Sudo_ponoff
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 248
-        Width = 270
+        Height = 21
+        Top = 237
+        Width = 348
         Caption = 'Разрешить пользователям конфигурировать соединение'
         OnChange = Sudo_configureChange
         TabOrder = 11
@@ -3548,9 +3548,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Sudo_configure
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 270
-        Width = 272
+        Height = 21
+        Top = 258
+        Width = 356
         Caption = 'Автозапуск интернета при старте системы (графический)'
         OnChange = Autostart_ponoffChange
         TabOrder = 12
@@ -3559,9 +3559,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Autostart_ponoff
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 292
-        Width = 477
+        Height = 21
+        Top = 279
+        Width = 620
         Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
         OnChange = AutostartpppdChange
         TabOrder = 13
@@ -3581,9 +3581,9 @@ object Form1: TForm1
         AnchorSideTop.Control = Autostartpppd
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 314
-        Width = 275
+        Height = 21
+        Top = 300
+        Width = 346
         Caption = 'Не изменять дефолтный шлюз, запустив VPN PPTP в фоне'
         OnChange = pppnotdefaultChange
         TabOrder = 14
@@ -3614,9 +3614,9 @@ object Form1: TForm1
         AnchorSideTop.Control = etc_hosts
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 160
-        Width = 218
+        Height = 21
+        Top = 153
+        Width = 284
         Caption = 'Программно маршрутизировать DNS-сервера'
         TabOrder = 7
       end
@@ -3646,9 +3646,9 @@ object Form1: TForm1
         AnchorSideTop.Control = routevpnauto
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 138
-        Width = 513
+        Height = 21
+        Top = 132
+        Width = 662
         Caption = 'Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)'
         Checked = True
         OnChange = etc_hostsChange
@@ -3659,9 +3659,9 @@ object Form1: TForm1
         AnchorSideTop.Control = pppnotdefault
         AnchorSideTop.Side = asrBottom
         Left = 8
-        Height = 22
-        Top = 336
-        Width = 229
+        Height = 21
+        Top = 321
+        Width = 294
         Caption = 'Средне- или высокоскоростная линия (nobuffer)'
         Checked = True
         OnChange = pppnotdefaultChange

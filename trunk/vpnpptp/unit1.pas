@@ -199,6 +199,7 @@ type
   TMyHintWindow = class(THintWindow)
   public
     procedure ActivateHint(Rect: TRect; const AHint: string); override;
+    //constructor Create(AOwner: TComponent); override;
   end;
 
 TTranslator = class(TAbstractTranslator)
@@ -399,11 +400,24 @@ resourcestring
   message155='Если у Вас низкоскоростное соединение, то отключите эту опцию.';
   message156='Но ее отключение при средне- или высокоскоростном соединении замедлит интернет.';
   message157='Эта опция используется только с VPN PPTP.';
+  message158='Одновременное получение маршрутов через DHCP, автозапуск интернета при старте системы демоном pppd без графики,';
+  message159='неиспользование опции usepeerdns - такое сочетание в Вашем дистрибутиве может работать некорректно.';
+  message160='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
 
 implementation
 
 uses
 LCLProc;
+
+{constructor TMyHintWindow.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  with Canvas.Font do
+  begin
+    Size := AFont;
+    Color:=clBlack;
+  end;
+end;   }
 
 procedure TMyHintWindow.ActivateHint(Rect: TRect; const AHint: string);
 begin
@@ -535,7 +549,7 @@ begin
    CountInterface:=i;
 end;
 
-function CompareFiles(const FirstFile, SecondFile: string): Boolean;
+{function CompareFiles(const FirstFile, SecondFile: string): Boolean;
 //сравнение файлов
 var
   f1, f2: TMemoryStream;
@@ -552,7 +566,7 @@ begin
     f2.Free;
     f1.Free;
   end
-end;
+end;}
 
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
@@ -593,6 +607,17 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
 If Unit2.Form2.CheckBoxusepeerdns.Checked then
                                          begin
                                             Form3.MyMessageBox(message0,message80+' '+message120,'',message122,message125,'/opt/vpnpptp/vpnpptp.png',false,true,true,AFont,Form1.Icon);
+                                            if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then
+                                                                                 begin
+                                                                                      Label14.Caption:='';
+                                                                                      Application.ProcessMessages;
+                                                                                      exit;
+                                                                                 end;
+                                            Application.ProcessMessages;
+                                         end;
+If fedora then if not Unit2.Form2.CheckBoxusepeerdns.Checked then If dhcp_route.Checked then if Autostartpppd.Checked then
+                                         begin
+                                            Form3.MyMessageBox(message0,message158+' '+message159+' '+message120,'',message122,message125,'/opt/vpnpptp/vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                             if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then
                                                                                  begin
                                                                                       Label14.Caption:='';
@@ -1441,8 +1466,13 @@ If suse then if not Autostartpppd.Checked then
  if EditDNS3.Text<>'none' then if EditDNS4.Text<>'none' then N:=2;
  if (EditDNS3.Text='none') or (EditDNS4.Text='none') then N:=1;
  if EditDNS3.Text='none' then if EditDNS4.Text='none' then N:=0;
+{ If (EditDNS3.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.82') then N:=1;
+ If (EditDNS4.Text='81.176.72.83') or (EditDNS3.Text='81.176.72.83') then N:=1;
+ If (EditDNS4.Text='81.176.72.83') and (EditDNS3.Text='81.176.72.82') then N:=2;
+ If (EditDNS3.Text='81.176.72.82') and (EditDNS4.Text='81.176.72.83') then N:=2;}
  AssignFile (FileResolvConf,'/etc/resolv.conf');
  reset (FileResolvConf);
+ If not (EditDNS3.Text='81.176.72.82') and not (EditDNS3.Text='81.176.72.83') and not (EditDNS4.Text='81.176.72.82') and not (EditDNS4.Text='81.176.72.83') then
  While not eof (FileResolvConf) do
      begin
         readln(FileResolvConf, str);
@@ -1456,7 +1486,22 @@ If suse then if not Autostartpppd.Checked then
                                        end;
         if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
      end;
- closefile(FileResolvConf);
+   closefile(FileResolvConf);
+   If ((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') or (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) then
+     begin
+        //readln(FileResolvConf, str);
+        //if LeftStr(str,11)<>'nameserver ' then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
+        //if LeftStr(str,11)='nameserver ' then i:=i+1;
+        //if LeftStr(str,11)='nameserver ' then if not endprint then
+          //                             begin
+        if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then if (EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') then
+                                  Shell ('printf "nameserver '+EditDNS3.Text+'\n" >> /var/run/ppp/resolv.conf');
+        if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then if (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83') then
+                                  Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /var/run/ppp/resolv.conf');
+   //                                 endprint:=true;
+     //                                  end;
+      //  if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
+     end;
 If suse or fedora or mandriva then
         begin
              Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
@@ -3276,6 +3321,11 @@ If FileExists ('/etc/init.d/network') then NetServiceStr:='network';
 If FileExists ('/etc/init.d/networking') then NetServiceStr:='networking';
 If FileExists ('/etc/init.d/network-manager') then NetServiceStr:='network-manager';
 If FileExists ('/etc/init.d/NetworkManager') then NetServiceStr:='NetworkManager';
+If NetServiceStr='none' then
+                            begin
+                               Form3.MyMessageBox(message0,message160,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                               Application.ProcessMessages;
+                            end;
 //проверка dhclient в процессах root и установлен ли пакет
    dhclient:=true;
    Shell('ps -u root | grep dhclient | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');

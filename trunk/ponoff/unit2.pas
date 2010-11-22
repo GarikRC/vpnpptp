@@ -108,6 +108,8 @@ begin
    if Y-Form2.Height>=0 then Form2.Top:=Y-Form2.Height;//22 пикселя - размер иконки в трее, 11- это пополам
    if Y-Form2.Height<0 then Form2.Top:=Y+22;
    Form2.Left:=11+X-Form2.Width div 2;
+   //Form2.Left:=11+X-Form2.Width div 2;
+   //Form2.Top:=Y-Form2.Height-22;
    Label1.Caption:=str0;
    Label2.Caption:='';
    Timer2.Interval:=n;
