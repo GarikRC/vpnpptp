@@ -116,7 +116,7 @@ const
 resourcestring
   message0='Внимание!';
   message1='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
-  //message2='Другая такая же программа уже работает с VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска.';
+  message2='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
   message3='Сначала сконфигурируйте соединение: Меню->Утилиты->Системные(или Меню->Интернет)->vpnpptp(Настройка соединения VPN PPTP/L2TP).';
   message4='No ethernet. Cетевой интерфейс для VPN PPTP/L2TP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
   message5='No link. Сетевой кабель для VPN PPTP/L2TP неподключен.';
@@ -347,6 +347,9 @@ If Code_up_ppp then
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
  end;
+If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
+                       If not CompareFiles('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
+                                            Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
 If Code_up_ppp then If not FileExists ('/etc/resolv.conf.lock') then Scripts:=false;//скрипты опускания и поднятия не были выполнены
 If not Scripts then If ubuntu or debian then Scripts:=true;
 If not Scripts then If not Welcome then
@@ -505,7 +508,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                            Application.ProcessMessages;
                                                       end;
                                 DhclientStart:=true;
-                                If fedora then sleep (10000);
+                                //If fedora then sleep (10000);
                               //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
                               end;
                               If link=1 then If NoInternet then If Memo_Config.Lines[9]='dhcp-route-yes' then //проверка поднялся ли интерфейс после dhclient
@@ -824,6 +827,11 @@ begin
   If FileExists ('/etc/init.d/networking') then NetServiceStr:='networking';
   If FileExists ('/etc/init.d/network-manager') then NetServiceStr:='network-manager';
   If FileExists ('/etc/init.d/NetworkManager') then NetServiceStr:='NetworkManager';
+  If NetServiceStr='none' then
+                            begin
+                               Form3.MyMessageBox(message0,message2,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+                               Application.ProcessMessages;
+                            end;
   //Проверяем поднялось ли соединение
   Shell('rm -f /tmp/status.ppp');
   Memo2.Clear;
@@ -1459,6 +1467,7 @@ begin
                                    end;
   //TrayIcon1.Hint:=str;
   Unit2.Form2.ShowMyHint (str, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+  //Unit2.Form2.ShowMyHint (str, 3000, Mouse.CursorPos.X, Mouse.CursorPos.Y, AFont);
   Application.ProcessMessages;
 end;
 
