@@ -235,15 +235,9 @@ end;
 
 procedure BalloonMessage (i:integer;str1:string);
 begin
-{Form1.TrayIcon1.BalloonHint:='';
-Form1.TrayIcon1.BalloonTimeout:=i;
-Form1.TrayIcon1.BalloonHint:=str1;
-Application.ProcessMessages;}
-If Form1.Memo_Config.Lines[23]<>'networktest-yes' then Sleep(1000);
-{If Form1.Memo_Config.Lines[24]='balloon-no' then If str1<>'' then Form1.TrayIcon1.ShowBalloonHint;
-Application.ProcessMessages;}
-Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
-Application.ProcessMessages;
+     If Form1.Memo_Config.Lines[23]<>'networktest-yes' then Sleep(1000);
+     Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+     Application.ProcessMessages;
 end;
 
 procedure MakeDefaultGW;
@@ -341,7 +335,6 @@ If Code_up_ppp then
                                                  Shell ('/sbin/route del default dev '+Memo_gate.Lines[0]);
                                              Shell ('/sbin/route add default gw '+Memo_config.Lines[2]+' dev '+Memo_config.Lines[3]);
                                              NoInternet:=false;//считаем, что типа при этом есть интернет
-                                             //Shell ('/etc/ppp/ip-up.d/ip.up'); //повторно указываем где искать vpn-сервер
                                            end;
                                end;
   Shell ('rm -f /tmp/gate');
@@ -510,7 +503,6 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                            Application.ProcessMessages;
                                                       end;
                                 DhclientStart:=true;
-                                //If fedora then sleep (10000);
                               //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
                               end;
                               If link=1 then If NoInternet then If Memo_Config.Lines[9]='dhcp-route-yes' then //проверка поднялся ли интерфейс после dhclient
@@ -1257,6 +1249,11 @@ begin
                       end;
   If Code_up_ppp then
                      begin
+                             If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+                                          Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
+                             If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
+                                                If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
+                                                       Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
                              Application.ProcessMessages;
                              If FileExists ('/opt/vpnpptp/on.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
                              If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
@@ -1266,11 +1263,6 @@ begin
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                              begin
                                  sleep (1000);
-                                 If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
-                                            Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
-                                 If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
-                                                If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
-                                                       Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
                                 //определение dns, на которых поднято vpn
                                  DNS3:='none';
                                  DNS4:='none';
@@ -1472,9 +1464,7 @@ begin
   If Code_up_ppp then str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')'
                     else str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                    end;
-  //TrayIcon1.Hint:=str;
   Unit2.Form2.ShowMyHint (str, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
-  //Unit2.Form2.ShowMyHint (str, 3000, Mouse.CursorPos.X, Mouse.CursorPos.Y, AFont);
   Application.ProcessMessages;
 end;
 
