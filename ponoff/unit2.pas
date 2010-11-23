@@ -35,6 +35,7 @@ type
 
 var
    Form2: TForm2;
+   Xg,Yg: Longint;
 
 implementation
 
@@ -57,6 +58,8 @@ end;
 
 procedure TForm2.ShowMyBalloonHint (str0, str1:string; n:integer; X, Y:Longint; AFont:integer);
 begin
+   Xg:=X;
+   Yg:=Y;
    Form2.Tag:=1;
    Form2.ShowInTaskBar:=stNever;
    If Form2.Tag=2 then Form2.Hide;//приоритет балуна над хинтом
@@ -90,6 +93,8 @@ end;
 procedure TForm2.ShowMyHint (str0:string; n:integer; X, Y:Longint; AFont:integer);
 begin
    If Form2.Tag=1 then exit;//запрет на показ хинта если показывается балун
+   Xg:=X;
+   Yg:=Y;
    Form2.Tag:=2;
    Form2.ShowInTaskBar:=stNever;
    Form2.BorderStyle:=bsNone;
@@ -126,6 +131,8 @@ end;
 
 procedure TForm2.Timer2Timer(Sender: TObject);
 begin
+   If Mouse.CursorPos.X>=Xg then If Mouse.CursorPos.X<=Xg+22 then
+                            If Mouse.CursorPos.Y>=Yg then If Mouse.CursorPos.Y<=Yg+22 then exit;
    Form2.Hide;
    Timer2.Enabled:=false;
    Form2.Tag:=0;
