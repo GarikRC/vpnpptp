@@ -19,13 +19,7 @@ Source0: vpnpptp-%{distsuffix}-src-%{version}.tar.gz
 Source1: vpnpptp_kde_one.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: fpc-src >= 2.2.4, fpc >= 2.2.4, gdk-pixbuf, gtk+, glibc, gdb, lazarus
-%ifarch i586
-BuildRequires: libglib1.2-devel, libgdk-pixbuf2-devel
-%endif
-%ifarch x86_64
-BuildRequires: lib64glib1.2-devel, lib64gdk-pixbuf2-devel
-%endif
+BuildRequires: fpc-src >= 2.2.4, fpc >= 2.2.4, lazarus
 Requires: pptp-linux, xl2tpd
 Obsoletes: vpnpptp-allde < 0.0.6
 Obsoletes: vpnpptp-kde-one < 0.0.6
@@ -58,8 +52,12 @@ fi
 %post
 ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
 ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
-ln -s /opt/vpnpptp/ponoff.png %{_datadir}/pixmaps
-ln -s /opt/vpnpptp/vpnpptp.png %{_datadir}/pixmaps
+rm -f %{_datadir}/pixmaps/ponoff.png
+rm -f %{_datadir}/pixmaps/vpnpptp.png
+cp -f /opt/vpnpptp/ponoff.png %{_datadir}/pixmaps/ponoff.png
+cp -f /opt/vpnpptp/vpnpptp.png %{_datadir}/pixmaps/vpnpptp.png
+chmod 0644 %{_datadir}/pixmaps/ponoff.png
+chmod 0644 %{_datadir}/pixmaps/vpnpptp.png
 
 %pre
 
@@ -78,6 +76,7 @@ mkdir $RPM_BUILD_ROOT/usr
 mkdir $RPM_BUILD_ROOT/usr/bin
 mkdir $RPM_BUILD_ROOT/usr/share
 mkdir $RPM_BUILD_ROOT/usr/share/applications
+mkdir $RPM_BUILD_ROOT/usr/share/pixmaps
 mkdir $RPM_BUILD_ROOT/usr/lib
 mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX
 mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX/network
@@ -108,7 +107,7 @@ Exec=/opt/vpnpptp/ponoff
 Comment=Control VPN via PPTP/L2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP
-Icon=/opt/vpnpptp/ponoff.png
+Icon=/usr/share/pixmaps/ponoff.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
 X-KDE-SubstituteUID=true
@@ -134,7 +133,7 @@ Exec=/opt/vpnpptp/vpnpptp
 Comment=Setup VPN via PPTP/L2TP
 Comment[ru]=Настройка соединения VPN PPTP/L2TP
 Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP
-Icon=/opt/vpnpptp/vpnpptp.png
+Icon=/usr/share/pixmaps/vpnpptp.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
 X-KDE-SubstituteUID=true

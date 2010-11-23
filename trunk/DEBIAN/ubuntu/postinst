@@ -2,5 +2,9 @@
 
 ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
 ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
-ln -s /opt/vpnpptp/ponoff.png /usr/share/pixmaps
-ln -s /opt/vpnpptp/vpnpptp.png /usr/share/pixmaps
+rm -f /usr/share/pixmaps/ponoff.png
+rm -f /usr/share/pixmaps/vpnpptp.png
+cp -f /opt/vpnpptp/ponoff.png /usr/share/pixmaps/ponoff.png
+cp -f /opt/vpnpptp/vpnpptp.png /usr/share/pixmaps/vpnpptp.png
+chmod 0644 /usr/share/pixmaps/ponoff.png
+chmod 0644 /usr/share/pixmaps/vpnpptp.png
