@@ -65,6 +65,7 @@ type
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -1172,6 +1173,11 @@ begin
                 AProcess.Execute;
                 AProcess.Free;
              end;
+end;
+
+procedure TForm1.PopupMenu1Popup(Sender: TObject);
+begin
+  Unit2.Form2.Hide;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
