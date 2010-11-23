@@ -549,25 +549,6 @@ begin
    CountInterface:=i;
 end;
 
-{function CompareFiles(const FirstFile, SecondFile: string): Boolean;
-//сравнение файлов
-var
-  f1, f2: TMemoryStream;
-begin
-  Result := false;
-  f1 := TMemoryStream.Create;
-  f2 := TMemoryStream.Create;
-  try
-    f1.LoadFromFile(FirstFile);
-    f2.LoadFromFile(SecondFile);
-    if f1.Size = f2.Size then
-            Result := CompareMem(f1.Memory, f2.memory, f1.Size);
-  finally
-    f2.Free;
-    f1.Free;
-  end
-end;}
-
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i:integer;
@@ -1057,11 +1038,9 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
      If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
  If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
  If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
- //If fedora or mandriva then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
  If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
  If suse then
             begin
-                //If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
                 Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
                 Memo_ip_up.Lines.Add('then');
                 Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /var/run/ppp/resolv.conf');
@@ -1467,10 +1446,6 @@ If suse then if not Autostartpppd.Checked then
  if EditDNS3.Text<>'none' then if EditDNS4.Text<>'none' then N:=2;
  if (EditDNS3.Text='none') or (EditDNS4.Text='none') then N:=1;
  if EditDNS3.Text='none' then if EditDNS4.Text='none' then N:=0;
-{ If (EditDNS3.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.82') then N:=1;
- If (EditDNS4.Text='81.176.72.83') or (EditDNS3.Text='81.176.72.83') then N:=1;
- If (EditDNS4.Text='81.176.72.83') and (EditDNS3.Text='81.176.72.82') then N:=2;
- If (EditDNS3.Text='81.176.72.82') and (EditDNS4.Text='81.176.72.83') then N:=2;}
  AssignFile (FileResolvConf,'/etc/resolv.conf');
  reset (FileResolvConf);
  If not (EditDNS3.Text='81.176.72.82') and not (EditDNS3.Text='81.176.72.83') and not (EditDNS4.Text='81.176.72.82') and not (EditDNS4.Text='81.176.72.83') then
@@ -1490,18 +1465,10 @@ If suse then if not Autostartpppd.Checked then
    closefile(FileResolvConf);
    If ((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') or (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) then
      begin
-        //readln(FileResolvConf, str);
-        //if LeftStr(str,11)<>'nameserver ' then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
-        //if LeftStr(str,11)='nameserver ' then i:=i+1;
-        //if LeftStr(str,11)='nameserver ' then if not endprint then
-          //                             begin
         if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then if (EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') then
                                   Shell ('printf "nameserver '+EditDNS3.Text+'\n" >> /var/run/ppp/resolv.conf');
         if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then if (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83') then
                                   Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /var/run/ppp/resolv.conf');
-   //                                 endprint:=true;
-     //                                  end;
-      //  if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
      end;
 If suse or fedora or mandriva then
         begin

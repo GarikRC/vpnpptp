@@ -6,7 +6,7 @@
 
 Пакеты для мандривы лежат здесь: ftp://ftp.linuxcenter.ru/pub/Mandriva/EduMandriva/educontrib и здесь http://code.google.com/p/vpnpptp/downloads/list
 
-Пакет входит в дистрибутивы: Edumandriva LXDE One, российский Mandriva Power Pack, MagOS, MiniOS. Также пакет используется в PCLinuxOS, Ubuntu, Debian, openSUSE, Fedora.
+Пакет входит в дистрибутивы: Edumandriva LXDE One, российский Mandriva Power Pack, MagOS, MiniOS, КСоНоМи. Также пакет используется в PCLinuxOS, Ubuntu, Debian, openSUSE, Fedora.
 
 Программа представлена в версиях пакетов:
 
