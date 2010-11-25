@@ -1965,8 +1965,15 @@ begin
                                        If not Pppd_log.Checked then if Form3.Kod.Text='2' then Memo_create.Lines.Add (message111+'service xl2tpd restart');
                                        if Form3.Kod.Text='2' then
                                                                  begin
-                                                                      Shell ('service xl2tpd stop');
-                                                                      Shell ('service xl2tpd start');
+                                                                      //проверка xl2tpd в процессах
+                                                                      Shell('ps -A | grep xl2tpd > /tmp/tmpnostart1');
+                                                                      If FileExists('/tmp/tmpnostart1') then If FileSize ('/tmp/tmpnostart1')=0 then
+                                                                                   begin
+                                                                                        Shell ('service xl2tpd stop');
+                                                                                        Shell ('service xl2tpd start');
+                                                                                        Sleep (5000);
+                                                                                   end;
+                                                                      Shell ('rm -f /tmp/tmpnostart1');
                                                                       Shell ('echo "c '+Edit_peer.Text+'" > /var/run/xl2tpd/l2tp-control');
                                                                  end;
                                     end;
@@ -2805,6 +2812,9 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var i:integer;
     len:integer;
+    FileFind:textfile;
+    strIface, strGateway, str:string;
+    ethCount, wlanCount, brCount:integer;
 begin
 Application.CreateForm(TForm3, Form3);
 ubuntu:=false;
@@ -3353,8 +3363,48 @@ DefaultError:=false;
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If Memo_gate.Lines[0]='none' then
+  If Memo_gate.Lines[0]='none' then //рестарт сети не помог
                                    begin
+                                        Shell('route -n |awk '+ chr(39)+'{print $8}'+chr(39)+' > /tmp/gate');
+                                        ethCount:=0;
+                                        wlanCount:=0;
+                                        brCount:=0;
+                                        AssignFile (FileFind,'/tmp/gate');
+                                        reset (FileFind);
+                                        While not eof (FileFind) do
+                                        begin
+                                             readln(FileFind, strIface);
+                                             If strIface<>'' then If strIface<>'Iface' then if leftstr(strIface,3)='eth' then ethCount:=ethCount+1;
+                                             If strIface<>'' then If strIface<>'Iface' then if leftstr(strIface,4)='wlan' then wlanCount:=wlanCount+1;
+                                             If strIface<>'' then If strIface<>'Iface' then if leftstr(strIface,2)='br' then brCount:=brCount+1;
+                                        end;
+                                        closefile(FileFind);
+                                        If ethCount>1 then ethCount:=1;
+                                        If wlanCount>1 then wlanCount:=1;
+                                        If brCount>1 then brCount:=1;
+                                        If ethCount+wlanCount+brCount=1 then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
+                                                                        begin
+                                                                             Shell('route -n |grep '+strIface+'|awk '+ chr(39)+'{print $2}'+chr(39)+' > /tmp/gate');
+                                                                             AssignFile (FileFind,'/tmp/gate');
+                                                                             reset (FileFind);
+                                                                             strGateway:='';
+                                                                             While not eof (FileFind) do
+                                                                             begin
+                                                                                  readln(FileFind, str);
+                                                                                  If str<>'' then If str<>'0.0.0.0' then strGateway:=str;
+                                                                             end;
+                                                                             closefile(FileFind);
+                                                                             If strGateway<>'' then Shell ('route add default gw '+strGateway+' dev '+strIface);
+                                                                        end;
+//повторная проверка дефолтного шлюза
+  If Memo_gate.Lines[0]='none' then Sleep(3000);
+  Memo_gate.Lines.Clear;
+  Shell ('rm -f /tmp/gate');
+  Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
+  Shell('printf "none" >> /tmp/gate');
+  Memo_gate.Clear;
+  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+  If Memo_gate.Lines[0]='none' then //ничего не помогло
                                         Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Shell ('rm -f /tmp/gate');
                                         Application.ProcessMessages;
