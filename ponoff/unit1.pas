@@ -712,8 +712,15 @@ If not Code_up_ppp then If link=1 then
                                                       If Memo_Config.Lines[39]<>'l2tp' then
                                                                                     Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
                                                                                                               begin
-                                                                                                                  Shell ('service xl2tpd stop');
-                                                                                                                  Shell ('service xl2tpd start');
+                                                                                                                   //проверка xl2tpd в процессах
+                                                                                                                   Shell('ps -A | grep xl2tpd > /tmp/tmpnostart1');
+                                                                                                                   If FileExists('/tmp/tmpnostart1') then If FileSize ('/tmp/tmpnostart1')=0 then
+                                                                                                                        begin
+                                                                                                                             Shell ('service xl2tpd stop');
+                                                                                                                             Shell ('service xl2tpd start');
+                                                                                                                             Sleep (3000);
+                                                                                                                        end;
+                                                                                                                  Shell ('rm -f /tmp/tmpnostart1');
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
                                                                                                               end;
                                                    end;
@@ -981,7 +988,7 @@ closefile (FilePeers);
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
- //просто убивает pppd, xl2tpd и других демонов и удаляет временные файлы
+ //просто убивает pppd и других демонов и удаляет временные файлы
 var i:integer;
 begin
  If DoubleRunPonoff then exit;
@@ -1001,8 +1008,11 @@ begin
                                                                                        sleep (3000);
                                                                                   end;
                                         end;
- Shell ('service xl2tpd stop');
- Shell ('killall xl2tpd');
+ If Memo_Config.Lines[39]<>'l2tp' then
+                                 begin
+                                      Shell ('service xl2tpd stop');
+                                      Shell ('killall xl2tpd');
+                                 end;
  Shell ('killall openl2tpd');
  Shell ('killall l2tpd');
  Application.ProcessMessages;
@@ -1040,6 +1050,7 @@ begin
                                                                             end;
                                             end;
   MenuItem2Click(Self);
+  Shell ('echo "d '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
   If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Application.ProcessMessages;
   Shell ('rm -f /tmp/gate');
@@ -1084,6 +1095,7 @@ begin
                                                                              end;
                                             end;
   MenuItem2Click(Self);
+  Shell ('echo "d '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
   If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Application.ProcessMessages;
   For i:=0 to 9 do
