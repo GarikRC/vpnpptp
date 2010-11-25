@@ -2810,11 +2810,13 @@ If ComboBoxVPN.Text='VPN PPTP' then
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var i:integer;
+var i,N:integer;
     len:integer;
     FileFind:textfile;
     strIface, strGateway, str:string;
-    ethCount, wlanCount, brCount:integer;
+    ethCount:array[0..9] of integer;
+    wlanCount:array[0..9] of integer;
+    brCount:array[0..9] of integer;
 begin
 Application.CreateForm(TForm3, Form3);
 ubuntu:=false;
@@ -3365,24 +3367,36 @@ DefaultError:=false;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then //рестарт сети не помог
                                    begin
+                                        for i:=0 to 9 do
+                                                 begin
+                                                    ethCount[i]:=0;
+                                                    wlanCount[i]:=0;
+                                                    brCount[i]:=0;
+                                                 end;
                                         Shell('route -n |awk '+ chr(39)+'{print $8}'+chr(39)+' > /tmp/gate');
-                                        ethCount:=0;
-                                        wlanCount:=0;
-                                        brCount:=0;
                                         AssignFile (FileFind,'/tmp/gate');
                                         reset (FileFind);
                                         While not eof (FileFind) do
                                         begin
-                                             readln(FileFind, strIface);
-                                             If strIface<>'' then If strIface<>'Iface' then if leftstr(strIface,3)='eth' then ethCount:=ethCount+1;
-                                             If strIface<>'' then If strIface<>'Iface' then if leftstr(strIface,4)='wlan' then wlanCount:=wlanCount+1;
-                                             If strIface<>'' then If strIface<>'Iface' then if leftstr(strIface,2)='br' then brCount:=brCount+1;
+                                             readln(FileFind, str);
+                                             for i:=0 to 9 do
+                                                 begin
+                                                      If str<>'' then If str<>'Iface' then if leftstr(str,4)='eth'+IntToStr(i) then ethCount[i]:=ethCount[i]+1;
+                                                      If str<>'' then If str<>'Iface' then if leftstr(str,5)='wlan'+IntToStr(i) then wlanCount[i]:=wlanCount[i]+1;
+                                                      If str<>'' then If str<>'Iface' then if leftstr(str,3)='br'+IntToStr(i) then brCount[i]:=brCount[i]+1;
+                                                 end;
                                         end;
                                         closefile(FileFind);
-                                        If ethCount>1 then ethCount:=1;
-                                        If wlanCount>1 then wlanCount:=1;
-                                        If brCount>1 then brCount:=1;
-                                        If ethCount+wlanCount+brCount=1 then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
+                                        for i:=0 to 9 do
+                                                 begin
+                                                      If ethCount[i]>=1 then begin ethCount[i]:=1;strIface:='eth'+IntToStr(i);end;
+                                                      If wlanCount[i]>=1 then begin wlanCount[i]:=1;strIface:='wlan'+IntToStr(i);end;
+                                                      If brCount[i]>=1 then begin brCount[i]:=1;strIface:='br'+IntToStr(i);end;
+                                                 end;
+                                        N:=0;
+                                        for i:=0 to 9 do
+                                               N:=N+ethCount[i]+wlanCount[i]+brCount[i];
+                                        If N=1 then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
                                                                         begin
                                                                              Shell('route -n |grep '+strIface+'|awk '+ chr(39)+'{print $2}'+chr(39)+' > /tmp/gate');
                                                                              AssignFile (FileFind,'/tmp/gate');
