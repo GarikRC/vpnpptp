@@ -110,6 +110,7 @@ var
   CountKillallpppd:integer; //счетчик сколько раз убивался pppd
   DoubleRunPonoff:boolean; //многократный запуск ponoff
   NetServiceStr:string; //какой сервис управляет сетью
+  ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
 
 const
   Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -262,7 +263,7 @@ begin
        If Form1.Memo_gate.Lines[0]='none' then
                                begin
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networking') then
-                                                                                                Shell ('service '+NetServiceStr+' restart');
+                                                                                                Shell (ServiceCommand+NetServiceStr+' restart');
                                  If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
                                  If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
@@ -716,8 +717,8 @@ If not Code_up_ppp then If link=1 then
                                                                                                                    Shell('ps -A | grep xl2tpd > /tmp/tmpnostart1');
                                                                                                                    If FileExists('/tmp/tmpnostart1') then If FileSize ('/tmp/tmpnostart1')=0 then
                                                                                                                         begin
-                                                                                                                             Shell ('service xl2tpd stop');
-                                                                                                                             Shell ('service xl2tpd start');
+                                                                                                                             Shell (ServiceCommand+'xl2tpd stop');
+                                                                                                                             Shell (ServiceCommand+'xl2tpd start');
                                                                                                                              Sleep (3000);
                                                                                                                         end;
                                                                                                                   Shell ('rm -f /tmp/tmpnostart1');
@@ -738,6 +739,7 @@ var
   Code_up_ppp:boolean;
 begin
   Application.CreateForm(TForm2, Form2);
+  If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
   DoubleRunPonoff:=false;
   ubuntu:=false;
   debian:=false;
@@ -929,7 +931,7 @@ If suse then
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
-                   Shell ('service '+NetServiceStr+' restart');
+                   Shell (ServiceCommand+NetServiceStr+' restart');
                    For h:=1 to CountInterface do
                                           Shell ('route del default');
                    If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
@@ -1004,13 +1006,13 @@ begin
                                              CountKillallpppd:=CountKillallpppd+1;
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
                                                                                   begin
-                                                                                       Shell ('service '+NetServiceStr+' restart');
+                                                                                       Shell (ServiceCommand+NetServiceStr+' restart');
                                                                                        sleep (3000);
                                                                                   end;
                                         end;
  If Memo_Config.Lines[39]<>'l2tp' then
                                  begin
-                                      Shell ('service xl2tpd stop');
+                                      Shell (ServiceCommand+'xl2tpd stop');
                                       Shell ('killall xl2tpd');
                                  end;
  Shell ('killall openl2tpd');
@@ -1061,7 +1063,7 @@ begin
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
   Shell('rm -f /tmp/xl2tpd.conf');
-  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Shell ('service '+NetServiceStr+' restart');
+  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Shell (ServiceCommand+NetServiceStr+' restart');
   If FileExists('/opt/vpnpptp/resolv.conf.before') then Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
@@ -1107,7 +1109,7 @@ begin
         If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
         If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');
       end;
-  Shell ('service '+NetServiceStr+' restart'); // организация конкурса интерфейсов
+  Shell (ServiceCommand+NetServiceStr+' restart'); // организация конкурса интерфейсов
   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
@@ -1129,7 +1131,7 @@ begin
               If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
               If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');
              end;
-            Shell ('service '+NetServiceStr+' restart');
+            Shell (ServiceCommand+NetServiceStr+' restart');
             For i:=0 to 9 do
                  begin
                     If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
