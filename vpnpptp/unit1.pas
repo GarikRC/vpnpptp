@@ -970,6 +970,10 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Shell('rm -f '+ Label_ip_up.Caption);
  Memo_ip_up.Clear;
  Memo_ip_up.Lines.Add('#!/bin/sh');
+ Memo_ip_up.Lines.Add('if [ ! -f /opt/vpnpptp/ponoff ]');
+ Memo_ip_up.Lines.Add('then');
+ Memo_ip_up.Lines.Add('     exit 0');
+ Memo_ip_up.Lines.Add('fi');
  If routevpnauto.Checked then if IPS then Memo_ip_up.Lines.Add('/sbin/route add -host ' + Edit_IPS.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
  flag:=false;
  If routevpnauto.Checked then if not IPS then  //определение всех актуальных в данный момент ip-адресов vpn-сервера с занесением в Memo_bindutilshost.Lines и в файл /opt/vpnpptp/hosts
@@ -1078,7 +1082,11 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
  Shell('rm -f '+ Label_ip_down.Caption);
  Memo_ip_down.Clear;
  Memo_ip_down.Lines.Add('#!/bin/sh');
- //отмена введенных пользователем маршрутов через скрипт ip-down
+ Memo_ip_down.Lines.Add('if [ ! -f /opt/vpnpptp/ponoff ]');
+ Memo_ip_down.Lines.Add('then');
+ Memo_ip_down.Lines.Add('     exit 0');
+ Memo_ip_down.Lines.Add('fi');
+{ //отмена введенных пользователем маршрутов через скрипт ip-down
  If FileExists ('/opt/vpnpptp/route') then
  begin
  Memo_route.Lines.Clear;
@@ -1097,7 +1105,7 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
      i:=i+1;
     end;
   end;
- end;
+ end; }
  If routevpnauto.Checked then if not IPS then //отмена маршрутов, полученных от команды host или ping
                If FileSize('/opt/vpnpptp/hosts')<>0 then
                                                         begin
@@ -1951,6 +1959,12 @@ begin
  Memo_create.Clear;
  if Form3.Kod.Text='1' then AProcess.CommandLine := '/opt/vpnpptp/ponoff';
  if Form3.Kod.Text='1' then AProcess.Execute;
+ if Form3.Kod.Text='2' then if dhcp_route.Checked then
+                                    begin
+                                        if fedora then Shell('killall dhclient');
+                                        Shell ('dhclient '+Edit_eth.Text);
+                                        if fedora then Sleep (10000) else Sleep(3000);
+                                    end;
  If ComboBoxVPN.Text='VPN L2TP' then
                                     begin
                                        If Pppd_log.Checked then Shell('printf "\n" >> /var/log/syslog');
@@ -3376,19 +3390,22 @@ DefaultError:=false;
                                                     brCount[i]:=0;
                                                  end;
                                         Shell('route -n |awk '+ chr(39)+'{print $8}'+chr(39)+' > /tmp/gate');
-                                        AssignFile (FileFind,'/tmp/gate');
-                                        reset (FileFind);
-                                        While not eof (FileFind) do
+                                        If FileExists ('/tmp/gate') then
                                         begin
-                                             readln(FileFind, str);
-                                             for i:=0 to 9 do
-                                                 begin
+                                             AssignFile (FileFind,'/tmp/gate');
+                                             reset (FileFind);
+                                             While not eof (FileFind) do
+                                             begin
+                                                  readln(FileFind, str);
+                                                  for i:=0 to 9 do
+                                                  begin
                                                       If str<>'' then If str<>'Iface' then if leftstr(str,4)='eth'+IntToStr(i) then ethCount[i]:=ethCount[i]+1;
                                                       If str<>'' then If str<>'Iface' then if leftstr(str,5)='wlan'+IntToStr(i) then wlanCount[i]:=wlanCount[i]+1;
                                                       If str<>'' then If str<>'Iface' then if leftstr(str,3)='br'+IntToStr(i) then brCount[i]:=brCount[i]+1;
-                                                 end;
+                                                  end;
+                                             end;
+                                             closefile(FileFind);
                                         end;
-                                        closefile(FileFind);
                                         strIface:='';
                                         for i:=0 to 9 do
                                                  begin
@@ -3402,17 +3419,20 @@ DefaultError:=false;
                                         If N=1 then If strIface<>'' then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
                                                                         begin
                                                                              Shell('route -n |grep '+strIface+'|awk '+ chr(39)+'{print $2}'+chr(39)+' > /tmp/gate');
-                                                                             AssignFile (FileFind,'/tmp/gate');
-                                                                             reset (FileFind);
-                                                                             strGateway:='';
-                                                                             While not eof (FileFind) do
+                                                                             If FileExists ('/tmp/gate') then
                                                                              begin
-                                                                                  readln(FileFind, str);
-                                                                                  If str<>'' then If str<>'0.0.0.0' then strGateway:=str;
+                                                                                  AssignFile (FileFind,'/tmp/gate');
+                                                                                  reset (FileFind);
+                                                                                  strGateway:='';
+                                                                                  While not eof (FileFind) do
+                                                                                  begin
+                                                                                       readln(FileFind, str);
+                                                                                       If str<>'' then If str<>'0.0.0.0' then strGateway:=str;
+                                                                                  end;
+                                                                                  closefile(FileFind);
+                                                                                  If strGateway<>'' then Shell ('route add default gw '+strGateway+' dev '+strIface);
                                                                              end;
-                                                                             closefile(FileFind);
-                                                                             If strGateway<>'' then Shell ('route add default gw '+strGateway+' dev '+strIface);
-                                                                        end;
+                                                                         end;
                                    end;
 //повторная проверка дефолтного шлюза
 //  If Memo_gate.Lines[0]='none' then Sleep(3000);

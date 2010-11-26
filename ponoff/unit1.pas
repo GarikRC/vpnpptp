@@ -701,6 +701,8 @@ If not Code_up_ppp then If link=1 then
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
+                                                      If FileExists('/opt/vpnpptp/resolv.conf.before') then
+                                                                           Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
                                                       If not FileExists('/opt/vpnpptp/tmp/ObnullRX') then ObnullRX:=false else ObnullRX:=true;
                                                       If not FileExists('/opt/vpnpptp/tmp/ObnullTX') then ObnullTX:=false else ObnullTX:=true;
                                                       If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0;
