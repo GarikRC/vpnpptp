@@ -238,6 +238,7 @@ var
   PressCreate:boolean; //нажата ли кнопка Create, запущен процесс создания подключения
   PingInternetStr:string; //адрес внешнего пингуемого сайта
   NetServiceStr:string; //какой сервис управляет сетью
+  ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
 
 const
   Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -499,7 +500,7 @@ begin
  closefile(FileSyslog);
  Shell ('cp -f /tmp/log.conf.tmp '+log_str);
  Shell ('rm -f /tmp/log.conf.tmp');
- Shell ('service syslog restart');
+ Shell (ServiceCommand+'syslog restart');
 end;
 
 Function MakeHint(str:string;n:byte):string;
@@ -837,7 +838,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                           If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
                           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+ 'up');
                           Application.ProcessMessages;
-                          Shell ('service '+NetServiceStr+' restart');
+                          Shell (ServiceCommand+NetServiceStr+' restart');
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                        end;
  If CheckBox_shorewall.Checked then If not FileExists('/etc/shorewall/interfaces.old') then
@@ -871,7 +872,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                         Shell('printf "net    ppp9    detect\n" >> /etc/shorewall/interfaces');
                                                                         Str:='printf "'+Str+'\n" >> /etc/shorewall/interfaces';
                                                                         Shell (Str);
-                                                                        Shell ('service shorewall restart');
+                                                                        Shell (ServiceCommand+'shorewall restart');
                                                                         Shell ('chmod 600 /etc/shorewall/interfaces');
                                                                      end;
                        end;
@@ -879,7 +880,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                   begin
                                                                         Shell('cp -f /etc/shorewall/interfaces.old /etc/shorewall/interfaces');
                                                                         Shell('rm -f /etc/shorewall/interfaces.old');
-                                                                        Shell ('service shorewall restart');
+                                                                        Shell (ServiceCommand+'shorewall restart');
                                                                   end;
  If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
@@ -1058,7 +1059,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                         begin
                                               If not suse then if not fedora then Memo_ip_up.Lines.Add('vnstat -u -i $PPP_IFACE');
                                               If suse or fedora then Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
-                                              Memo_ip_up.Lines.Add('service vnstat restart');
+                                              Memo_ip_up.Lines.Add(ServiceCommand+'vnstat restart');
                                         end;
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
@@ -1343,7 +1344,7 @@ If FileExists ('/etc/rc.d/rc.local') then If (Autostartpppd.Checked) then If not
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
                                  If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
-                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
+                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add(ServiceCommand+'xl2tpd restart');
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f /etc/rc.d/rc.local');
                                  Memo_Autostartpppd.Lines.SaveToFile('/etc/rc.d/rc.local');
@@ -1383,7 +1384,7 @@ If not FileExists ('/etc/rc.d/rc.local') then If FileExists ('/etc/rc.local') th
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
                                  If dhcp_route.Checked then if fedora then Memo_Autostartpppd.Lines.Add('sleep 10');
                                  If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
-                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add('service xl2tpd restart');
+                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add(ServiceCommand+'xl2tpd restart');
                                  if exit0find then Memo_Autostartpppd.Lines.Add(str);
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f /etc/rc.local');
@@ -1428,7 +1429,7 @@ If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN L2TP' then
                                                              end;
                    Shell ('touch /etc/init.d/after.local');
                    Shell ('printf "#!/bin/sh\n" >> /etc/init.d/after.local');
-                   Shell ('printf "service xl2tpd restart\n" >> /etc/init.d/after.local');
+                   Shell ('printf "'+ServiceCommand+'xl2tpd restart\n" >> /etc/init.d/after.local');
                    Shell ('chmod +x /etc/init.d/after.local');
                 end;
 If suse then if not Autostartpppd.Checked then
@@ -1785,8 +1786,8 @@ end;
  Shell ('cp -f /opt/vpnpptp/vpnpptp.png /usr/share/pixmaps/vpnpptp.png');
  Shell ('chmod 0644 /usr/share/pixmaps/vpnpptp.png');
  if not(FileExists('/bin/ip')) then Shell('ln -s /sbin/ip /bin/ip');
- Shell ('service syslog restart');
- Shell ('service rsyslog restart');
+ Shell (ServiceCommand+'syslog restart');
+ Shell (ServiceCommand+'rsyslog restart');
  Shell('rm -f /etc/resolv.conf.old');
 end;
 
@@ -1904,7 +1905,7 @@ If suse then
           If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
           If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');
         end;
-    Shell ('service '+NetServiceStr+' restart');
+    Shell (ServiceCommand+NetServiceStr+' restart');
     For i:=0 to 9 do
         begin
           If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
@@ -1959,18 +1960,18 @@ begin
                                        If not Pppd_log.Checked then if Form3.Kod.Text='1' then Memo_create.Lines.Add (message111+' /opt/vpnpptp/ponoff');
                                        If Pppd_log.Checked then if Form3.Kod.Text='2' then
                                                                  begin
-                                                                      Shell('printf "'+message111+'service xl2tpd stop'+'\n" >> /var/log/syslog');
-                                                                      Shell('printf "'+message111+'service xl2tpd start'+'\n" >> /var/log/syslog');
+                                                                      Shell('printf "'+message111+ServiceCommand+'xl2tpd stop'+'\n" >> /var/log/syslog');
+                                                                      Shell('printf "'+message111+ServiceCommand+'xl2tpd start'+'\n" >> /var/log/syslog');
                                                                  end;
-                                       If not Pppd_log.Checked then if Form3.Kod.Text='2' then Memo_create.Lines.Add (message111+'service xl2tpd restart');
+                                       If not Pppd_log.Checked then if Form3.Kod.Text='2' then Memo_create.Lines.Add (message111+ServiceCommand+'xl2tpd restart');
                                        if Form3.Kod.Text='2' then
                                                                  begin
                                                                       //проверка xl2tpd в процессах
                                                                       Shell('ps -A | grep xl2tpd > /tmp/tmpnostart1');
                                                                       If FileExists('/tmp/tmpnostart1') then If FileSize ('/tmp/tmpnostart1')=0 then
                                                                                    begin
-                                                                                        Shell ('service xl2tpd stop');
-                                                                                        Shell ('service xl2tpd start');
+                                                                                        Shell (ServiceCommand+'xl2tpd stop');
+                                                                                        Shell (ServiceCommand+'xl2tpd start');
                                                                                         Sleep (5000);
                                                                                    end;
                                                                       Shell ('rm -f /tmp/tmpnostart1');
@@ -2824,6 +2825,7 @@ debian:=false;
 fedora:=false;
 suse:=false;
 mandriva:=false;
+If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
 //определение дистрибутива
 Shell('rm -f /tmp/version');
 Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
@@ -3264,7 +3266,7 @@ If suse then
                                            Application.ProcessMessages;
                                            Shell ('killall ponoff');
                                            Shell('killall pppd');
-                                           Shell ('service xl2tpd stop');
+                                           Shell (ServiceCommand+'xl2tpd stop');
                                            Shell ('killall xl2tpd');
                                            Shell ('killall openl2tpd');
                                            Shell ('killall l2tpd');
@@ -3273,7 +3275,7 @@ If suse then
                                          end;
 Shell ('killall ponoff');
 Shell ('killall pppd');
-Shell ('service xl2tpd stop');
+Shell (ServiceCommand+'xl2tpd stop');
 Shell ('killall xl2tpd');
 Shell ('killall openl2tpd');
 Shell ('killall l2tpd');
@@ -3355,7 +3357,7 @@ DefaultError:=false;
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If Memo_gate.Lines[0]='none' then Shell ('service '+NetServiceStr+' restart');
+  If Memo_gate.Lines[0]='none' then Shell (ServiceCommand+NetServiceStr+' restart');
   Shell ('rm -f /tmp/gate');
 //повторная проверка дефолтного шлюза
   If Memo_gate.Lines[0]='none' then Sleep(3000);
@@ -3387,6 +3389,7 @@ DefaultError:=false;
                                                  end;
                                         end;
                                         closefile(FileFind);
+                                        strIface:='';
                                         for i:=0 to 9 do
                                                  begin
                                                       If ethCount[i]>=1 then begin ethCount[i]:=1;strIface:='eth'+IntToStr(i);end;
@@ -3396,7 +3399,7 @@ DefaultError:=false;
                                         N:=0;
                                         for i:=0 to 9 do
                                                N:=N+ethCount[i]+wlanCount[i]+brCount[i];
-                                        If N=1 then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
+                                        If N=1 then If strIface<>'' then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
                                                                         begin
                                                                              Shell('route -n |grep '+strIface+'|awk '+ chr(39)+'{print $2}'+chr(39)+' > /tmp/gate');
                                                                              AssignFile (FileFind,'/tmp/gate');
@@ -3410,8 +3413,9 @@ DefaultError:=false;
                                                                              closefile(FileFind);
                                                                              If strGateway<>'' then Shell ('route add default gw '+strGateway+' dev '+strIface);
                                                                         end;
+                                   end;
 //повторная проверка дефолтного шлюза
-  If Memo_gate.Lines[0]='none' then Sleep(3000);
+//  If Memo_gate.Lines[0]='none' then Sleep(3000);
   Memo_gate.Lines.Clear;
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
@@ -3419,6 +3423,7 @@ DefaultError:=false;
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
   If Memo_gate.Lines[0]='none' then //ничего не помогло
+                                   begin
                                         Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Shell ('rm -f /tmp/gate');
                                         Application.ProcessMessages;
