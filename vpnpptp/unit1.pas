@@ -239,6 +239,7 @@ var
   PingInternetStr:string; //адрес внешнего пингуемого сайта
   NetServiceStr:string; //какой сервис управляет сетью
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
+  DhclientStartGood:boolean; //false если dhclient стартанул неудачно или не стартовал вообще
 
 const
   Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -567,6 +568,7 @@ begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
 Children:=false;
+DhclientStartGood:=false;
 If Unit2.Form2.CheckBoxusepeerdns.Checked then If ((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') or (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) then
                                          begin //автоматическая поправка на детские DNS
                                             Form3.MyMessageBox(message0,message153,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -729,8 +731,7 @@ Application.ProcessMessages;
 If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 If FileExists ('/etc/hosts.old') then Shell ('cp -f /etc/hosts.old /etc/hosts');
 Shell('rm -f /opt/vpnpptp/hosts');
-If FileExists('/etc/ppp/ip-up.old') then //сброс настройки маршрутизации remote ip address в шлюз локальной сети
-                                         //оставлено для совместимости с пред.версиями
+If FileExists('/etc/ppp/ip-up.old') then //оставлено для совместимости с пред.версиями
                                    begin
                                       Shell('cp -f /etc/ppp/ip-up.old /etc/ppp/ip-up');
                                       Shell('chmod a+x /etc/ppp/ip-up');
@@ -795,6 +796,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Label14.Caption:=message49;
                           Application.ProcessMessages;
                           Shell ('dhclient '+Edit_eth.Text);
+                          DhclientStartGood:=true;
                           Application.ProcessMessages;
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >/tmp/dhclienttest2');
                           //проверка поднялся ли интерфейс после dhclient
@@ -814,6 +816,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                                                                                  Form3.MyMessageBox(message0,message41+' '+message42,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                                                                  StartMessage:=false;
                                                                                                  dhcp_route.Checked:=false;
+                                                                                                 DhclientStartGood:=false;
                                                                                                  StartMessage:=true;
                                                                                                  Application.ProcessMessages;
                                                                                                end;
@@ -822,6 +825,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                        end;
 If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') then
                        begin
+                          DhclientStartGood:=false;
                           if FileExists('/etc/dhclient.conf.old') then Shell('cp -f /etc/dhclient.conf.old /etc/dhclient.conf');
                           Shell('rm -f /etc/dhclient.conf.old');
                           if FileExists('/etc/dhclient-exit-hooks.old') then Shell('cp -f /etc/dhclient-exit-hooks.old /etc/dhclient-exit-hooks');
@@ -1959,7 +1963,7 @@ begin
  Memo_create.Clear;
  if Form3.Kod.Text='1' then AProcess.CommandLine := '/opt/vpnpptp/ponoff';
  if Form3.Kod.Text='1' then AProcess.Execute;
- if Form3.Kod.Text='2' then if dhcp_route.Checked then
+ if Form3.Kod.Text='2' then if dhcp_route.Checked then if not DhclientStartGood then
                                     begin
                                         if fedora then Shell('killall dhclient');
                                         Shell ('dhclient '+Edit_eth.Text);
