@@ -342,7 +342,8 @@ If Code_up_ppp then
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
  end;
-If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+//If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
                                             Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
 If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
                        If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
@@ -431,7 +432,8 @@ If link=4 then
    end;
 If link=1 then If NoInternet then MakeDefaultGW;
 If not Code_up_ppp then
-       If FileExists('/opt/vpnpptp/resolv.conf.before') then
+       If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+             If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
                                  Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
 //проверка технической возможности поднятия соединения
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_config.Lines[30]<>'none' then
@@ -701,8 +703,11 @@ If not Code_up_ppp then If link=1 then
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
-                                                      If FileExists('/opt/vpnpptp/resolv.conf.before') then
-                                                                           Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+                                                      If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+                                                           If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
+                                                               Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+                                                      //If FileExists('/opt/vpnpptp/resolv.conf.before') then
+                                                        //                   Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
                                                       If not FileExists('/opt/vpnpptp/tmp/ObnullRX') then ObnullRX:=false else ObnullRX:=true;
                                                       If not FileExists('/opt/vpnpptp/tmp/ObnullTX') then ObnullTX:=false else ObnullTX:=true;
                                                       If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0;
@@ -1066,7 +1071,10 @@ begin
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
   Shell('rm -f /tmp/xl2tpd.conf');
   If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Shell (ServiceCommand+NetServiceStr+' restart');
-  If FileExists('/opt/vpnpptp/resolv.conf.before') then Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+  If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+         If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
+                         Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+//  If FileExists('/opt/vpnpptp/resolv.conf.before') then Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
@@ -1085,7 +1093,10 @@ begin
   Timer2.Enabled:=False;
   Shell ('killall net_monitor');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
-  If FileExists('/opt/vpnpptp/resolv.conf.before') then Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+  If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+          If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
+                            Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+//  If FileExists('/opt/vpnpptp/resolv.conf.before') then Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
   If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
@@ -1271,7 +1282,8 @@ begin
                       end;
   If Code_up_ppp then
                      begin
-                             If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+                             //If fedora then If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+                             If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
                                           Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
                              If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
                                                 If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
