@@ -1090,26 +1090,6 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
  Memo_ip_down.Lines.Add('then');
  Memo_ip_down.Lines.Add('     exit 0');
  Memo_ip_down.Lines.Add('fi');
-{ //отмена введенных пользователем маршрутов через скрипт ip-down
- If FileExists ('/opt/vpnpptp/route') then
- begin
- Memo_route.Lines.Clear;
- Memo_route.Lines.LoadFromFile('/opt/vpnpptp/route');
- i:=0;
- For i:=0 to Memo_route.Lines.Count-1 do
-     begin
-         Memo_route.Lines[i]:=StringReplace(Memo_route.Lines[i],'add','del',[rfReplaceAll]);
-     end;
- If Memo_route.Lines[0]<>'' then
-  begin
-   i:=0;
-   While Memo_route.Lines.Count > i do
-    begin
-     Memo_ip_down.Lines.Add(Memo_route.Lines[i]);
-     i:=i+1;
-    end;
-  end;
- end; }
  If routevpnauto.Checked then if not IPS then //отмена маршрутов, полученных от команды host или ping
                If FileSize('/opt/vpnpptp/hosts')<>0 then
                                                         begin
@@ -3439,7 +3419,6 @@ DefaultError:=false;
                                                                          end;
                                    end;
 //повторная проверка дефолтного шлюза
-//  If Memo_gate.Lines[0]='none' then Sleep(3000);
   Memo_gate.Lines.Clear;
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
