@@ -1,4 +1,4 @@
-%define rel 2
+%define rel 1
 %define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
@@ -7,7 +7,7 @@ Summary: Tools for setup and control VPN via PPTP/L2TP
 Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
 Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-kde-one
-Version: 0.2.6
+Version: 0.2.7
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
