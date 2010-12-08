@@ -994,11 +994,13 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
   Shell('rm -f /tmp/users');
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
- //частично настраиваем /var/run/ppp/resolv.conf
+  Shell('rm -f /etc/resolv.conf.lock');
+  Shell('rm -f /tmp/ip-down');
+ {//частично настраиваем /var/run/ppp/resolv.conf
 // if not DirectoryExists('/var/run/ppp/') then If ubuntu or debian then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('mkdir /var/run/ppp/');
 // if DirectoryExists('/var/run/ppp/') then If ubuntu or debian then If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -rf /var/run/ppp');
 // if not DirectoryExists('/var/run/ppp/') then If suse then Shell ('mkdir /var/run/ppp/');
- if not DirectoryExists('/var/run/ppp/') then Shell ('mkdir /var/run/ppp/');
+ if not DirectoryExists('/var/run/ppp/') then Shell ('mkdir /var/run/ppp/');}
  Shell ('rm -f /etc/ppp/ip-up.d/ip-up.old');
  Shell ('rm -f /etc/ppp/ip-down.d/ip-down.old');
 //перезаписываем скрипт поднятия соединения ip-up
@@ -1094,22 +1096,28 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
  If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
  //If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
- Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
+ //Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
  //If suse then
    //         begin
                 Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
                 Memo_ip_up.Lines.Add('then');
-                Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /var/run/ppp/resolv.conf');
+                {Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /var/run/ppp/resolv.conf');
                 Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f /var/run/ppp/resolv.conf');
                 Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /var/run/ppp/resolv.conf');
                 Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /var/run/ppp/resolv.conf');
-                Memo_ip_up.Lines.Add('     cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
+                Memo_ip_up.Lines.Add('     cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');}
+                Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /opt/vpnpptp/resolv.conf.after');
+                Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f /opt/vpnpptp/resolv.conf.after');
+                Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /opt/vpnpptp/resolv.conf.after');
+                Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /opt/vpnpptp/resolv.conf.after');
+                //Memo_ip_up.Lines.Add('     cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
                 Memo_ip_up.Lines.Add('fi');
      //       end;
 // If (not Unit2.Form2.CheckBoxusepeerdns.Checked and ubuntu) or (not ubuntu) then if DirectoryExists('/var/run/ppp/') then
   //          begin
-                 Memo_ip_up.Lines.Add('cp -f /etc/resolv.conf /etc/resolv.conf.lock');
-                 Memo_ip_up.Lines.Add('cp -f /var/run/ppp/resolv.conf /etc/resolv.conf');
+                 //Memo_ip_up.Lines.Add('cp -f /etc/resolv.conf /etc/resolv.conf.lock');
+                 //Memo_ip_up.Lines.Add('cp -f /var/run/ppp/resolv.conf /etc/resolv.conf');
+                 Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
     //        end;
  If FileExists ('/usr/bin/net_monitor') then If FileExists ('/usr/bin/vnstat') then
                                         begin
@@ -1184,8 +1192,9 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
                                                        end;
 // If (not Unit2.Form2.CheckBoxusepeerdns.Checked and ubuntu) or (not ubuntu) then if DirectoryExists('/var/run/ppp/') then
   //          begin
-                 Memo_ip_down.Lines.Add('cp -f /etc/resolv.conf.lock /etc/resolv.conf');
-                 Memo_ip_down.Lines.Add('rm -f /etc/resolv.conf.lock');
+                 //Memo_ip_down.Lines.Add('cp -f /etc/resolv.conf.lock /etc/resolv.conf');
+                 //Memo_ip_down.Lines.Add('rm -f /etc/resolv.conf.lock');
+                 Memo_ip_down.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
     //        end;
  If suse then
          begin
@@ -1491,7 +1500,8 @@ If suse then if not Autostartpppd.Checked then
                                                                   Shell ('cp -f /etc/init.d/after.local /etc/init.d/after.local.old');
                    Shell ('rm -f /etc/init.d/after.local');
                 end;
- //настраиваем /var/run/ppp/resolv.conf
+{ //настраиваем /var/run/ppp/resolv.conf}
+//настраиваем /opt/vpnpptp/resolv.conf.after
  endprint:=false;
  i:=0;
  N:=0;
@@ -1506,28 +1516,28 @@ If suse then if not Autostartpppd.Checked then
  While not eof (FileResolvConf) do
      begin
         readln(FileResolvConf, str);
-        if LeftStr(str,11)<>'nameserver ' then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
+        if LeftStr(str,11)<>'nameserver ' then Shell('printf "'+str+'\n" >> /opt/vpnpptp/resolv.conf.after');
         if LeftStr(str,11)='nameserver ' then i:=i+1;
         if LeftStr(str,11)='nameserver ' then if not endprint then
                                        begin
-                                            if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then Shell ('printf "nameserver '+EditDNS3.Text+'\n" >> /var/run/ppp/resolv.conf');
-                                            if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /var/run/ppp/resolv.conf');
+                                            if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then Shell ('printf "nameserver '+EditDNS3.Text+'\n" >> /opt/vpnpptp/resolv.conf.after');
+                                            if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /opt/vpnpptp/resolv.conf.after');
                                             endprint:=true;
                                        end;
-        if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /var/run/ppp/resolv.conf');
+        if LeftStr(str,11)='nameserver ' then if i>N then Shell('printf "'+str+'\n" >> /opt/vpnpptp/resolv.conf.after');
      end;
    closefile(FileResolvConf);
    If ((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') or (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) then
      begin
         if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then if (EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') then
-                                  Shell ('printf "nameserver '+EditDNS3.Text+'\n" >> /var/run/ppp/resolv.conf');
+                                  Shell ('printf "nameserver '+EditDNS3.Text+'\n" >> /opt/vpnpptp/resolv.conf.after');
         if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then if (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83') then
-                                  Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /var/run/ppp/resolv.conf');
+                                  Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /opt/vpnpptp/resolv.conf.after');
      end;
 //If suse or fedora or mandriva then
   //      begin
-             Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
-             If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
+             //Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
+             //If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
     //    end;
 //настройка /etc/ppp/chap-secrets
 If FileExists('/etc/ppp/chap-secrets.old') then

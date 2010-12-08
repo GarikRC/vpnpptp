@@ -360,8 +360,8 @@ If Code_up_ppp then
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
  end;
-If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
-                                            Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
+//If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+  //                                          Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
 If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
                        If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
                                             Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
@@ -1086,7 +1086,7 @@ begin
   Application.ProcessMessages;
   Shell ('rm -f /tmp/gate');
 //  If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
-  Shell('rm -f /etc/resolv.conf.lock');
+//  Shell('rm -f /etc/resolv.conf.lock');
   For h:=1 to CountInterface do
               Shell ('route del default');
   //If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
@@ -1190,7 +1190,7 @@ begin
            Ifup('lo');
      end;
 //  If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
-  Shell('rm -f /etc/resolv.conf.lock');
+//  Shell('rm -f /etc/resolv.conf.lock');
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
   Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
@@ -1315,8 +1315,8 @@ begin
                       end;
   If Code_up_ppp then
                      begin
-                             If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
-                                          Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
+                             //If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
+                               //           Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
                              If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
                                                 If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
                                                        Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
