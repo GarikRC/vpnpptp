@@ -1,11 +1,11 @@
 1) установить пакет rpm-build или для openSUSE пакет rpm,
 2) создать в папке /root папку rpmbuild, в которой создать папки BUILD, BUILDROOT, RPMS, SOURCES, SPECS, SRPMS (в PCLinuxOS они уже созданы и находятся в /usr/src/rpm вместо /root; в openSUSE они уже созданы и находятся в /usr/src/packages),
-3) в папку /root/rmpbuild/SPECS скопировать файлы из папки spec в исходниках,
-4) в папку /root/rmpbuild/SOURCES скопировать файлы из папки patch в исходниках,
-5) в папку /root/rmpbuild/SOURCES скопировать всю папку trunk из исходников, переименовав ее в vpnpptp-edm-src-0.1.9, где 0.1.9 - номер версии, а edm - суффикс дистрибутива (edm, edmpclos),
-6) сжать получившуюся папку /root/rmpbuild/SOURCES/vpnpptp-edm-src-0.1.9 в .tar.gz,
-7) перейти в папку SPECS командой cd /root/rmpbuild/SPECS,
+3) в папку /root/rpmbuild/SPECS скопировать файлы из папки spec в исходниках,
+4) в папку /root/rpmbuild/SOURCES скопировать файлы из папки patch в исходниках,
+5) в папку /root/rpmbuild/SOURCES скопировать всю папку trunk из исходников, переименовав ее в vpnpptp-edm-src-0.1.9, где 0.1.9 - номер версии, а edm - суффикс дистрибутива (edm, edmpclos),
+6) сжать получившуюся папку /root/rpmbuild/SOURCES/vpnpptp-edm-src-0.1.9 в .tar.gz,
+7) перейти в папку SPECS командой cd /root/rpmbuild/SPECS,
 8) выполнить команды под root:
 rpmbuild -ba ./vpnpptp-allde.spec
 rpmbuild -ba ./vpnpptp-kde-one.spec
-9) собранные пакеты будут в /root/rmpbuild/RPMS, сурсы в /root/rmpbuild/SRPMS
+9) собранные пакеты будут в /root/rpmbuild/RPMS, сурсы в /root/rpmbuild/SRPMS
