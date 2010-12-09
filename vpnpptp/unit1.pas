@@ -234,7 +234,7 @@ var
   mandriva:boolean; //используется ли дистрибутив mandriva
   fedora:boolean; //используется ли дистрибутив fedora
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
-  DefaultError:boolean; //ошибка определения дефолтного шлюза
+  //DefaultError:boolean; //ошибка определения дефолтного шлюза
   PressCreate:boolean; //нажата ли кнопка Create, запущен процесс создания подключения
   PingInternetStr:string; //адрес внешнего пингуемого сайта
   NetServiceStr:string; //какой сервис управляет сетью
@@ -642,7 +642,10 @@ Shell ('rm -f /opt/vpnpptp/resolv.conf.copy');
 Shell ('rm -f /opt/vpnpptp/resolv.conf.before');
 Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
 If not DirectoryExists('/opt/vpnpptp/tmp/') then Shell ('mkdir /opt/vpnpptp/tmp/');
-If DefaultError then Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
+For i:=1 to CountInterface do
+                           Shell('/sbin/route del default');
+//If DefaultError then Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
+Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
 //проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
    If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
    If IPS then If etc_hosts.Checked then
@@ -2889,7 +2892,7 @@ If ComboBoxVPN.Text='VPN PPTP' then
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var i,N:integer;
+var i,N, CountGateway:integer;
     len:integer;
     FileFind:textfile;
     strIface, strGateway, str:string;
@@ -2903,6 +2906,7 @@ debian:=false;
 fedora:=false;
 suse:=false;
 mandriva:=false;
+DoCountInterface;
 If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
 //определение дистрибутива
 Shell('rm -f /tmp/version');
@@ -3432,14 +3436,14 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
   Button_next2.Visible:=False;
 If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
 StartMessage:=true;
-DefaultError:=false;
+//DefaultError:=false;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  If Memo_gate.Lines[0]='none' then Shell (ServiceCommand+NetServiceStr+' restart');
+  //If Memo_gate.Lines[0]='none' then Shell (ServiceCommand+NetServiceStr+' restart');
   Shell ('rm -f /tmp/gate');
 //повторная проверка дефолтного шлюза
   If Memo_gate.Lines[0]='none' then Sleep(3000);
@@ -3492,13 +3496,18 @@ DefaultError:=false;
                                                                                   AssignFile (FileFind,'/tmp/gate');
                                                                                   reset (FileFind);
                                                                                   strGateway:='';
+                                                                                  CountGateway:=0;
                                                                                   While not eof (FileFind) do
                                                                                   begin
                                                                                        readln(FileFind, str);
-                                                                                       If str<>'' then If str<>'0.0.0.0' then strGateway:=str;
+                                                                                       If str<>'' then If str<>'0.0.0.0' then If str<>strGateway then
+                                                                                                                                                 begin
+                                                                                                                                                      strGateway:=str;
+                                                                                                                                                      CountGateway:=CountGateway+1;
+                                                                                                                                                 end;
                                                                                   end;
                                                                                   closefile(FileFind);
-                                                                                  If strGateway<>'' then Shell ('route add default gw '+strGateway+' dev '+strIface);
+                                                                                  If strGateway<>'' then If CountGateway=1 then Shell ('route add default gw '+strGateway+' dev '+strIface);
                                                                              end;
                                                                          end;
                                    end;
@@ -3514,7 +3523,7 @@ DefaultError:=false;
                                         Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Shell ('rm -f /tmp/gate');
                                         Application.ProcessMessages;
-                                        DefaultError:=true;
+                                        //DefaultError:=true;
                                    end;
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
