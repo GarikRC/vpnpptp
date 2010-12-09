@@ -234,7 +234,6 @@ var
   mandriva:boolean; //используется ли дистрибутив mandriva
   fedora:boolean; //используется ли дистрибутив fedora
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
-  //DefaultError:boolean; //ошибка определения дефолтного шлюза
   PressCreate:boolean; //нажата ли кнопка Create, запущен процесс создания подключения
   PingInternetStr:string; //адрес внешнего пингуемого сайта
   NetServiceStr:string; //какой сервис управляет сетью
@@ -407,6 +406,7 @@ resourcestring
   message159='- такое сочетание в Вашем дистрибутиве может работать некорректно.';
   message160='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
   message161='Будут проигнорированы недетские DNS при поднятом VPN, VPN будет поднято только на детских DNS.';
+  message162='Запуск конфигуратора может занять некоторое время, так как требуется предварительная автоматическая подготовка сети.';
 
 implementation
 
@@ -644,7 +644,6 @@ Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
 If not DirectoryExists('/opt/vpnpptp/tmp/') then Shell ('mkdir /opt/vpnpptp/tmp/');
 For i:=1 to CountInterface do
                            Shell('/sbin/route del default');
-//If DefaultError then Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
 Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
 //проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
    If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
@@ -808,13 +807,9 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Label14.Caption:=message48;
                           Application.ProcessMessages;
                           Ifdown(Edit_eth.Text);
-                          //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Edit_eth.Text);
-                          //If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' down');
                           Application.ProcessMessages;
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
                           Ifup(Edit_eth.Text);
-                          //If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
-                          //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' up');
                           Application.ProcessMessages;
                           Shell ('rm -f /tmp/dhclienttest1');
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
@@ -833,8 +828,6 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Shell('printf "none" >> /tmp/gate');
                           Memo_gate.Clear;
                           If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-                          //If Memo_gate.Lines[0]='none' then If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
-                          //If Memo_gate.Lines[0]='none' then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' up');
                           If Memo_gate.Lines[0]='none' then Ifup(Edit_eth.Text);
                           Shell ('rm -f /tmp/gate');
                           Memo_gate.Lines.Clear;
@@ -866,15 +859,10 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                         end;
                           Label14.Caption:=message51;
                           Application.ProcessMessages;
-                          //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Edit_eth.Text);
-                          //If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+' down');
                           Ifdown(Edit_eth.Text);
-                          //If FileExists ('/sbin/ifup') then Shell ('ifup '+Edit_eth.Text);
-                          //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Edit_eth.Text+ 'up');
                           Ifup(Edit_eth.Text);
                           Application.ProcessMessages;
                           Shell (ServiceCommand+NetServiceStr+' restart');
-                          //If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                           Sleep(3000);
                        end;
  If CheckBox_shorewall.Checked then If not FileExists('/etc/shorewall/interfaces.old') then
@@ -932,7 +920,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                 end;
  If ComboBoxVPN.Text='VPN L2TP' then Memo_peer.Lines.Add('#pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
  Memo_peer.Lines.Add('remotename '+Edit_peer.Text);
-// Memo_peer.Lines.Add('ipparam '+Edit_peer.Text);
  Memo_peer.Lines.Add('user "'+Edit_user.Text+'"');
  Memo_peer.Lines.Add('password "'+Edit_passwd.Text+'"');
  Memo_peer.Lines.Add('unit '+NumberUnit);
@@ -992,18 +979,13 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
  Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные файлы
-  Shell('rm -f /tmp/gate');
-  Shell('rm -f /tmp/eth');
-  Shell('rm -f /tmp/users');
-  Shell('rm -f /tmp/tmpsetup');
-  Shell('rm -f /tmp/tmpnostart');
-  Shell('rm -f /etc/resolv.conf.lock');
-  Shell('rm -f /tmp/ip-down');
- {//частично настраиваем /var/run/ppp/resolv.conf
-// if not DirectoryExists('/var/run/ppp/') then If ubuntu or debian then If not Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('mkdir /var/run/ppp/');
-// if DirectoryExists('/var/run/ppp/') then If ubuntu or debian then If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -rf /var/run/ppp');
-// if not DirectoryExists('/var/run/ppp/') then If suse then Shell ('mkdir /var/run/ppp/');
- if not DirectoryExists('/var/run/ppp/') then Shell ('mkdir /var/run/ppp/');}
+ Shell('rm -f /tmp/gate');
+ Shell('rm -f /tmp/eth');
+ Shell('rm -f /tmp/users');
+ Shell('rm -f /tmp/tmpsetup');
+ Shell('rm -f /tmp/tmpnostart');
+ Shell('rm -f /etc/resolv.conf.lock');
+ Shell('rm -f /tmp/ip-down');
  Shell ('rm -f /etc/ppp/ip-up.d/ip-up.old');
  Shell ('rm -f /etc/ppp/ip-down.d/ip-down.old');
 //перезаписываем скрипт поднятия соединения ip-up
@@ -1016,14 +998,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_ip_up.Lines.Add('then');
  Memo_ip_up.Lines.Add('     exit 0');
  Memo_ip_up.Lines.Add('fi');
-{ If not fedora then
-        begin
-             If not suse then Memo_ip_up.Lines.Add('if [ ! $PPP_IPPARAM = "'+Edit_peer.Text+'" ]');
-             If suse then Memo_ip_up.Lines.Add('if [ ! $IPPARAM = "'+Edit_peer.Text+'" ]');
-             Memo_ip_up.Lines.Add('then');
-             Memo_ip_up.Lines.Add('     exit 0');
-             Memo_ip_up.Lines.Add('fi');
-        end;}
  If not suse then if not fedora then Memo_ip_up.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
  If suse or fedora then Memo_ip_up.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_up.Lines.Add('then');
@@ -1098,30 +1072,14 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
      If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
  If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
  If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
- //If not Unit2.Form2.CheckBoxusepeerdns.Checked then Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
- //Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /var/run/ppp/resolv.conf');
- //If suse then
-   //         begin
-                Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
-                Memo_ip_up.Lines.Add('then');
-                {Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /var/run/ppp/resolv.conf');
-                Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f /var/run/ppp/resolv.conf');
-                Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /var/run/ppp/resolv.conf');
-                Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /var/run/ppp/resolv.conf');
-                Memo_ip_up.Lines.Add('     cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');}
-                Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /opt/vpnpptp/resolv.conf.after');
-                Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f /opt/vpnpptp/resolv.conf.after');
-                Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /opt/vpnpptp/resolv.conf.after');
-                Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /opt/vpnpptp/resolv.conf.after');
-                //Memo_ip_up.Lines.Add('     cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
-                Memo_ip_up.Lines.Add('fi');
-     //       end;
-// If (not Unit2.Form2.CheckBoxusepeerdns.Checked and ubuntu) or (not ubuntu) then if DirectoryExists('/var/run/ppp/') then
-  //          begin
-                 //Memo_ip_up.Lines.Add('cp -f /etc/resolv.conf /etc/resolv.conf.lock');
-                 //Memo_ip_up.Lines.Add('cp -f /var/run/ppp/resolv.conf /etc/resolv.conf');
-                 Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
-    //        end;
+ Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
+ Memo_ip_up.Lines.Add('then');
+ Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /opt/vpnpptp/resolv.conf.after');
+ Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f /opt/vpnpptp/resolv.conf.after');
+ Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /opt/vpnpptp/resolv.conf.after');
+ Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /opt/vpnpptp/resolv.conf.after');
+ Memo_ip_up.Lines.Add('fi');
+ Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
  If FileExists ('/usr/bin/net_monitor') then If FileExists ('/usr/bin/vnstat') then
                                         begin
                                               If not suse then if not fedora then Memo_ip_up.Lines.Add('vnstat -u -i $PPP_IFACE');
@@ -1133,12 +1091,12 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
  Shell('chmod a+x '+ Label_ip_up.Caption);
 //поправка на debian
-If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
-                                                       begin
-                                                            Shell ('cp -f /etc/ppp/ip-up.d/exim4 /opt/vpnpptp/scripts');
-                                                            Shell ('rm -f /etc/ppp/ip-up.d/exim4');
-                                                            Shell ('printf "Program vpnpptp moved script exim4 in directory /opt/vpnpptp/scripts\n" > /etc/ppp/ip-up.d/exim4.move');
-                                                       end;
+if FileExists('/etc/ppp/ip-up.d/exim4') then
+                                           begin
+                                                Shell ('cp -f /etc/ppp/ip-up.d/exim4 /opt/vpnpptp/scripts');
+                                                Shell ('rm -f /etc/ppp/ip-up.d/exim4');
+                                                Shell ('printf "Program vpnpptp moved script exim4 in directory /opt/vpnpptp/scripts\n" > /etc/ppp/ip-up.d/exim4.move');
+                                           end;
 //перезаписываем скрипт опускания соединения ip-down
  If not DirectoryExists('/etc/ppp/ip-down.d/') then Shell ('mkdir /etc/ppp/ip-down.d/');
  If fedora then Shell ('ln -s /etc/ppp/ip-down.d/ip-down /etc/ppp/ip-down.local');
@@ -1149,14 +1107,6 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
  Memo_ip_down.Lines.Add('then');
  Memo_ip_down.Lines.Add('     exit 0');
  Memo_ip_down.Lines.Add('fi');
-{ If not fedora then
-               begin
-                    If not suse then Memo_ip_down.Lines.Add('if [ ! $PPP_IPPARAM = "'+Edit_peer.Text+'" ]');
-                    If suse then Memo_ip_down.Lines.Add('if [ ! $IPPARAM = "'+Edit_peer.Text+'" ]');
-                    Memo_ip_down.Lines.Add('then');
-                    Memo_ip_down.Lines.Add('     exit 0');
-                    Memo_ip_down.Lines.Add('fi');
-               end;}
  If not suse then if not fedora then Memo_ip_down.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
  If suse or fedora then Memo_ip_down.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_down.Lines.Add('then');
@@ -1193,12 +1143,7 @@ If debian then if FileExists('/etc/ppp/ip-up.d/exim4') then
                                                                    Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $IPREMOTE dev $IFNAME');
                                                               end;
                                                        end;
-// If (not Unit2.Form2.CheckBoxusepeerdns.Checked and ubuntu) or (not ubuntu) then if DirectoryExists('/var/run/ppp/') then
-  //          begin
-                 //Memo_ip_down.Lines.Add('cp -f /etc/resolv.conf.lock /etc/resolv.conf');
-                 //Memo_ip_down.Lines.Add('rm -f /etc/resolv.conf.lock');
-                 Memo_ip_down.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
-    //        end;
+ Memo_ip_down.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
  If suse then
          begin
                 Memo_ip_down.Lines.Add('netconfig update -f');
@@ -1503,7 +1448,6 @@ If suse then if not Autostartpppd.Checked then
                                                                   Shell ('cp -f /etc/init.d/after.local /etc/init.d/after.local.old');
                    Shell ('rm -f /etc/init.d/after.local');
                 end;
-{ //настраиваем /var/run/ppp/resolv.conf}
 //настраиваем /opt/vpnpptp/resolv.conf.after
  endprint:=false;
  i:=0;
@@ -1537,11 +1481,6 @@ If suse then if not Autostartpppd.Checked then
         if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then if (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83') then
                                   Shell ('printf "nameserver '+EditDNS4.Text+'\n" >> /opt/vpnpptp/resolv.conf.after');
      end;
-//If suse or fedora or mandriva then
-  //      begin
-             //Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
-             //If Unit2.Form2.CheckBoxusepeerdns.Checked then Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
-    //    end;
 //настройка /etc/ppp/chap-secrets
 If FileExists('/etc/ppp/chap-secrets.old') then
                                             begin
@@ -1577,8 +1516,6 @@ If FileExists('/etc/ppp/chap-secrets.old') then
    //тест EditDNS1-сервера
 If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
   begin
-     //If EditDNS1.Text='127.0.0.1' then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-     //If EditDNS1.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
      If EditDNS1.Text='127.0.0.1' then Ifup('lo');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS1.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
@@ -1595,8 +1532,6 @@ If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
    //тест EditDNS2-сервера
 If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
   begin
-     //If EditDNS2.Text='127.0.0.1' then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-     //If EditDNS2.Text='127.0.0.1' then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
      If EditDNS2.Text='127.0.0.1' then Ifup('lo');
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+EditDNS2.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
@@ -1969,12 +1904,6 @@ If suse then
           Ifdown('eth'+IntToStr(i));
           Ifdown('wlan'+IntToStr(i));
           Ifdown('br'+IntToStr(i));
-          {If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
-          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
-          If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
-          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
-          If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
-          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');}
         end;
     Shell (ServiceCommand+NetServiceStr+' restart');
     For i:=0 to 9 do
@@ -1982,15 +1911,7 @@ If suse then
           Ifup('eth'+IntToStr(i));
           Ifup('wlan'+IntToStr(i));
           Ifup('br'+IntToStr(i));
-          {If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
-          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' up');
-          If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
-          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' up');
-          If FileExists ('/sbin/ifup') then Shell ('ifup br'+IntToStr(i));
-          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' up');}
         end;
-    //If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-    //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
     Ifup('lo');
 ButtonRestart.Caption:=message93;
 Button_exit.Enabled:=true;
@@ -2029,8 +1950,11 @@ begin
  if Form3.Kod.Text='2' then if dhcp_route.Checked then if not DhclientStartGood then
                                     begin
                                         if fedora then Shell('killall dhclient');
+                                        Memo_create.Lines.Add(message53);
+                                        Application.ProcessMessages;
                                         Shell ('dhclient '+Edit_eth.Text);
                                         if fedora then Sleep (10000) else Sleep(3000);
+                                        Memo_create.Clear;
                                     end;
  If ComboBoxVPN.Text='VPN L2TP' then
                                     begin
@@ -2051,6 +1975,8 @@ begin
                                                                       Shell('ps -A | grep xl2tpd > /tmp/tmpnostart1');
                                                                       If FileExists('/tmp/tmpnostart1') then If FileSize ('/tmp/tmpnostart1')=0 then
                                                                                    begin
+                                                                                        Memo_create.Lines.Add(message53);
+                                                                                        Application.ProcessMessages;
                                                                                         Shell (ServiceCommand+'xl2tpd stop');
                                                                                         Shell (ServiceCommand+'xl2tpd start');
                                                                                         Sleep (5000);
@@ -2934,6 +2860,9 @@ Shell('rm -f /tmp/version');
 Shell ('cat /etc/issue|grep MagOS > /tmp/version');
 If FileSize ('/tmp/version')<>0 then mandriva:=true;
 Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep ROSA > /tmp/version');
+If FileSize ('/tmp/version')<>0 then mandriva:=true;
+Shell('rm -f /tmp/version');
 ComboBoxDistr.Text:=message151;
 ComboBoxDistr.Items.Add(message150);
 ComboBoxDistr.Items.Add('Ubuntu');
@@ -2942,7 +2871,7 @@ ComboBoxDistr.Items.Add('Fedora');
 ComboBoxDistr.Items.Add('openSUSE');
 CountInterface:=1;
 PressCreate:=false;
-//отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf
+//отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf (для PCLinuxOS)
 Shell ('rm -f /var/run/ppp/resolv.conf');
 If not FileExists('/etc/resolv.conf') then
     begin
@@ -3436,14 +3365,18 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
   Button_next2.Visible:=False;
 If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
 StartMessage:=true;
-//DefaultError:=false;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть
   Shell ('rm -f /tmp/gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
   Shell('printf "none" >> /tmp/gate');
   Memo_gate.Clear;
   If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
-  //If Memo_gate.Lines[0]='none' then Shell (ServiceCommand+NetServiceStr+' restart');
+  If Memo_gate.Lines[0]='none' then
+                               begin
+                                    Form3.MyMessageBox(message0,message162,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                    Application.ProcessMessages;
+                                    Shell (ServiceCommand+NetServiceStr+' restart');
+                               end;
   Shell ('rm -f /tmp/gate');
 //повторная проверка дефолтного шлюза
   If Memo_gate.Lines[0]='none' then Sleep(3000);
@@ -3523,7 +3456,6 @@ StartMessage:=true;
                                         Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Shell ('rm -f /tmp/gate');
                                         Application.ProcessMessages;
-                                        //DefaultError:=true;
                                    end;
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
