@@ -90,8 +90,6 @@ var
   Filenetworktest, FileRemoteIPaddress, FileEtc_hosts, FileDoubleRun, FileDateStart, FileResolv_conf:textfile;//текстовые файлы
   DhclientStart:boolean; //стартанул ли dhclient
   RemoteIPaddress:string;
-  //Scripts:boolean;//отслеживает невыполнение скриптов поднятия и опускания
-  //Welcome:boolean;//необходимость в параметре welcome для pppd
   f: text;//текстовый поток
   RX,TX:string;//объем загруженного/отданного
   RXbyte,TXbyte:string;//объем загруженного/отданного в байтах
@@ -280,15 +278,9 @@ begin
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networking') then
                                                                                                 Shell (ServiceCommand+NetServiceStr+' restart');
                                  Ifdown(Form1.Memo_Config.Lines[3]);
-                                 //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Form1.Memo_Config.Lines[3]);
-                                 //If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' down');
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                                  Ifup(Form1.Memo_Config.Lines[3]);
-                                 //If FileExists ('/sbin/ifup') then Shell ('ifup '+Form1.Memo_Config.Lines[3]);
-                                 //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Form1.Memo_Config.Lines[3]+' up');
                                  Ifup('lo');
-                                 //If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-                                 //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                                end;
        Shell ('rm -f /tmp/gate');
@@ -360,28 +352,9 @@ If Code_up_ppp then
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
  end;
-//If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
-  //                                          Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
 If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
                        If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
                                             Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
-//If Code_up_ppp then If not FileExists ('/etc/resolv.conf.lock') then Scripts:=false;//скрипты опускания и поднятия не были выполнены
-//If not Scripts then If ubuntu or debian then Scripts:=true;
-{If not Scripts then If not Welcome then
-                 begin
-                    Shell ('killall pppd');
-                    Shell ('route add default dev '+Memo_Config.Lines[3]);
-                    If FileExists('/opt/vpnpptp/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
-                            begin
-                                Memo_ip_down.Clear;
-                                Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
-                                Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
-                                Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
-                                Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                            end;
-                     Shell ('printf "welcome /etc/ppp/ip-up.d/ip-up\n" >> /etc/ppp/peers/'+Memo_Config.Lines[0]);
-                     Welcome:=true;
-                end; }
 Shell('rm -f /tmp/hosts.tmp');
 If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
 //обработка случая когда RemoteIPaddress совпадается с ip-адресом самого vpn-сервера
@@ -516,8 +489,6 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                 For h:=1 to CountInterface do
                                                             Shell ('route del default');
                                 Ifup(Form1.Memo_Config.Lines[3]);
-                                //If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                                //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                 If not DhclientStart then
                                                       begin
                                                            if fedora then Shell('killall dhclient');
@@ -525,7 +496,6 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                            Application.ProcessMessages;
                                                       end;
                                 DhclientStart:=true;
-                              //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);//для проверки бага
                               end;
                               If link=1 then If NoInternet then If Memo_Config.Lines[9]='dhcp-route-yes' then //проверка поднялся ли интерфейс после dhclient
                               begin
@@ -544,8 +514,6 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                          If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
                                          If Memo_gate.Lines[0]='none' then
                                          begin
-                                              //If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                                              //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                               Ifup(Form1.Memo_Config.Lines[3]);
                                               DhclientStart:=false;
                                          end;
@@ -630,6 +598,7 @@ If not Code_up_ppp then If link=3 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
+                                                                Unit2.Form2.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
@@ -656,6 +625,7 @@ If not Code_up_ppp then If link=2 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
+                                                                Unit2.Form2.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
@@ -716,10 +686,6 @@ If not Code_up_ppp then If link=1 then
                                                       For h:=1 to CountInterface do
                                                                                 Shell ('route del default');
                                                       Ifdown(Memo_Config.Lines[3]);
-                                                      //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
-                                                      //If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
-                                                      //If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                                                      //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                                                       Ifup(Form1.Memo_Config.Lines[3]);
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
@@ -730,8 +696,6 @@ If not Code_up_ppp then If link=1 then
                                                       If not FileExists('/opt/vpnpptp/tmp/ObnullRX') then ObnullRX:=false else ObnullRX:=true;
                                                       If not FileExists('/opt/vpnpptp/tmp/ObnullTX') then ObnullTX:=false else ObnullTX:=true;
                                                       If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0;
-                                                      //If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-                                                      //If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
                                                       For h:=1 to CountInterface do
                                                                           Shell ('route del default');
@@ -760,7 +724,6 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   link:byte; //1-link ok, 2-no link, 3-none
   i,j,h:integer;
-  FilePeers:textfile;
   str:string;
   Apid:tpid;
   Code_up_ppp:boolean;
@@ -794,7 +757,6 @@ begin
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
-//  Scripts:=true;
   NoInternet:=true;
   DhclientStart:=false;
   RemoteIPaddress:='none';
@@ -841,8 +803,7 @@ begin
     Timer2.Enabled:=False;
     Form1.Hide;
     TrayIcon1.Hide;
-    If mandriva then Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon)
-                          else Form3.MyMessageBox(message0,message3,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
     halt;
    end;
   If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
@@ -962,11 +923,7 @@ If suse then
                    For h:=1 to CountInterface do
                                           Shell ('route del default');
                    Ifdown(Memo_Config.Lines[3]);
-                   //If FileExists ('/sbin/ifdown') then Shell ('ifdown '+Memo_Config.Lines[3]);
-                   //If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' down');
                    Ifup(Memo_Config.Lines[3]);
-                   //If FileExists ('/sbin/ifup') then Shell ('ifup '+Memo_Config.Lines[3]);
-                   //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Memo_Config.Lines[3]+' up');
                    //повторная проверка состояния сетевого интерфейса
                    If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
                    Shell('rm -f /tmp/gate2');
@@ -1007,15 +964,6 @@ If suse then
                                              end
                                                 else
                                                    Timer1.Interval:=100;
-{Welcome:=false;
-AssignFile (FilePeers,'/etc/ppp/peers/'+Memo_Config.Lines[0]);
-reset (FilePeers);
-While not eof(FilePeers) do
-      begin
-         readln(FilePeers, Str);
-         If Str='welcome /etc/ppp/ip-up.d/ip-up' then Welcome:=true;
-       end;
-closefile (FilePeers);}
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
@@ -1085,12 +1033,8 @@ begin
   If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
   Application.ProcessMessages;
   Shell ('rm -f /tmp/gate');
-//  If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
-//  Shell('rm -f /etc/resolv.conf.lock');
   For h:=1 to CountInterface do
               Shell ('route del default');
-  //If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-  //If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell('rm -f /tmp/xl2tpd.conf');
   If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Shell (ServiceCommand+NetServiceStr+' restart');
@@ -1139,17 +1083,9 @@ begin
         Ifdown('eth'+IntToStr(i));
         Ifdown('wlan'+IntToStr(i));
         Ifdown('br'+IntToStr(i));
-        {If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
-        If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
-        If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
-        If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
-        If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
-        If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');}
       end;
   Shell (ServiceCommand+NetServiceStr+' restart'); // организация конкурса интерфейсов
   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
-//  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-//  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
@@ -1165,12 +1101,6 @@ begin
               Ifdown('eth'+IntToStr(i));
               Ifdown('wlan'+IntToStr(i));
               Ifdown('br'+IntToStr(i));
-              {If FileExists ('/sbin/ifdown') then Shell ('ifdown eth'+IntToStr(i));
-              If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' down');
-              If FileExists ('/sbin/ifdown') then Shell ('ifdown wlan'+IntToStr(i));
-              If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' down');
-              If FileExists ('/sbin/ifdown') then Shell ('ifdown br'+IntToStr(i));
-              If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' down');}
              end;
             Shell (ServiceCommand+NetServiceStr+' restart');
             For i:=0 to 9 do
@@ -1178,25 +1108,14 @@ begin
                     Ifup('eth'+IntToStr(i));
                     Ifup('wlan'+IntToStr(i));
                     Ifup('br'+IntToStr(i));
-                    {If FileExists ('/sbin/ifup') then Shell ('ifup eth'+IntToStr(i));
-                    If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig eth'+IntToStr(i)+' up');
-                    If FileExists ('/sbin/ifup') then Shell ('ifup wlan'+IntToStr(i));
-                    If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig wlan'+IntToStr(i)+' up');
-                    If FileExists ('/sbin/ifup') then Shell ('ifup br'+IntToStr(i));
-                    If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig br'+IntToStr(i)+' up');}
                  end;
-           //If FileExists ('/sbin/ifup') then Shell ('ifup lo');
-           //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig lo up');
            Ifup('lo');
      end;
-//  If (not Scripts) or (Welcome) then Shell ('etc/ppp/ip-down.d/ip-down');
-//  Shell('rm -f /etc/resolv.conf.lock');
   Shell ('rm -f /tmp/gate');
   Memo_gate.Lines.Clear;
   Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
-  //If (NetServiceStr<>'network-manager') then if (NetServiceStr<>'NetworkManager') then
   if CountInterface=1 then
                         Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;
@@ -1315,8 +1234,6 @@ begin
                       end;
   If Code_up_ppp then
                      begin
-                             //If Code_up_ppp then if not FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/var/run/ppp/resolv.conf') then
-                               //           Shell ('cp -f /var/run/ppp/resolv.conf /opt/vpnpptp/resolv.conf.after');
                              If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
                                                 If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
                                                        Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
@@ -1401,6 +1318,9 @@ begin
                                     begin
                                          BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
                                          NoInternet:=true;
+                                         Shell('rm -f /opt/vpnpptp/tmp/DateStart');
+                                         Shell('rm -f /opt/vpnpptp/tmp/ObnullRX');
+                                         Shell('rm -f /opt/vpnpptp/tmp/ObnullTX');
                                     end;
                              If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
                              StartMessage:=true;
