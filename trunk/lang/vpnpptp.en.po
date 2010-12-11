@@ -981,3 +981,11 @@ msgstr "- such combination in your distribution may not work correctly."
 #: unit1.message160
 msgid "Не обна#209�ужено ни одного се#209�виса, способного уп#209�авлять сетью. Ко#209�#209�ектная #209�абота п#209�ог#209�аммы невозможна!"
 msgstr "Did not find any service that can manage the network. Correct operation of the program is impossible!"
+
+#: unit1.message161
+msgid "Будут п#209�оигно#209�и#209�ованы недетские DNS п#209�и поднятом VPN, VPN будет поднято только на детских DNS."
+msgstr "Not children's DNS after raised VPN will be ignored, VPN will be raised only on children's DNS."
+
+#: unit1.message162
+msgid "Запуск конфигу#209�ато#209�а может занять некото#209�ое в#209�емя, так как т#209�ебуется п#209�едва#209�ительная автоматическая подготовка сети."
+msgstr "Run the configurator may take some time, since it requires advanced automatic preparation of the network."
