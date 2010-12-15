@@ -1,3 +1,5 @@
+{ Это - файл ресурсов, автоматически созданный lazarus }
+
 LazarusResources.Add('TForm2','FORMDATA',[
   'TPF0'#6'TForm2'#5'Form2'#4'Left'#3#29#3#6'Height'#3#150#0#3'Top'#3#141#0#5'W'
   +'idth'#3#180#1#13'ActiveControl'#7#6'Panel1'#7'Caption'#6#5'Form2'#12'Client'
