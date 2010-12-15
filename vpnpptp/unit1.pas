@@ -1072,13 +1072,16 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
      If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
  If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
  If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
- Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
- Memo_ip_up.Lines.Add('then');
- Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /opt/vpnpptp/resolv.conf.after');
- Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f /opt/vpnpptp/resolv.conf.after');
- Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /opt/vpnpptp/resolv.conf.after');
- Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /opt/vpnpptp/resolv.conf.after');
- Memo_ip_up.Lines.Add('fi');
+ If Unit2.Form2.CheckBoxusepeerdns.Checked then
+        begin
+             Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
+             Memo_ip_up.Lines.Add('then');
+             Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f /opt/vpnpptp/resolv.conf.after');
+             Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f /opt/vpnpptp/resolv.conf.after');
+             Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /opt/vpnpptp/resolv.conf.after');
+             Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /opt/vpnpptp/resolv.conf.after');
+             Memo_ip_up.Lines.Add('fi');
+        end;
  Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
  If FileExists ('/usr/bin/net_monitor') then If FileExists ('/usr/bin/vnstat') then
                                         begin
