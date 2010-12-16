@@ -977,6 +977,8 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
    if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
    If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
+ If FileExists('/opt/vpnpptp/scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
+                                                     Shell ('sh /opt/vpnpptp/scripts/peermodify.sh '+Label_peername.Caption);
  Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные файлы
  Shell('rm -f /tmp/gate');
