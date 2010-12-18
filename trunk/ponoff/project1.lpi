@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="7"/>
+    <Version Value="9"/>
     <General>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=""/>
       <Title Value="Управление соединением VPN PPTP/L2TP"/>
-      <Icon Value="0"/>
       <UseXPManifest Value="True"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -16,9 +15,13 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <CurrentBuildNr Value="667"/>
+      <BuildNr Value="668"/>
       <Language Value="0419"/>
+      <StringTable ProductVersion="0.0.0.667"/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>
@@ -41,11 +44,13 @@
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="project1"/>
-        <CursorPos X="1" Y="22"/>
-        <TopLine Value="1"/>
         <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="22"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="unit1.pas"/>
@@ -53,11 +58,14 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <CursorPos X="77" Y="812"/>
-        <TopLine Value="893"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="812"/>
+        <CursorPos X="77" Y="812"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="../mandriva_pptp/unit1.pas"/>
@@ -65,8 +73,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <CursorPos X="154" Y="196"/>
         <TopLine Value="177"/>
+        <CursorPos X="154" Y="196"/>
         <UsageCount Value="4"/>
       </Unit2>
       <Unit3>
@@ -75,8 +83,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Setup"/>
-        <CursorPos X="63" Y="9"/>
         <TopLine Value="1"/>
+        <CursorPos X="63" Y="9"/>
         <UsageCount Value="4"/>
       </Unit3>
       <Unit4>
@@ -86,46 +94,46 @@
       <Unit5>
         <Filename Value="../../usr/share/fpcsrc/packages/users/src/users.pp"/>
         <UnitName Value="users"/>
-        <CursorPos X="11" Y="18"/>
         <TopLine Value="1"/>
+        <CursorPos X="11" Y="18"/>
         <UsageCount Value="38"/>
       </Unit5>
       <Unit6>
         <Filename Value="../../usr/lib/lazarus/lcl/textstrings.pas"/>
         <UnitName Value="TextStrings"/>
-        <CursorPos X="1" Y="181"/>
         <TopLine Value="164"/>
+        <CursorPos X="1" Y="181"/>
         <UsageCount Value="32"/>
       </Unit6>
       <Unit7>
         <Filename Value="project1.lrs"/>
-        <CursorPos X="1" Y="5236"/>
         <TopLine Value="5203"/>
+        <CursorPos X="1" Y="5236"/>
         <UsageCount Value="8"/>
       </Unit7>
       <Unit8>
         <Filename Value="../../usr/lib/lazarus/lcl/customtimer.pas"/>
         <UnitName Value="CustomTimer"/>
-        <CursorPos X="1" Y="182"/>
         <TopLine Value="164"/>
+        <CursorPos X="1" Y="182"/>
         <UsageCount Value="8"/>
       </Unit8>
       <Unit9>
         <Filename Value="../../usr/lib/lazarus/lcl/include/customedit.inc"/>
-        <CursorPos X="1" Y="77"/>
         <TopLine Value="58"/>
+        <CursorPos X="1" Y="77"/>
         <UsageCount Value="6"/>
       </Unit9>
       <Unit10>
         <Filename Value="../../usr/lib/lazarus/lcl/include/customform.inc"/>
-        <CursorPos X="1" Y="2403"/>
         <TopLine Value="2386"/>
+        <CursorPos X="1" Y="2403"/>
         <UsageCount Value="7"/>
       </Unit10>
       <Unit11>
         <Filename Value="../../usr/lib/lazarus/lcl/include/application.inc"/>
-        <CursorPos X="1" Y="1257"/>
         <TopLine Value="1240"/>
+        <CursorPos X="1" Y="1257"/>
         <UsageCount Value="7"/>
       </Unit11>
       <Unit12>
@@ -135,37 +143,39 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UnitMyMessageBox"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
         <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="99"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit12>
       <Unit13>
         <Filename Value="../../usr/lib/lazarus/lcl/interfaces/gtk2/gtk2trayicon.inc"/>
-        <CursorPos X="1" Y="207"/>
         <TopLine Value="190"/>
+        <CursorPos X="1" Y="207"/>
         <UsageCount Value="10"/>
       </Unit13>
       <Unit14>
         <Filename Value="../../usr/lib/lazarus/0.9.28.2/lcl/customtimer.pas"/>
         <UnitName Value="CustomTimer"/>
-        <CursorPos X="1" Y="182"/>
         <TopLine Value="163"/>
+        <CursorPos X="1" Y="182"/>
         <UsageCount Value="14"/>
       </Unit14>
       <Unit15>
         <Filename Value="../../usr/lib/lazarus/lcl/alllclunits.pp"/>
         <UnitName Value="AllLCLUnits"/>
-        <CursorPos X="6" Y="30"/>
         <TopLine Value="16"/>
+        <CursorPos X="6" Y="30"/>
         <UsageCount Value="10"/>
       </Unit15>
       <Unit16>
         <Filename Value="../../usr/lib/lazarus/lcl/masks.pas"/>
         <UnitName Value="Masks"/>
-        <CursorPos X="22" Y="29"/>
         <TopLine Value="15"/>
+        <CursorPos X="22" Y="29"/>
         <UsageCount Value="10"/>
       </Unit16>
       <Unit17>
@@ -174,16 +184,18 @@
         <ComponentName Value="Form2"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit2"/>
-        <CursorPos X="19" Y="22"/>
-        <TopLine Value="1"/>
         <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="19" Y="22"/>
         <UsageCount Value="39"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit17>
       <Unit18>
-        <Filename Value="../../../usr/lib/lazarus/lcl/include/customform.inc"/>
-        <CursorPos X="1" Y="2226"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/customform.inc"/>
         <TopLine Value="2209"/>
+        <CursorPos X="1" Y="2226"/>
         <UsageCount Value="10"/>
       </Unit18>
     </Units>
@@ -307,17 +319,18 @@
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <Target>
       <Filename Value="ponoff"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)/"/>
-      <OtherUnitFiles Value="../modules/"/>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../modules"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
         <CStyleOperator Value="False"/>
+        <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>
     <Linking>

@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="7"/>
+    <Version Value="9"/>
     <General>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=""/>
       <Title Value="Настройка подключения к VPN через PPTP/L2TP"/>
-      <Icon Value="0"/>
       <UseXPManifest Value="True"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <i18n>
       <EnableI18N Value="True"/>
@@ -16,9 +15,13 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <CurrentBuildNr Value="1302"/>
+      <BuildNr Value="1304"/>
       <Language Value="0419"/>
+      <StringTable ProductVersion="0.0.0.1302"/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>
@@ -45,11 +48,13 @@
         <Filename Value="project1.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="project1"/>
-        <CursorPos X="7" Y="8"/>
-        <TopLine Value="1"/>
         <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="7" Y="8"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="unit1.pas"/>
@@ -57,11 +62,14 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <CursorPos X="71" Y="980"/>
-        <TopLine Value="961"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="3542"/>
+        <CursorPos X="71" Y="980"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="../../EduSetup/branch/0.0.2/unit1.pas"/>
@@ -69,8 +77,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <CursorPos X="64" Y="17"/>
         <TopLine Value="1"/>
+        <CursorPos X="64" Y="17"/>
         <UsageCount Value="4"/>
       </Unit2>
       <Unit3>
@@ -79,15 +87,15 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Setup"/>
-        <CursorPos X="17" Y="117"/>
         <TopLine Value="163"/>
+        <CursorPos X="17" Y="117"/>
         <UsageCount Value="5"/>
       </Unit3>
       <Unit4>
         <Filename Value="../../usr/lib/lazarus/components/indy-10.2.0.3/lazarus/IdDNSResolver.pas"/>
         <UnitName Value="IdDNSResolver"/>
-        <CursorPos X="42" Y="236"/>
         <TopLine Value="225"/>
+        <CursorPos X="42" Y="236"/>
         <UsageCount Value="4"/>
       </Unit4>
       <Unit5>
@@ -96,71 +104,71 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <CursorPos X="3" Y="125"/>
         <TopLine Value="112"/>
+        <CursorPos X="3" Y="125"/>
         <UsageCount Value="5"/>
       </Unit5>
       <Unit6>
         <Filename Value="../../usr/lib/lazarus/lcl/textstrings.pas"/>
         <UnitName Value="TextStrings"/>
-        <CursorPos X="1" Y="223"/>
         <TopLine Value="206"/>
+        <CursorPos X="1" Y="223"/>
         <UsageCount Value="45"/>
       </Unit6>
       <Unit7>
         <Filename Value="../../usr/lib/lazarus/lcl/include/control.inc"/>
-        <CursorPos X="1" Y="2228"/>
         <TopLine Value="2213"/>
+        <CursorPos X="1" Y="2228"/>
         <UsageCount Value="16"/>
       </Unit7>
       <Unit8>
         <Filename Value="../../usr/lib/lazarus/lcl/include/wincontrol.inc"/>
-        <CursorPos X="1" Y="4921"/>
         <TopLine Value="4904"/>
+        <CursorPos X="1" Y="4921"/>
         <UsageCount Value="9"/>
       </Unit8>
       <Unit9>
         <Filename Value="../../usr/lib/lazarus/lcl/include/buttoncontrol.inc"/>
-        <CursorPos X="1" Y="27"/>
         <TopLine Value="10"/>
+        <CursorPos X="1" Y="27"/>
         <UsageCount Value="13"/>
       </Unit9>
       <Unit10>
         <Filename Value="../../usr/lib/lazarus/lcl/include/buttons.inc"/>
-        <CursorPos X="1" Y="332"/>
         <TopLine Value="302"/>
+        <CursorPos X="1" Y="332"/>
         <UsageCount Value="13"/>
       </Unit10>
       <Unit11>
         <Filename Value="utranslator.pas"/>
         <UnitName Value="uTranslator"/>
-        <CursorPos X="3" Y="63"/>
         <TopLine Value="1"/>
+        <CursorPos X="3" Y="63"/>
         <UsageCount Value="11"/>
       </Unit11>
       <Unit12>
         <Filename Value="project1.lrs"/>
-        <CursorPos X="1" Y="1"/>
         <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="9"/>
       </Unit12>
       <Unit13>
         <Filename Value="../../usr/lib/lazarus/lcl/translations.pas"/>
         <UnitName Value="Translations"/>
-        <CursorPos X="1" Y="516"/>
         <TopLine Value="1"/>
+        <CursorPos X="1" Y="516"/>
         <UsageCount Value="8"/>
       </Unit13>
       <Unit14>
         <Filename Value="../../usr/lib/lazarus/lcl/include/fileutil.inc"/>
-        <CursorPos X="1" Y="83"/>
         <TopLine Value="64"/>
+        <CursorPos X="1" Y="83"/>
         <UsageCount Value="3"/>
       </Unit14>
       <Unit15>
         <Filename Value="../../usr/lib/lazarus/lcl/include/customcheckbox.inc"/>
-        <CursorPos X="1" Y="65"/>
         <TopLine Value="47"/>
+        <CursorPos X="1" Y="65"/>
         <UsageCount Value="3"/>
       </Unit15>
       <Unit16>
@@ -169,36 +177,38 @@
         <ComponentName Value="Form2"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit2"/>
-        <CursorPos X="33" Y="68"/>
-        <TopLine Value="68"/>
         <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="68"/>
+        <CursorPos X="33" Y="68"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit16>
       <Unit17>
         <Filename Value="../../usr/lib/lazarus/lcl/include/customform.inc"/>
-        <CursorPos X="1" Y="1682"/>
         <TopLine Value="1665"/>
+        <CursorPos X="1" Y="1682"/>
         <UsageCount Value="3"/>
       </Unit17>
       <Unit18>
         <Filename Value="../../usr/lib/lazarus/lcl/lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
-        <CursorPos X="1" Y="121"/>
         <TopLine Value="104"/>
+        <CursorPos X="1" Y="121"/>
         <UsageCount Value="4"/>
       </Unit18>
       <Unit19>
         <Filename Value="../../usr/lib/lazarus/lcl/interfaces/gtk2/gtk2wsstdctrls.pp"/>
         <UnitName Value="Gtk2WSStdCtrls"/>
-        <CursorPos X="1" Y="1854"/>
         <TopLine Value="1837"/>
+        <CursorPos X="1" Y="1854"/>
         <UsageCount Value="4"/>
       </Unit19>
       <Unit20>
         <Filename Value="../../usr/lib/lazarus/lcl/include/customedit.inc"/>
-        <CursorPos X="1" Y="478"/>
         <TopLine Value="460"/>
+        <CursorPos X="1" Y="478"/>
         <UsageCount Value="10"/>
       </Unit20>
       <Unit21>
@@ -208,16 +218,18 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UnitMyMessageBox"/>
-        <CursorPos X="22" Y="63"/>
-        <TopLine Value="43"/>
         <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="43"/>
+        <CursorPos X="22" Y="63"/>
         <UsageCount Value="134"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit21>
       <Unit22>
         <Filename Value="../../usr/lib/lazarus/lcl/include/application.inc"/>
-        <CursorPos X="1" Y="1993"/>
         <TopLine Value="1975"/>
+        <CursorPos X="1" Y="1993"/>
         <UsageCount Value="8"/>
       </Unit22>
     </Units>
@@ -345,14 +357,19 @@
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <Target>
       <Filename Value="vpnpptp"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)/"/>
-      <OtherUnitFiles Value="../modules/"/>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="../modules"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Options>
         <Win32>
