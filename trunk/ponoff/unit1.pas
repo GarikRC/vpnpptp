@@ -165,9 +165,24 @@ implementation
 Function DeleteSym(d, s: string): string;
 //Удаление любого символа из строки s, где d - символ для удаления
 Begin
-While pos(d, s) <> 0 do
-Delete(s, (pos(d, s)), 1); result := s;
+  While pos(d, s) <> 0 do
+  Delete(s, (pos(d, s)), 1); result := s;
 End;
+
+procedure MySleep (sec:integer);
+//пауза
+var
+  i,j:integer;
+begin
+   i:=0;
+   j:=0;
+   repeat
+         Sleep(100);
+         j:=j+1;
+         i:=i+100;
+         Application.ProcessMessages;
+   until i+100>sec;
+end;
 
 function CompareFiles(const FirstFile, SecondFile: string): Boolean;
 //сравнение файлов
@@ -260,7 +275,7 @@ end;
 
 procedure BalloonMessage (i:integer;str1:string);
 begin
-     If Form1.Memo_Config.Lines[23]<>'networktest-yes' then Sleep(1000);
+     If Form1.Memo_Config.Lines[23]<>'networktest-yes' then MySleep(1000);
      Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
      Application.ProcessMessages;
 end;
@@ -294,20 +309,10 @@ begin
                                                                                                      AProcess.Free;
                                                                                                 end;
                                  Ifdown(Form1.Memo_Config.Lines[3]);
-                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
-                                                                                                begin
-                                                                                                     sleep (1000);
-                                                                                                     sleep (1000);
-                                                                                                     sleep (1000);
-                                                                                                end;
+                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Mysleep (3000);
                                  Ifup(Form1.Memo_Config.Lines[3]);
                                  Ifup('lo');
-                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
-                                                                                                begin
-                                                                                                     sleep (1000);
-                                                                                                     sleep (1000);
-                                                                                                     sleep (1000);
-                                                                                                end;
+                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Mysleep (3000);
                                end;
        Shell ('rm -f /tmp/gate');
        Form1.Memo_gate.Lines.Clear;
@@ -463,7 +468,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
                                                                    begin
                                                                         NoPingDNS1:=true;
                                                                         BalloonMessage (8000,message23);
-                                                                        sleep(1000);
+                                                                        Mysleep(1000);
                                                                    end;
                                  Shell('rm -f /tmp/networktest');
                             end;
@@ -478,7 +483,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
                                                                    begin
                                                                         NoPingDNS2:=true;
                                                                         BalloonMessage (8000,message24);
-                                                                        sleep(1000);
+                                                                        Mysleep(1000);
                                                                    end;
                                  Shell('rm -f /tmp/networktest');
                             end;
@@ -523,9 +528,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                            AProcess := TProcess.Create(nil);
                                                            AProcess.CommandLine :='dhclient '+Memo_Config.Lines[3];
                                                            AProcess.Execute;
-                                                           sleep (1000);
-                                                           sleep (1000);
-                                                           sleep (1000);
+                                                           Mysleep(3000);
                                                            AProcess.Free;
                                                            Application.ProcessMessages;
                                                       end;
@@ -540,8 +543,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
                                  If Memo_gate.Lines[0]='none' then
                                     begin
-                                         sleep (1000);
-                                         sleep (1000);
+                                         Mysleep(3000);
                                          Shell('rm -f /tmp/gate');
                                          Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > /tmp/gate');
                                          Shell('printf "none" >> /tmp/gate');
@@ -746,9 +748,7 @@ If not Code_up_ppp then If link=1 then
                                                                                                                              Shell (ServiceCommand+'xl2tpd stop');
                                                                                                                              Shell (ServiceCommand+'xl2tpd start');
                                                                                                                              Form1.Repaint;
-                                                                                                                             Sleep (1000);
-                                                                                                                             Sleep (1000);
-                                                                                                                             Sleep (1000);
+                                                                                                                             Mysleep(3000);
                                                                                                                         end;
                                                                                                                   Shell ('rm -f /tmp/tmpnostart1');
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
@@ -965,17 +965,10 @@ If suse then
                    For h:=1 to CountInterface do
                                           Shell ('route del default');
                    Ifdown(Memo_Config.Lines[3]);
-                   sleep (1000);
-                   Sleep (1000);
-                   Sleep (1000);
+                   Mysleep(3000);
                    Ifup(Memo_Config.Lines[3]);
                    //повторная проверка состояния сетевого интерфейса
-                   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
-                                                                                            begin
-                                                                                                 Sleep (1000);
-                                                                                                 Sleep (1000);
-                                                                                                 Sleep (1000);
-                                                                                            end;
+                   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Mysleep(3000);
                    Shell('rm -f /tmp/gate2');
                    Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> /tmp/gate2');
                    Shell('printf "none" >> /tmp/gate2');
@@ -1038,9 +1031,7 @@ begin
                                                                                        AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                                                                                        AProcess.Execute;
                                                                                        AProcess.Free;
-                                                                                       sleep (1000);
-                                                                                       sleep (1000);
-                                                                                       sleep (1000);
+                                                                                       Mysleep(3000);
                                                                                   end;
                                         end;
  If Memo_Config.Lines[39]<>'l2tp' then
@@ -1148,12 +1139,7 @@ begin
         Ifdown('br'+IntToStr(i));
       end;
   Shell (ServiceCommand+NetServiceStr+' restart'); // организация конкурса интерфейсов
-  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
-                                                                             begin
-                                                                               sleep (1000);
-                                                                               sleep (1000);
-                                                                               sleep (1000);
-                                                                             end;
+  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Mysleep(3000);
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
@@ -1224,6 +1210,7 @@ end;
 
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
 begin
+  Application.ProcessMessages;
   Unit2.Form2.Hide;
 end;
 
@@ -1313,7 +1300,7 @@ begin
                              If FileExists ('/usr/bin/vnstat') then Shell ('vnstat -u -i '+pppiface);
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                              begin
-                                 sleep (1000);
+                                 Mysleep(1000);
                                 //определение dns, на которых поднято vpn
                                  DNS3:='none';
                                  DNS4:='none';
@@ -1341,7 +1328,7 @@ begin
                                                                    begin
                                                                         NoPingDNS3:=true;
                                                                         BalloonMessage (8000,message42);
-                                                                        sleep(1000);
+                                                                        Mysleep(1000);
                                                                    end;
                                          Shell('rm -f /tmp/networktest');
                                     end;
@@ -1357,7 +1344,7 @@ begin
                                                                    begin
                                                                         NoPingDNS4:=true;
                                                                         BalloonMessage (8000,message40);
-                                                                        sleep(1000);
+                                                                        Mysleep(1000);
                                                                    end;
                                          Shell('rm -f /tmp/networktest');
                                     end;

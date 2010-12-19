@@ -58,11 +58,13 @@ end;
 
 procedure TForm2.ShowMyBalloonHint (str0, str1:string; n:integer; X, Y:Longint; AFont:integer);
 begin
+   if (str0='') or (str1='') then Form2.Hide;
    Xg:=X;
    Yg:=Y;
    Form2.Tag:=1;
    Form2.ShowInTaskBar:=stNever;
    If Form2.Tag=2 then Form2.Hide;//приоритет балуна над хинтом
+   Application.ProcessMessages;
    Form2.BorderStyle:=bsNone;
    Timer1.Enabled:=true;
    Form2.Font.Size:=AFont;
@@ -92,6 +94,8 @@ end;
 
 procedure TForm2.ShowMyHint (str0:string; n:integer; X, Y:Longint; AFont:integer);
 begin
+   if str0='' then Form2.Hide;
+   Application.ProcessMessages;
    If Form2.Tag=1 then exit;//запрет на показ хинта если показывается балун
    Xg:=X;
    Yg:=Y;
