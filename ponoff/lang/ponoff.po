@@ -1,7 +1,8 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: TFORM1.CAPTION
+#: TFORM1.FORM1.CAPTION
+msgctxt "TFORM1.FORM1.CAPTION"
 msgid "ponoff"
 msgstr ""
 

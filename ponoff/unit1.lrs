@@ -1,4 +1,4 @@
-{ Это - файл ресурсов, автоматически созданный lazarus }
+{ This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TForm1','FORMDATA',[
   'TPF0'#6'TForm1'#5'Form1'#4'Left'#3'a'#2#6'Height'#3#153#0#3'Top'#2'\'#5'Widt'
@@ -2386,10 +2386,10 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#8'OnCreate'#7#10'FormCreate'#8'Position'#7#14'poScreenCenter'#8'ShowHint'
-  +#9#13'ShowInTaskBar'#7#7'stNever'#10'LCLVersion'#6#8'0.9.28.2'#11'WindowStat'
-  +'e'#7#11'wsMinimized'#0#5'TMemo'#11'Memo_Config'#4'Left'#2'0'#6'Height'#2'%'
-  +#3'Top'#2#0#5'Width'#2'q'#13'Lines.Strings'#1#6#5'Memo1'#0#8'TabOrder'#2#0#7
-  +'Visible'#8#0#0#5'TMemo'#5'Memo2'#4'Left'#3#170#0#6'Height'#2'%'#3'Top'#2#0#5
+  +#9#13'ShowInTaskBar'#7#7'stNever'#10'LCLVersion'#6#6'0.9.29'#11'WindowState'
+  +#7#11'wsMinimized'#0#5'TMemo'#11'Memo_Config'#4'Left'#2'0'#6'Height'#2'%'#3
+  +'Top'#2#0#5'Width'#2'q'#13'Lines.Strings'#1#6#5'Memo1'#0#8'TabOrder'#2#0#7'V'
+  +'isible'#8#0#0#5'TMemo'#5'Memo2'#4'Left'#3#170#0#6'Height'#2'%'#3'Top'#2#0#5
   +'Width'#2'p'#13'Lines.Strings'#1#6#5'Memo2'#0#8'TabOrder'#2#1#7'Visible'#8#0
   +#0#5'TMemo'#5'Memo3'#4'Left'#3' '#1#6'Height'#2'%'#3'Top'#2#0#5'Width'#2'q'
   +#13'Lines.Strings'#1#6#5'Memo3'#0#8'TabOrder'#2#2#7'Visible'#8#0#0#5'TMemo'#5
