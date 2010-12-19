@@ -1,3 +1,5 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TForm1','FORMDATA',[
   'TPF0'#6'TForm1'#5'Form1'#4'Left'#3#183#1#6'Height'#3'D'#2#3'Top'#2'^'#5'Widt'
   +'h'#3'0'#3#18'HorzScrollBar.Page'#3#25#3#21'HorzScrollBar.Visible'#8#18'Vert'
@@ -2860,22 +2862,22 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#8'OnCreate'#7#10'FormCreate'#11'OnMouseDown'#7#18'TabSheet1MouseDown'#8'P'
-  +'osition'#7#15'poDesktopCenter'#8'ShowHint'#9#10'LCLVersion'#6#8'0.9.28.2'#0
-  +#12'TPageControl'#12'PageControl1'#22'AnchorSideLeft.Control'#7#5'Owner'#23
-  +'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'
-  +#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBo'
-  +'ttom'#4'Left'#2#0#6'Height'#3#24#2#3'Top'#2#0#5'Width'#3'0'#3#10'ActivePage'
-  +#7#9'TabSheet1'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#20'BorderSpaci'
-  +'ng.Bottom'#2'!'#8'TabIndex'#2#0#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'
-  +#18'AnchorSideTop.Side'#7#9'asrCenter'#24'AnchorSideBottom.Control'#7#12'Pag'
-  +'eControl1'#21'AnchorSideBottom.Side'#7#9'asrBottom'#7'Caption'#6#10#208#173
-  +#209#130#208#176#208#191' 1'#12'ClientHeight'#3#253#1#11'ClientWidth'#3'.'#3
-  +#11'OnMouseDown'#7#18'TabSheet1MouseDown'#0#6'TLabel'#9'Label_IPS'#22'Anchor'
-  +'SideLeft.Control'#7#7'Label40'#21'AnchorSideTop.Control'#7#8'Edit_IPS'#18'A'
-  +'nchorSideTop.Side'#7#9'asrCenter'#23'AnchorSideRight.Control'#7#8'Edit_IPS'
-  +#24'AnchorSideBottom.Control'#7#8'Edit_IPS'#21'AnchorSideBottom.Side'#7#9'as'
-  +'rBottom'#4'Left'#2#14#6'Height'#2#14#3'Top'#2'&'#5'Width'#3#135#0#7'Anchors'
-  +#11#5'akTop'#7'akRight'#0#7'Caption'#6'&'#208#159#209#128#208#190#208#178#208
+  +'osition'#7#15'poDesktopCenter'#8'ShowHint'#9#10'LCLVersion'#6#6'0.9.29'#0#12
+  +'TPageControl'#12'PageControl1'#22'AnchorSideLeft.Control'#7#5'Owner'#23'Anc'
+  +'horSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24
+  +'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBotto'
+  +'m'#4'Left'#2#0#6'Height'#3#24#2#3'Top'#2#0#5'Width'#3'0'#3#10'ActivePage'#7
+  +#9'TabSheet1'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#20'BorderSpacing'
+  +'.Bottom'#2'!'#8'TabIndex'#2#0#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'#18
+  +'AnchorSideTop.Side'#7#9'asrCenter'#24'AnchorSideBottom.Control'#7#12'PageCo'
+  +'ntrol1'#21'AnchorSideBottom.Side'#7#9'asrBottom'#7'Caption'#6#10#208#173#209
+  +#130#208#176#208#191' 1'#12'ClientHeight'#3#253#1#11'ClientWidth'#3'.'#3#11
+  +'OnMouseDown'#7#18'TabSheet1MouseDown'#0#6'TLabel'#9'Label_IPS'#22'AnchorSid'
+  +'eLeft.Control'#7#7'Label40'#21'AnchorSideTop.Control'#7#8'Edit_IPS'#18'Anch'
+  +'orSideTop.Side'#7#9'asrCenter'#23'AnchorSideRight.Control'#7#8'Edit_IPS'#24
+  +'AnchorSideBottom.Control'#7#8'Edit_IPS'#21'AnchorSideBottom.Side'#7#9'asrBo'
+  +'ttom'#4'Left'#2#14#6'Height'#2#14#3'Top'#2'&'#5'Width'#3#135#0#7'Anchors'#11
+  +#5'akTop'#7'akRight'#0#7'Caption'#6'&'#208#159#209#128#208#190#208#178#208
   +#176#208#185#208#180#208#181#209#128' (IP '#208#184#208#187#208#184' '#208
   +#184#208#188#209#143'):'#11'ParentColor'#8#14'ParentShowHint'#8#8'ShowHint'#9
   +#11'OnMouseDown'#7#18'TabSheet1MouseDown'#0#0#6'TLabel'#10'Label_user'#22'An'

@@ -56,10 +56,6 @@ msgctxt "TFORM1.BUTTON_NEXT2.CAPTION"
 msgid "Далее"
 msgstr ""
 
-#: TFORM1.CAPTION
-msgid "Настройка VPN PPTP"
-msgstr ""
-
 #: TFORM1.CHECKBOX_DESKTOP.CAPTION
 msgid "Создать ярлык на рабочем столе"
 msgstr ""
@@ -122,6 +118,11 @@ msgstr ""
 
 #: TFORM1.ETC_HOSTS.CAPTION
 msgid "Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)"
+msgstr ""
+
+#: TFORM1.FORM1.CAPTION
+msgctxt "TFORM1.FORM1.CAPTION"
+msgid "Настройка VPN PPTP"
 msgstr ""
 
 #: TFORM1.LABEL1.CAPTION

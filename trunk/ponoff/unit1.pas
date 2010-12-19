@@ -191,15 +191,25 @@ end;
 procedure Ifdown (Iface:string);
 //опускает интерфейс
 begin
-          If FileExists ('/sbin/ifdown') then if not ubuntu then if not fedora then Shell ('ifdown '+Iface);
-          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' down');
+          AProcess := TProcess.Create(nil);
+          //If FileExists ('/sbin/ifdown') then if not ubuntu then if not fedora then Shell ('ifdown '+Iface);
+          //If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' down');
+          If FileExists ('/sbin/ifdown') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifdown '+Iface;
+          If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' down';
+          AProcess.Execute;
+          AProcess.Free;
 end;
 
 procedure Ifup (Iface:string);
 //поднимает интерфейс
 begin
-          If FileExists ('/sbin/ifup') then if not ubuntu then if not fedora then Shell ('ifup '+Iface);
-          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' up');
+          AProcess := TProcess.Create(nil);
+          //If FileExists ('/sbin/ifup') then if not ubuntu then if not fedora then Shell ('ifup '+Iface);
+          //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' up');
+          If FileExists ('/sbin/ifup') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifup '+Iface;
+          If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' up';
+          AProcess.Execute;
+          AProcess.Free;
 end;
 
 procedure ClearEtc_hosts;
@@ -276,12 +286,28 @@ begin
        If Form1.Memo_gate.Lines[0]='none' then
                                begin
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networking') then
-                                                                                                Shell (ServiceCommand+NetServiceStr+' restart');
+                                                                                                //Shell (ServiceCommand+NetServiceStr+' restart');
+                                                                                                begin
+                                                                                                     AProcess := TProcess.Create(nil);
+                                                                                                     AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                                                                                                     AProcess.Execute;
+                                                                                                     AProcess.Free;
+                                                                                                end;
                                  Ifdown(Form1.Memo_Config.Lines[3]);
-                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
+                                                                                                begin
+                                                                                                     sleep (1000);
+                                                                                                     sleep (1000);
+                                                                                                     sleep (1000);
+                                                                                                end;
                                  Ifup(Form1.Memo_Config.Lines[3]);
                                  Ifup('lo');
-                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+                                 If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
+                                                                                                begin
+                                                                                                     sleep (1000);
+                                                                                                     sleep (1000);
+                                                                                                     sleep (1000);
+                                                                                                end;
                                end;
        Shell ('rm -f /tmp/gate');
        Form1.Memo_gate.Lines.Clear;
@@ -488,11 +514,19 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               begin
                                 For h:=1 to CountInterface do
                                                             Shell ('route del default');
-                                Ifup(Form1.Memo_Config.Lines[3]);
+                                Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+                                //Ifup(Form1.Memo_Config.Lines[3]);
                                 If not DhclientStart then
                                                       begin
                                                            if fedora then Shell('killall dhclient');
-                                                           Shell ('dhclient '+Memo_Config.Lines[3]);
+                                                           //Shell ('dhclient '+Memo_Config.Lines[3]);
+                                                           AProcess := TProcess.Create(nil);
+                                                           AProcess.CommandLine :='dhclient '+Memo_Config.Lines[3];
+                                                           AProcess.Execute;
+                                                           sleep (1000);
+                                                           sleep (1000);
+                                                           sleep (1000);
+                                                           AProcess.Free;
                                                            Application.ProcessMessages;
                                                       end;
                                 DhclientStart:=true;
@@ -506,8 +540,9 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
                                  If Memo_gate.Lines[0]='none' then
                                     begin
-                                         sleep (2000);
-                                         Shell ('rm -f /tmp/gate');
+                                         sleep (1000);
+                                         sleep (1000);
+                                         Shell('rm -f /tmp/gate');
                                          Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > /tmp/gate');
                                          Shell('printf "none" >> /tmp/gate');
                                          Memo_gate.Clear;
@@ -637,7 +672,7 @@ If not Code_up_ppp then If link=2 then
                                                                                                        Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                                                                                        Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                                        Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                                       Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
+                                                                                                       Shell('rm -f /opt/vpnpptp/tmp/ip-down');
                                                                                                    end;
                                                                    end;
                                                                 halt;
@@ -710,7 +745,10 @@ If not Code_up_ppp then If link=1 then
                                                                                                                         begin
                                                                                                                              Shell (ServiceCommand+'xl2tpd stop');
                                                                                                                              Shell (ServiceCommand+'xl2tpd start');
-                                                                                                                             Sleep (3000);
+                                                                                                                             Form1.Repaint;
+                                                                                                                             Sleep (1000);
+                                                                                                                             Sleep (1000);
+                                                                                                                             Sleep (1000);
                                                                                                                         end;
                                                                                                                   Shell ('rm -f /tmp/tmpnostart1');
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
@@ -890,19 +928,19 @@ If suse then
    If FileExists('/opt/vpnpptp/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
                                                                               begin
                                                                                   Memo_ip_down.Clear;
-                                                                                  Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
+                                                                                  Shell('rm -f /etc/ppp/ip-down.d/ip-down');
                                                                                   Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
                                                                                   Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                   Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                                                               end;
    If Memo_Config.Lines[7]='noreconnect-pptp' then
                                              begin
-                                                Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
+                                                Shell('rm -f /opt/vpnpptp/tmp/ip-down');
                                                 Memo_ip_down.Clear;
                                                 If FileExists('/etc/ppp/ip-down.d/ip-down') then Memo_ip_down.Lines.LoadFromFile('/etc/ppp/ip-down.d/ip-down');
                                                 Memo_ip_down.Lines.SaveToFile('/opt/vpnpptp/tmp/ip-down');
-                                                Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
-                                                Shell ('printf "#!/bin/sh\n" >> /etc/ppp/ip-down.d/ip-down');
+                                                Shell('rm -f /etc/ppp/ip-down.d/ip-down');
+                                                Shell('printf "#!/bin/sh\n" >> /etc/ppp/ip-down.d/ip-down');
                                                 Shell('chmod a+x /opt/vpnpptp/tmp/ip-down');
                                                 Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                              end;
@@ -919,13 +957,25 @@ If suse then
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
-                   Shell (ServiceCommand+NetServiceStr+' restart');
+                   //Shell (ServiceCommand+NetServiceStr+' restart');
+                   AProcess := TProcess.Create(nil);
+                   AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                   AProcess.Execute;
+                   AProcess.Free;
                    For h:=1 to CountInterface do
                                           Shell ('route del default');
                    Ifdown(Memo_Config.Lines[3]);
+                   sleep (1000);
+                   Sleep (1000);
+                   Sleep (1000);
                    Ifup(Memo_Config.Lines[3]);
                    //повторная проверка состояния сетевого интерфейса
-                   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+                   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
+                                                                                            begin
+                                                                                                 Sleep (1000);
+                                                                                                 Sleep (1000);
+                                                                                                 Sleep (1000);
+                                                                                            end;
                    Shell('rm -f /tmp/gate2');
                    Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> /tmp/gate2');
                    Shell('printf "none" >> /tmp/gate2');
@@ -983,8 +1033,14 @@ begin
                                              CountKillallpppd:=CountKillallpppd+1;
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
                                                                                   begin
-                                                                                       Shell (ServiceCommand+NetServiceStr+' restart');
-                                                                                       sleep (3000);
+                                                                                       //Shell (ServiceCommand+NetServiceStr+' restart');
+                                                                                       AProcess := TProcess.Create(nil);
+                                                                                       AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                                                                                       AProcess.Execute;
+                                                                                       AProcess.Free;
+                                                                                       sleep (1000);
+                                                                                       sleep (1000);
+                                                                                       sleep (1000);
                                                                                   end;
                                         end;
  If Memo_Config.Lines[39]<>'l2tp' then
@@ -992,8 +1048,8 @@ begin
                                       Shell (ServiceCommand+'xl2tpd stop');
                                       Shell ('killall xl2tpd');
                                  end;
- Shell ('killall openl2tpd');
- Shell ('killall l2tpd');
+ Shell('killall openl2tpd');
+ Shell('killall l2tpd');
  Application.ProcessMessages;
  Shell('rm -f /tmp/status.ppp');
  Shell('rm -f /tmp/tmp');
@@ -1037,7 +1093,14 @@ begin
               Shell ('route del default');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell('rm -f /tmp/xl2tpd.conf');
-  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Shell (ServiceCommand+NetServiceStr+' restart');
+  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
+                                                                                                        Shell (ServiceCommand+NetServiceStr+' restart');
+                                                                                                        //begin
+                                                                                                          //   AProcess := TProcess.Create(nil);
+                                                                                                            // AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                                                                                                      //       AProcess.Execute;
+                                                                                                        //     AProcess.Free;
+                                                                                                     //   end;
   If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
          If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
                          Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
@@ -1085,7 +1148,12 @@ begin
         Ifdown('br'+IntToStr(i));
       end;
   Shell (ServiceCommand+NetServiceStr+' restart'); // организация конкурса интерфейсов
-  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (3000);
+  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
+                                                                             begin
+                                                                               sleep (1000);
+                                                                               sleep (1000);
+                                                                               sleep (1000);
+                                                                             end;
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом

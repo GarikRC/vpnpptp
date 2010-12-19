@@ -2129,7 +2129,7 @@ object Form1: TForm1
   Position = poScreenCenter
   ShowHint = True
   ShowInTaskBar = stNever
-  LCLVersion = '0.9.28.2'
+  LCLVersion = '0.9.29'
   WindowState = wsMinimized
   object Memo_Config: TMemo
     Left = 48

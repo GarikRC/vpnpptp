@@ -2135,7 +2135,7 @@ object Form1: TForm1
   OnMouseDown = TabSheet1MouseDown
   Position = poDesktopCenter
   ShowHint = True
-  LCLVersion = '0.9.28.2'
+  LCLVersion = '0.9.29'
   object PageControl1: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideRight.Control = Owner
