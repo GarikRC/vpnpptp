@@ -240,6 +240,7 @@ var
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
   DhclientStartGood:boolean; //false если dhclient стартанул неудачно или не стартовал вообще
   NumberUnit:string; //номер параметра unit в провайдерском файле настроек
+  f: text;//текстовый поток
 
 const
   Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -407,6 +408,8 @@ resourcestring
   message160='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
   message161='Будут проигнорированы недетские DNS при поднятом VPN, VPN будет поднято только на детских DNS.';
   message162='Запуск конфигуратора может занять некоторое время, так как требуется предварительная автоматическая подготовка сети.';
+  message163='Рекомендуется вручную уменьшить MTU/MRU, так как используемое значение MTU =';
+  message164='байт слишком большое.';
 
 implementation
 
@@ -1939,9 +1942,11 @@ end;
 procedure TForm1.ButtonTestClick(Sender: TObject);
  //тестовый запуск сконфигурированного соединения
 var
- i,j,k:integer;
+ i,j,l,k:integer;
  flag:boolean;
  str_log:string;
+ Code_up_ppp,FlagMtu:boolean;
+ pppiface,MtuUsed:string;
 begin
  Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,'/opt/vpnpptp/vpnpptp.png',true,true,true,AFont,Form1.Icon);
  Application.ProcessMessages;
@@ -2005,37 +2010,77 @@ If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
 Memo_create.Hint:=message109;
 Application.ProcessMessages;
 str_log:='/var/log/syslog';
+FlagMtu:=false;
 If Pppd_log.Checked then
 begin
  While true do
     begin
        Shell ('tail -40 '+str_log+' > /tmp/test_vpn');
        If FileExists ('/tmp/test_vpn') then MemoTest.Lines.LoadFromFile('/tmp/test_vpn');
-       j:=0;
-       While j<=MemoTest.Lines.Count-1 do
+       l:=0;
+       While l<=MemoTest.Lines.Count-1 do
          begin
            flag:=false;
            For i:=0 to Memo_create.Lines.Count-1 do
               begin
-                    If Memo_create.Lines[i]=MemoTest.Lines[j] then flag:=true;
+                    If Memo_create.Lines[i]=MemoTest.Lines[l] then flag:=true;
               end;
-           If not flag then If MemoTest.Lines[j]<>'' then
+           If not flag then If MemoTest.Lines[l]<>'' then
                                                          begin
-                                                             For k:=j to MemoTest.Lines.Count-1 do
+                                                             For k:=l to MemoTest.Lines.Count-1 do
                                                                   begin
                                                                      Memo_create.Lines.Add(MemoTest.Lines[k]);
                                                                      Application.ProcessMessages;
                                                                   end;
-                                                             j:=MemoTest.Lines.Count;
+                                                             l:=MemoTest.Lines.Count;
                                                          end;
-           j:=j+1;
+           l:=l+1;
          end;
        Application.ProcessMessages;
        Sleep(100);
+       If not FlagMtu then
+           begin
+                 //Проверяем поднялось ли соединение
+                 Shell('rm -f /tmp/status.ppp');
+                 Memo2.Clear;
+                 Shell('ifconfig | grep Link > /tmp/status.ppp');
+                 Code_up_ppp:=False;
+                 If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+                 Memo2.Lines.Add(' ');
+                 For j:=0 to Memo2.Lines.Count-1 do
+                 begin
+                      If LeftStr(Memo2.Lines[j],3)='ppp' then
+                         begin
+                              Code_up_ppp:=True;
+                              pppiface:=LeftStr(Memo2.Lines[j],4);
+                         end;
+                 end;
+                 Shell('rm -f /tmp/status.ppp');
+                 //Проверяем используемое mtu
+                 MtuUsed:='';
+                 If Code_up_ppp then
+                    begin
+                      popen (f,'ifconfig '+pppiface+'|grep MTU |awk '+ chr(39)+'{print $6}'+chr(39),'R');
+                      While not eof(f) do
+                         begin
+                           Readln (f,MtuUsed);
+                         end;
+                      PClose(f);
+                      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
+                      If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
+                         begin
+                              Memo_create.Lines.Add('......................................');
+                              Application.ProcessMessages;
+                              Form3.MyMessageBox(message0,message163+' '+MtuUsed+' '+message164,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                              Application.ProcessMessages;
+                         end;
+                         FlagMtu:=true;
+                    end;
+           end;
     end;
 end;
  Shell ('rm -f /tmp/test_vpn');
- Shell ('/tmp/statusv.ppp');
+ Shell ('rm -f /tmp/statusv.ppp');
  if Form3.Kod.Text='1' then AProcess.Free;
 end;
 
@@ -2109,7 +2154,8 @@ begin
   Shell('rm -f /tmp/users');
   Shell('rm -f /tmp/tmpsetup');
   Shell('rm -f /tmp/tmpnostart');
-  Shell ('rm -f /tmp/test_vpn');
+  Shell('rm -f /tmp/test_vpn');
+  Shell('rm -f /tmp/statusv.ppp');
   halt;
 end;
 
