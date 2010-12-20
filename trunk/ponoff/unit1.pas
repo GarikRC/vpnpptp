@@ -105,10 +105,11 @@ var
   suse:boolean; // используется ли дистрибутив suse
   mandriva:boolean; // используется ли дистрибутив mandriva
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
-  CountKillallpppd:integer; //счетчик сколько раз убивался pppd
+  //CountKillallpppd:integer; //счетчик сколько раз убивался pppd
   DoubleRunPonoff:boolean; //многократный запуск ponoff
   NetServiceStr:string; //какой сервис управляет сетью
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
+  FlagMtu:boolean; //необходимость проверки mtu
 
 const
   Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -157,6 +158,8 @@ resourcestring
   message40='DNS2-сервер при поднятом VPN не пингуется. ';
   message41='Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска.';
   message42='DNS1-сервер при поднятом VPN не пингуется. ';
+  message43='Рекомендуется вручную уменьшить MTU/MRU, так как используемое значение MTU =';
+  message44='байт слишком большое.';
 
 implementation
 
@@ -323,9 +326,10 @@ var
     i,j,h:integer;
     Code_up_ppp:boolean;
     link:byte;//1-link ok, 2-no link, 3-none, 4-еще не определено
-    str:string;
+    str,MtuUsed:string;
     Str_networktest, Str_RemoteIPaddress:string;
     FindRemoteIPaddress:boolean;
+    pppiface:string;
 begin
   NewIPS:=true;
   NoPingIPS:=false;
@@ -348,6 +352,7 @@ begin
      If LeftStr(Memo2.Lines[j],3)='ppp' then
       begin
          Code_up_ppp:=True;
+         pppiface:=LeftStr(Memo2.Lines[j],4);
       end;
    end;
 //проверяем поднялось ли соединение на pppN и если нет, то поднимаем на pppN; переводим pppN в фон
@@ -388,6 +393,26 @@ If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If Fil
                                             Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
 Shell('rm -f /tmp/hosts.tmp');
 If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
+//Проверяем используемое mtu
+If not Code_up_ppp then FlagMtu:=false;
+MtuUsed:='';
+If Code_up_ppp then If not FlagMtu then
+   begin
+     popen (f,'ifconfig '+pppiface+'|grep MTU |awk '+ chr(39)+'{print $6}'+chr(39),'R');
+     While not eof(f) do
+        begin
+          Readln (f,MtuUsed);
+        end;
+     PClose(f);
+     If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
+     If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
+        begin
+             BalloonMessage (8000,message43+' '+MtuUsed+' '+message44);
+             MySleep(3000);
+             Application.ProcessMessages;
+        end;
+        FlagMtu:=true;
+   end;
 //обработка случая когда RemoteIPaddress совпадается с ip-адресом самого vpn-сервера
 If Code_up_ppp then
                If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
@@ -514,6 +539,8 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
 If not Code_up_ppp then DhclientStart:=false;
 If not Code_up_ppp then If link=1 then //старт dhclient
                            begin
+                              AProcess := TProcess.Create(nil);
+                              AProcess.CommandLine :='dhclient '+Memo_Config.Lines[3];
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
@@ -525,11 +552,8 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                       begin
                                                            if fedora then Shell('killall dhclient');
                                                            //Shell ('dhclient '+Memo_Config.Lines[3]);
-                                                           AProcess := TProcess.Create(nil);
-                                                           AProcess.CommandLine :='dhclient '+Memo_Config.Lines[3];
                                                            AProcess.Execute;
                                                            Mysleep(3000);
-                                                           AProcess.Free;
                                                            Application.ProcessMessages;
                                                       end;
                                 DhclientStart:=true;
@@ -558,6 +582,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                  Shell ('rm -f /tmp/gate');
                                  Memo_gate.Lines.Clear;
                               end;
+                              AProcess.Free;
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
   If not FileExists('/opt/vpnpptp/hosts') then NewIPS:=false;
@@ -788,7 +813,8 @@ begin
   TXSpeed:='0b/s';
   Count:=0;
   CountInterface:=1;
-  CountKillallpppd:=0;
+//  CountKillallpppd:=0;
+  FlagMtu:=false;
   Form1.Visible:=false;
   Form1.WindowState:=wsMinimized;
   Form1.Hide;
@@ -1023,7 +1049,7 @@ begin
  If (LeftStr(tmp_pppd.Lines[i],4)='pppd') then
                                         begin
                                              Shell('killall pppd');
-                                             CountKillallpppd:=CountKillallpppd+1;
+                                             //CountKillallpppd:=CountKillallpppd+1;
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
                                                                                   begin
                                                                                        //Shell (ServiceCommand+NetServiceStr+' restart');
@@ -1084,8 +1110,8 @@ begin
               Shell ('route del default');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell('rm -f /tmp/xl2tpd.conf');
-  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
-                                                                                                        Shell (ServiceCommand+NetServiceStr+' restart');
+//  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
+  //                                                                                                      Shell (ServiceCommand+NetServiceStr+' restart');
                                                                                                         //begin
                                                                                                           //   AProcess := TProcess.Create(nil);
                                                                                                             // AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
