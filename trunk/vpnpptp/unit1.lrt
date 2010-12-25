@@ -76,6 +76,7 @@ TFORM1.PPPNOTDEFAULT.CAPTION=Не изменять дефолтный шлюз, 
 TFORM1.ROUTEDNSAUTO.CAPTION=Программно маршрутизировать DNS-сервера
 TFORM1.ETC_HOSTS.CAPTION=Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)
 TFORM1.NOBUFFER.CAPTION=Средне- или высокоскоростная линия (nobuffer)
+TFORM1.ROUTE_IP_REMOTE.CAPTION=Маршрутизировать remote IP address в шлюз локальной сети
 TFORM1.TABSHEET4.CAPTION=Этап 4
 TFORM1.BUTTON_EXIT.CAPTION=Выход
 TFORM1.BUTTON_NEXT1.CAPTION=Далее

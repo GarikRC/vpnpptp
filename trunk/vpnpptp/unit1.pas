@@ -45,6 +45,7 @@ type
     balloon: TCheckBox;
     Autostart_ponoff: TCheckBox;
     Autostartpppd: TCheckBox;
+    route_IP_remote: TCheckBox;
     ComboBoxDistr: TComboBox;
     etc_hosts: TCheckBox;
     CheckBox_required: TCheckBox;
@@ -243,7 +244,7 @@ var
   f: text;//текстовый поток
 
 const
-  Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
@@ -410,6 +411,7 @@ resourcestring
   message162='Запуск конфигуратора может занять некоторое время, так как требуется предварительная автоматическая подготовка сети.';
   message163='Рекомендуется вручную уменьшить MTU/MRU, так как используемое значение MTU =';
   message164='байт слишком большое.';
+  message165='Если remote IP address не совпадает с IP-адресом VPN-сервера, то может потребоваться маршрутизировать его в шлюз локальной сети.';
 
 implementation
 
@@ -645,6 +647,7 @@ Shell ('rm -f /opt/vpnpptp/resolv.conf.copy');
 Shell ('rm -f /opt/vpnpptp/resolv.conf.before');
 Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
 If not DirectoryExists('/opt/vpnpptp/tmp/') then Shell ('mkdir /opt/vpnpptp/tmp/');
+If not DirectoryExists('/etc/ppp/peers/') then Shell ('mkdir /etc/ppp/peers/');
 For i:=1 to CountInterface do
                            Shell('/sbin/route del default');
 Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
@@ -980,8 +983,9 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
    if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
    If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
- If FileExists('/opt/vpnpptp/scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
-                                                     Shell ('sh /opt/vpnpptp/scripts/peermodify.sh '+Label_peername.Caption);
+ If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
+                              If FileExists('/opt/vpnpptp/scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
+                                                                Shell ('sh /opt/vpnpptp/scripts/peermodify.sh '+Label_peername.Caption);
  Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные файлы
  Shell('rm -f /tmp/gate');
@@ -991,8 +995,10 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Shell('rm -f /tmp/tmpnostart');
  Shell('rm -f /etc/resolv.conf.lock');
  Shell('rm -f /tmp/ip-down');
- Shell ('rm -f /etc/ppp/ip-up.d/ip-up.old');
- Shell ('rm -f /etc/ppp/ip-down.d/ip-down.old');
+ Shell('rm -f /etc/ppp/ip-up.d/ip-up.old');
+ Shell('rm -f /etc/ppp/ip-down.d/ip-down.old');
+ Shell('rm -f /etc/ppp/ip-up.local');
+ Shell('rm -f /etc/ppp/ip-down.local');
 //перезаписываем скрипт поднятия соединения ip-up
  If not DirectoryExists('/etc/ppp/ip-up.d/') then Shell ('mkdir /etc/ppp/ip-up.d/');
  If fedora then Shell ('ln -s /etc/ppp/ip-up.d/ip-up /etc/ppp/ip-up.local');
@@ -1094,6 +1100,11 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                               If suse or fedora then Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
                                               Memo_ip_up.Lines.Add(ServiceCommand+'vnstat restart');
                                         end;
+ If route_IP_remote.Checked then
+                                begin
+                                  If not suse then if not fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                  If suse or fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                end;
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
@@ -1164,6 +1175,11 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
  Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/ObnullRX');
  Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/ObnullTX');
+ If route_IP_remote.Checked then
+                                begin
+                                  If not suse then if not fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                  If suse or fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                end;
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля
@@ -1252,6 +1268,8 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  Shell('printf "'+PingInternetStr+'\n" >> /opt/vpnpptp/config');
  If nobuffer.Checked then Shell('printf "nobuffer-yes\n" >> /opt/vpnpptp/config') else
                                               Shell('printf "nobuffer-no\n" >> /opt/vpnpptp/config');
+ If route_IP_remote.Checked then Shell('printf "route-IP-remote-yes\n" >> /opt/vpnpptp/config') else
+                                              Shell('printf "route-IP-remote-no\n" >> /opt/vpnpptp/config');
  Shell ('chmod 600 /opt/vpnpptp/config');
 //настройка sudoers
 If FileExists('/usr/share/applications/ponoff.desktop.old') then //восстанавливаем ярлык запуска ponoff
@@ -3037,6 +3055,7 @@ Autostartpppd.Hint:=MakeHint(message62,6);
 pppnotdefault.Hint:=MakeHint(message64,6);
 Memo_create.Hint:=MakeHint(message127,5);
 nobuffer.Hint:=MakeHint(message155+' '+message156+' '+message157,6);
+route_IP_remote.Hint:=MakeHint(message165,6);
 Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
@@ -3283,6 +3302,7 @@ If Screen.Height>1000 then
         PingInternetStr:=Memo_config.Lines[44];
         If (PingInternetStr='') or (PingInternetStr='none') then PingInternetStr:='yandex.ru';
         If Memo_config.Lines[45]='nobuffer-no' then nobuffer.Checked:=false else nobuffer.Checked:=true;
+        If Memo_config.Lines[46]='route-IP-remote-yes' then route_IP_remote.Checked:=true else route_IP_remote.Checked:=false;
         If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then //восстановление логина и пароля
                 begin
                     Memo_config.Clear;
