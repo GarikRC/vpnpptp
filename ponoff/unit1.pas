@@ -112,7 +112,7 @@ var
   FlagMtu:boolean; //необходимость проверки mtu
 
 const
-  Config_n=46;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
 
 resourcestring
   message0='Внимание!';
@@ -396,7 +396,7 @@ If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_h
 //Проверяем используемое mtu
 If not Code_up_ppp then FlagMtu:=false;
 MtuUsed:='';
-If Code_up_ppp then If not FlagMtu then
+If Code_up_ppp then If not FlagMtu then If not FileExists ('/tmp/mtu.checked') then
    begin
      popen (f,'ifconfig '+pppiface+'|grep MTU |awk '+ chr(39)+'{print $6}'+chr(39),'R');
      While not eof(f) do
@@ -408,13 +408,14 @@ If Code_up_ppp then If not FlagMtu then
      If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
         begin
              BalloonMessage (8000,message43+' '+MtuUsed+' '+message44);
+             Shell('touch /tmp/mtu.checked');
              MySleep(3000);
              Application.ProcessMessages;
         end;
         FlagMtu:=true;
    end;
 //обработка случая когда RemoteIPaddress совпадается с ip-адресом самого vpn-сервера
-If Code_up_ppp then
+If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                             if Memo_config.Lines[21]='IPS-no' then
                                       begin
@@ -1125,6 +1126,7 @@ begin
   Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
+  Shell ('rm -f /tmp/mtu.checked');
   MakeDefaultGW;
   halt;
 end;
@@ -1196,8 +1198,9 @@ begin
   Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
-  if CountInterface=1 then
-                        Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+  Shell ('rm -f /tmp/mtu.checked');
+  //if CountInterface=1 then
+    //                    Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;
 end;
 

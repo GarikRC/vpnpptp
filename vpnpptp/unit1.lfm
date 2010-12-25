@@ -2146,10 +2146,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 816
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 2
+    TabIndex = 1
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -3472,7 +3472,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 174
+        Top = 195
         Width = 419
         Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
         OnChange = networktestChange
@@ -3483,7 +3483,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 195
+        Top = 216
         Width = 313
         Caption = 'Блокировать все всплывающие сообщения из трея'
         OnChange = balloonChange
@@ -3505,7 +3505,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 216
+        Top = 237
         Width = 326
         Caption = 'Разрешить пользователям управлять подключением'
         OnChange = Sudo_ponoffChange
@@ -3516,7 +3516,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 237
+        Top = 258
         Width = 348
         Caption = 'Разрешить пользователям конфигурировать соединение'
         OnChange = Sudo_configureChange
@@ -3549,7 +3549,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 258
+        Top = 279
         Width = 356
         Caption = 'Автозапуск интернета при старте системы (графический)'
         OnChange = Autostart_ponoffChange
@@ -3560,7 +3560,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 279
+        Top = 300
         Width = 620
         Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
         OnChange = AutostartpppdChange
@@ -3582,7 +3582,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 300
+        Top = 321
         Width = 346
         Caption = 'Не изменять дефолтный шлюз, запустив VPN PPTP в фоне'
         OnChange = pppnotdefaultChange
@@ -3611,11 +3611,11 @@ object Form1: TForm1
         Visible = False
       end
       object routeDNSauto: TCheckBox
-        AnchorSideTop.Control = etc_hosts
+        AnchorSideTop.Control = route_IP_remote
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 153
+        Top = 174
         Width = 284
         Caption = 'Программно маршрутизировать DNS-сервера'
         TabOrder = 7
@@ -3660,13 +3660,23 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 321
+        Top = 342
         Width = 294
         Caption = 'Средне- или высокоскоростная линия (nobuffer)'
         Checked = True
         OnChange = pppnotdefaultChange
         State = cbChecked
         TabOrder = 35
+      end
+      object route_IP_remote: TCheckBox
+        AnchorSideTop.Control = etc_hosts
+        AnchorSideTop.Side = asrBottom
+        Left = 8
+        Height = 21
+        Top = 153
+        Width = 367
+        Caption = 'Маршрутизировать remote IP address в шлюз локальной сети'
+        TabOrder = 36
       end
     end
     object TabSheet4: TTabSheet
