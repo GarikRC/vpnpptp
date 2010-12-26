@@ -1011,8 +1011,9 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_ip_up.Lines.Add('then');
  Memo_ip_up.Lines.Add('     exit 0');
  Memo_ip_up.Lines.Add('fi');
- If not suse then if not fedora then Memo_ip_up.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
- If suse or fedora then Memo_ip_up.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
+ //If not suse then if not fedora then Memo_ip_up.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
+ //If suse or fedora then Memo_ip_up.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
+ Memo_ip_up.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_up.Lines.Add('then');
  Memo_ip_up.Lines.Add('     exit 0');
  Memo_ip_up.Lines.Add('fi');
@@ -1066,25 +1067,26 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS2.Text<>'none' then Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS2.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
  If routeDNSauto.Checked then If pppnotdefault.Checked then
                                                        begin
-                                                          if not suse then if not fedora then
-                                                             begin
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                             end;
-                                                          if suse or fedora then
-                                                             begin
+                                                          //if not suse then if not fedora then
+                                                            // begin
+                                                              //    Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                                //  Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                                //  Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                                 // Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          //   end;
+                                                          //if suse or fedora then
+                                                            // begin
                                                                   Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS3.Text + ' gw $IPREMOTE dev $IFNAME');
                                                                   Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS4.Text + ' gw $IPREMOTE dev $IFNAME');
                                                                   Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $IPREMOTE dev $IFNAME');
                                                                   Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $IPREMOTE dev $IFNAME');
-                                                             end;
+                                                            // end;
                                                        end;
  For i:=1 to CountInterface do
      If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
- If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
- If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
+ //If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
+ //If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
+ If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
  If Unit2.Form2.CheckBoxusepeerdns.Checked then
         begin
              Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
@@ -1098,15 +1100,17 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_ip_up.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
  If FileExists ('/usr/bin/net_monitor') then If FileExists ('/usr/bin/vnstat') then
                                         begin
-                                              If not suse then if not fedora then Memo_ip_up.Lines.Add('vnstat -u -i $PPP_IFACE');
-                                              If suse or fedora then Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
+                                              //If not suse then if not fedora then Memo_ip_up.Lines.Add('vnstat -u -i $PPP_IFACE');
+                                              //If suse or fedora then Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
+                                              Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
                                               Memo_ip_up.Lines.Add(ServiceCommand+'vnstat restart');
                                         end;
  If route_IP_remote.Checked then
-                                begin
-                                  If not suse then if not fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                  If suse or fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                end;
+                                Memo_ip_up.Lines.Add ('/sbin/route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                //begin
+                                  //If not suse then if not fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                  //If suse or fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                //end;
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile('/opt/vpnpptp/route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f /opt/vpnpptp/route');
@@ -1128,8 +1132,9 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  Memo_ip_down.Lines.Add('then');
  Memo_ip_down.Lines.Add('     exit 0');
  Memo_ip_down.Lines.Add('fi');
- If not suse then if not fedora then Memo_ip_down.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
- If suse or fedora then Memo_ip_down.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
+ //If not suse then if not fedora then Memo_ip_down.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
+ //If suse or fedora then Memo_ip_down.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
+ Memo_ip_down.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_down.Lines.Add('then');
  Memo_ip_down.Lines.Add('     exit 0');
  Memo_ip_down.Lines.Add('fi');
@@ -1149,20 +1154,20 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS2.Text<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + EditDNS2.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
  If routeDNSauto.Checked then If pppnotdefault.Checked then
                                                        begin
-                                                          if not suse then if not fedora then
-                                                              begin
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                              end;
-                                                          if suse or fedora then
-                                                              begin
+                                                         // if not suse then if not fedora then
+                                                           //   begin
+                                                             //      Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                               //    Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
+                                                                 //  Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                        //           Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
+                                                          //    end;
+                                                    //      if suse or fedora then
+                                                      //        begin
                                                                    Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS3.Text + ' gw $IPREMOTE dev $IFNAME');
                                                                    Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS4.Text + ' gw $IPREMOTE dev $IFNAME');
                                                                    Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $IPREMOTE dev $IFNAME');
                                                                    Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $IPREMOTE dev $IFNAME');
-                                                              end;
+                                                        //      end;
                                                        end;
  Memo_ip_down.Lines.Add('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
  If suse then
@@ -1178,10 +1183,11 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/ObnullRX');
  Memo_ip_down.Lines.Add('rm -f /opt/vpnpptp/tmp/ObnullTX');
  If route_IP_remote.Checked then
-                                begin
-                                  If not suse then if not fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                  If suse or fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                end;
+                                Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                                //begin
+                                  //If not suse then if not fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                               //   If suse or fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
+                              //  end;
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля

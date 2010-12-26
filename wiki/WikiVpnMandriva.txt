@@ -303,9 +303,9 @@
  route add default dev ppp0
 Хотел бы добавить, что часто, но не всегда, в скрипте '''/etc/ppp/ip-up.d/ip-up''' не обязательно забивать весь этот список, можно обойтись лишь строкой
 
- route add -host $PPP_REMOTE gw 10.167.0.17 
+ route add -host $IPREMOTE gw 10.167.0.17 
 
-т.к. $PPP_REMOTE - переменная, содержащая remote IP address, который часто, но не всегда, совпадает с адресом vpn сервера.
+т.к. $IPREMOTE - переменная, содержащая remote IP address, который часто, но не всегда, совпадает с адресом vpn сервера. Такой подход маршрутизирует remote IP address в шлюз локальной сети, а если remote IP address совпадает с адресом vpn сервера, то это будет наилучшая маршрутизация vpn сервера.
 
 А в скрипт '''/etc/ppp/ip-down.d/ip-down''' мы запишем строчки, которые вернут нам шлюз по умолчанию после обрыва соединения:
  #!/bin/sh
@@ -314,7 +314,7 @@
  #
  route del default
  route add default gw 10.167.0.17
-Надо вписать в файл '''/etc/ppp/ip-up.d/ip-up''' строчку '''route add default dev ppp0''' (или лучше строчку '''route add default dev $PPP_IFACE''', так как $PPP_IFACE - переменная, содержащая интерфейс), иначе нет соединения.
+Надо вписать в файл '''/etc/ppp/ip-up.d/ip-up''' строчку '''route add default dev ppp0''' (или лучше строчку '''route add default dev $IFNAME''', так как $IFNAME - переменная, содержащая интерфейс), иначе нет соединения.
 
 Строку в скрипте '''/etc/ppp/ip-up.d/ip-up'''
 
@@ -505,11 +505,10 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
 Дополнительно к вышеизложенному создаем символические ссылки:
  ln -s /etc/ppp/ip-up.d/ip-up /etc/ppp/ip-up.local
  ln -s /etc/ppp/ip-down.d/ip-down /etc/ppp/ip-down.local
-Вместо $PPP_IFACE используется $IFNAME, вместо $PPP_REMOTE используется $IPREMOTE.
 
 '''openSUSE:'''
 
-Для автозапуска интернета при старте системы не используется ни файл '''/etc/rc.d/rc.local''', ни файл '''/etc/rc.local''', а используется файл '''/etc/init.d/after.local'''. Вместо $PPP_IFACE используется $IFNAME, вместо $PPP_REMOTE используется $IPREMOTE.
+Для автозапуска интернета при старте системы не используется ни файл '''/etc/rc.d/rc.local''', ни файл '''/etc/rc.local''', а используется файл '''/etc/init.d/after.local'''.
 
 ==Графические утилиты для настройки VPN==
 Есть простая графическая программа для настройки VPN для любого DE - vpnpptp (http://code.google.com/p/vpnpptp/), которая включает в себя графический конфигуратор, основанный на этой инструкции (и настоящая инструкция основана на проекте vpnpptp), а также программу для дозвона (при этом оба эти приложения достаточно независимы друг от друга).
