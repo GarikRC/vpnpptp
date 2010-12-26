@@ -412,6 +412,8 @@ resourcestring
   message163='Рекомендуется вручную уменьшить MTU/MRU, так как используемое значение MTU =';
   message164='байт слишком большое.';
   message165='Если remote IP address не совпадает с IP-адресом VPN-сервера, то может потребоваться маршрутизировать его в шлюз локальной сети.';
+  message166='Если remote IP address совпадает с IP-адресом VPN-сервера, то эта опция позволит наилучшим способом маршрутизировать VPN-сервер';
+  message167='без необходимости иных методов маршрутизации VPN-сервера.';
 
 implementation
 
@@ -3055,7 +3057,7 @@ Autostartpppd.Hint:=MakeHint(message62,6);
 pppnotdefault.Hint:=MakeHint(message64,6);
 Memo_create.Hint:=MakeHint(message127,5);
 nobuffer.Hint:=MakeHint(message155+' '+message156+' '+message157,6);
-route_IP_remote.Hint:=MakeHint(message165,6);
+route_IP_remote.Hint:=MakeHint(message165+' '+message166+' '+message167,7);
 Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
