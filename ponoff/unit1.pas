@@ -98,7 +98,7 @@ var
   Count:byte;//счетчик времени
   ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
   AFont:integer; //шрифт приложения
-  AProcess: TProcess; //для запуска внешних приложений
+  AProcess,AProcessDhclient: TProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
   debian:boolean; // используется ли дистрибутив debian
   fedora:boolean; // используется ли дистрибутив fedora
@@ -540,8 +540,8 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
 If not Code_up_ppp then DhclientStart:=false;
 If not Code_up_ppp then If link=1 then //старт dhclient
                            begin
-                              AProcess := TProcess.Create(nil);
-                              AProcess.CommandLine :='dhclient '+Memo_Config.Lines[3];
+                              AProcessDhclient := TProcess.Create(nil);
+                              AProcessDhclient.CommandLine :='dhclient '+Memo_Config.Lines[3];
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
@@ -553,7 +553,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                       begin
                                                            if fedora then Shell('killall dhclient');
                                                            //Shell ('dhclient '+Memo_Config.Lines[3]);
-                                                           AProcess.Execute;
+                                                           AProcessDhclient.Execute;
                                                            Mysleep(3000);
                                                            Application.ProcessMessages;
                                                       end;
@@ -583,7 +583,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                  Shell ('rm -f /tmp/gate');
                                  Memo_gate.Lines.Clear;
                               end;
-                              AProcess.Free;
+                              AProcessDhclient.Free;
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
   If not FileExists('/opt/vpnpptp/hosts') then NewIPS:=false;
@@ -1127,6 +1127,7 @@ begin
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
   Shell ('rm -f /tmp/mtu.checked');
+  Shell ('rm -f /tmp/status3.ppp');
   MakeDefaultGW;
   halt;
 end;
@@ -1199,6 +1200,7 @@ begin
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
   Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
   Shell ('rm -f /tmp/mtu.checked');
+  Shell ('rm -f /tmp/status3.ppp');
   //if CountInterface=1 then
     //                    Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;

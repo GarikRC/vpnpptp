@@ -2867,8 +2867,8 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'horSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24
   +'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBotto'
   +'m'#4'Left'#2#0#6'Height'#3#24#2#3'Top'#2#0#5'Width'#3'0'#3#10'ActivePage'#7
-  +#9'TabSheet2'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#20'BorderSpacing'
-  +'.Bottom'#2'!'#8'TabIndex'#2#1#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'#18
+  +#9'TabSheet3'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#20'BorderSpacing'
+  +'.Bottom'#2'!'#8'TabIndex'#2#2#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'#18
   +'AnchorSideTop.Side'#7#9'asrCenter'#24'AnchorSideBottom.Control'#7#12'PageCo'
   +'ntrol1'#21'AnchorSideBottom.Side'#7#9'asrBottom'#7'Caption'#6#10#208#173#209
   +#130#208#176#208#191' 1'#12'ClientHeight'#3#253#1#11'ClientWidth'#3'.'#3#11
@@ -3442,21 +3442,21 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#28#3'Top'#3#225#1#5'Width'#3'.'#3#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRigh'
   +'t'#8'akBottom'#0#11'ParentColor'#8#8'WordWrap'#9#11'OnMouseDown'#7#18'TabSh'
   +'eet1MouseDown'#0#0#5'TMemo'#9'Memo_peer'#4'Left'#3#199#2#6'Height'#2''''#3
-  +'Top'#3'>'#1#5'Width'#2'F'#13'Lines.Strings'#1#6#0#0#8'TabOrder'#2#15#7'Visi'
+  +'Top'#3'>'#1#5'Width'#2'F'#13'Lines.Strings'#1#6#0#0#8'TabOrder'#2#17#7'Visi'
   +'ble'#8#0#0#5'TMemo'#10'Memo_ip_up'#4'Left'#3#199#2#6'Height'#2''''#3'Top'#3
-  +#238#0#5'Width'#2'G'#13'Lines.Strings'#1#6#0#0#8'TabOrder'#2#16#7'Visible'#8
+  +#238#0#5'Width'#2'G'#13'Lines.Strings'#1#6#0#0#8'TabOrder'#2#18#7'Visible'#8
   +#0#0#5'TMemo'#12'Memo_ip_down'#4'Left'#3#199#2#6'Height'#2''''#3'Top'#3#198#0
-  +#5'Width'#2'F'#13'Lines.Strings'#1#6#0#0#8'TabOrder'#2#17#7'Visible'#8#0#0#5
+  +#5'Width'#2'F'#13'Lines.Strings'#1#6#0#0#8'TabOrder'#2#19#7'Visible'#8#0#0#5
   +'TMemo'#10'Memo_users'#4'Left'#3#199#2#6'Height'#2''''#3'Top'#3#22#1#5'Width'
-  +#2'F'#13'Lines.Strings'#1#6#5'Memo7'#0#8'TabOrder'#2#18#7'Visible'#8#0#0#5'T'
+  +#2'F'#13'Lines.Strings'#1#6#5'Memo7'#0#8'TabOrder'#2#20#7'Visible'#8#0#0#5'T'
   +'Memo'#9'Memo_pptp'#4'Left'#3#199#2#6'Height'#2''''#3'Top'#2'.'#5'Width'#2'F'
-  +#13'Lines.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#19#7'Visible'#8#0#0#5'TMemo'
+  +#13'Lines.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#21#7'Visible'#8#0#0#5'TMemo'
   +#8'Memo_eth'#4'Left'#3#199#2#6'Height'#2''''#3'Top'#2#6#5'Width'#2'F'#13'Lin'
-  +'es.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#20#7'Visible'#8#0#0#5'TMemo'#9'Mem'
+  +'es.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#22#7'Visible'#8#0#0#5'TMemo'#9'Mem'
   +'o_gate'#4'Left'#3#199#2#6'Height'#2''''#3'Top'#3#142#1#5'Width'#2'F'#13'Lin'
-  +'es.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#21#7'Visible'#8#0#0#5'TMemo'#10'Tm'
+  +'es.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#23#7'Visible'#8#0#0#5'TMemo'#10'Tm'
   +'pnostart'#4'Left'#3#199#2#6'Height'#2''''#3'Top'#3'f'#1#5'Width'#2'F'#13'Li'
-  +'nes.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#22#7'Visible'#8#0#0#9'TCheckBox'
+  +'nes.Strings'#1#6#5'Memo5'#0#8'TabOrder'#2#24#7'Visible'#8#0#0#9'TCheckBox'
   ,#11'Mii_tool_no'#4'Left'#2#8#6'Height'#2#21#3'Top'#2#6#5'Width'#3#2#1#7'Capt'
   +'ion'#6'E'#208#157#208#181' '#208#186#208#190#208#189#209#130#209#128#208#190
   +#208#187#208#184#209#128#208#190#208#178#208#176#209#130#209#140' state '#209
@@ -3488,7 +3488,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'Checked'#9#8'OnChange'#7#16'dhcp_routeChange'#5'State'#7#9'cbChecked'#8'Tab'
   +'Order'#2#3#0#0#5'TMemo'#11'Memo_config'#4'Left'#3#199#2#6'Height'#2':'#3'To'
   +'p'#3#142#0#5'Width'#2'F'#13'Lines.Strings'#1#6#11'Memo_config'#0#8'TabOrder'
-  +#2#23#7'Visible'#8#0#0#9'TCheckBox'#18'CheckBox_shorewall'#21'AnchorSideTop.'
+  +#2#25#7'Visible'#8#0#0#9'TCheckBox'#18'CheckBox_shorewall'#21'AnchorSideTop.'
   +'Control'#7#10'dhcp_route'#18'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#2#8
   +#6'Height'#2#21#3'Top'#2'Z'#5'Width'#3#164#1#7'Caption'#6'l'#208#148#208#190
   +#208#177#208#176#208#178#208#184#209#130#209#140' '#209#129#208#181#209#130
@@ -3499,9 +3499,9 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'hecked'#9#8'OnChange'#7#24'CheckBox_shorewallChange'#5'State'#7#9'cbChecked'
   +#8'TabOrder'#2#4#0#0#5'TMemo'#14'Memo_shorewall'#4'Left'#3#199#2#6'Height'#2
   +':'#3'Top'#2'V'#5'Width'#2'F'#13'Lines.Strings'#1#6#11'Memo_config'#0#8'TabO'
-  +'rder'#2#24#7'Visible'#8#0#0#5'TMemo'#11'Memo_ip_IPS'#4'Left'#3#199#2#6'Heig'
+  +'rder'#2#26#7'Visible'#8#0#0#5'TMemo'#11'Memo_ip_IPS'#4'Left'#3#199#2#6'Heig'
   +'ht'#2'0'#3'Top'#3#182#1#5'Width'#2'F'#13'Lines.Strings'#1#6#11'Memo_ip_IPS'
-  +#0#8'TabOrder'#2#25#7'Visible'#8#0#0#9'TCheckBox'#12'routevpnauto'#21'Anchor'
+  +#0#8'TabOrder'#2#27#7'Visible'#8#0#0#9'TCheckBox'#12'routevpnauto'#21'Anchor'
   +'SideTop.Control'#7#18'CheckBox_shorewall'#18'AnchorSideTop.Side'#7#9'asrBot'
   +'tom'#4'Left'#2#8#6'Height'#2#21#3'Top'#2'o'#5'Width'#3'%'#1#7'Caption'#6'L'
   +#208#159#209#128#208#190#208#179#209#128#208#176#208#188#208#188#208#189#208
@@ -3511,7 +3511,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'OnChange'#7#18'routevpnautoChange'#5'State'#7#9'cbChecked'#8'TabOrder'#2#5#0
   +#0#5'TMemo'#18'Memo_bindutilshost'#4'Left'#3#127#2#6'Height'#2'0'#3'Top'#2'V'
   +#5'Width'#2'F'#13'Lines.Strings'#1#6#18'Memo_bindutilshost'#0#8'TabOrder'#2
-  +#26#7'Visible'#8#0#0#9'TCheckBox'#11'networktest'#21'AnchorSideTop.Control'#7
+  +#28#7'Visible'#8#0#0#9'TCheckBox'#11'networktest'#21'AnchorSideTop.Control'#7
   +#12'routeDNSauto'#18'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#2#8#6'Height'
   +#2#21#3'Top'#3#195#0#5'Width'#3#163#1#7'Caption'#6'o'#208#159#209#128#208#190
   +#208#178#208#181#209#128#209#143#209#130#209#140' VPN-'#209#129#208#181#209
@@ -3519,7 +3519,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#209#128', '#209#136#208#187#209#142#208#183' '#208#187#208#190#208#186#208
   +#176#208#187#209#140#208#189#208#190#208#185' '#209#129#208#181#209#130#208
   +#184' '#208#184' '#208#184#208#189#209#130#208#181#209#128#208#189#208#181
-  +#209#130#8'OnChange'#7#17'networktestChange'#8'TabOrder'#2#8#0#0#9'TCheckBox'
+  +#209#130#8'OnChange'#7#17'networktestChange'#8'TabOrder'#2#9#0#0#9'TCheckBox'
   +#7'balloon'#21'AnchorSideTop.Control'#7#11'networktest'#18'AnchorSideTop.Sid'
   ,'e'#7#9'asrBottom'#4'Left'#2#8#6'Height'#2#21#3'Top'#3#216#0#5'Width'#3'9'#1
   +#7'Caption'#6'U'#208#145#208#187#208#190#208#186#208#184#209#128#208#190#208
@@ -3527,9 +3527,9 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#208#191#208#187#209#139#208#178#208#176#209#142#209#137#208#184#208#181' '
   +#209#129#208#190#208#190#208#177#209#137#208#181#208#189#208#184#209#143' '
   +#208#184#208#183' '#209#130#209#128#208#181#209#143#8'OnChange'#7#13'balloon'
-  +'Change'#8'TabOrder'#2#9#0#0#5'TMemo'#16'Memo_networktest'#4'Left'#3#127#2#6
+  +'Change'#8'TabOrder'#2#10#0#0#5'TMemo'#16'Memo_networktest'#4'Left'#3#127#2#6
   +'Height'#2'4'#3'Top'#3#134#0#5'Width'#2'F'#13'Lines.Strings'#1#6#16'Memo_net'
-  +'worktest'#0#8'TabOrder'#2#27#7'Visible'#8#0#0#9'TCheckBox'#11'Sudo_ponoff'
+  +'worktest'#0#8'TabOrder'#2#29#7'Visible'#8#0#0#9'TCheckBox'#11'Sudo_ponoff'
   +#21'AnchorSideTop.Control'#7#7'balloon'#18'AnchorSideTop.Side'#7#9'asrBottom'
   +#4'Left'#2#8#6'Height'#2#21#3'Top'#3#237#0#5'Width'#3'F'#1#7'Caption'#6'Y'
   +#208#160#208#176#208#183#209#128#208#181#209#136#208#184#209#130#209#140' '
@@ -3537,7 +3537,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#181#208#187#209#143#208#188' '#209#131#208#191#209#128#208#176#208#178#208
   +#187#209#143#209#130#209#140' '#208#191#208#190#208#180#208#186#208#187#209
   +#142#209#135#208#181#208#189#208#184#208#181#208#188#8'OnChange'#7#17'Sudo_p'
-  +'onoffChange'#8'TabOrder'#2#10#0#0#9'TCheckBox'#14'Sudo_configure'#21'Anchor'
+  +'onoffChange'#8'TabOrder'#2#11#0#0#9'TCheckBox'#14'Sudo_configure'#21'Anchor'
   +'SideTop.Control'#7#11'Sudo_ponoff'#18'AnchorSideTop.Side'#7#9'asrBottom'#4
   +'Left'#2#8#6'Height'#2#21#3'Top'#3#2#1#5'Width'#3'\'#1#7'Caption'#6'a'#208
   +#160#208#176#208#183#209#128#208#181#209#136#208#184#209#130#209#140' '#208
@@ -3545,12 +3545,12 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#208#187#209#143#208#188' '#208#186#208#190#208#189#209#132#208#184#208#179
   +#209#131#209#128#208#184#209#128#208#190#208#178#208#176#209#130#209#140' '
   +#209#129#208#190#208#181#208#180#208#184#208#189#208#181#208#189#208#184#208
-  +#181#8'OnChange'#7#20'Sudo_configureChange'#8'TabOrder'#2#11#0#0#5'TMemo'#27
+  +#181#8'OnChange'#7#20'Sudo_configureChange'#8'TabOrder'#2#12#0#0#5'TMemo'#27
   +'Memo_vpnpptp_ponoff_desktop'#4'Left'#3#127#2#6'Height'#2'/'#3'Top'#3#190#0#5
   +'Width'#2'F'#13'Lines.Strings'#1#6#20'Memo_vpnpptp_desktop'#0#8'TabOrder'#2
-  +#28#7'Visible'#8#0#0#5'TMemo'#9'Memo_sudo'#4'Left'#3#127#2#6'Height'#2')'#3
+  +#30#7'Visible'#8#0#0#5'TMemo'#9'Memo_sudo'#4'Left'#3#127#2#6'Height'#2')'#3
   +'Top'#3#238#0#5'Width'#2'F'#13'Lines.Strings'#1#6#9'Memo_sudo'#0#8'TabOrder'
-  +#2#29#7'Visible'#8#0#0#9'TCheckBox'#16'Autostart_ponoff'#21'AnchorSideTop.Co'
+  +#2#31#7'Visible'#8#0#0#9'TCheckBox'#16'Autostart_ponoff'#21'AnchorSideTop.Co'
   +'ntrol'#7#14'Sudo_configure'#18'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#2
   +#8#6'Height'#2#21#3'Top'#3#23#1#5'Width'#3'd'#1#7'Caption'#6'c'#208#144#208
   +#178#209#130#208#190#208#183#208#176#208#191#209#131#209#129#208#186' '#208
@@ -3558,7 +3558,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#191#209#128#208#184' '#209#129#209#130#208#176#209#128#209#130#208#181' '
   +#209#129#208#184#209#129#209#130#208#181#208#188#209#139' ('#208#179#209#128
   +#208#176#209#132#208#184#209#135#208#181#209#129#208#186#208#184#208#185')'#8
-  +'OnChange'#7#22'Autostart_ponoffChange'#8'TabOrder'#2#12#0#0#9'TCheckBox'#13
+  +'OnChange'#7#22'Autostart_ponoffChange'#8'TabOrder'#2#13#0#0#9'TCheckBox'#13
   +'Autostartpppd'#21'AnchorSideTop.Control'#7#16'Autostart_ponoff'#18'AnchorSi'
   +'deTop.Side'#7#9'asrBottom'#4'Left'#2#8#6'Height'#2#21#3'Top'#3','#1#5'Width'
   +#3'l'#2#7'Caption'#6#175#208#144#208#178#209#130#208#190#208#183#208#176#208
@@ -3570,31 +3570,31 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#208#186#208#184' ('#208#189#208#181' '#209#128#208#181#208#186#208#190#208
   +#188#208#181#208#189#208#180#209#131#208#181#209#130#209#129#209#143' '#208
   +#184#209#129#208#191#208#190#208#187#209#140#208#183#208#190#208#178#208#176
-  +#209#130#209#140')'#8'OnChange'#7#19'AutostartpppdChange'#8'TabOrder'#2#13#0
+  +#209#130#209#140')'#8'OnChange'#7#19'AutostartpppdChange'#8'TabOrder'#2#14#0
   +#0#5'TMemo'#18'Memo_Autostartpppd'#4'Left'#3#127#2#6'Height'#2')'#3'Top'#3#22
   +#1#5'Width'#2'F'#13'Lines.Strings'#1#6#18'Memo_Autostartpppd'#0#8'TabOrder'#2
-  +#30#7'Visible'#8#0#0#9'TCheckBox'#13'pppnotdefault'#21'AnchorSideTop.Control'
+  +' '#7'Visible'#8#0#0#9'TCheckBox'#13'pppnotdefault'#21'AnchorSideTop.Control'
   +#7#13'Autostartpppd'#18'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#2#8#6'Hei'
   +'ght'#2#21#3'Top'#3'A'#1#5'Width'#3'Z'#1#7'Caption'#6'X'#208#157#208#181' '
   +#208#184#208#183#208#188#208#181#208#189#209#143#209#130#209#140' '#208#180
   +#208#181#209#132#208#190#208#187#209#130#208#189#209#139#208#185' '#209#136
   +#208#187#209#142#208#183', '#208#183#208#176#208#191#209#131#209#129#209#130
   +#208#184#208#178' VPN PPTP '#208#178' '#209#132#208#190#208#189#208#181#8'On'
-  +'Change'#7#19'pppnotdefaultChange'#8'TabOrder'#2#14#0#0#5'TMemo'#8'Memonew1'
+  +'Change'#7#19'pppnotdefaultChange'#8'TabOrder'#2#15#0#0#5'TMemo'#8'Memonew1'
   +#4'Left'#3#127#2#6'Height'#2'*'#3'Top'#3'>'#1#5'Width'#2'F'#13'Lines.Strings'
-  +#1#6#8'Memonew1'#0#8'TabOrder'#2#31#7'Visible'#8#0#0#5'TMemo'#8'Memonew2'#4
+  +#1#6#8'Memonew1'#0#8'TabOrder'#2'!'#7'Visible'#8#0#0#5'TMemo'#8'Memonew2'#4
   +'Left'#3#127#2#6'Height'#2'*'#3'Top'#3'f'#1#5'Width'#2'F'#13'Lines.Strings'#1
-  +#6#8'Memonew1'#0#8'TabOrder'#2' '#7'Visible'#8#0#0#9'TCheckBox'#12'routeDNSa'
+  +#6#8'Memonew1'#0#8'TabOrder'#2'"'#7'Visible'#8#0#0#9'TCheckBox'#12'routeDNSa'
   ,'uto'#21'AnchorSideTop.Control'#7#15'route_IP_remote'#18'AnchorSideTop.Side'
   +#7#9'asrBottom'#4'Left'#2#8#6'Height'#2#21#3'Top'#3#174#0#5'Width'#3#28#1#7
   +'Caption'#6'H'#208#159#209#128#208#190#208#179#209#128#208#176#208#188#208
   +#188#208#189#208#190' '#208#188#208#176#209#128#209#136#209#128#209#131#209
   +#130#208#184#208#183#208#184#209#128#208#190#208#178#208#176#209#130#209#140
   +' DNS-'#209#129#208#181#209#128#208#178#208#181#209#128#208#176#8'TabOrder'#2
-  +#7#0#0#5'TMemo'#8'MemoTest'#4'Left'#3#127#2#6'Height'#2')'#3'Top'#3#142#1#5
-  +'Width'#2'F'#13'Lines.Strings'#1#6#8'MemoTest'#0#8'TabOrder'#2'!'#7'Visible'
+  +#8#0#0#5'TMemo'#8'MemoTest'#4'Left'#3#127#2#6'Height'#2')'#3'Top'#3#142#1#5
+  +'Width'#2'F'#13'Lines.Strings'#1#6#8'MemoTest'#0#8'TabOrder'#2'#'#7'Visible'
   +#8#0#0#5'TMemo'#5'Memo2'#4'Left'#3#127#2#6'Height'#2'0'#3'Top'#3#182#1#5'Wid'
-  +'th'#2'F'#13'Lines.Strings'#1#6#5'Memo2'#0#8'TabOrder'#2'"'#7'Visible'#8#0#0
+  +'th'#2'F'#13'Lines.Strings'#1#6#5'Memo2'#0#8'TabOrder'#2'$'#7'Visible'#8#0#0
   +#9'TCheckBox'#9'etc_hosts'#21'AnchorSideTop.Control'#7#12'routevpnauto'#18'A'
   +'nchorSideTop.Side'#7#9'asrBottom'#4'Left'#2#8#6'Height'#2#21#3'Top'#3#132#0
   +#5'Width'#3#150#2#7'Caption'#6#183#208#152#209#129#208#191#208#190#208#187
@@ -3614,16 +3614,16 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#184' '#208#178#209#139#209#129#208#190#208#186#208#190#209#129#208#186#208
   +#190#209#128#208#190#209#129#209#130#208#189#208#176#209#143' '#208#187#208
   +#184#208#189#208#184#209#143' (nobuffer)'#7'Checked'#9#8'OnChange'#7#19'pppn'
-  +'otdefaultChange'#5'State'#7#9'cbChecked'#8'TabOrder'#2'#'#0#0#9'TCheckBox'
+  +'otdefaultChange'#5'State'#7#9'cbChecked'#8'TabOrder'#2#16#0#0#9'TCheckBox'
   +#15'route_IP_remote'#21'AnchorSideTop.Control'#7#9'etc_hosts'#18'AnchorSideT'
   +'op.Side'#7#9'asrBottom'#4'Left'#2#8#6'Height'#2#21#3'Top'#3#153#0#5'Width'#3
   +'o'#1#7'Caption'#6'Z'#208#156#208#176#209#128#209#136#209#128#209#131#209#130
   +#208#184#208#183#208#184#209#128#208#190#208#178#208#176#209#130#209#140' re'
   +'mote IP address '#208#178' '#209#136#208#187#209#142#208#183' '#208#187#208
   +#190#208#186#208#176#208#187#209#140#208#189#208#190#208#185' '#209#129#208
-  +#181#209#130#208#184#8'TabOrder'#2'$'#0#0#0#9'TTabSheet'#9'TabSheet4'#7'Capt'
-  +'ion'#6#10#208#173#209#130#208#176#208#191' 4'#12'ClientHeight'#3#253#1#11'C'
-  +'lientWidth'#3'.'#3#0#5'TMemo'#11'Memo_create'#22'AnchorSideLeft.Control'#7#9
+  +#181#209#130#208#184#8'TabOrder'#2#7#0#0#0#9'TTabSheet'#9'TabSheet4'#7'Capti'
+  +'on'#6#10#208#173#209#130#208#176#208#191' 4'#12'ClientHeight'#3#253#1#11'Cl'
+  +'ientWidth'#3'.'#3#0#5'TMemo'#11'Memo_create'#22'AnchorSideLeft.Control'#7#9
   +'TabSheet4'#21'AnchorSideTop.Control'#7#9'TabSheet4'#23'AnchorSideRight.Cont'
   +'rol'#7#9'TabSheet4'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBo'
   +'ttom.Control'#7#9'TabSheet4'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Lef'
