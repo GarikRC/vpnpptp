@@ -1,5 +1,4 @@
 %define rel 1
-%define distsuffix edm
 
 %{?dist: %{expand: %%define %dist 1}}
 
@@ -15,7 +14,7 @@ Group: Network
 Packager: Alex Loginov <loginov_alex@inbox.ru>, <loginov.alex.valer@gmail.com>
 Vendor: Mandriva Russia, http://www.mandriva.ru
 
-Source0: vpnpptp-%{distsuffix}-src-%{version}.tar.gz
+Source0: vpnpptp-src-%{version}.tar.gz
 Source1: vpnpptp_allde.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -36,7 +35,7 @@ Tools for easy and quick setup and control VPN via PPTP/L2TP
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT
 
-%setup -n vpnpptp-%{distsuffix}-src-%{version}
+%setup -n vpnpptp-src-%{version}
 
 
 %postun

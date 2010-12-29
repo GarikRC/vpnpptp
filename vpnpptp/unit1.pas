@@ -352,7 +352,8 @@ resourcestring
   message103='Настройка VPN PPTP/L2TP';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message105='Обнаружено, что VPN PPTP/L2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
-  message106='Обнаружено, что используется пакет xl2tpd не из репозитория EduMandriva, поэтому встроенный в демон xl2tpd механизм реконнекта выбрать нельзя.';
+  //message106='Обнаружено, что используется пакет xl2tpd не из репозитория EduMandriva, поэтому встроенный в демон xl2tpd механизм реконнекта выбрать нельзя.';
+  message106='Встроенный в демон xl2tpd механизм реконнекта будет работать корректно, только если Вы используете пропатченный xl2tpd.';
   message107='Запустить конфигуратор VPN PPTP/L2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
   message108='Установить тестовое соединение VPN PPTP/L2TP в графике/без графики сейчас?';
   message109='Тестовый запуск';
@@ -392,7 +393,7 @@ resourcestring
   message143='При низких разрешениях экрана одновременное нажатие клавиши Alt и левой кнопки мыши поможет переместить окно.';
   message144='Отсутствует дефолтный шлюз, и это невозможно исправить автоматически.';
   message145='Укажите вручную сетевой интерфейс и шлюз локальной сети - программа сама сделает его дефолтным.';
-  message146='Для реализации этой опции подлежит использовать пропатченный xl2tpd с суффиксом edm в имени пакета.';
+  //message146='Для реализации этой опции подлежит использовать пропатченный xl2tpd с суффиксом edm в имени пакета.';
   message147='Настройте sudo средствами Вашего дистрибутива.';
   message148='Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска.';
   message149='Нажатие левой/правой кнопкой мыши на пустом месте окна изменяет шрифт.';
@@ -650,6 +651,7 @@ Shell ('rm -f /opt/vpnpptp/resolv.conf.before');
 Shell ('rm -f /opt/vpnpptp/resolv.conf.after');
 If not DirectoryExists('/opt/vpnpptp/tmp/') then Shell ('mkdir /opt/vpnpptp/tmp/');
 If not DirectoryExists('/etc/ppp/peers/') then Shell ('mkdir /etc/ppp/peers/');
+If fedora then If not DirectoryExists('/etc/ppp/dhcp/') then Shell ('mkdir /etc/ppp/dhcp/');
 For i:=1 to CountInterface do
                            Shell('/sbin/route del default');
 Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
@@ -735,7 +737,7 @@ Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           StartMessage:=true;
                           Application.ProcessMessages;
                        end;
-   If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then If FileExists ('/bin/rpm') then
+   {If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then If FileExists ('/bin/rpm') then
                                begin
                                  Shell ('rm -f /tmp/ver_xl2tpd');
                                  Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd');
@@ -750,7 +752,7 @@ Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                                                                       Application.ProcessMessages;
                                                                  end;
                                  Shell ('rm -f /tmp/ver_xl2tpd');
-                               end;
+                               end;}
 Button_more.Visible:=false;
 Button_create.Enabled:=false;
 Button_exit.Enabled:=false;
@@ -989,7 +991,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                               If FileExists('/opt/vpnpptp/scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
                                                                 Shell ('sh /opt/vpnpptp/scripts/peermodify.sh '+Label_peername.Caption);
  Shell ('chmod 600 '+Label_peername.Caption);
-//удаляем временные файлы
+//удаляем временные, старые файлы и ссылки
  Shell('rm -f /tmp/gate');
  Shell('rm -f /tmp/eth');
  Shell('rm -f /tmp/users');
@@ -1001,6 +1003,8 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Shell('rm -f /etc/ppp/ip-down.d/ip-down.old');
  Shell('rm -f /etc/ppp/ip-up.local');
  Shell('rm -f /etc/ppp/ip-down.local');
+ Shell('rm -f /etc/dhcp/dhclient-exit-hooks');
+ Shell('rm -f /etc/dhcp/dhclient.conf');
 //перезаписываем скрипт поднятия соединения ip-up
  If not DirectoryExists('/etc/ppp/ip-up.d/') then Shell ('mkdir /etc/ppp/ip-up.d/');
  If fedora then Shell ('ln -s /etc/ppp/ip-up.d/ip-up /etc/ppp/ip-up.local');
@@ -1971,7 +1975,7 @@ var
  i,j,l,k:integer;
  flag:boolean;
  str_log:string;
- Code_up_ppp,FlagMtu:boolean;
+ Code_up_ppp:boolean;
  pppiface,MtuUsed:string;
 begin
  Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,'/opt/vpnpptp/vpnpptp.png',true,true,true,AFont,Form1.Icon);
@@ -2036,7 +2040,7 @@ If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
 Memo_create.Hint:=message109;
 Application.ProcessMessages;
 str_log:='/var/log/syslog';
-FlagMtu:=false;
+//FlagMtu:=false;
 If Pppd_log.Checked then
 begin
  While true do
@@ -2064,8 +2068,8 @@ begin
          end;
        Application.ProcessMessages;
        Sleep(100);
-       If not FlagMtu then
-           begin
+       //If not FlagMtu then
+           //begin
                  //Проверяем поднялось ли соединение
                  Shell('rm -f /tmp/status.ppp');
                  Memo2.Clear;
@@ -2094,16 +2098,19 @@ begin
                       PClose(f);
                       If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
                       If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
-                         begin
-                              Memo_create.Lines.Add('......................................');
-                              Application.ProcessMessages;
-                              Form3.MyMessageBox(message0,message163+' '+MtuUsed+' '+message164,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                              Application.ProcessMessages;
-                         end;
-                         FlagMtu:=true;
+                         //begin
+                              //Memo_create.Lines.Add('......................................');
+                              //Application.ProcessMessages;
+                              //Form3.MyMessageBox(message0,message163+' '+MtuUsed+' '+message164,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                              //Memo_create.Lines.Add(message163+' '+MtuUsed+' '+message164);
+                              Shell('printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> /var/log/syslog');
+                              //Application.ProcessMessages;
+                         //end;
+                         //FlagMtu:=true;
                     end;
-           end;
+           //end;
     end;
+//end;
 end;
  Shell ('rm -f /tmp/test_vpn');
  Shell ('rm -f /tmp/statusv.ppp');
@@ -2885,6 +2892,7 @@ If ComboBoxVPN.Text='VPN PPTP' then
                                         Application.ProcessMessages;
                                       end;
                                end;
+ If ComboBoxVPN.Text='VPN PPTP' then Reconnect_pptp.Hint:=MakeHint(message31,6);
  Button_more.Visible:=True;
  Button_create.Visible:=True;
  TabSheet1.TabVisible:= False;
@@ -3047,7 +3055,7 @@ CheckBox_no40.Hint:=MakeHint(message90+' '+message88,6);
 CheckBox_no56.Hint:=MakeHint(message91+' '+message88,6);
 CheckBox_no128.Hint:=MakeHint(message92+' '+message88,6);
 Mii_tool_no.Hint:=MakeHint(message30,6);
-Reconnect_pptp.Hint:=MakeHint(message31,6);
+Reconnect_pptp.Hint:=MakeHint(message31+' '+message106,7);
 Pppd_log.Hint:=MakeHint(message32,5);
 dhcp_route.Hint:=MakeHint(message33+' '+message35,6);
 CheckBox_shorewall.Hint:=MakeHint(message34+' '+message36,6);
@@ -3549,7 +3557,7 @@ end;
 procedure TForm1.Reconnect_pptpChange(Sender: TObject);
 begin
     //проверка версии пакета xl2tpd
-    If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then
+    {If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then
                                begin
                                  Shell ('rm -f /tmp/ver_xl2tpd');
                                  If FileExists ('/bin/rpm') then Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd') else
@@ -3563,7 +3571,7 @@ begin
                                                                       exit;
                                                                  end;
                                  Shell ('rm -f /tmp/ver_xl2tpd');
-                               end;
+                               end;}
 end;
 
 procedure TForm1.Sudo_configureChange(Sender: TObject);

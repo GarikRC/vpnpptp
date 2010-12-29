@@ -720,10 +720,6 @@ msgstr "Field \"MRU\" is wrong. Required limit is [576..1460..1492..1500]."
 msgid "Обна#209�ужено, что VPN PPTP/L2TP поднято. <ОК> - п#209�одолжить, убив VPN PPTP/L2TP и пе#209�езапустив сеть. <Отмена> - отмена запуска конфигу#209�ато#209�а."
 msgstr "Found that the VPN PPTP/L2TP works. <OK>  - continue, killing VPN PPTP/L2TP and restarting the network. <Cancel> - to cancel the start of this program."
 
-#: unit1.message106
-msgid "Обна#209�ужено, что используется пакет xl2tpd не из #209�епозито#209�ия EduMandriva, поэтому вст#209�оенный в демон xl2tpd механизм #209�еконнекта выб#209�ать нельзя."
-msgstr "Found that the package xl2tpd is used not from the repository EduMandriva, so the built-in daemon xl2tpd reconnect mechanism can not be selected."
-
 #: unit1.message107
 msgid "Запустить конфигу#209�ато#209� VPN PPTP/L2TP можно также из Цент#209�а Уп#209�авления->Сеть и Инте#209�нет->Наст#209�ойка VPN-соединений->VPN PPTP/L2TP."
 msgstr "To run the configurator VPN PPTP/L2TP can also from the Control Center-> Network and Internet> Setting up VPN-connections-> VPN PPTP/L2TP."
@@ -989,3 +985,31 @@ msgstr "Not children's DNS after raised VPN will be ignored, VPN will be raised 
 #: unit1.message162
 msgid "Запуск конфигу#209�ато#209�а может занять некото#209�ое в#209�емя, так как т#209�ебуется п#209�едва#209�ительная автоматическая подготовка сети."
 msgstr "Run the configurator may take some time, since it requires advanced automatic preparation of the network."
+
+#: unit1.message106
+msgid "Вст#209�оенный в демон xl2tpd механизм #209�еконнекта будет #209�аботать ко#209�#209�ектно, только если Вы используете п#209�опатченный xl2tpd."
+msgstr "Built-in reconnect mechanism demon xl2tpd will work correctly only if you use the patched xl2tpd."
+
+#: TFORM1.ROUTE_IP_REMOTE.CAPTION
+msgid "Маршрутизировать remote IP address в шлюз локальной сети"
+msgstr "Route the remote IP address in the gateway of the local network"
+
+#: unit1.message163
+msgid "Рекомендуется в#209�учную уменьшить MTU/MRU, так как используемое значение MTU ="
+msgstr "It is recommended to manually reduce the MTU/MRU, as the value to use MTU ="
+
+#: unit1.message164
+msgid "байт слишком большое."
+msgstr "bytes is too large."
+
+#: unit1.message165
+msgid "Если remote IP address не совпадает с IP-ад#209�есом VPN-се#209�ве#209�а, то может пот#209�ебоваться ма#209�ш#209�утизи#209�овать его в шлюз локальной сети."
+msgstr "If the remote IP address does not match the IP-address of the VPN-server, then you may need to route it to the gateway of the local network."
+
+#: unit1.message166
+msgid "Если remote IP address совпадает с IP-ад#209�есом VPN-се#209�ве#209�а, то эта опция позволит наилучшим способом ма#209�ш#209�утизи#209�овать VPN-се#209�ве#209�"
+msgstr "If the remote IP address matches with the IP-address of the VPN-server, then this option is the best way to route the VPN-server"
+
+#: unit1.message167
+msgid "без необходимости иных методов ма#209�ш#209�утизации VPN-се#209�ве#209�а."
+msgstr "without the necessary other methods of routing VPN-server."
