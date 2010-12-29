@@ -1,3 +1,5 @@
+#summary Получение маршрутов через DHCP
+
 При поднятом VPN требуется, чтобы одновременно работали и внешние ресурсы, и локальные ресурсы. Однако без явного указания локальных ресурсов в таблице маршрутизации при поднятом VPN локальные ресурсы окажутся недоступны.
 
 Конечно, можно вручную самим вписать эти маршруты в таблицу маршрутизации, но надо знать какие это маршруты, а они могут меняться, вручную забивать роутинг неудобно и нерационально.
@@ -11,6 +13,8 @@
 Рассмотрим получение маршрутов через DHCP на примере '''Mandriva''' и ее аналогов, а также на примере '''Fedora'''. 
 
 Создадим скрипт '''/etc/dhclient-exit-hooks''', сделаем его исполняемым, следующего содержания:
+
+{{{
 
  #!/bin/bash
  RUN="yes"
@@ -44,7 +48,11 @@
          fi
  fi
 
+}}}
+
 Создадим файл '''/etc/dhclient.conf''' следующего содержания:
+
+{{{
 
  # Configuration file for /sbin/dhclient, which is included in Debian's
  #	dhcp3-client package.
@@ -101,6 +109,8 @@
  request subnet-mask, broadcast-address, time-offset, routers, domain-name, domain-name-servers, host-name, netbios-name-servers, netbios-scope, interface-mtu, rfc3442-classless-static-routes;
  #ms-classless-static-routes;
  #supersede domain-name-servers 91.210.204.1
+
+}}}
 
 В консоли запустим:
  dhclient eth0
