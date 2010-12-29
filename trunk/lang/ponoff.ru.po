@@ -1,7 +1,8 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: TFORM1.CAPTION
+#: TFORM1.FORM1.CAPTION
+msgctxt "TFORM1.FORM1.CAPTION"
 msgid "ponoff"
 msgstr ""
 
@@ -25,7 +26,8 @@ msgstr ""
 msgid "Look"
 msgstr ""
 
-#: TFORM2.CAPTION
+#: TFORM2.FORM2.CAPTION
+msgctxt "TFORM2.FORM2.CAPTION"
 msgid "Form2"
 msgstr ""
 
@@ -196,6 +198,14 @@ msgstr ""
 
 #: unit1.message42
 msgid "DNS1-се#209�ве#209� п#209�и поднятом VPN не пингуется. "
+msgstr ""
+
+#: unit1.message43
+msgid "Рекомендуется в#209�учную уменьшить MTU/MRU, так как используемое значение MTU ="
+msgstr ""
+
+#: unit1.message44
+msgid "байт слишком большое."
 msgstr ""
 
 #: unit1.message5

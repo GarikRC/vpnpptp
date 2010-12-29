@@ -189,3 +189,11 @@ msgstr "DNS1-server at elevated VPN does not ping. "
 #: unit1.message2
 msgid "Не обна#209�ужено ни одного се#209�виса, способного уп#209�авлять сетью. Ко#209�#209�ектная #209�абота п#209�ог#209�аммы невозможна!"
 msgstr "Did not find any service that can manage the network. Correct operation of the program is impossible!"
+
+#: unit1.message43
+msgid "Рекомендуется в#209�учную уменьшить MTU/MRU, так как используемое значение MTU ="
+msgstr "It is recommended to manually reduce the MTU/MRU, as the value to use MTU ="
+
+#: unit1.message44
+msgid "байт слишком большое."
+msgstr "bytes is too large."
