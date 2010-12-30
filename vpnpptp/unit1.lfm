@@ -2146,10 +2146,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 816
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -2696,7 +2696,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         Left = 581
         Height = 14
-        Top = 163
+        Top = 159
         Width = 75
         BorderSpacing.Top = 10
         Caption = 'Примечания:'
@@ -2730,7 +2730,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrCenter
         Left = 581
         Height = 78
-        Top = 177
+        Top = 173
         Width = 233
         Anchors = [akTop, akLeft, akRight]
         Caption = '- желательно вписать маршруты для VPN-сервера, DNS-серверов, особенно если включенных сетевых интерфейсов в системе более одного, а также вписать другие маршруты'
@@ -2747,7 +2747,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrCenter
         Left = 581
         Height = 78
-        Top = 255
+        Top = 251
         Width = 233
         Anchors = [akTop, akLeft, akRight]
         Caption = '- если сетевой интерфейс и/или шлюз определились неправильно, то сделайте требующийся сетевой интерфейс основным и настройте все заново или введите эти значения вручную'
@@ -2764,8 +2764,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrBottom
         Left = 581
-        Height = 155
-        Top = 333
+        Height = 159
+        Top = 329
         Width = 233
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = '- без занесения маршрутов не гарантируется одновременная работа интернета и локальной сети, но интернет в любом случае будет работать'
@@ -2858,7 +2858,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 581
         Height = 14
-        Top = 97
+        Top = 93
         Width = 111
         BorderSpacing.Top = 10
         Caption = 'Шифрование mppe:'
@@ -2947,7 +2947,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrCenter
         Left = 581
         Height = 21
-        Top = 45
+        Top = 41
         Width = 102
         Anchors = [akLeft]
         Caption = 'refuse-mschap'
@@ -2960,7 +2960,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 648
         Height = 21
-        Top = 111
+        Top = 107
         Width = 68
         Caption = 'stateless'
         TabOrder = 14
@@ -2972,7 +2972,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 581
         Height = 21
-        Top = 132
+        Top = 128
         Width = 50
         Caption = 'no40'
         TabOrder = 15
@@ -2984,7 +2984,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 631
         Height = 21
-        Top = 132
+        Top = 128
         Width = 50
         Caption = 'no56'
         TabOrder = 16
@@ -3131,7 +3131,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 581
         Height = 21
-        Top = 111
+        Top = 107
         Width = 67
         Caption = 'required'
         TabOrder = 13
@@ -3143,7 +3143,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 681
         Height = 21
-        Top = 132
+        Top = 128
         Width = 57
         Caption = 'no128'
         TabOrder = 17
@@ -3154,7 +3154,7 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_rmschap
         Left = 683
         Height = 21
-        Top = 45
+        Top = 41
         Width = 80
         Caption = 'refuse-pap'
         TabOrder = 11
@@ -3165,7 +3165,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 581
         Height = 21
-        Top = 66
+        Top = 62
         Width = 119
         Caption = 'refuse-mschap-v2'
         TabOrder = 12

@@ -2867,8 +2867,8 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'horSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24
   +'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBotto'
   +'m'#4'Left'#2#0#6'Height'#3#24#2#3'Top'#2#0#5'Width'#3'0'#3#10'ActivePage'#7
-  +#9'TabSheet3'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#20'BorderSpacing'
-  +'.Bottom'#2'!'#8'TabIndex'#2#2#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'#18
+  +#9'TabSheet1'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#20'BorderSpacing'
+  +'.Bottom'#2'!'#8'TabIndex'#2#0#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'#18
   +'AnchorSideTop.Side'#7#9'asrCenter'#24'AnchorSideBottom.Control'#7#12'PageCo'
   +'ntrol1'#21'AnchorSideBottom.Side'#7#9'asrBottom'#7'Caption'#6#10#208#173#209
   +#130#208#176#208#191' 1'#12'ClientHeight'#3#253#1#11'ClientWidth'#3'.'#3#11
@@ -3156,7 +3156,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'n'#0#0#6'TLabel'#7'Label12'#22'AnchorSideLeft.Control'#7#13'CheckBox_no40'
   +#21'AnchorSideTop.Control'#7#13'CheckBox_no40'#18'AnchorSideTop.Side'#7#9'as'
   +'rBottom'#23'AnchorSideRight.Control'#7#9'TabSheet2'#20'AnchorSideRight.Side'
-  +#7#9'asrBottom'#4'Left'#3'E'#2#6'Height'#2#14#3'Top'#3#163#0#5'Width'#2'K'#17
+  +#7#9'asrBottom'#4'Left'#3'E'#2#6'Height'#2#14#3'Top'#3#159#0#5'Width'#2'K'#17
   +'BorderSpacing.Top'#2#10#7'Caption'#6#21#208#159#209#128#208#184#208#188#208
   +#181#209#135#208#176#208#189#208#184#209#143':'#11'ParentColor'#8#11'OnMouse'
   +'Down'#7#18'TabSheet1MouseDown'#0#0#6'TLabel'#7'Label25'#22'AnchorSideLeft.C'
@@ -3175,7 +3175,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'Memo_route'#19'AnchorSideLeft.Side'#7#9'asrBottom'#21'AnchorSideTop.Control'
   +#7#7'Label12'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Contr'
   +'ol'#7#9'TabSheet2'#20'AnchorSideRight.Side'#7#9'asrBottom'#21'AnchorSideBot'
-  +'tom.Side'#7#9'asrCenter'#4'Left'#3'E'#2#6'Height'#2'N'#3'Top'#3#177#0#5'Wid'
+  +'tom.Side'#7#9'asrCenter'#4'Left'#3'E'#2#6'Height'#2'N'#3'Top'#3#173#0#5'Wid'
   +'th'#3#233#0#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#7'Caption'#12'"'#1
   +#0#0'- '#208#182#208#181#208#187#208#176#209#130#208#181#208#187#209#140#208
   +#189#208#190' '#208#178#208#191#208#184#209#129#208#176#209#130#209#140' '
@@ -3196,7 +3196,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'bel46'#22'AnchorSideLeft.Control'#7#7'Label12'#21'AnchorSideTop.Control'#7#7
   +'Label45'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7
   +#9'TabSheet2'#20'AnchorSideRight.Side'#7#9'asrBottom'#21'AnchorSideBottom.Si'
-  +'de'#7#9'asrCenter'#4'Left'#3'E'#2#6'Height'#2'N'#3'Top'#3#255#0#5'Width'#3
+  +'de'#7#9'asrCenter'#4'Left'#3'E'#2#6'Height'#2'N'#3'Top'#3#251#0#5'Width'#3
   +#233#0#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#7'Caption'#12'7'#1#0#0
   +'- '#208#181#209#129#208#187#208#184' '#209#129#208#181#209#130#208#181#208
   +#178#208#190#208#185' '#208#184#208#189#209#130#208#181#209#128#209#132#208
@@ -3219,7 +3219,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'12'#21'AnchorSideTop.Control'#7#7'Label46'#18'AnchorSideTop.Side'#7#9'asrBo'
   +'ttom'#23'AnchorSideRight.Control'#7#9'TabSheet2'#20'AnchorSideRight.Side'#7
   +#9'asrBottom'#24'AnchorSideBottom.Control'#7#10'Memo_route'#21'AnchorSideBot'
-  +'tom.Side'#7#9'asrBottom'#4'Left'#3'E'#2#6'Height'#3#155#0#3'Top'#3'M'#1#5'W'
+  +'tom.Side'#7#9'asrBottom'#4'Left'#3'E'#2#6'Height'#3#159#0#3'Top'#3'I'#1#5'W'
   +'idth'#3#233#0#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#7'C'
   +'aption'#6#246'- '#208#177#208#181#208#183' '#208#183#208#176#208#189#208#181
   +#209#129#208#181#208#189#208#184#209#143' '#208#188#208#176#209#128#209#136
@@ -3280,7 +3280,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#143':'#11'ParentColor'#8#11'OnMouseDown'#7#18'TabSheet1MouseDown'#0#0#6'TLa'
   +'bel'#7'Label13'#22'AnchorSideLeft.Control'#7#18'CheckBox_rmschapv2'#21'Anch'
   +'orSideTop.Control'#7#18'CheckBox_rmschapv2'#18'AnchorSideTop.Side'#7#9'asrB'
-  +'ottom'#4'Left'#3'E'#2#6'Height'#2#14#3'Top'#2'a'#5'Width'#2'o'#17'BorderSpa'
+  +'ottom'#4'Left'#3'E'#2#6'Height'#2#14#3'Top'#2']'#5'Width'#2'o'#17'BorderSpa'
   +'cing.Top'#2#10#7'Caption'#6#26#208#168#208#184#209#132#209#128#208#190#208
   +#178#208#176#208#189#208#184#208#181' mppe:'#11'ParentColor'#8#11'OnMouseDow'
   +'n'#7#18'TabSheet1MouseDown'#0#0#6'TLabel'#9'Label_mru'#21'AnchorSideTop.Con'
@@ -3314,20 +3314,20 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'Box_rmschap'#22'AnchorSideLeft.Control'#7#14'CheckBox_rchap'#21'AnchorSideT'
   +'op.Control'#7#14'CheckBox_rchap'#18'AnchorSideTop.Side'#7#9'asrBottom'#24'A'
   +'nchorSideBottom.Control'#7#16'CheckBox_desktop'#21'AnchorSideBottom.Side'#7
-  +#9'asrCenter'#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#2'-'#5'Width'#2'f'#7'Anch'
+  +#9'asrCenter'#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#2')'#5'Width'#2'f'#7'Anch'
   +'ors'#11#6'akLeft'#0#7'Caption'#6#13'refuse-mschap'#8'TabOrder'#2#10#0#0#9'T'
   +'CheckBox'#18'CheckBox_stateless'#22'AnchorSideLeft.Control'#7#17'CheckBox_r'
   +'equired'#19'AnchorSideLeft.Side'#7#9'asrBottom'#21'AnchorSideTop.Control'#7
   +#17'CheckBox_required'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#3#136
-  +#2#6'Height'#2#21#3'Top'#2'o'#5'Width'#2'D'#7'Caption'#6#9'stateless'#8'TabO'
+  +#2#6'Height'#2#21#3'Top'#2'k'#5'Width'#2'D'#7'Caption'#6#9'stateless'#8'TabO'
   +'rder'#2#14#0#0#9'TCheckBox'#13'CheckBox_no40'#22'AnchorSideLeft.Control'#7
   +#17'CheckBox_required'#21'AnchorSideTop.Control'#7#17'CheckBox_required'#18
   +'AnchorSideTop.Side'#7#9'asrBottom'#21'AnchorSideBottom.Side'#7#9'asrBottom'
-  +#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#3#132#0#5'Width'#2'2'#7'Caption'#6#4'n'
+  +#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#3#128#0#5'Width'#2'2'#7'Caption'#6#4'n'
   +'o40'#8'TabOrder'#2#15#0#0#9'TCheckBox'#13'CheckBox_no56'#22'AnchorSideLeft.'
   +'Control'#7#13'CheckBox_no40'#19'AnchorSideLeft.Side'#7#9'asrBottom'#21'Anch'
   +'orSideTop.Control'#7#13'CheckBox_no40'#21'AnchorSideBottom.Side'#7#9'asrBot'
-  +'tom'#4'Left'#3'w'#2#6'Height'#2#21#3'Top'#3#132#0#5'Width'#2'2'#7'Caption'#6
+  +'tom'#4'Left'#3'w'#2#6'Height'#2#21#3'Top'#3#128#0#5'Width'#2'2'#7'Caption'#6
   +#4'no56'#8'TabOrder'#2#16#0#0#5'TMemo'#10'Memo_route'#22'AnchorSideLeft.Cont'
   ,'rol'#7#9'TabSheet2'#21'AnchorSideTop.Control'#7#6'Label5'#18'AnchorSideTop.'
   +'Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#13'CheckBox_no40'#24'Anc'
@@ -3381,18 +3381,18 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#5#9'MaxLength'#2'd'#8'TabOrder'#2#5#0#0#9'TCheckBox'#17'CheckBox_required'
   +#22'AnchorSideLeft.Control'#7#7'Label13'#21'AnchorSideTop.Control'#7#7'Label'
   +'13'#18'AnchorSideTop.Side'#7#9'asrBottom'#21'AnchorSideBottom.Side'#7#9'asr'
-  +'Bottom'#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#2'o'#5'Width'#2'C'#7'Caption'#6
+  +'Bottom'#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#2'k'#5'Width'#2'C'#7'Caption'#6
   +#8'required'#8'TabOrder'#2#13#0#0#9'TCheckBox'#14'CheckBox_no128'#22'AnchorS'
   +'ideLeft.Control'#7#13'CheckBox_no56'#19'AnchorSideLeft.Side'#7#9'asrBottom'
   +#21'AnchorSideTop.Control'#7#13'CheckBox_no56'#21'AnchorSideBottom.Side'#7#9
-  +'asrBottom'#4'Left'#3#169#2#6'Height'#2#21#3'Top'#3#132#0#5'Width'#2'9'#7'Ca'
+  +'asrBottom'#4'Left'#3#169#2#6'Height'#2#21#3'Top'#3#128#0#5'Width'#2'9'#7'Ca'
   +'ption'#6#5'no128'#8'TabOrder'#2#17#0#0#9'TCheckBox'#13'CheckBox_rpap'#22'An'
   +'chorSideLeft.Control'#7#16'CheckBox_rmschap'#19'AnchorSideLeft.Side'#7#9'as'
   +'rBottom'#21'AnchorSideTop.Control'#7#16'CheckBox_rmschap'#4'Left'#3#171#2#6
-  +'Height'#2#21#3'Top'#2'-'#5'Width'#2'P'#7'Caption'#6#10'refuse-pap'#8'TabOrd'
+  +'Height'#2#21#3'Top'#2')'#5'Width'#2'P'#7'Caption'#6#10'refuse-pap'#8'TabOrd'
   +'er'#2#11#0#0#9'TCheckBox'#18'CheckBox_rmschapv2'#22'AnchorSideLeft.Control'
   +#7#16'CheckBox_rmschap'#21'AnchorSideTop.Control'#7#16'CheckBox_rmschap'#18
-  +'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#2'B'
+  +'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#3'E'#2#6'Height'#2#21#3'Top'#2'>'
   ,#5'Width'#2'w'#7'Caption'#6#16'refuse-mschap-v2'#8'TabOrder'#2#12#0#0#5'TEdi'
   +'t'#8'Edit_mru'#22'AnchorSideLeft.Control'#7#7'Label25'#19'AnchorSideLeft.Si'
   +'de'#7#9'asrBottom'#21'AnchorSideTop.Control'#7#8'Edit_mtu'#18'AnchorSideTop'
