@@ -1552,7 +1552,7 @@ If FileExists('/etc/ppp/chap-secrets.old') then
  EditDNS1ping:=true;
  EditDNS2ping:=true;
    //тест EditDNS1-сервера
-If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
+If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then If not FileExists('/opt/vpnpptp/tmp/NoTest') then
   begin
      If EditDNS1.Text='127.0.0.1' then Ifup('lo');
      Shell('rm -f /tmp/networktest');
@@ -1568,7 +1568,7 @@ If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
      Shell('rm -f /tmp/networktest');
   end;
    //тест EditDNS2-сервера
-If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
+If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then If not FileExists('/opt/vpnpptp/tmp/NoTest') then
   begin
      If EditDNS2.Text='127.0.0.1' then Ifup('lo');
      Shell('rm -f /tmp/networktest');
@@ -1629,6 +1629,8 @@ If not flag then
      Shell('rm -f /tmp/networktest');
    end;
    //тест шлюза локальной сети
+If not FileExists('/opt/vpnpptp/tmp/NoTest') then
+   begin
      Shell('rm -f /tmp/networktest');
      Str:='ping -c2 '+Edit_gate.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > /tmp/networktest';
      Label14.Caption:=message47;
@@ -1646,6 +1648,7 @@ If not flag then
                                                 Application.ProcessMessages;
                                          end;
      Shell('rm -f /tmp/networktest');
+   end;
 //запоминаем текущий /etc/resolv.conf
 Shell ('cp -f /etc/resolv.conf /opt/vpnpptp/resolv.conf.before');
 //Создаем ярлык для подключения
@@ -1975,7 +1978,7 @@ var
  i,j,l,k:integer;
  flag:boolean;
  str_log:string;
- Code_up_ppp:boolean;
+ Code_up_ppp,FlagMtu:boolean;
  pppiface,MtuUsed:string;
 begin
  Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,'/opt/vpnpptp/vpnpptp.png',true,true,true,AFont,Form1.Icon);
@@ -2040,7 +2043,7 @@ If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
 Memo_create.Hint:=message109;
 Application.ProcessMessages;
 str_log:='/var/log/syslog';
-//FlagMtu:=false;
+FlagMtu:=false;
 If Pppd_log.Checked then
 begin
  While true do
@@ -2068,8 +2071,8 @@ begin
          end;
        Application.ProcessMessages;
        Sleep(100);
-       //If not FlagMtu then
-           //begin
+       If not FlagMtu then
+           begin
                  //Проверяем поднялось ли соединение
                  Shell('rm -f /tmp/status.ppp');
                  Memo2.Clear;
@@ -2106,11 +2109,10 @@ begin
                               Shell('printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> /var/log/syslog');
                               //Application.ProcessMessages;
                          //end;
-                         //FlagMtu:=true;
+                         FlagMtu:=true;
                     end;
-           //end;
+           end;
     end;
-//end;
 end;
  Shell ('rm -f /tmp/test_vpn');
  Shell ('rm -f /tmp/statusv.ppp');
