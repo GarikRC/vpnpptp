@@ -113,6 +113,10 @@ var
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  LibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
+  TmpDir='/tmp/'; //директория для временных файлов
+  DataDir='/usr/share/vpnpptp/'; //директория для основных неизменных файлов программы
+  BinDir='/usr/bin/'; // директория для исполняемых файлов программы
 
 resourcestring
   message0='Внимание!';
@@ -244,11 +248,11 @@ If FileExists ('/etc/hosts') then
                begin
                    readln(FileEtc_hosts, Str_Etc_hosts);
                    If not (RightStr(Str_Etc_hosts,Length(Form1.Memo_Config.Lines[1]))=Form1.Memo_Config.Lines[1]) then
-                                  Shell('printf "'+Str_Etc_hosts+'\n" >> /tmp/hosts.tmp');
+                                  Shell('printf "'+Str_Etc_hosts+'\n" >> '+TmpDir+'hosts.tmp');
                end;
         closefile (FileEtc_hosts);
-        Shell('cp -f /tmp/hosts.tmp /etc/hosts');
-        Shell('rm -f /tmp/hosts.tmp');
+        Shell('cp -f '+TmpDir+'hosts.tmp /etc/hosts');
+        Shell('rm -f '+TmpDir+'hosts.tmp');
         Shell('chmod 0644 /etc/hosts');
     end;
 end;
@@ -261,9 +265,9 @@ var
    FileInterface:textfile;
 begin
    i:=0;
-   Shell ('rm -f /tmp/CountInterface');
-   Shell ('ifconfig |grep eth >>/tmp/CountInterface & ifconfig |grep wlan >>/tmp/CountInterface & ifconfig |grep br >>/tmp/CountInterface');
-   AssignFile (FileInterface,'/tmp/CountInterface');
+   Shell ('rm -f '+TmpDir+'CountInterface');
+   Shell ('ifconfig |grep eth >>'+TmpDir+'CountInterface & ifconfig |grep wlan >>'+TmpDir+'CountInterface & ifconfig |grep br >>'+TmpDir+'CountInterface');
+   AssignFile (FileInterface,TmpDir+'CountInterface');
    reset (FileInterface);
    While not eof (FileInterface) do
    begin
@@ -271,7 +275,7 @@ begin
         i:=i+1;
    end;
    closefile(FileInterface);
-   Shell ('rm -f /tmp/CountInterface');
+   Shell ('rm -f '+TmpDir+'CountInterface');
    if i=0 then i:=1;
    CountInterface:=i;
 end;
@@ -286,20 +290,20 @@ end;
 procedure MakeDefaultGW;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN
 begin
-       Shell ('rm -f /tmp/gate');
-       Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
-       Shell('printf "none" >> /tmp/gate');
+       Shell ('rm -f '+TmpDir+'gate');
+       Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'gate');
+       Shell('printf "none" >> '+TmpDir+'gate');
        Form1.Memo_gate.Clear;
-       If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
+       If FileExists(TmpDir+'gate') then Form1.Memo_gate.Lines.LoadFromFile(TmpDir+'gate');
        If Form1.Memo_gate.Lines[0]='none' then
                                           begin
        //исправление default и повторная проверка
                                                Shell ('route add default gw '+Form1.Memo_Config.Lines[2]+' dev '+Form1.Memo_Config.Lines[3]);
-                                               Shell ('rm -f /tmp/gate');
-                                               Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
-                                               Shell('printf "none" >> /tmp/gate');
+                                               Shell ('rm -f '+TmpDir+'gate');
+                                               Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'gate');
+                                               Shell('printf "none" >> '+TmpDir+'gate');
                                                Form1.Memo_gate.Clear;
-                                               If FileExists('/tmp/gate') then Form1.Memo_gate.Lines.LoadFromFile('/tmp/gate');
+                                               If FileExists(TmpDir+'gate') then Form1.Memo_gate.Lines.LoadFromFile(TmpDir+'gate');
                                           end;
        If Form1.Memo_gate.Lines[0]='none' then
                                begin
@@ -317,7 +321,7 @@ begin
                                  Ifup('lo');
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Mysleep (3000);
                                end;
-       Shell ('rm -f /tmp/gate');
+       Shell ('rm -f '+TmpDir+'gate');
        Form1.Memo_gate.Lines.Clear;
 end;
 
@@ -341,11 +345,11 @@ begin
   NoPingDNS4:=false;
   DoCountInterface;
   //Проверяем поднялось ли соединение
-  Shell('rm -f /tmp/status.ppp');
+  Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
-  Shell('ifconfig | grep Link > /tmp/status.ppp');
+  Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
   Code_up_ppp:=False;
-  If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+  If FileExists(TmpDir+'status.ppp') then Memo2.Lines.LoadFromFile(TmpDir+'status.ppp');
   Memo2.Lines.Add(' ');
   For j:=0 to Memo2.Lines.Count-1 do
    begin
@@ -359,13 +363,13 @@ begin
 If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=true;
 If Code_up_ppp then
  begin
-  Shell ('rm -f /tmp/gate');
-  Shell('/sbin/ip r|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
-  Shell('/sbin/ip r|grep default|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' >> /tmp/gate');
-  Shell('printf "none\n" >> /tmp/gate');
-  Shell('printf "none\n" >> /tmp/gate');
+  Shell ('rm -f '+TmpDir+'gate');
+  Shell('/sbin/ip r|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'tmp/gate');
+  Shell('/sbin/ip r|grep default|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' >> '+TmpDir+'gate');
+  Shell('printf "none\n" >> '+TmpDir+'gate');
+  Shell('printf "none\n" >> '+TmpDir+'gate');
   Memo_gate.Clear;
-  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+  If FileExists(TmpDir+'gate') then Memo_gate.Lines.LoadFromFile(TmpDir+'gate');
   If LeftStr(Memo_gate.Lines[0],3)='ppp' then If Memo_gate.Lines[0]<>Memo_gate.Lines[1] then
                                begin
                                   If Memo_Config.Lines[29]<>'pppnotdefault-yes' then
@@ -385,18 +389,18 @@ If Code_up_ppp then
                                              NoInternet:=false;//считаем, что типа при этом есть интернет
                                            end;
                                end;
-  Shell ('rm -f /tmp/gate');
+  Shell ('rm -f '+TmpDir+'gate');
   Memo_gate.Lines.Clear;
  end;
-If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
-                       If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
-                                            Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
-Shell('rm -f /tmp/hosts.tmp');
+If Code_up_ppp then If FileExists (LibDir+'resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
+                       If not CompareFiles (LibDir+'resolv.conf.after', '/etc/resolv.conf') then
+                                            Shell ('cp -f '+LibDir+'resolv.conf.after /etc/resolv.conf');
+Shell('rm -f '+TmpDir+'hosts.tmp');
 If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
 //Проверяем используемое mtu
 If not Code_up_ppp then FlagMtu:=false;
 MtuUsed:='';
-If Code_up_ppp then If not FlagMtu then If not FileExists ('/tmp/mtu.checked') then
+If Code_up_ppp then If not FlagMtu then If not FileExists (TmpDir+'mtu.checked') then
    begin
      popen (f,'ifconfig '+pppiface+'|grep MTU |awk '+ chr(39)+'{print $6}'+chr(39),'R');
      While not eof(f) do
@@ -408,7 +412,7 @@ If Code_up_ppp then If not FlagMtu then If not FileExists ('/tmp/mtu.checked') t
      If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
         begin
              BalloonMessage (8000,message43+' '+MtuUsed+' '+message44);
-             Shell('touch /tmp/mtu.checked');
+             Shell('touch '+TmpDir+'mtu.checked');
              MySleep(3000);
              Application.ProcessMessages;
         end;
@@ -416,20 +420,20 @@ If Code_up_ppp then If not FlagMtu then If not FileExists ('/tmp/mtu.checked') t
    end;
 //обработка случая когда RemoteIPaddress совпадается с ip-адресом самого vpn-сервера
 If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
-               If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
+               If FileExists(LibDir+'hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                             if Memo_config.Lines[21]='IPS-no' then
                                       begin
-                                         Shell('rm -f /tmp/RemoteIPaddress');
-                                         Shell ('ifconfig|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39)+' >> /tmp/RemoteIPaddress');
-                                         If FileSize('/tmp/RemoteIPaddress')<>0 then
+                                         Shell('rm -f '+TmpDir+'RemoteIPaddress');
+                                         Shell ('ifconfig|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39)+' >> '+TmpDir+'RemoteIPaddress');
+                                         If FileSize(TmpDir+'RemoteIPaddress')<>0 then
                                                                                  begin
-                                                                                    AssignFile (FileRemoteIPaddress,'/tmp/RemoteIPaddress');
+                                                                                    AssignFile (FileRemoteIPaddress,TmpDir+'RemoteIPaddress');
                                                                                     reset (FileRemoteIPaddress);
                                                                                     readln(FileRemoteIPaddress, Str_RemoteIPaddress);
                                                                                     RemoteIPaddress:=RightStr(Str_RemoteIPaddress,Length(Str_RemoteIPaddress)-6);
                                                                                     closefile (FileRemoteIPaddress);
-                                                                                    Shell('rm -f /tmp/RemoteIPaddress');
-                                                                                    Memo_bindutilshost0.Lines.LoadFromFile('/opt/vpnpptp/hosts');
+                                                                                    Shell('rm -f '+TmpDir+'RemoteIPaddress');
+                                                                                    Memo_bindutilshost0.Lines.LoadFromFile(LibDir+'hosts');
                                                                                     FindRemoteIPaddress:=false;
                                                                                     For i:=0 to Memo_bindutilshost0.Lines.Count-1 do
                                                                                     If RemoteIPaddress=Memo_bindutilshost0.Lines[i] then FindRemoteIPaddress:=true;
@@ -455,13 +459,13 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                                                                                                                                                           //If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
                                                                                                                                                           //If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
                                                                                                                                                      //end;
-                                                                                                            If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/opt/vpnpptp/tmp/ip-down') then
-                                                                                                                                                         Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
+                                                                                                            If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists(LibDir+'ip-down') then
+                                                                                                                                                         Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+LibDir+'ip-down');
                                                                                                                                                      //begin
                                                                                                                                                           //If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
                                                                                                                                                           //If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
                                                                                                                                                       //end;
-                                                                                                            Shell('rm -f /opt/vpnpptp/hosts');
+                                                                                                            Shell('rm -f '+LibDir+'hosts');
                                                                                                           end;
                                                                                  end;
                                       end;
@@ -471,74 +475,74 @@ If Memo_Config.Lines[6]='mii-tool-no' then link:=1; //отказ от контр
 If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
 If link=4 then
    begin
-     Shell('rm -f /tmp/gate1');
-     Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> /tmp/gate1');
-     Shell('printf "none" >> /tmp/gate1');
+     Shell('rm -f '+TmpDir+'gate1');
+     Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> '+TmpDir+'gate1');
+     Shell('printf "none" >> '+TmpDir+'gate1');
      Form1.Memo_gate1.Clear;
-     If FileExists('/tmp/gate1') then Memo_gate1.Lines.LoadFromFile('/tmp/gate1');
+     If FileExists(TmpDir+'gate1') then Memo_gate1.Lines.LoadFromFile(TmpDir+'gate1');
      If RightStr(Memo_gate1.Lines[0],7)='link ok' then link:=1;
      If RightStr(Memo_gate1.Lines[0],7)='no link' then link:=2;
      If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
    end;
 If link=1 then If NoInternet then MakeDefaultGW;
 If not Code_up_ppp then
-       If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
-             If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
-                                 Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+       If FileExists(LibDir+'resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+             If not CompareFiles (LibDir+'resolv.conf.before', '/etc/resolv.conf') then
+                                 Shell ('cp -f '+LibDir+'resolv.conf.before /etc/resolv.conf');
 //проверка технической возможности поднятия соединения
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_config.Lines[30]<>'none' then
                             begin //тест dns1-сервера
-                                 Shell('rm -f /tmp/networktest');
-                                 Str:='ping -c1 '+Memo_config.Lines[30]+'|grep '+chr(39)+'1 received'+chr(39)+' > /tmp/networktest';
+                                 Shell('rm -f '+TmpDir+'networktest');
+                                 Str:='ping -c1 '+Memo_config.Lines[30]+'|grep '+chr(39)+'1 received'+chr(39)+' > '+TmpDir+'networktest';
                                  Application.ProcessMessages;
                                  Shell(str);
                                  Application.ProcessMessages;
-                                 If FileSize('/tmp/networktest')=0 then
+                                 If FileSize(TmpDir+'networktest')=0 then
                                                                    begin
                                                                         NoPingDNS1:=true;
                                                                         BalloonMessage (8000,message23);
                                                                         Mysleep(1000);
                                                                    end;
-                                 Shell('rm -f /tmp/networktest');
+                                 Shell('rm -f '+TmpDir+'networktest');
                             end;
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_config.Lines[31]<>'none' then
                             begin //тест dns2-сервера
-                                 Shell('rm -f /tmp/networktest');
-                                 Str:='ping -c1 '+Memo_config.Lines[31]+'|grep '+chr(39)+'1 received'+chr(39)+' > /tmp/networktest';
+                                 Shell('rm -f '+TmpDir+'networktest');
+                                 Str:='ping -c1 '+Memo_config.Lines[31]+'|grep '+chr(39)+'1 received'+chr(39)+' > '+TmpDir+'networktest';
                                  Application.ProcessMessages;
                                  Shell(str);
                                  Application.ProcessMessages;
-                                 If FileSize('/tmp/networktest')=0 then
+                                 If FileSize(TmpDir+'networktest')=0 then
                                                                    begin
                                                                         NoPingDNS2:=true;
                                                                         BalloonMessage (8000,message24);
                                                                         Mysleep(1000);
                                                                    end;
-                                 Shell('rm -f /tmp/networktest');
+                                 Shell('rm -f '+TmpDir+'networktest');
                             end;
 If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindUtils)) or ((Memo_Config.Lines[23]='networktest-yes') and (Memo_config.Lines[22]='routevpnauto-no')) then
                             begin //тест vpn-сервера
-                                 Shell('rm -f /tmp/networktest');
-                                 Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
+                                 Shell('rm -f '+TmpDir+'networktest');
+                                 Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > '+TmpDir+'networktest';
                                  Application.ProcessMessages;
                                  Shell(str);
                                  Application.ProcessMessages;
-                                 Shell('printf "none\n" >> /tmp/networktest');
-                                 Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+                                 Shell('printf "none\n" >> '+TmpDir+'networktest');
+                                 Memo_networktest.Lines.LoadFromFile(TmpDir+'networktest');
                                  If Memo_networktest.Lines[0]='none' then NoPingIPS:=true;
-                                 Shell('rm -f /tmp/networktest');
+                                 Shell('rm -f '+TmpDir+'networktest');
                             end;
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
                             begin //тест шлюза локальной сети
-                                 Shell('rm -f /tmp/networktest');
-                                 Str:='ping -c1 '+Memo_config.Lines[2]+'|grep '+chr(39)+'1 received'+chr(39)+' > /tmp/networktest';
+                                 Shell('rm -f '+TmpDir+'networktest');
+                                 Str:='ping -c1 '+Memo_config.Lines[2]+'|grep '+chr(39)+'1 received'+chr(39)+' > '+TmpDir+'networktest';
                                  Application.ProcessMessages;
                                  Shell(str);
                                  Application.ProcessMessages;
-                                 Shell('printf "none\n" >> /tmp/networktest');
-                                 Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+                                 Shell('printf "none\n" >> '+TmpDir+'networktest');
+                                 Memo_networktest.Lines.LoadFromFile(TmpDir+'networktest');
                                  If Memo_networktest.Lines[0]='none' then NoPingGW:=true;
-                                 Shell('rm -f /tmp/networktest');
+                                 Shell('rm -f '+TmpDir+'networktest');
                             end;
 If not Code_up_ppp then DhclientStart:=false;
 If not Code_up_ppp then If link=1 then //старт dhclient
@@ -564,48 +568,48 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                               end;
                               If link=1 then If NoInternet then If Memo_Config.Lines[9]='dhcp-route-yes' then //проверка поднялся ли интерфейс после dhclient
                               begin
-                                 Shell ('rm -f /tmp/gate');
-                                 Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > /tmp/gate');
-                                 Shell('printf "none" >> /tmp/gate');
+                                 Shell ('rm -f '+TmpDir+'gate');
+                                 Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > '+TmpDir+'gate');
+                                 Shell('printf "none" >> '+TmpDir+'gate');
                                  Memo_gate.Clear;
-                                 If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+                                 If FileExists(TmpDir+'gate') then Memo_gate.Lines.LoadFromFile(TmpDir+'gate');
                                  If Memo_gate.Lines[0]='none' then
                                     begin
                                          Mysleep(3000);
-                                         Shell('rm -f /tmp/gate');
-                                         Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > /tmp/gate');
-                                         Shell('printf "none" >> /tmp/gate');
+                                         Shell('rm -f '+TmpDir+'gate');
+                                         Shell('/sbin/ip r|grep '+Memo_Config.Lines[3]+' > '+TmpDir+'gate');
+                                         Shell('printf "none" >> '+TmpDir+'gate');
                                          Memo_gate.Clear;
-                                         If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+                                         If FileExists(TmpDir+'gate') then Memo_gate.Lines.LoadFromFile(TmpDir+'gate');
                                          If Memo_gate.Lines[0]='none' then
                                          begin
                                               Ifup(Form1.Memo_Config.Lines[3]);
                                               DhclientStart:=false;
                                          end;
                                     end;
-                                 Shell ('rm -f /tmp/gate');
+                                 Shell ('rm -f '+TmpDir+'gate');
                                  Memo_gate.Lines.Clear;
                               end;
                               AProcessDhclient.Free;
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
-  If not FileExists('/opt/vpnpptp/hosts') then NewIPS:=false;
+  If not FileExists(LibDir+'hosts') then NewIPS:=false;
   if BindUtils then Str:='host '+Memo_config.Lines[1]+'|grep address|grep '+Memo_config.Lines[1]+'|awk '+ chr(39)+'{print $4}'+chr(39);
   if not BindUtils then Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39);
   If not Code_up_ppp then If link=1 then
-               If FileExists('/opt/vpnpptp/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
+               If FileExists(LibDir+'hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                             if Memo_config.Lines[21]='IPS-no' then
                                               begin
-                                                  Shell('rm -f /tmp/hosts');
+                                                  Shell('rm -f '+TmpDir+'hosts');
                                                   Application.ProcessMessages;
-                                                  Shell (Str+' >> /tmp/hosts');
+                                                  Shell (Str+' >> '+TmpDir+'hosts');
                                                   Application.ProcessMessages;
-                                                  If FileSize('/tmp/hosts')=0 then If not BindUtils then
+                                                  If FileSize(TmpDir+'hosts')=0 then If not BindUtils then
                                                                                              NoPingIPS:=true;
-                                                  If FileSize('/tmp/hosts')=0 then If BindUtils then
+                                                  If FileSize(TmpDir+'hosts')=0 then If BindUtils then
                                                                                              NoDNS:=true;
-                                                  Memo_bindutilshost0.Lines.LoadFromFile('/opt/vpnpptp/hosts');
-                                                  AssignFile (Filenetworktest,'/tmp/hosts');
+                                                  Memo_bindutilshost0.Lines.LoadFromFile(LibDir+'hosts');
+                                                  AssignFile (Filenetworktest,TmpDir+'hosts');
                                                   reset (Filenetworktest);
                                               While not eof(Filenetworktest) do
                                               begin
@@ -622,33 +626,33 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                               If Memo_Config.Lines[41]='etc-hosts-yes' then Shell ('printf "'+Str_networktest+' '+Memo_config.Lines[1]+'\n" >> /etc/hosts');
                                               If NewIPS then
                                                   begin //определился новый, неизвестный ранее ip-адрес vpn-сервера
-                                                        Shell('printf "'+Str_networktest+'\n'+'" >> /opt/vpnpptp/hosts');
+                                                        Shell('printf "'+Str_networktest+'\n'+'" >> '+LibDir+'hosts');
                                                         //проверка на наличие добавляемого маршрута в таблице маршрутизации и его добавление если нету
-                                                        Shell('/sbin/route -n|grep '+Str_networktest+'|grep '+Memo_config.Lines[2]+'|grep '+Memo_config.Lines[3]+'|awk '+ chr(39)+'{print $0}'+chr(39)+' > /tmp/gatevpn');
-                                                        Shell('printf "none" >> /tmp/gatevpn');
+                                                        Shell('/sbin/route -n|grep '+Str_networktest+'|grep '+Memo_config.Lines[2]+'|grep '+Memo_config.Lines[3]+'|awk '+ chr(39)+'{print $0}'+chr(39)+' > '+TmpDir+'gatevpn');
+                                                        Shell('printf "none" >> '+TmpDir+'gatevpn');
                                                         Memo_gatevpn.Clear;
-                                                        If FileExists('/tmp/gatevpn') then Memo_gatevpn.Lines.LoadFromFile('/tmp/gatevpn');
+                                                        If FileExists(TmpDir+'gatevpn') then Memo_gatevpn.Lines.LoadFromFile(TmpDir+'gatevpn');
                                                         //немедленно добавить маршрут в таблицу маршрутизации
                                                         If Memo_gatevpn.Lines[0]='none' then
                                                                                         Shell ('/sbin/route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]);
-                                                        Shell('rm -f /tmp/gatevpn');
+                                                        Shell('rm -f '+TmpDir+'gatevpn');
                                                         //изменение скрипта ip-up
                                                         If FileExists('/etc/ppp/ip-up.d/ip-up') then
                                                                                         Shell ('printf "'+'/sbin/route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
                                                         //изменение скрипта ip-down
                                                         If Memo_Config.Lines[7]='reconnect-pptp' then if FileExists('/etc/ppp/ip-down.d/ip-down') then
                                                                                         Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                        If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists('/opt/vpnpptp/tmp/ip-down') then
-                                                                                        Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
+                                                        If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists(LibDir+'ip-down') then
+                                                                                        Shell ('printf "'+'/sbin/route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+LibDir+'ip-down');
                                                   end;
                                               end;
                                            closefile (Filenetworktest);
                                            end;
-                                           Shell('rm -f /tmp/hosts');
+                                           Shell('rm -f '+TmpDir+'hosts');
 If Code_up_ppp then If link<>1 then //когда связи по факту нет, но в NetApplet и в ifconfig ppp0 числится, а pppd продолжает сидеть в процессах
                                begin
                                  MenuItem2Click(Self);
-                                 If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                                 If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
                                  exit;
                                end;
 
@@ -658,25 +662,25 @@ If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 If not Code_up_ppp then If link=3 then
                                   begin
                                    MenuItem2Click(Self);
-                                   If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                                   If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
                                                                 Unit2.Form2.Hide;
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
                                                                      Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                                                      Memo_ip_down.Clear;
-                                                                     If FileExists('/opt/vpnpptp/tmp/ip-down') then
+                                                                     If FileExists(LibDir+'ip-down') then
                                                                                                    begin
-                                                                                                      Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
+                                                                                                      Memo_ip_down.Lines.LoadFromFile(LibDir+'ip-down');
                                                                                                       Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                                       Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                                      Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
+                                                                                                      Shell ('rm -f '+LibDir+'ip-down');
                                                                                                     end;
                                                                    end;
                                                                 halt;
@@ -685,25 +689,25 @@ If not Code_up_ppp then If link=3 then
 If not Code_up_ppp then If link=2 then
                                   begin
                                    MenuItem2Click(Self);
-                                   If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                                   If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
                                                                 Unit2.Form2.Hide;
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
                                                                      Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                                                      Memo_ip_down.Clear;
-                                                                     If FileExists('/opt/vpnpptp/tmp/ip-down') then
+                                                                     If FileExists(LibDir+'ip-down') then
                                                                                                    begin
-                                                                                                       Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
+                                                                                                       Memo_ip_down.Lines.LoadFromFile(LibDir+'ip-down');
                                                                                                        Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                                        Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                                       Shell('rm -f /opt/vpnpptp/tmp/ip-down');
+                                                                                                       Shell('rm -f '+LibDir+'ip-down');
                                                                                                    end;
                                                                    end;
                                                                 halt;
@@ -756,12 +760,12 @@ If not Code_up_ppp then If link=1 then
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
-                                                      If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
-                                                           If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
-                                                               Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
-                                                      If not FileExists('/opt/vpnpptp/tmp/ObnullRX') then ObnullRX:=false else ObnullRX:=true;
-                                                      If not FileExists('/opt/vpnpptp/tmp/ObnullTX') then ObnullTX:=false else ObnullTX:=true;
-                                                      If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0;
+                                                      If FileExists(LibDir+'resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+                                                           If not CompareFiles (LibDir+'resolv.conf.before', '/etc/resolv.conf') then
+                                                               Shell ('cp -f '+LibDir+'resolv.conf.before /etc/resolv.conf');
+                                                      If not FileExists(TmpDir+'ObnullRX') then ObnullRX:=false else ObnullRX:=true;
+                                                      If not FileExists(TmpDir+'ObnullTX') then ObnullTX:=false else ObnullTX:=true;
+                                                      If not FileExists(TmpDir+'DateStart') then DateStart:=0;
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
                                                       For h:=1 to CountInterface do
                                                                           Shell ('route del default');
@@ -771,15 +775,15 @@ If not Code_up_ppp then If link=1 then
                                                                                     Shell ('/usr/sbin/pppd call '+Memo_Config.Lines[0]) else
                                                                                                               begin
                                                                                                                    //проверка xl2tpd в процессах
-                                                                                                                   Shell('ps -A | grep xl2tpd > /tmp/tmpnostart1');
-                                                                                                                   If FileExists('/tmp/tmpnostart1') then If FileSize ('/tmp/tmpnostart1')=0 then
+                                                                                                                   Shell('ps -A | grep xl2tpd > '+TmpDir+'tmpnostart1');
+                                                                                                                   If FileExists(TmpDir+'tmpnostart1') then If FileSize (TmpDir+'tmpnostart1')=0 then
                                                                                                                         begin
                                                                                                                              Shell (ServiceCommand+'xl2tpd stop');
                                                                                                                              Shell (ServiceCommand+'xl2tpd start');
                                                                                                                              Form1.Repaint;
                                                                                                                              Mysleep(3000);
                                                                                                                         end;
-                                                                                                                  Shell ('rm -f /tmp/tmpnostart1');
+                                                                                                                  Shell ('rm -f '+TmpDir+'tmpnostart1');
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
                                                                                                               end;
                                                    end;
@@ -806,7 +810,7 @@ begin
   Application.CreateForm(TForm3, Form3);
   Application.ShowMainForm:=false;
   Application.Minimize;
-  If FileExists ('/opt/vpnpptp/ponoff.png') then Image1.Picture.LoadFromFile('/opt/vpnpptp/ponoff.png');
+  If FileExists (DataDir+'ponoff.png') then Image1.Picture.LoadFromFile(DataDir+'ponoff.png');
   Panel1.Caption:=message37+' '+message38;
   Form1.Height:=152;
   Form1.Width:=670;
@@ -839,10 +843,10 @@ begin
   If Screen.Height>550 then AFont:=8;
   If Screen.Height>1000 then AFont:=10;
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
-   Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart1');
-   Shell('printf "none" >> /tmp/tmpnostart1');
+   Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > '+TmpDir+'tmpnostart1');
+   Shell('printf "none" >> '+TmpDir+'tmpnostart1');
    Form1.tmpnostart.Clear;
-   If FileExists('/tmp/tmpnostart1') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
+   If FileExists(TmpDir+'tmpnostart1') then tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart1');
    If not (LeftStr(tmpnostart.Lines[0],6)='ponoff') then
                                                         begin
                                                              //запуск не под root
@@ -850,30 +854,32 @@ begin
                                                              Timer2.Enabled:=False;
                                                              Form1.Hide;
                                                              TrayIcon1.Hide;
-                                                             Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
-                                                             Shell('rm -f /tmp/tmpnostart1');
+                                                             Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                                                             Shell('rm -f '+TmpDir+'tmpnostart1');
                                                              halt;
                                                          end;
   //обеспечение совместимости старого config с новым
-  If FileExists('/opt/vpnpptp/config') then
+  If FileExists(LibDir+'config') then
      begin
-        Memo_config.Lines.LoadFromFile('/opt/vpnpptp/config');
+        Memo_config.Lines.LoadFromFile(LibDir+'config');
         If Memo_config.Lines.Count<Config_n then
                                             begin
                                                for i:=Memo_config.Lines.Count to Config_n do
-                                                  Shell('printf "none\n" >> /opt/vpnpptp/config');
+                                                  Shell('printf "none\n" >> '+LibDir+'config');
                                             end;
      end;
-  If FileExists('/opt/vpnpptp/config') then begin Memo_Config.Lines.LoadFromFile('/opt/vpnpptp/config');end
+  If FileExists(LibDir+'config') then begin Memo_Config.Lines.LoadFromFile(LibDir+'config');end
   else
    begin
     Timer1.Enabled:=False;
     Timer2.Enabled:=False;
     Form1.Hide;
     TrayIcon1.Hide;
-    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+    Shell('rm -f '+TmpDir+'tmpnostart1');
     halt;
    end;
+  Shell('rm -f '+TmpDir+'tmpnostart1');
   If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
   If Memo_Config.Lines[43]='ubuntu' then ubuntu:=true;
   If Memo_Config.Lines[43]='debian' then debian:=true;
@@ -889,15 +895,15 @@ begin
   If FileExists ('/etc/init.d/NetworkManager') then NetServiceStr:='NetworkManager';
   If NetServiceStr='none' then
                             begin
-                               Form3.MyMessageBox(message0,message2,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+                               Form3.MyMessageBox(message0,message2,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                                Application.ProcessMessages;
                             end;
   //Проверяем поднялось ли соединение
-  Shell('rm -f /tmp/status.ppp');
+  Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
-  Shell('ifconfig | grep Link > /tmp/status.ppp');
+  Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
   Code_up_ppp:=False;
-  If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+  If FileExists(TmpDir+'status.ppp') then Memo2.Lines.LoadFromFile(TmpDir+'status.ppp');
   Memo2.Lines.Add(' ');
   For j:=0 to Memo2.Lines.Count-1 do
    begin
@@ -906,8 +912,8 @@ begin
        Code_up_ppp:=True;
       end;
    end;
-If Code_up_ppp then If FileExists ('/opt/vpnpptp/on.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
-If not Code_up_ppp then If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+If Code_up_ppp then If FileExists (DataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'on.ico');
+If not Code_up_ppp then If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
 TrayIcon1.Show;
 Application.ProcessMessages;
 //проверка ponoff в процессах root, обработка двойного запуска программы
@@ -915,8 +921,8 @@ Application.ProcessMessages;
                                              begin
                                                   DoubleRunPonoff:=true;
                                                   Apid:=FpGetpid;
-                                                  Shell('ps -e|grep ponoff|awk '+chr(39)+'{print$1}'+chr(39)+' >/tmp/doublerun');
-                                                  AssignFile (FileDoubleRun,'/tmp/doublerun');
+                                                  Shell('ps -e|grep ponoff|awk '+chr(39)+'{print$1}'+chr(39)+' >'+TmpDir+'doublerun');
+                                                  AssignFile (FileDoubleRun,TmpDir+'doublerun');
                                                   reset (FileDoubleRun);
                                                   While not eof(FileDoubleRun) do
                                                         begin
@@ -925,11 +931,11 @@ Application.ProcessMessages;
                                                              FpKill(StrToInt(str),9);
                                                         end;
                                                   closefile (FileDoubleRun);
-                                                  Shell('rm -f /tmp/doublerun')
+                                                  Shell('rm -f '+TmpDir+'doublerun')
                                              end;
-If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0 else
+If not FileExists (TmpDir+'DateStart') then DateStart:=0 else
                                        begin
-                                            AssignFile (FileDateStart,'/opt/vpnpptp/tmp/DateStart');
+                                            AssignFile (FileDateStart,TmpDir+'DateStart');
                                             reset (FileDateStart);
                                             While not eof(FileDateStart) do
                                             begin
@@ -941,45 +947,45 @@ If not FileExists ('/opt/vpnpptp/tmp/DateStart') then DateStart:=0 else
 //учитывание особенностей openSUSE
 If suse then
         begin
-             Shell('/sbin/ip r|grep dsl > /tmp/gate');
-             If FileExists ('/tmp/gate') then if FileSize('/tmp/gate')<>0 then
+             Shell('/sbin/ip r|grep dsl > '+TmpDir+'gate');
+             If FileExists (TmpDir+'gate') then if FileSize(TmpDir+'gate')<>0 then
                                          begin
                                            Timer1.Enabled:=False;
                                            Timer2.Enabled:=False;
                                            Form1.Hide;
                                            TrayIcon1.Hide;
-                                           Form3.MyMessageBox(message0,message41,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
-                                           Shell('rm -f /tmp/gate');
+                                           Form3.MyMessageBox(message0,message41,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                                           Shell('rm -f '+TmpDir+'gate');
                                            halt;
                                          end;
         end;
-   Shell('rm -f /tmp/tmpnostart1');
+   Shell('rm -f '+TmpDir+'tmpnostart1');
    If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
-   If FileExists('/opt/vpnpptp/tmp/ip-down') then  //возврат к изначальной настройке скрипта ip-down
+   If FileExists(LibDir+'ip-down') then  //возврат к изначальной настройке скрипта ip-down
                                                                               begin
                                                                                   Memo_ip_down.Clear;
                                                                                   Shell('rm -f /etc/ppp/ip-down.d/ip-down');
-                                                                                  Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
+                                                                                  Memo_ip_down.Lines.LoadFromFile(LibDir+'ip-down');
                                                                                   Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                   Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                                                               end;
    If Memo_Config.Lines[7]='noreconnect-pptp' then
                                              begin
-                                                Shell('rm -f /opt/vpnpptp/tmp/ip-down');
+                                                Shell('rm -f '+LibDir+'ip-down');
                                                 Memo_ip_down.Clear;
                                                 If FileExists('/etc/ppp/ip-down.d/ip-down') then Memo_ip_down.Lines.LoadFromFile('/etc/ppp/ip-down.d/ip-down');
-                                                Memo_ip_down.Lines.SaveToFile('/opt/vpnpptp/tmp/ip-down');
+                                                Memo_ip_down.Lines.SaveToFile(LibDir+'ip-down');
                                                 Shell('rm -f /etc/ppp/ip-down.d/ip-down');
                                                 Shell('printf "#!/bin/sh\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                Shell('chmod a+x /opt/vpnpptp/tmp/ip-down');
+                                                Shell('chmod a+x '+LibDir+'ip-down');
                                                 Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
                                              end;
    //проверка состояния сетевого интерфейса
-   Shell('rm -f /tmp/gate2');
-   Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> /tmp/gate2');
-   Shell('printf "none" >> /tmp/gate2');
+   Shell('rm -f '+TmpDir+'gate2');
+   Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> '+TmpDir+'gate2');
+   Shell('printf "none" >> '+TmpDir+'gate2');
    Form1.Memo_gate1.Clear;
-   If FileExists('/tmp/gate2') then Memo_gate1.Lines.LoadFromFile('/tmp/gate2');
+   If FileExists(TmpDir+'gate2') then Memo_gate1.Lines.LoadFromFile(TmpDir+'gate2');
    If RightStr(Memo_gate1.Lines[0],7)='link ok' then link:=1;
    If RightStr(Memo_gate1.Lines[0],7)='no link' then link:=2;
    If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
@@ -999,11 +1005,11 @@ If suse then
                    Ifup(Memo_Config.Lines[3]);
                    //повторная проверка состояния сетевого интерфейса
                    If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then Mysleep(3000);
-                   Shell('rm -f /tmp/gate2');
-                   Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> /tmp/gate2');
-                   Shell('printf "none" >> /tmp/gate2');
+                   Shell('rm -f '+TmpDir+'gate2');
+                   Shell('/sbin/mii-tool '+Memo_Config.Lines[3]+' >> '+TmpDir+'gate2');
+                   Shell('printf "none" >> '+TmpDir+'gate2');
                    Form1.Memo_gate1.Clear;
-                   If FileExists('/tmp/gate2') then Memo_gate1.Lines.LoadFromFile('/tmp/gate2');
+                   If FileExists(TmpDir+'gate2') then Memo_gate1.Lines.LoadFromFile(TmpDir+'gate2');
                    If RightStr(Memo_gate1.Lines[0],7)='link ok' then link:=1;
                    If RightStr(Memo_gate1.Lines[0],7)='no link' then link:=2;
                    If LeftStr(Memo_gate1.Lines[0],4)='none' then link:=3;
@@ -1017,12 +1023,12 @@ If suse then
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
-                 Form3.MyMessageBox(message0,message4,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+                 Form3.MyMessageBox(message0,message4,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                  halt;
                 end;
    if link=2 then
                 begin
-                 Form3.MyMessageBox(message0,message5,'','',message33,'/opt/vpnpptp/ponoff.png',false,false,true,AFont,Form1.Icon);
+                 Form3.MyMessageBox(message0,message5,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
@@ -1045,9 +1051,9 @@ var i:integer;
 begin
  If DoubleRunPonoff then exit;
 //проверка наличия в процессах демона pppd
- Shell('ps -u root | grep pppd | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmp_pppd');
+ Shell('ps -u root | grep pppd | awk '+chr(39)+'{print $4}'+chr(39)+' > '+TmpDir+'tmp_pppd');
  Form1.tmp_pppd.Clear;
- If FileExists('/tmp/tmp_pppd') then tmp_pppd.Lines.LoadFromFile('/tmp/tmp_pppd');
+ If FileExists(TmpDir+'tmp_pppd') then tmp_pppd.Lines.LoadFromFile(TmpDir+'tmp_pppd');
  Application.ProcessMessages;
  For i:=0 to tmp_pppd.Lines.Count-1 do
  If (LeftStr(tmp_pppd.Lines[i],4)='pppd') then
@@ -1072,16 +1078,16 @@ begin
  Shell('killall openl2tpd');
  Shell('killall l2tpd');
  Application.ProcessMessages;
- Shell('rm -f /tmp/status.ppp');
- Shell('rm -f /tmp/tmp');
- Shell('rm -f /tmp/gate');
- Shell('rm -f /tmp/gate1');
- Shell('rm -f /tmp/gate2');
- Shell('rm -f /tmp/users');
- Shell('rm -f /tmp/tmpnostart1');
- Shell('rm -f /tmp/status3.ppp');
- Shell('rm -f /tmp/status.ppp');
- Shell('rm -f /tmp/tmp_pppd');
+ Shell('rm -f '+TmpDir+'status.ppp');
+ Shell('rm -f '+TmpDir+'tmp');
+ Shell('rm -f '+TmpDir+'gate');
+ Shell('rm -f '+TmpDir+'gate1');
+ Shell('rm -f '+TmpDir+'gate2');
+ Shell('rm -f '+TmpDir+'users');
+ Shell('rm -f '+TmpDir+'tmpnostart1');
+ Shell('rm -f '+TmpDir+'status3.ppp');
+ Shell('rm -f '+TmpDir+'status.ppp');
+ Shell('rm -f '+TmpDir+'tmp_pppd');
 end;
 
 procedure TForm1.MenuItem3Click(Sender: TObject);
@@ -1097,23 +1103,23 @@ begin
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                               Memo_ip_down.Clear;
-                                              If FileExists('/opt/vpnpptp/tmp/ip-down') then
+                                              If FileExists(LibDir+'ip-down') then
                                                                             begin
-                                                                                 Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
+                                                                                 Memo_ip_down.Lines.LoadFromFile(LibDir+'ip-down');
                                                                                  Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                  Shell ('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                 Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
+                                                                                 Shell ('rm -f '+LibDir+'ip-down');
                                                                             end;
                                             end;
   MenuItem2Click(Self);
   Shell ('echo "d '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
-  If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
   Application.ProcessMessages;
-  Shell ('rm -f /tmp/gate');
+  Shell ('rm -f '+TmpDir+'gate');
   For h:=1 to CountInterface do
               Shell ('route del default');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
-  Shell('rm -f /tmp/xl2tpd.conf');
+  Shell('rm -f '+TmpDir+'xl2tpd.conf');
 //  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
   //                                                                                                      Shell (ServiceCommand+NetServiceStr+' restart');
                                                                                                         //begin
@@ -1122,15 +1128,15 @@ begin
                                                                                                       //       AProcess.Execute;
                                                                                                         //     AProcess.Free;
                                                                                                      //   end;
-  If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
-         If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
-                         Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+  If FileExists(LibDir+'resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+         If not CompareFiles (LibDir+'resolv.conf.before', '/etc/resolv.conf') then
+                         Shell ('cp -f '+LibDir+'resolv.conf.before /etc/resolv.conf');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
-  Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
-  Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
-  Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
-  Shell ('rm -f /tmp/mtu.checked');
-  Shell ('rm -f /tmp/status3.ppp');
+  Shell ('rm -f '+TmpDir+'DateStart');
+  Shell ('rm -f '+TmpDir+'ObnullRX');
+  Shell ('rm -f '+TmpDir+'ObnullTX');
+  Shell ('rm -f '+TmpDir+'mtu.checked');
+  Shell ('rm -f '+TmpDir+'status3.ppp');
   MakeDefaultGW;
   halt;
 end;
@@ -1145,24 +1151,24 @@ begin
   Timer2.Enabled:=False;
   Shell ('killall net_monitor');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
-  If FileExists('/opt/vpnpptp/resolv.conf.before') then If FileExists('/etc/resolv.conf') then
-          If not CompareFiles ('/opt/vpnpptp/resolv.conf.before', '/etc/resolv.conf') then
-                            Shell ('cp -f /opt/vpnpptp/resolv.conf.before /etc/resolv.conf');
+  If FileExists(LibDir+'resolv.conf.before') then If FileExists('/etc/resolv.conf') then
+          If not CompareFiles (LibDir+'resolv.conf.before', '/etc/resolv.conf') then
+                            Shell ('cp -f '+LibDir+'resolv.conf.before /etc/resolv.conf');
   If Memo_Config.Lines[7]='noreconnect-pptp' then
                                             begin
                                               Shell ('rm -f /etc/ppp/ip-down.d/ip-down');
                                               Memo_ip_down.Clear;
-                                              If FileExists('/opt/vpnpptp/tmp/ip-down') then
+                                              If FileExists(LibDir+'ip-down') then
                                                                             begin
-                                                                                 Memo_ip_down.Lines.LoadFromFile('/opt/vpnpptp/tmp/ip-down');
+                                                                                 Memo_ip_down.Lines.LoadFromFile(LibDir+'ip-down');
                                                                                  Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
                                                                                  Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
-                                                                                 Shell ('rm -f /opt/vpnpptp/tmp/ip-down');
+                                                                                 Shell ('rm -f '+LibDir+'ip-down');
                                                                              end;
                                             end;
   MenuItem2Click(Self);
   Shell ('echo "d '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
-  If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+  If FileExists (Datadir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
   Application.ProcessMessages;
   For i:=0 to 9 do
       begin
@@ -1175,11 +1181,11 @@ begin
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
-  Shell ('rm -f /tmp/gate');
-  Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > /tmp/gate');
-  Shell('printf "none" >> /tmp/gate');
+  Shell ('rm -f '+TmpDir+'gate');
+  Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'gate');
+  Shell('printf "none" >> '+TmpDir+'gate');
   Memo_gate.Clear;
-  If FileExists('/tmp/gate') then Memo_gate.Lines.LoadFromFile('/tmp/gate');
+  If FileExists(TmpDir+'gate') then Memo_gate.Lines.LoadFromFile(TmpDir+'gate');
   If Memo_gate.Lines[0]='none' then
      begin
          For i:=0 to 9 do
@@ -1197,13 +1203,13 @@ begin
                  end;
            Ifup('lo');
      end;
-  Shell ('rm -f /tmp/gate');
+  Shell ('rm -f '+TmpDir+'gate');
   Memo_gate.Lines.Clear;
-  Shell ('rm -f /opt/vpnpptp/tmp/DateStart');
-  Shell ('rm -f /opt/vpnpptp/tmp/ObnullRX');
-  Shell ('rm -f /opt/vpnpptp/tmp/ObnullTX');
-  Shell ('rm -f /tmp/mtu.checked');
-  Shell ('rm -f /tmp/status3.ppp');
+  Shell ('rm -f '+TmpDir+'DateStart');
+  Shell ('rm -f '+TmpDir+'ObnullRX');
+  Shell ('rm -f '+TmpDir+'ObnullTX');
+  Shell ('rm -f '+TmpDir+'mtu.checked');
+  Shell ('rm -f '+TmpDir+'status3.ppp');
   //if CountInterface=1 then
     //                    Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;
@@ -1219,11 +1225,11 @@ begin
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
-  Shell('rm -f /tmp/status.ppp');
+  Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
-  Shell('ifconfig | grep Link > /tmp/status.ppp');
+  Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
   Code_up_ppp:=False;
-  If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+  If FileExists(TmpDir+'status.ppp') then Memo2.Lines.LoadFromFile(TmpDir+'status.ppp');
   Memo2.Lines.Add(' ');
   For j:=0 to Memo2.Lines.Count-1 do
    begin
@@ -1269,11 +1275,11 @@ begin
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
-  Shell('rm -f /tmp/status.ppp');
+  Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
-  Shell('ifconfig | grep Link > /tmp/status.ppp');
+  Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
   Code_up_ppp:=False;
-  If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+  If FileExists(TmpDir+'status.ppp') then Memo2.Lines.LoadFromFile(TmpDir+'status.ppp');
   Memo2.Lines.Add(' ');
   For j:=0 to Memo2.Lines.Count-1 do
    begin
@@ -1300,8 +1306,8 @@ begin
   PClose(f);
   Delete(RXbyte1,1,6);
   Delete(TXbyte1,1,6);
-  If StrToInt64(RXbyte1)>=4242538496 then begin ObnullRX:=true; Shell ('touch /opt/vpnpptp/tmp/ObnullRX'); end;//реакция программы за 3сек до факта обнуления значений
-  If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch /opt/vpnpptp/tmp/ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
+  If StrToInt64(RXbyte1)>=4242538496 then begin ObnullRX:=true; Shell ('touch '+TmpDir+'ObnullRX'); end;//реакция программы за 3сек до факта обнуления значений
+  If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch '+TmpDir+'ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
   If Count=2 then
   begin
      RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
@@ -1319,15 +1325,15 @@ begin
                       begin
                            fpGettimeofday(@TV,nil);
                            DateStart:=TV.tv_sec;
-                           If not FileExists ('/opt/vpnpptp/tmp/DateStart') then Shell ('printf "'+IntToStr(DateStart)+'\n" > /opt/vpnpptp/tmp/DateStart');
+                           If not FileExists (TmpDir+'DateStart') then Shell ('printf "'+IntToStr(DateStart)+'\n" > '+TmpDir+'DateStart');
                       end;
   If Code_up_ppp then
                      begin
-                             If Code_up_ppp then If FileExists ('/opt/vpnpptp/resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
-                                                If not CompareFiles ('/opt/vpnpptp/resolv.conf.after', '/etc/resolv.conf') then
-                                                       Shell ('cp -f /opt/vpnpptp/resolv.conf.after /etc/resolv.conf');
+                             If Code_up_ppp then If FileExists (LibDir+'resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
+                                                If not CompareFiles (LibDir+'resolv.conf.after', '/etc/resolv.conf') then
+                                                       Shell ('cp -f '+LibDir+'resolv.conf.after /etc/resolv.conf');
                              Application.ProcessMessages;
-                             If FileExists ('/opt/vpnpptp/on.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/on.ico');
+                             If FileExists (DataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'on.ico');
                              If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
                              If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
                              If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
@@ -1353,45 +1359,45 @@ begin
                                  //тест dns3-сервера
                                  If DNS3<>'none' then
                                     begin
-                                         Shell('rm -f /tmp/networktest');
-                                         Str:='ping -c1 '+DNS3+'|grep '+chr(39)+'1 received'+chr(39)+' > /tmp/networktest';
+                                         Shell('rm -f '+TmpDir+'networktest');
+                                         Str:='ping -c1 '+DNS3+'|grep '+chr(39)+'1 received'+chr(39)+' > '+TmpDir+'networktest';
                                          Application.ProcessMessages;
                                          Shell(str);
                                          Application.ProcessMessages;
-                                         If FileSize('/tmp/networktest')=0 then
+                                         If FileSize(TmpDir+'networktest')=0 then
                                                                    begin
                                                                         NoPingDNS3:=true;
                                                                         BalloonMessage (8000,message42);
                                                                         Mysleep(1000);
                                                                    end;
-                                         Shell('rm -f /tmp/networktest');
+                                         Shell('rm -f '+TmpDir+'networktest');
                                     end;
                                  //тест dns4-сервера
                                  If DNS4<>'none' then
                                     begin
-                                         Shell('rm -f /tmp/networktest');
-                                         Str:='ping -c1 '+DNS4+'|grep '+chr(39)+'1 received'+chr(39)+' > /tmp/networktest';
+                                         Shell('rm -f '+TmpDir+'networktest');
+                                         Str:='ping -c1 '+DNS4+'|grep '+chr(39)+'1 received'+chr(39)+' > '+TmpDir+'networktest';
                                          Application.ProcessMessages;
                                          Shell(str);
                                          Application.ProcessMessages;
-                                         If FileSize('/tmp/networktest')=0 then
+                                         If FileSize(TmpDir+'networktest')=0 then
                                                                    begin
                                                                         NoPingDNS4:=true;
                                                                         BalloonMessage (8000,message40);
                                                                         Mysleep(1000);
                                                                    end;
-                                         Shell('rm -f /tmp/networktest');
+                                         Shell('rm -f '+TmpDir+'networktest');
                                     end;
                                  //тест интернета
-                                 Shell('rm -f /tmp/networktest');
-                                 Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+Memo_Config.Lines[44]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > /tmp/networktest';
+                                 Shell('rm -f '+TmpDir+'networktest');
+                                 Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+Memo_Config.Lines[44]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39)+' > '+TmpDir+'networktest';
                                  Application.ProcessMessages;
                                  Shell(str);
                                  Application.ProcessMessages;
-                                 Shell('printf "none\n" >> /tmp/networktest');
-                                 Memo_networktest.Lines.LoadFromFile('/tmp/networktest');
+                                 Shell('printf "none\n" >> '+TmpDir+'networktest');
+                                 Memo_networktest.Lines.LoadFromFile(TmpDir+'networktest');
                                  If Memo_networktest.Lines[0]='none' then NoInternet:=true else NoInternet:=false;
-                                 Shell('rm -f /tmp/networktest');
+                                 Shell('rm -f '+TmpDir+'networktest');
                                  Application.ProcessMessages;
                                  If NoInternet then BalloonMessage (16000,message6+' '+Memo_Config.Lines[0]+' '+message7+'... '+message16)
                                                     else
@@ -1407,11 +1413,11 @@ begin
                                     begin
                                          BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
                                          NoInternet:=true;
-                                         Shell('rm -f /opt/vpnpptp/tmp/DateStart');
-                                         Shell('rm -f /opt/vpnpptp/tmp/ObnullRX');
-                                         Shell('rm -f /opt/vpnpptp/tmp/ObnullTX');
+                                         Shell('rm -f '+TmpDir+'DateStart');
+                                         Shell('rm -f '+TmpDir+'ObnullRX');
+                                         Shell('rm -f '+TmpDir+'ObnullTX');
                                     end;
-                             If FileExists ('/opt/vpnpptp/off.ico') then TrayIcon1.Icon.LoadFromFile('/opt/vpnpptp/off.ico');
+                             If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
                              StartMessage:=true;
                            end;
   Application.ProcessMessages;
@@ -1432,11 +1438,11 @@ begin
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
-  Shell('rm -f /tmp/status.ppp');
+  Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
-  Shell('ifconfig | grep Link > /tmp/status.ppp');
+  Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
   Code_up_ppp:=False;
-  If FileExists('/tmp/status.ppp') then Memo2.Lines.LoadFromFile('/tmp/status.ppp');
+  If FileExists(TmpDir+'status.ppp') then Memo2.Lines.LoadFromFile(TmpDir+'status.ppp');
   Memo2.Lines.Add(' ');
   For j:=0 to Memo2.Lines.Count-1 do
    begin
@@ -1449,12 +1455,12 @@ begin
   If Code_up_ppp then If FileExists ('/usr/bin/net_monitor') then if FileExists ('/usr/bin/vnstat') then
                     begin
                          //проверка net_monitor в процессах root, игнорируя зомби
-                         Shell('ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39)+' > /tmp/tmpnostart1');
-                         Shell('printf "none" >> /tmp/tmpnostart1');
+                         Shell('ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39)+' > '+TmpDir+'tmpnostart1');
+                         Shell('printf "none" >> '+TmpDir+'tmpnostart1');
                          Form1.tmpnostart.Clear;
-                         If FileExists('/tmp/tmpnostart1') then
+                         If FileExists(TmpDir+'tmpnostart1') then
                               begin
-                                   tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
+                                   tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart1');
                                    For j:=0 to tmpnostart.Lines.Count-1 do
                                             If tmpnostart.Lines[j]='net_monitor' then find_net_monitor:=true;
                               end;
@@ -1493,11 +1499,11 @@ begin
   Time:=IntToStr(hour)+message30+IntToStr(min)+message31+IntToStr(sec)+message32;
   pppiface:='';
   Application.ProcessMessages;
-  Shell('rm -f /tmp/status3.ppp');
+  Shell('rm -f '+TmpDir+'status3.ppp');
   Memo2.Clear;
-  Shell('ifconfig | grep Link > /tmp/status3.ppp');
+  Shell('ifconfig | grep Link > '+TmpDir+'status3.ppp');
   Code_up_ppp:=False;
-  If FileExists('/tmp/status3.ppp') then Memo2.Lines.LoadFromFile('/tmp/status3.ppp');
+  If FileExists(TmpDir+'status3.ppp') then Memo2.Lines.LoadFromFile(TmpDir+'status3.ppp');
   Memo2.Lines.Add(' ');
   Application.ProcessMessages;
   For j:=0 to Memo2.Lines.Count-1 do
@@ -1526,8 +1532,8 @@ begin
   TX:=DeleteSym (')',TX);
   RX:=DeleteSym ('(',RX);
   RX:=DeleteSym (')',RX);
-  If ObnullRX or FileExists('/opt/vpnpptp/tmp/ObnullRX')then RX:='>4GiB';
-  If ObnullTX or FileExists('/opt/vpnpptp/tmp/ObnullTX')then TX:='>4GiB';
+  If ObnullRX or FileExists(TmpDir+'ObnullRX')then RX:='>4GiB';
+  If ObnullTX or FileExists(TmpDir+'ObnullTX')then TX:='>4GiB';
   str:='';
   If Memo_Config.Lines[39]<>'l2tp' then
                                    begin
@@ -1550,7 +1556,7 @@ initialization
   //FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
-                               POFileName:= '/opt/vpnpptp/lang/ponoff.ru.po';
+                               POFileName:= DataDir+'lang/ponoff.ru.po';
                                If FileExists (POFileName) then
                                begin
                                     Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
@@ -1559,7 +1565,7 @@ initialization
                             end;
   If FallbackLang='uk' then
                             begin
-                               POFileName:= '/opt/vpnpptp/lang/ponoff.uk.po';
+                               POFileName:= DataDir+'lang/ponoff.uk.po';
                                If FileExists (POFileName) then
                                begin
                                     Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
@@ -1568,7 +1574,7 @@ initialization
                             end;
   If not Translate then
                             begin
-                               POFileName:= '/opt/vpnpptp/lang/ponoff.en.po';
+                               POFileName:= DataDir+'lang/ponoff.en.po';
                                If FileExists (POFileName) then
                                              Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
                             end;
