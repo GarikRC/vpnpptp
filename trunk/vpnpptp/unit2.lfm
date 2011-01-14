@@ -2128,7 +2128,7 @@ object Form2: TForm2
   OnCreate = FormCreate
   Position = poMainFormCenter
   ShowHint = True
-  LCLVersion = '0.9.28.2'
+  LCLVersion = '0.9.29'
   object Label1: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter

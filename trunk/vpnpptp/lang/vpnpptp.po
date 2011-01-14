@@ -364,10 +364,6 @@ msgctxt "TFORM2.BUTTON1.CAPTION"
 msgid "OK"
 msgstr ""
 
-#: TFORM2.CAPTION
-msgid "Опции демона pppd"
-msgstr ""
-
 #: TFORM2.CHECKBOXAUTH.CAPTION
 msgid "auth"
 msgstr ""
@@ -460,6 +456,11 @@ msgstr ""
 msgid "usepeerdns"
 msgstr ""
 
+#: TFORM2.FORM2.CAPTION
+msgctxt "TFORM2.FORM2.CAPTION"
+msgid "Опции демона pppd"
+msgstr ""
+
 #: TFORM2.LABEL1.CAPTION
 msgid "www.opennet.ru/man.shtml?topic=pppd&&category=8"
 msgstr ""
@@ -469,6 +470,12 @@ msgid "___________________________________________________"
 msgstr ""
 
 #: TFORM3.CAPTION
+msgctxt "TFORM3.CAPTION"
+msgid "Form3"
+msgstr ""
+
+#: TFORM3.FORM3.CAPTION
+msgctxt "TFORM3.FORM3.CAPTION"
 msgid "Form3"
 msgstr ""
 

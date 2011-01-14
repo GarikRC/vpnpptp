@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ./opt/vpnpptp
+cd ./usr/share/vpnpptp
 
 cat > ponoff.desktop << EOF
 #!/usr/bin/env xdg-open
@@ -13,7 +13,7 @@ GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
-Exec=gksu /opt/vpnpptp/ponoff
+Exec=gksu /usr/bin/ponoff
 Comment=Control VPN via PPTP/L2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP
@@ -38,7 +38,7 @@ GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
-Exec=gksu /opt/vpnpptp/vpnpptp
+Exec=gksu /usr/bin/vpnpptp
 Comment=Setup VPN via PPTP/L2TP
 Comment[ru]=Настройка соединения VPN PPTP/L2TP
 Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP
@@ -75,14 +75,16 @@ cd ./src/ponoff
 cd ..
 cd ..
 
-cp -f ./src/ponoff/ponoff ./opt/vpnpptp/ponoff
-cp -f ./src/vpnpptp/vpnpptp ./opt/vpnpptp/vpnpptp
-mkdir ./usr
-mkdir ./usr/share
+mkdir ./usr/bin
+cp -f ./src/ponoff/ponoff ./usr/bin/ponoff
+cp -f ./src/vpnpptp/vpnpptp ./usr/bin/vpnpptp
 mkdir ./usr/share/applications
-cp -f ./opt/vpnpptp/vpnpptp.desktop ./usr/share/applications
-cp -f ./opt/vpnpptp/ponoff.desktop ./usr/share/applications
-rm -f ./opt/vpnpptp/vpnpptp.desktop
-rm -f ./opt/vpnpptp/ponoff.desktop
+mkdir ./usr/share/pixmaps
+cp -f ./usr/share/vpnpptp/vpnpptp.png ./usr/share/pixmaps
+cp -f ./usr/share/vpnpptp/ponoff.png ./usr/share/pixmaps
+cp -f ./usr/share/vpnpptp/vpnpptp.desktop ./usr/share/applications
+cp -f ./usr/share/vpnpptp/ponoff.desktop ./usr/share/applications
+rm -f ./usr/share/vpnpptp/vpnpptp.desktop
+rm -f ./usr/share/vpnpptp/ponoff.desktop
 rm -rf ./src
 rm -f ./ubuntu.compile.sh

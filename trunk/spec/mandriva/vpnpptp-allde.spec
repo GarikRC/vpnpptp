@@ -1,10 +1,10 @@
-%define rel 1
+%define rel 4
 
 %{?dist: %{expand: %%define %dist 1}}
 
 Summary: Tools for setup and control VPN via PPTP/L2TP
-Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
-Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
+#Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
+#Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-allde
 Version: 0.2.9
 Release: %mkrel %{rel}
@@ -49,16 +49,12 @@ then
 fi
 
 %post
-ln -s /opt/vpnpptp/ponoff /usr/bin/ponoff
-ln -s /opt/vpnpptp/vpnpptp /usr/bin/vpnpptp
-rm -f %{_datadir}/pixmaps/ponoff.png
-rm -f %{_datadir}/pixmaps/vpnpptp.png
-cp -f /opt/vpnpptp/ponoff.png %{_datadir}/pixmaps/ponoff.png
-cp -f /opt/vpnpptp/vpnpptp.png %{_datadir}/pixmaps/vpnpptp.png
-chmod 0644 %{_datadir}/pixmaps/ponoff.png
-chmod 0644 %{_datadir}/pixmaps/vpnpptp.png
 
 %pre
+rm -f /usr/bin/vpnpptp
+rm -f /usr/bin/ponoff
+rm -f %{_datadir}/pixmaps/ponoff.png
+rm -f %{_datadir}/pixmaps/vpnpptp.png
 
 %preun
 
@@ -66,14 +62,13 @@ chmod 0644 %{_datadir}/pixmaps/vpnpptp.png
 ./mandriva.compile.sh
 
 %install
-mkdir $RPM_BUILD_ROOT/opt
-mkdir $RPM_BUILD_ROOT/opt/vpnpptp
-mkdir $RPM_BUILD_ROOT/opt/vpnpptp/scripts
-mkdir $RPM_BUILD_ROOT/opt/vpnpptp/wiki
-mkdir $RPM_BUILD_ROOT/opt/vpnpptp/lang
 mkdir $RPM_BUILD_ROOT/usr
-mkdir $RPM_BUILD_ROOT/usr/bin
 mkdir $RPM_BUILD_ROOT/usr/share
+mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp
+mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp/scripts
+mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp/wiki
+mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp/lang
+mkdir $RPM_BUILD_ROOT/usr/bin
 mkdir $RPM_BUILD_ROOT/usr/share/applications
 mkdir $RPM_BUILD_ROOT/usr/share/pixmaps
 mkdir $RPM_BUILD_ROOT/usr/lib
@@ -81,14 +76,17 @@ mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX
 mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX/network
 mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX/network/connection
 
-cp -f ./vpnpptp/vpnpptp $RPM_BUILD_ROOT/opt/vpnpptp/
-cp -f ./ponoff/ponoff $RPM_BUILD_ROOT/opt/vpnpptp/
-cp -f ./ponoff.png $RPM_BUILD_ROOT/opt/vpnpptp/
-cp -f ./vpnpptp.png $RPM_BUILD_ROOT/opt/vpnpptp/
-cp -f ./*.ico $RPM_BUILD_ROOT/opt/vpnpptp
-cp -rf ./scripts $RPM_BUILD_ROOT/opt/vpnpptp/
-cp -rf ./wiki $RPM_BUILD_ROOT/opt/vpnpptp/
-cp -rf ./lang $RPM_BUILD_ROOT/opt/vpnpptp/
+cp -f ./vpnpptp/vpnpptp $RPM_BUILD_ROOT/usr/bin/
+cp -f ./ponoff/ponoff $RPM_BUILD_ROOT/usr/bin/
+cp -f ./ponoff.png $RPM_BUILD_ROOT/usr/share/pixmaps/
+cp -f ./vpnpptp.png $RPM_BUILD_ROOT/usr/share/pixmaps/
+chmod 0644 $RPM_BUILD_ROOT/usr/share/pixmaps/ponoff.png
+chmod 0644 $RPM_BUILD_ROOT/usr/share/pixmaps/vpnpptp.png
+cp -f ./*.ico $RPM_BUILD_ROOT/usr/share/vpnpptp
+cp -f ./*.png $RPM_BUILD_ROOT/usr/share/vpnpptp
+cp -rf ./scripts $RPM_BUILD_ROOT/usr/share/vpnpptp/
+cp -rf ./wiki $RPM_BUILD_ROOT/usr/share/vpnpptp/
+cp -rf ./lang $RPM_BUILD_ROOT/usr/share/vpnpptp/
 
 install -dm 755 %{buildroot}%{_datadir}/applications
 cat > ponoff.desktop << EOF
@@ -102,7 +100,7 @@ GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
-Exec=gksu -u root -l /opt/vpnpptp/ponoff
+Exec=gksu -u root -l /usr/bin/ponoff
 Comment=Control VPN via PPTP/L2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP
@@ -129,7 +127,7 @@ GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
-Exec=gksu -u root -l /opt/vpnpptp/vpnpptp
+Exec=gksu -u root -l /usr/bin/vpnpptp
 Comment=Setup VPN via PPTP/L2TP
 Comment[ru]=Настройка соединения VPN PPTP/L2TP
 Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP
@@ -150,14 +148,15 @@ install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp_al
 %files
 %defattr(-,root, root)
 
-/opt/vpnpptp/vpnpptp
-/opt/vpnpptp/ponoff
-/opt/vpnpptp/lang
-/opt/vpnpptp/ponoff.png
-/opt/vpnpptp/vpnpptp.png
-/opt/vpnpptp/*.ico
-/opt/vpnpptp/scripts
-/opt/vpnpptp/wiki
+/usr/bin/vpnpptp
+/usr/bin/ponoff
+/usr/share/vpnpptp/lang
+/usr/share/pixmaps/ponoff.png
+/usr/share/pixmaps/vpnpptp.png
+/usr/share/vpnpptp/*.ico
+/usr/share/vpnpptp/*.png
+/usr/share/vpnpptp/scripts
+/usr/share/vpnpptp/wiki
 %{_datadir}/applications/ponoff.desktop
 %{_datadir}/applications/vpnpptp.desktop
 /usr/lib/libDrakX/network/vpn/vpnpptp_allde.pm
