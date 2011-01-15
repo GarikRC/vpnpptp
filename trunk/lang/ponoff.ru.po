@@ -40,6 +40,12 @@ msgid "               Label2"
 msgstr ""
 
 #: TFORM3.CAPTION
+msgctxt "TFORM3.CAPTION"
+msgid "Form3"
+msgstr ""
+
+#: TFORM3.FORM3.CAPTION
+msgctxt "TFORM3.FORM3.CAPTION"
 msgid "Form3"
 msgstr ""
 

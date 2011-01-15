@@ -114,7 +114,7 @@ var
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
   LibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
-  TmpDir='/tmp/'; //директория для временных файлов
+  TmpDir='/tmp/vpnpptp/'; //директория для временных файлов
   DataDir='/usr/share/vpnpptp/'; //директория для основных неизменных файлов программы
   BinDir='/usr/bin/'; // директория для исполняемых файлов программы
 
@@ -364,7 +364,7 @@ If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=true;
 If Code_up_ppp then
  begin
   Shell ('rm -f '+TmpDir+'gate');
-  Shell('/sbin/ip r|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'tmp/gate');
+  Shell('/sbin/ip r|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'gate');
   Shell('/sbin/ip r|grep default|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39)+' >> '+TmpDir+'gate');
   Shell('printf "none\n" >> '+TmpDir+'gate');
   Shell('printf "none\n" >> '+TmpDir+'gate');
@@ -843,10 +843,11 @@ begin
   If Screen.Height>550 then AFont:=8;
   If Screen.Height>1000 then AFont:=10;
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
-   Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > '+TmpDir+'tmpnostart1');
-   Shell('printf "none" >> '+TmpDir+'tmpnostart1');
+   Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart1');
+   Shell('printf "none" >> /tmp/tmpnostart1');
    Form1.tmpnostart.Clear;
-   If FileExists(TmpDir+'tmpnostart1') then tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart1');
+   If FileExists('/tmp/tmpnostart1') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
+   Shell('rm -f /tmp/tmpnostart1');
    If not (LeftStr(tmpnostart.Lines[0],6)='ponoff') then
                                                         begin
                                                              //запуск не под root
@@ -855,9 +856,10 @@ begin
                                                              Form1.Hide;
                                                              TrayIcon1.Hide;
                                                              Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
-                                                             Shell('rm -f '+TmpDir+'tmpnostart1');
+                                                             //Shell('rm -f /tmp/tmpnostart1');
                                                              halt;
                                                          end;
+  If not FileExists(TmpDir) then Shell ('mkdir '+TmpDir);
   //обеспечение совместимости старого config с новым
   If FileExists(LibDir+'config') then
      begin
@@ -876,10 +878,10 @@ begin
     Form1.Hide;
     TrayIcon1.Hide;
     Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
-    Shell('rm -f '+TmpDir+'tmpnostart1');
+    //Shell('rm -f '+TmpDir+'tmpnostart1');
     halt;
    end;
-  Shell('rm -f '+TmpDir+'tmpnostart1');
+  //Shell('rm -f '+TmpDir+'tmpnostart1');
   If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
   If Memo_Config.Lines[43]='ubuntu' then ubuntu:=true;
   If Memo_Config.Lines[43]='debian' then debian:=true;
@@ -893,6 +895,7 @@ begin
   If FileExists ('/etc/init.d/networking') then NetServiceStr:='networking';
   If FileExists ('/etc/init.d/network-manager') then NetServiceStr:='network-manager';
   If FileExists ('/etc/init.d/NetworkManager') then NetServiceStr:='NetworkManager';
+  If FileExists ('/etc/init.d/networkmanager') then NetServiceStr:='networkmanager';
   If NetServiceStr='none' then
                             begin
                                Form3.MyMessageBox(message0,message2,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);

@@ -246,7 +246,7 @@ var
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
   LibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
-  TmpDir='/tmp/'; //директория для временных файлов
+  TmpDir='/tmp/vpnpptp/'; //директория для временных файлов
   DataDir='/usr/share/vpnpptp/'; //директория для основных неизменных файлов программы
   BinDir='/usr/bin/'; // директория для исполняемых файлов программы
 
@@ -402,7 +402,7 @@ resourcestring
   message147='Настройте sudo средствами Вашего дистрибутива.';
   message148='Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска.';
   message149='Нажатие левой/правой кнопкой мыши на пустом месте окна изменяет шрифт.';
-  message150='Mandriva и аналоги';
+  message150='и аналоги';
   message151='Выберите дистрибутив...';
   message152='Выбор дистрибутива обязателен, но неправильный выбор опасен!';
   message153='Для того чтобы интернет был настроен для детей, опция usepeerdns была автоматически отключена.';
@@ -1279,11 +1279,11 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  If etc_hosts.Checked then Shell('printf "etc-hosts-yes\n" >> '+LibDir+'config') else
                                               Shell('printf "etc-hosts-no\n" >> '+LibDir+'config');
  Shell('printf "'+IntToStr(AFont)+'\n" >> '+LibDir+'config');
- If ComboBoxDistr.Text='Ubuntu' then Shell('printf "ubuntu\n" >> '+LibDir+'config');
- If ComboBoxDistr.Text='Debian' then Shell('printf "debian\n" >> '+LibDir+'config');
- If ComboBoxDistr.Text='Fedora' then Shell('printf "fedora\n" >> '+LibDir+'config');
- If ComboBoxDistr.Text='openSUSE' then Shell('printf "suse\n" >> '+LibDir+'config');
- If ComboBoxDistr.Text=message150 then Shell('printf "mandriva\n" >> '+LibDir+'config');
+ If ComboBoxDistr.Text='Ubuntu '+message150 then Shell('printf "ubuntu\n" >> '+LibDir+'config');
+ If ComboBoxDistr.Text='Debian '+message150 then Shell('printf "debian\n" >> '+LibDir+'config');
+ If ComboBoxDistr.Text='Fedora '+message150 then Shell('printf "fedora\n" >> '+LibDir+'config');
+ If ComboBoxDistr.Text='openSUSE '+message150 then Shell('printf "suse\n" >> '+LibDir+'config');
+ If ComboBoxDistr.Text='Mandriva '+message150 then Shell('printf "mandriva\n" >> '+LibDir+'config');
  Shell('printf "'+PingInternetStr+'\n" >> '+LibDir+'config');
  If nobuffer.Checked then Shell('printf "nobuffer-yes\n" >> '+LibDir+'config') else
                                               Shell('printf "nobuffer-no\n" >> '+LibDir+'config');
@@ -2435,11 +2435,11 @@ if not y then
                 Button_next1.Visible:=False;
                 Button_next2.Visible:=True;
               end;
-If ComboBoxDistr.Text='Ubuntu' then begin ubuntu:=true;debian:=false;suse:=false;mandriva:=false;fedora:=false;end;
-If ComboBoxDistr.Text='Debian' then begin debian:=true;ubuntu:=false;suse:=false;mandriva:=false;fedora:=false;end;
-If ComboBoxDistr.Text='Fedora' then begin fedora:=true;debian:=false;ubuntu:=false;suse:=false;mandriva:=false;end;
-If ComboBoxDistr.Text='openSUSE' then begin suse:=true;ubuntu:=false;debian:=false;mandriva:=false;fedora:=false;end;
-If ComboBoxDistr.Text=message150 then begin mandriva:=true;ubuntu:=false;debian:=false;suse:=false;fedora:=false;end;
+If ComboBoxDistr.Text='Ubuntu '+message150 then begin ubuntu:=true;debian:=false;suse:=false;mandriva:=false;fedora:=false;end;
+If ComboBoxDistr.Text='Debian '+message150 then begin debian:=true;ubuntu:=false;suse:=false;mandriva:=false;fedora:=false;end;
+If ComboBoxDistr.Text='Fedora '+message150 then begin fedora:=true;debian:=false;ubuntu:=false;suse:=false;mandriva:=false;end;
+If ComboBoxDistr.Text='openSUSE '+message150 then begin suse:=true;ubuntu:=false;debian:=false;mandriva:=false;fedora:=false;end;
+If ComboBoxDistr.Text='Mandriva '+message150 then begin mandriva:=true;ubuntu:=false;debian:=false;suse:=false;fedora:=false;end;
 //проверка строки vpn-сервера
 y:=false;
 If (Form1.Edit_IPS.Text='none') or (Form1.Edit_IPS.Text='') or (Length(Form1.Edit_gate.Text)>15) then //15-макс.длина шлюза 255.255.255.255
@@ -2926,50 +2926,44 @@ debian:=false;
 fedora:=false;
 suse:=false;
 mandriva:=false;
-DoCountInterface;
+//DoCountInterface;
 If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
 //определение дистрибутива
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep Ubuntu > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then ubuntu:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep Xonomi > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then ubuntu:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep Kubuntu > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then ubuntu:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep Debian > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then debian:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep Fedora > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then fedora:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep RFRemix > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then fedora:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep openSUSE > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then suse:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep Mandriva > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then mandriva:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep PCLinuxOS > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then mandriva:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep MagOS > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then mandriva:=true;
-Shell('rm -f '+TmpDir+'version');
-Shell ('cat /etc/issue|grep ROSA > '+TmpDir+'version');
-If FileSize (TmpDir+'version')<>0 then mandriva:=true;
-Shell('rm -f '+TmpDir+'version');
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
+If FileSize ('/tmp/version')<>0 then ubuntu:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep Debian > /tmp/version');
+If FileSize ('/tmp/version')<>0 then debian:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep Fedora > /tmp/version');
+If FileSize ('/tmp/version')<>0 then fedora:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep RFRemix > /tmp/version');
+If FileSize ('/tmp/version')<>0 then fedora:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep openSUSE > /tmp/version');
+If FileSize ('/tmp/version')<>0 then suse:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep Mandriva > /tmp/version');
+If FileSize ('/tmp/version')<>0 then mandriva:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep PCLinuxOS > /tmp/version');
+If FileSize ('/tmp/version')<>0 then mandriva:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep MagOS > /tmp/version');
+If FileSize ('/tmp/version')<>0 then mandriva:=true;
+Shell('rm -f /tmp/version');
+Shell ('cat /etc/issue|grep ROSA > /tmp/version');
+If FileSize ('/tmp/version')<>0 then mandriva:=true;
+Shell('rm -f /tmp/version');
 ComboBoxDistr.Text:=message151;
-ComboBoxDistr.Items.Add(message150);
-ComboBoxDistr.Items.Add('Ubuntu');
-ComboBoxDistr.Items.Add('Debian');
-ComboBoxDistr.Items.Add('Fedora');
-ComboBoxDistr.Items.Add('openSUSE');
-CountInterface:=1;
+ComboBoxDistr.Items.Add('Mandriva '+message150);
+ComboBoxDistr.Items.Add('Ubuntu '+message150);
+ComboBoxDistr.Items.Add('Debian '+message150);
+ComboBoxDistr.Items.Add('Fedora '+message150);
+ComboBoxDistr.Items.Add('openSUSE '+message150);
+//CountInterface:=1;
 PressCreate:=false;
 //отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf (для PCLinuxOS)
 {Shell ('rm -f /var/run/ppp/resolv.conf');
@@ -3235,18 +3229,21 @@ If Screen.Height>1000 then
                              Memo_route.Width:=650;
                          end;
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
-   Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > '+TmpDir+'tmpnostart');
-   Shell('printf "none" >> '+TmpDir+'tmpnostart');
+   Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
+   Shell('printf "none" >> /tmp/tmpnostart');
    Form1.tmpnostart.Clear;
-   If FileExists(TmpDir+'tmpnostart') then tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart');
+   If FileExists('/tmp/tmpnostart') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart');
+   Shell('rm -f /tmp/tmpnostart');
    If not (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') then
                                                        begin
                                                          If mandriva then Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon)
                                                                          else Form3.MyMessageBox(message0,message18,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                         Shell('rm -f '+TmpDir+'tmpnostart');
                                                          Application.ProcessMessages;
                                                          halt;
                                                        end;
+ If not FileExists(TmpDir) then Shell ('mkdir '+TmpDir);
+ CountInterface:=1;
+ DoCountInterface;
 //обеспечение совместимости старого config с новым
  If FileExists(LibDir+'config') then
      begin
@@ -3311,18 +3308,18 @@ If Screen.Height>1000 then
         If Edit_mru.Text='mru-none' then Edit_mru.Text:='';
         If Memo_config.Lines[41]='etc-hosts-yes' then etc_hosts.Checked:=true else etc_hosts.Checked:=false;
         If Memo_config.Lines[42]<>'none' then AFont:=StrToInt(Memo_config.Lines[42]);
-        If Memo_config.Lines[43]='ubuntu' then ComboBoxDistr.Text:='Ubuntu';
-        If Memo_config.Lines[43]='debian' then ComboBoxDistr.Text:='Debian';
-        If Memo_config.Lines[43]='fedora' then ComboBoxDistr.Text:='Fedora';
-        If Memo_config.Lines[43]='suse' then ComboBoxDistr.Text:='openSUSE';
-        If Memo_config.Lines[43]='mandriva' then ComboBoxDistr.Text:=message150;
+        If Memo_config.Lines[43]='ubuntu' then ComboBoxDistr.Text:='Ubuntu '+message150;
+        If Memo_config.Lines[43]='debian' then ComboBoxDistr.Text:='Debian '+message150;
+        If Memo_config.Lines[43]='fedora' then ComboBoxDistr.Text:='Fedora '+message150;
+        If Memo_config.Lines[43]='suse' then ComboBoxDistr.Text:='openSUSE '+message150;
+        If Memo_config.Lines[43]='mandriva' then ComboBoxDistr.Text:='Mandriva '+message150;
         If Memo_config.Lines[43]='none' then
                                              begin
-                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu';
-                                                If debian then ComboBoxDistr.Text:='Debian';
-                                                If fedora then ComboBoxDistr.Text:='Fedora';
-                                                If suse then ComboBoxDistr.Text:='openSUSE';
-                                                If mandriva then ComboBoxDistr.Text:=message150;
+                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
+                                                If debian then ComboBoxDistr.Text:='Debian '+message150;
+                                                If fedora then ComboBoxDistr.Text:='Fedora '+message150;
+                                                If suse then ComboBoxDistr.Text:='openSUSE '+message150;
+                                                If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
                                              end;
         PingInternetStr:=Memo_config.Lines[44];
         If (PingInternetStr='') or (PingInternetStr='none') then PingInternetStr:='yandex.ru';
@@ -3345,11 +3342,11 @@ If Screen.Height>1000 then
   If not FileExists(LibDir+'config') then
                                            begin
                                                 ComboBoxVPN.Text:='VPN PPTP';
-                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu';
-                                                If debian then ComboBoxDistr.Text:='Debian';
-                                                If fedora then ComboBoxDistr.Text:='Fedora';
-                                                If suse then ComboBoxDistr.Text:='openSUSE';
-                                                If mandriva then ComboBoxDistr.Text:=message150;
+                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
+                                                If debian then ComboBoxDistr.Text:='Debian '+message150;
+                                                If fedora then ComboBoxDistr.Text:='Fedora '+message150;
+                                                If suse then ComboBoxDistr.Text:='openSUSE '+message150;
+                                                If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
                                            end;
   if ComboBoxDistr.Text<>message151 then ComboBoxDistr.Enabled:=false;
   If FileExists (LibDir+'route') then Memo_route.Lines.LoadFromFile(LibDir+'route'); //восстановление маршрутов
@@ -3424,6 +3421,7 @@ If FileExists ('/etc/init.d/network') then NetServiceStr:='network';
 If FileExists ('/etc/init.d/networking') then NetServiceStr:='networking';
 If FileExists ('/etc/init.d/network-manager') then NetServiceStr:='network-manager';
 If FileExists ('/etc/init.d/NetworkManager') then NetServiceStr:='NetworkManager';
+If FileExists ('/etc/init.d/networkmanager') then NetServiceStr:='networkmanager';
 If NetServiceStr='none' then
                             begin
                                Form3.MyMessageBox(message0,message160,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);

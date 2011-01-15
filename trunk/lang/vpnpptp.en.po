@@ -927,8 +927,8 @@ msgid "Нажатие левой/п#209�авой кнопкой мыши на 
 msgstr "Pressing the left/right click on the window changes the font."
 
 #: unit1.message150
-msgid "Mandriva и аналоги"
-msgstr "Mandriva and analogues"
+msgid "и аналоги"
+msgstr "and analogues"
 
 #: unit1.message151
 msgid "Выбе#209�ите дист#209�ибутив..."
