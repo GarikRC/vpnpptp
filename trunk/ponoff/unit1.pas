@@ -110,6 +110,7 @@ var
   NetServiceStr:string; //какой сервис управляет сетью
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
   FlagMtu:boolean; //необходимость проверки mtu
+  FlagLengthSyslog:boolean; //проверен ли размер файла-лога /var/log/syslog
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -164,6 +165,8 @@ resourcestring
   message42='DNS1-сервер при поднятом VPN не пингуется. ';
   message43='Рекомендуется вручную уменьшить MTU/MRU, так как используемое значение MTU =';
   message44='байт слишком большое.';
+  message45='Размер файла-лога /var/log/syslog больше 1 GiB.';
+  message46='Возможны проблемы с установлением соединения...';
 
 implementation
 
@@ -344,6 +347,14 @@ begin
   NoPingDNS3:=false;
   NoPingDNS4:=false;
   DoCountInterface;
+  //Проверяем размер файла-лога /var/log/syslog
+  If not FlagLengthSyslog then If FileSize('/var/log/syslog')>1073741824 then // >1 Гб
+           begin
+               BalloonMessage (8000,message45+' '+message46);
+               MySleep(3000);
+               Application.ProcessMessages;
+          end;
+   FlagLengthSyslog:=true;
   //Проверяем поднялось ли соединение
   Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
@@ -823,6 +834,7 @@ begin
   CountInterface:=1;
 //  CountKillallpppd:=0;
   FlagMtu:=false;
+  FlagLengthSyslog:=false;
   Form1.Visible:=false;
   Form1.WindowState:=wsMinimized;
   Form1.Hide;
