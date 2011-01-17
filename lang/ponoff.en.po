@@ -197,3 +197,11 @@ msgstr "It is recommended to manually reduce the MTU/MRU, as the value to use MT
 #: unit1.message44
 msgid "байт слишком большое."
 msgstr "bytes is too large."
+
+#: unit1.message45
+msgid "Разме#209� файла-лога /var/log/syslog больше 1 GiB."
+msgstr "The size of the log /var/log/syslog is more than 1 GiB."
+
+#: unit1.message46
+msgid "Возможны п#209�облемы с установлением соединения..."
+msgstr "Possible problems with establishing a connection..."

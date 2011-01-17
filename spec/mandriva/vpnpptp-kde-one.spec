@@ -1,4 +1,4 @@
-%define rel 4
+%define rel 5
 
 %{?dist: %{expand: %%define %dist 1}}
 
@@ -39,6 +39,16 @@ mkdir -p $RPM_BUILD_ROOT
 
 
 %postun
+
+%post
+
+%pre
+#удалить ссылки если есть
+rm -f /usr/bin/vpnpptp 
+rm -f /usr/bin/ponoff
+#обеспечить переход с allde на kde-one или наоборот
+rm -f %{_datadir}/pixmaps/ponoff.png
+rm -f %{_datadir}/pixmaps/vpnpptp.png
 if [ -a %{_datadir}/applications/ponoff.desktop.old ]
 then
 	rm -f %{_datadir}/applications/ponoff.desktop.old
@@ -47,14 +57,6 @@ if [ -a %{_datadir}/applications/vpnpptp.desktop.old ]
 then
 	rm -f %{_datadir}/applications/vpnpptp.desktop.old
 fi
-
-%post
-
-%pre
-rm -f /usr/bin/vpnpptp
-rm -f /usr/bin/ponoff
-rm -f %{_datadir}/pixmaps/ponoff.png
-rm -f %{_datadir}/pixmaps/vpnpptp.png
 
 %preun
 
