@@ -46,9 +46,9 @@ mkdir -p $RPM_BUILD_ROOT
 #удалить ссылки если есть
 rm -f /usr/bin/vpnpptp
 rm -f /usr/bin/ponoff
-#обеспечить переход с allde на kde-one или наоборот
 rm -f %{_datadir}/pixmaps/ponoff.png
 rm -f %{_datadir}/pixmaps/vpnpptp.png
+#обеспечить переход с allde на kde-one или наоборот
 if [ -a %{_datadir}/applications/ponoff.desktop.old ]
 then
 	rm -f %{_datadir}/applications/ponoff.desktop.old

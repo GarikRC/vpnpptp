@@ -1,8 +1,21 @@
 #!/bin/sh
 
-cd ./usr/share/vpnpptp
+# Передайте этому скрипту 2 параметра: номер версии собираемого пакета и архитектуру (i386, amd64 и т.д.)
+# выполните этот скрипт под root
 
-cat > ponoff.desktop << EOF
+if [ -z "$(env | grep USER=root)" ];then
+	echo "You're not the root!"
+	exit 0
+fi
+
+if [ $# -ne 2 ];then
+	echo "For this script you must write a two parameters"
+	exit 0
+fi
+
+mkdir -p ./build/usr/share/applications/
+
+cat > ./build/usr/share/applications/ponoff.desktop << EOF
 #!/usr/bin/env xdg-open
 
 [Desktop Entry]
@@ -25,9 +38,9 @@ X-KDE-Username=root
 X-KDE-autostart-after=kdesktop
 StartupNotify=false
 EOF
-chmod 0644 ponoff.desktop
+chmod 0644 ./build/usr/share/applications/ponoff.desktop
 
-cat > vpnpptp.desktop << EOF
+cat > ./build/usr/share/applications/vpnpptp.desktop << EOF
 #!/usr/bin/env xdg-open
 
 [Desktop Entry]
@@ -49,42 +62,60 @@ X-KDE-SubstituteUID=true
 X-KDE-Username=root
 StartupNotify=false
 EOF
-chmod 0644 vpnpptp.desktop
+chmod 0644 ./build/usr/share/applications/vpnpptp.desktop
 
-cd ..
-cd ..
+tar -xf vpnpptp-src-$1.tar.gz
 
-cd ./src/modules
+cd ./vpnpptp-src-$1/modules/
+
 /usr/bin/fpc $(cat ./MyMessageBox.compiled | grep "Params Value" | cut -d\" -f2)
 /usr/bin/strip -s ./mymessagebox
 
 cd ..
 cd ..
+cd ./vpnpptp-src-$1/vpnpptp/
 
-cd ./src/vpnpptp
 /usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
 /usr/bin/strip -s ./vpnpptp
 
 cd ..
 cd ..
+cd ./vpnpptp-src-$1/ponoff/
 
-cd ./src/ponoff
-/usr/bin/fpc $( cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
+/usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
 /usr/bin/strip -s ./ponoff
 
 cd ..
 cd ..
 
-mkdir ./usr/bin
-cp -f ./src/ponoff/ponoff ./usr/bin/ponoff
-cp -f ./src/vpnpptp/vpnpptp ./usr/bin/vpnpptp
-mkdir ./usr/share/applications
-mkdir ./usr/share/pixmaps
-cp -f ./usr/share/vpnpptp/vpnpptp.png ./usr/share/pixmaps
-cp -f ./usr/share/vpnpptp/ponoff.png ./usr/share/pixmaps
-cp -f ./usr/share/vpnpptp/vpnpptp.desktop ./usr/share/applications
-cp -f ./usr/share/vpnpptp/ponoff.desktop ./usr/share/applications
-rm -f ./usr/share/vpnpptp/vpnpptp.desktop
-rm -f ./usr/share/vpnpptp/ponoff.desktop
-rm -rf ./src
-rm -f ./ubuntu.compile.sh
+mkdir -p ./build/usr/bin
+
+cp -f ./vpnpptp-src-$1/ponoff/ponoff ./build/usr/bin/ponoff
+cp -f ./vpnpptp-src-$1/vpnpptp/vpnpptp ./build/usr/bin/vpnpptp
+
+mkdir -p ./build/usr/share/pixmaps
+
+cp -f ./vpnpptp-src-$1/vpnpptp.png ./build/usr/share/pixmaps
+cp -f ./vpnpptp-src-$1/ponoff.png ./build/usr/share/pixmaps
+
+mkdir -p ./build/usr/share/vpnpptp/
+
+cp -rf ./vpnpptp-src-$1/scripts ./build/usr/share/vpnpptp/
+cp -rf ./vpnpptp-src-$1/wiki ./build/usr/share/vpnpptp/
+cp -rf ./vpnpptp-src-$1/lang ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$1/vpnpptp.png ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$1/ponoff.png ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$1/on.ico ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$1/off.ico ./build/usr/share/vpnpptp/
+
+mkdir -p ./build/DEBIAN/
+
+cp -f ./vpnpptp-src-$1/DEBIAN/ubuntu/preinst ./build/DEBIAN/
+chmod 0775 ./build/DEBIAN/preinst
+cp -f ./vpnpptp-src-$1/DEBIAN/ubuntu/control ./build/DEBIAN/
+chmod 0775 ./build/DEBIAN/control
+
+dpkg -b ./build/ vpnpptp-allde-$1_$2.deb
+
+rm -rf ./build/
+rm -rf ./vpnpptp-src-$1/

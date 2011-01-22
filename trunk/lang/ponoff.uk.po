@@ -200,8 +200,12 @@ msgstr "байт занадто велике."
 
 #: unit1.message45
 msgid "Разме#209� файла-лога /var/log/syslog больше 1 GiB."
-msgstr ""
+msgstr "Розмір файлу-логі /var/log/syslog більше 1 Gib."
 
 #: unit1.message46
 msgid "Возможны п#209�облемы с установлением соединения..."
-msgstr ""
+msgstr "Можливі проблеми із установленням з'єднання..."
+
+#: unit1.message47
+msgid "Запускается се#209�вис xl2tpd..."
+msgstr "Запускається сервіс xl2tpd..."
