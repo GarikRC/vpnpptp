@@ -1,14 +1,17 @@
-1) создать в папке /tmp папку vpnpptp-allde (получится /tmp/vpnpptp-allde),
-2) в созданной папке /tmp/vpnpptp-allde создать папку /usr/share/vpnpptp (получится /tmp/vpnpptp-allde/usr/share/vpnpptp), папку DEBIAN (получится /tmp/vpnpptp-allde/DEBIAN) и папку src (получится /tmp/vpnpptp-allde/src),
-3) в папку /tmp/vpnpptp-allde/usr/share/vpnpptp из исходников скопировать папки с их содержимым lang, scripts, wiki, а также файлы off.ico, on.ico, ponoff.png, vpnpptp.png (для того чтобы собрать свой пакет нужно поместить файлы в каталоге /tmp/vpnpptp-allde так, как будто это корневой каталог),
-4) скопировать в папку /tmp/vpnpptp-allde/src из исходников папки с их содержимым modules, vpnpptp, ponoff,
-5) перекомпилировать в Lazarus (команда из консоли sudo lazarus-ide, затем "Запуск"->"Собрать все") содержимое этих папок modules, vpnpptp, ponoff (сначала modules), иначе пакет не соберется если писалось в другой версии,
-6) скопировать в папку /tmp/vpnpptp-allde скрипт ubuntu.compile.sh,
-7) скопировать в папку /tmp/vpnpptp-allde/DEBIAN содержимое папки DEBIAN исходников,
-8) выполнить скрипт ubuntu.compile.sh командой sudo sh ./ubuntu.compile.sh, находясь в папке /tmp/vpnpptp-allde; после выполнения этого скрипта будут созданы исполняемые файлы ponoff, vpnpptp и помещены в /tmp/vpnpptp-allde/usr/bin, также создадутся файлы ponoff.desktop, vpnpptp.desktop в /tmp/vpnpptp-allde/usr/share/applications, сам же скрипт ubuntu.compile.sh и директория src с содержимым будут удалены,
-9) права на скрипты в папке DEBIAN должны быть 0775,
-10) находясь в папке /tpm выполнить команду sudo dpkg -b ./vpnpptp-allde vpnpptp-allde-0.1.9_i386.deb, где вместо 0.1.9 указать версию,
-11) в папке /tmp находится собранный пакет.
+1) положите в любую папку исходники .tar.gz и в эту же папку положите скрипт ubuntu.compile.sh (этот скрипт самостоятельно извлечь из исходников .tar.gz),
+2) находясь в этой папке, выполните скрипт ubuntu.compile.sh под root командой:
+              sh скрипт параметры
+              или
+              sudo sh скрипт параметры
+в качестве первого параметра передайте номер версии программы, а в качестве второго параметра передайте архитектуру (i386, amd64 и т.д.),
+             например,
+             sh ubuntu.compile.sh 0.2.9 i386
+3) собранный пакет появится в этой же папке.
 
-Примечание: вместо папки /tmp можно использовать другую папку
+Примечания:
+
 Скрипт ubuntu.compile.sh используется в Ubuntu и в Debian.
+Зависимости для сборки пакета: fpc, fpc-src, lazarus.
+Исходники имеют вид: vpnpptp-src-0.2.9.tar.gz, где 0.2.9 - версия.
+Если пакет собрался, но в него не попали исполняемые файлы /usr/bin/vpnpptp и /usr/bin/ponoff, то перекомпилируйте в lazarus-ide исходники под root и упакуйте их обратно в архив .tar.gz.
+Обязательно проверьте в получившемся .deb пакете наличие исполняемых файлов /usr/bin/vpnpptp и /usr/bin/ponoff.

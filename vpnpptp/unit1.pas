@@ -1190,9 +1190,9 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
                 Memo_ip_down.Lines.Add('     rm -f /etc/resolv.conf.netconfig');
                 Memo_ip_down.Lines.Add('fi');
          end;
- Memo_ip_down.Lines.Add('rm -f '+TmpDir+'DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
- Memo_ip_down.Lines.Add('rm -f '+TmpDir+'ObnullRX');
- Memo_ip_down.Lines.Add('rm -f '+TmpDir+'ObnullTX');
+// Memo_ip_down.Lines.Add('rm -f '+TmpDir+'DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
+// Memo_ip_down.Lines.Add('rm -f '+TmpDir+'ObnullRX');
+// Memo_ip_down.Lines.Add('rm -f '+TmpDir+'ObnullTX');
  If route_IP_remote.Checked then
                                 Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
                                 //begin
@@ -2919,6 +2919,7 @@ var i,N, CountGateway:integer;
     ethCount:array[0..9] of integer;
     wlanCount:array[0..9] of integer;
     brCount:array[0..9] of integer;
+    nostart:boolean;
 begin
 Application.CreateForm(TForm3, Form3);
 ubuntu:=false;
@@ -2929,7 +2930,34 @@ mandriva:=false;
 //DoCountInterface;
 If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
 //определение дистрибутива
-Shell('rm -f /tmp/version');
+popen (f,'cat /etc/issue|grep Ubuntu','R');
+If not eof(f) then ubuntu:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep Debian','R');
+If not eof(f) then debian:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep Fedora','R');
+If not eof(f) then fedora:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep RFRemix','R');
+If not eof(f) then fedora:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep openSUSE','R');
+If not eof(f) then suse:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep Mandriva','R');
+If not eof(f) then mandriva:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep PCLinuxOS','R');
+If not eof(f) then mandriva:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep MagOS','R');
+If not eof(f) then mandriva:=true;
+PClose(f);
+popen (f,'cat /etc/issue|grep ROSA','R');
+If not eof(f) then mandriva:=true;
+PClose(f);
+{Shell('rm -f /tmp/version');
 Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
 If FileSize ('/tmp/version')<>0 then ubuntu:=true;
 Shell('rm -f /tmp/version');
@@ -2956,7 +2984,7 @@ If FileSize ('/tmp/version')<>0 then mandriva:=true;
 Shell('rm -f /tmp/version');
 Shell ('cat /etc/issue|grep ROSA > /tmp/version');
 If FileSize ('/tmp/version')<>0 then mandriva:=true;
-Shell('rm -f /tmp/version');
+Shell('rm -f /tmp/version');}
 ComboBoxDistr.Text:=message151;
 ComboBoxDistr.Items.Add('Mandriva '+message150);
 ComboBoxDistr.Items.Add('Ubuntu '+message150);
@@ -3229,18 +3257,23 @@ If Screen.Height>1000 then
                              Memo_route.Width:=650;
                          end;
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
-   Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
+   {Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
    Shell('printf "none" >> /tmp/tmpnostart');
    Form1.tmpnostart.Clear;
    If FileExists('/tmp/tmpnostart') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart');
    Shell('rm -f /tmp/tmpnostart');
-   If not (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') then
-                                                       begin
-                                                         If mandriva then Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon)
-                                                                         else Form3.MyMessageBox(message0,message18,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                         Application.ProcessMessages;
-                                                         halt;
-                                                       end;
+   If not (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') then}
+  nostart:=false;
+  popen (f,'ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39),'R');
+  If eof(f) then nostart:=true;
+  PClose(f);
+  If nostart then
+                begin
+                    If mandriva then Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon)
+                                          else Form3.MyMessageBox(message0,message18,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                    Application.ProcessMessages;
+                    halt;
+                end;
  If not FileExists(TmpDir) then Shell ('mkdir '+TmpDir);
  CountInterface:=1;
  DoCountInterface;

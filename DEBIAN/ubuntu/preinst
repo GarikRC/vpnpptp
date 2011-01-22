@@ -1,0 +1,7 @@
+#! /bin/sh
+
+#удалить ссылки если есть
+rm -f /usr/bin/vpnpptp 
+rm -f /usr/bin/ponoff
+rm -f /usr/share/pixmaps/ponoff.png
+rm -f /usr/share/pixmaps/vpnpptp.png

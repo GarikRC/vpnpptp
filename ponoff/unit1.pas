@@ -167,6 +167,7 @@ resourcestring
   message44='байт слишком большое.';
   message45='Размер файла-лога /var/log/syslog больше 1 GiB.';
   message46='Возможны проблемы с установлением соединения...';
+  message47='Запускается сервис xl2tpd...';
 
 implementation
 
@@ -285,6 +286,7 @@ end;
 
 procedure BalloonMessage (i:integer;str1:string);
 begin
+     If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
      If Form1.Memo_Config.Lines[23]<>'networktest-yes' then MySleep(1000);
      Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
      Application.ProcessMessages;
@@ -348,7 +350,7 @@ begin
   NoPingDNS4:=false;
   DoCountInterface;
   //Проверяем размер файла-лога /var/log/syslog
-  If not FlagLengthSyslog then If FileSize('/var/log/syslog')>1073741824 then // >1 Гб
+  If not FlagLengthSyslog then If FileExists('/var/log/syslog') then If FileSize('/var/log/syslog')>1073741824 then // >1 Гб
            begin
                BalloonMessage (8000,message45+' '+message46);
                MySleep(3000);
@@ -792,7 +794,8 @@ If not Code_up_ppp then If link=1 then
                                                                                                                              Shell (ServiceCommand+'xl2tpd stop');
                                                                                                                              Shell (ServiceCommand+'xl2tpd start');
                                                                                                                              Form1.Repaint;
-                                                                                                                             Mysleep(3000);
+                                                                                                                             BalloonMessage (3000,message47);
+                                                                                                                             If Memo_Config.Lines[24]<>'balloon-no' then Mysleep(3000);
                                                                                                                         end;
                                                                                                                   Shell ('rm -f '+TmpDir+'tmpnostart1');
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
@@ -808,7 +811,7 @@ var
   i,j,h:integer;
   str:string;
   Apid:tpid;
-  Code_up_ppp:boolean;
+  Code_up_ppp,nostart:boolean;
 begin
   Application.CreateForm(TForm2, Form2);
   If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
@@ -855,22 +858,27 @@ begin
   If Screen.Height>550 then AFont:=8;
   If Screen.Height>1000 then AFont:=10;
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
-   Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart1');
+   {Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart1');
    Shell('printf "none" >> /tmp/tmpnostart1');
    Form1.tmpnostart.Clear;
    If FileExists('/tmp/tmpnostart1') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
    Shell('rm -f /tmp/tmpnostart1');
-   If not (LeftStr(tmpnostart.Lines[0],6)='ponoff') then
-                                                        begin
-                                                             //запуск не под root
-                                                             Timer1.Enabled:=False;
-                                                             Timer2.Enabled:=False;
-                                                             Form1.Hide;
-                                                             TrayIcon1.Hide;
-                                                             Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
-                                                             //Shell('rm -f /tmp/tmpnostart1');
-                                                             halt;
-                                                         end;
+   If not (LeftStr(tmpnostart.Lines[0],6)='ponoff') then}
+   nostart:=false;
+   popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
+   If eof(f) then nostart:=true;
+   PClose(f);
+   If nostart then
+                   begin
+                      //запуск не под root
+                      Timer1.Enabled:=False;
+                      Timer2.Enabled:=False;
+                      Form1.Hide;
+                      TrayIcon1.Hide;
+                      Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                      //Shell('rm -f /tmp/tmpnostart1');
+                      halt;
+                   end;
   If not FileExists(TmpDir) then Shell ('mkdir '+TmpDir);
   //обеспечение совместимости старого config с новым
   If FileExists(LibDir+'config') then

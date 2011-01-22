@@ -205,3 +205,7 @@ msgstr "The size of the log /var/log/syslog is more than 1 GiB."
 #: unit1.message46
 msgid "Возможны п#209�облемы с установлением соединения..."
 msgstr "Possible problems with establishing a connection..."
+
+#: unit1.message47
+msgid "Запускается се#209�вис xl2tpd..."
+msgstr "Service xl2tpd is starting..."
