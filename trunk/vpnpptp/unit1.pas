@@ -184,7 +184,6 @@ type
     procedure routevpnautoChange(Sender: TObject);
     procedure dhcp_routeChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Reconnect_pptpChange(Sender: TObject);
     procedure Sudo_configureChange(Sender: TObject);
     procedure Sudo_ponoffChange(Sender: TObject);
     procedure TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -215,8 +214,8 @@ end;
 
 var
   Form1: TForm1;
-  POFileName : String; //файл перевода
-  Lang,FallbackLang:String; //язык системы
+  POFileName : string; //файл перевода
+  Lang,FallbackLang:string; //язык системы
   Translate:boolean; // переведено или еще не переведено
   dhclient:boolean; // запущен ли и установлен ли dhclient
   IPS: boolean; // если true, то в поле vpn-сервера введен ip; если false - то имя
@@ -357,7 +356,6 @@ resourcestring
   message103='Настройка VPN PPTP/L2TP';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message105='Обнаружено, что VPN PPTP/L2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
-  //message106='Обнаружено, что используется пакет xl2tpd не из репозитория EduMandriva, поэтому встроенный в демон xl2tpd механизм реконнекта выбрать нельзя.';
   message106='Встроенный в демон xl2tpd механизм реконнекта будет работать корректно, только если Вы используете пропатченный xl2tpd.';
   message107='Запустить конфигуратор VPN PPTP/L2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
   message108='Установить тестовое соединение VPN PPTP/L2TP в графике/без графики сейчас?';
@@ -494,30 +492,6 @@ begin
      closefile(Fileoowriter_find);
      Shell('rm -f '+TmpDir+'oowriter_find');
 end;
-
-{procedure Create_Log (log_str:string);
-var
- str:string;
- FileSyslog:textfile;
-begin
- If not FileExists (log_str) then exit;
- Shell ('rm -f '+TmpDir+'log.conf.tmp');
- AssignFile (FileSyslog,log_str);
- reset (FileSyslog);
- While not eof (FileSyslog) do
-     begin
-         readln(FileSyslog, str);
-         If LeftStr(str,5)<>'!pppd' then if LeftStr(str,4)<>'!ppp' then
-                     if RightStr(str,17)<>'/var/log/pppd.log' then
-                                    if RightStr(str,16)<>'/var/log/ppp.log' then
-                                          if LeftStr(str,7)<>'!xl2tpd' then if RightStr(str,19)<>'/var/log/xl2tpd.log' then
-                                                       Shell ('printf "'+str+'\n" >> /opt/vpnpptp/tmp/log.conf.tmp');
-      end;
- closefile(FileSyslog);
- Shell ('cp -f /opt/vpnpptp/tmp/log.conf.tmp '+log_str);
- Shell ('rm -f /opt/vpnpptp/tmp/log.conf.tmp');
- Shell (ServiceCommand+'syslog restart');
-end;}
 
 Function MakeHint(str:string;n:byte):string;
 //создает многострочный хинт
@@ -743,22 +717,6 @@ Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           StartMessage:=true;
                           Application.ProcessMessages;
                        end;
-   {If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then If FileExists ('/bin/rpm') then
-                               begin
-                                 Shell ('rm -f /tmp/ver_xl2tpd');
-                                 Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd');
-                                 If FileSize ('/tmp/ver_xl2tpd') = 0 then
-                                                                 begin
-                                                                      Label14.Caption:=message106+' '+message146;
-                                                                      Application.ProcessMessages;
-                                                                      Form3.MyMessageBox(message0,message106+' '+message146,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                                      StartMessage:=false;
-                                                                      Reconnect_pptp.Checked:=false;
-                                                                      StartMessage:=true;
-                                                                      Application.ProcessMessages;
-                                                                 end;
-                                 Shell ('rm -f /tmp/ver_xl2tpd');
-                               end;}
 Button_more.Visible:=false;
 Button_create.Enabled:=false;
 Button_exit.Enabled:=false;
@@ -996,7 +954,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
  If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
                               If FileExists(DataDir+'scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
-                                                                Shell ('sh '+DataDir+'peermodify.sh '+Label_peername.Caption);
+                                                                Shell ('sh '+DataDir+'scripts/peermodify.sh '+Label_peername.Caption);
  Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные, старые файлы и ссылки
  Shell('rm -f '+TmpDir+'gate');
@@ -1022,8 +980,6 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_ip_up.Lines.Add('then');
  Memo_ip_up.Lines.Add('     exit 0');
  Memo_ip_up.Lines.Add('fi');
- //If not suse then if not fedora then Memo_ip_up.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
- //If suse or fedora then Memo_ip_up.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_up.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_up.Lines.Add('then');
  Memo_ip_up.Lines.Add('     exit 0');
@@ -1078,25 +1034,13 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS2.Text<>'none' then Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS2.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
  If routeDNSauto.Checked then If pppnotdefault.Checked then
                                                        begin
-                                                          //if not suse then if not fedora then
-                                                            // begin
-                                                              //    Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                //  Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                //  Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                 // Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                          //   end;
-                                                          //if suse or fedora then
-                                                            // begin
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS3.Text + ' gw $IPREMOTE dev $IFNAME');
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS4.Text + ' gw $IPREMOTE dev $IFNAME');
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $IPREMOTE dev $IFNAME');
-                                                                  Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $IPREMOTE dev $IFNAME');
-                                                            // end;
+                                                           Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS3.Text + ' gw $IPREMOTE dev $IFNAME');
+                                                           Memo_ip_up.Lines.Add('/sbin/route add -host ' + EditDNS4.Text + ' gw $IPREMOTE dev $IFNAME');
+                                                           Memo_ip_up.Lines.Add('/sbin/route add -host $DNS1 gw $IPREMOTE dev $IFNAME');
+                                                           Memo_ip_up.Lines.Add('/sbin/route add -host $DNS2 gw $IPREMOTE dev $IFNAME');
                                                        end;
  For i:=1 to CountInterface do
      If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route del default');
- //If not pppnotdefault.Checked then If not suse then if not fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $PPP_IFACE');
- //If not pppnotdefault.Checked then If suse or fedora then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
  If not pppnotdefault.Checked then Memo_ip_up.Lines.Add('/sbin/route add default dev $IFNAME');
  If Unit2.Form2.CheckBoxusepeerdns.Checked then
         begin
@@ -1111,17 +1055,11 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_ip_up.Lines.Add('cp -f '+LibDir+'resolv.conf.after /etc/resolv.conf');
  If FileExists ('/usr/bin/net_monitor') then If FileExists ('/usr/bin/vnstat') then
                                         begin
-                                              //If not suse then if not fedora then Memo_ip_up.Lines.Add('vnstat -u -i $PPP_IFACE');
-                                              //If suse or fedora then Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
                                               Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
                                               Memo_ip_up.Lines.Add(ServiceCommand+'vnstat restart');
                                         end;
  If route_IP_remote.Checked then
                                 Memo_ip_up.Lines.Add ('/sbin/route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                //begin
-                                  //If not suse then if not fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                  //If suse or fedora then Memo_ip_up.Lines.Add ('/sbin/route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                //end;
  Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile(LibDir+'route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f '+LibDir+'route');
@@ -1143,8 +1081,6 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  Memo_ip_down.Lines.Add('then');
  Memo_ip_down.Lines.Add('     exit 0');
  Memo_ip_down.Lines.Add('fi');
- //If not suse then if not fedora then Memo_ip_down.Lines.Add('if [ ! $PPP_IFACE = "ppp'+NumberUnit+'" ]');
- //If suse or fedora then Memo_ip_down.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_down.Lines.Add('if [ ! $IFNAME = "ppp'+NumberUnit+'" ]');
  Memo_ip_down.Lines.Add('then');
  Memo_ip_down.Lines.Add('     exit 0');
@@ -1165,20 +1101,10 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
  If routeDNSauto.Checked then If not pppnotdefault.Checked then If EditDNS2.Text<>'none' then Memo_ip_down.Lines.Add('/sbin/route del -host ' + EditDNS2.Text + ' gw '+ Edit_gate.Text+ ' dev '+ Edit_eth.Text);
  If routeDNSauto.Checked then If pppnotdefault.Checked then
                                                        begin
-                                                         // if not suse then if not fedora then
-                                                           //   begin
-                                                             //      Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS3.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                               //    Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS4.Text + ' gw $PPP_REMOTE dev $PPP_IFACE');
-                                                                 //  Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                        //           Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $PPP_REMOTE dev $PPP_IFACE');
-                                                          //    end;
-                                                    //      if suse or fedora then
-                                                      //        begin
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS3.Text + ' gw $IPREMOTE dev $IFNAME');
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS4.Text + ' gw $IPREMOTE dev $IFNAME');
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $IPREMOTE dev $IFNAME');
-                                                                   Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $IPREMOTE dev $IFNAME');
-                                                        //      end;
+                                                           Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS3.Text + ' gw $IPREMOTE dev $IFNAME');
+                                                           Memo_ip_up.Lines.Add('/sbin/route del -host ' + EditDNS4.Text + ' gw $IPREMOTE dev $IFNAME');
+                                                           Memo_ip_up.Lines.Add('/sbin/route del -host $DNS1 gw $IPREMOTE dev $IFNAME');
+                                                           Memo_ip_up.Lines.Add('/sbin/route del -host $DNS2 gw $IPREMOTE dev $IFNAME');
                                                        end;
  Memo_ip_down.Lines.Add('cp -f '+LibDir+'resolv.conf.before /etc/resolv.conf');
  If suse then
@@ -1190,15 +1116,8 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
                 Memo_ip_down.Lines.Add('     rm -f /etc/resolv.conf.netconfig');
                 Memo_ip_down.Lines.Add('fi');
          end;
-// Memo_ip_down.Lines.Add('rm -f '+TmpDir+'DateStart'); //обнулить счетчик времени в сети, сбросить RX и TX если pppN опущен корректно
-// Memo_ip_down.Lines.Add('rm -f '+TmpDir+'ObnullRX');
-// Memo_ip_down.Lines.Add('rm -f '+TmpDir+'ObnullTX');
  If route_IP_remote.Checked then
                                 Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                                //begin
-                                  //If not suse then if not fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $PPP_REMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                               //   If suse or fedora then Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
-                              //  end;
  Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
  Shell('chmod a+x '+ Label_ip_down.Caption);
 //Записываем готовый конфиг, кроме логина и пароля
@@ -1550,8 +1469,6 @@ If FileExists('/etc/ppp/chap-secrets.old') then
                                        If Autostartpppd.Checked then Shell('printf "'+'autodial = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                        If Pppd_log.Checked then Shell('printf "'+'ppp debug = yes'+'\n" >> /etc/xl2tpd/xl2tpd.conf');
                                   end;
-{ //настройка ведения логов для совместимости с предыдущими версиями
- Create_log ('/etc/syslog.conf');}
  //настройка /etc/ppp/options
  if not FileExists('/etc/ppp/options.old') then Shell('cp -f /etc/ppp/options /etc/ppp/options.old');
  Shell('echo "#Clear config file" > /etc/ppp/options');
@@ -1559,7 +1476,7 @@ If FileExists('/etc/ppp/chap-secrets.old') then
  EditDNS1ping:=true;
  EditDNS2ping:=true;
    //тест EditDNS1-сервера
-If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then //If not FileExists('/opt/vpnpptp/tmp/NoTest') then
+If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
   begin
      If EditDNS1.Text='127.0.0.1' then Ifup('lo');
      Shell('rm -f '+TmpDir+'networktest');
@@ -1575,7 +1492,7 @@ If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then //If not FileExists('/op
      Shell('rm -f '+TmpDir+'networktest');
   end;
    //тест EditDNS2-сервера
-If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then //If not FileExists('/opt/vpnpptp/tmp/NoTest') then
+If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
   begin
      If EditDNS2.Text='127.0.0.1' then Ifup('lo');
      Shell('rm -f '+TmpDir+'networktest');
@@ -1636,8 +1553,6 @@ If not flag then
      Shell('rm -f '+TmpDir+'networktest');
    end;
    //тест шлюза локальной сети
-//If not FileExists('/opt/vpnpptp/tmp/NoTest') then
-  // begin
      Shell('rm -f '+TmpDir+'networktest');
      Str:='ping -c2 '+Edit_gate.Text+'|grep '+chr(39)+'2 received'+chr(39)+' > '+TmpDir+'networktest';
      Label14.Caption:=message47;
@@ -1655,7 +1570,6 @@ If not flag then
                                                 Application.ProcessMessages;
                                          end;
      Shell('rm -f '+TmpDir+'networktest');
-  // end;
 //запоминаем текущий /etc/resolv.conf
 Shell ('cp -f /etc/resolv.conf '+LibDir+'resolv.conf.before');
 //Создаем ярлык для подключения
@@ -2108,15 +2022,8 @@ begin
                       PClose(f);
                       If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
                       If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
-                         //begin
-                              //Memo_create.Lines.Add('......................................');
-                              //Application.ProcessMessages;
-                              //Form3.MyMessageBox(message0,message163+' '+MtuUsed+' '+message164,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                              //Memo_create.Lines.Add(message163+' '+MtuUsed+' '+message164);
                               Shell('printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> /var/log/syslog');
-                              //Application.ProcessMessages;
-                         //end;
-                         FlagMtu:=true;
+                      FlagMtu:=true;
                     end;
            end;
     end;
@@ -2927,7 +2834,6 @@ debian:=false;
 fedora:=false;
 suse:=false;
 mandriva:=false;
-//DoCountInterface;
 If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
 //определение дистрибутива
 popen (f,'cat /etc/issue|grep Ubuntu','R');
@@ -2957,50 +2863,13 @@ PClose(f);
 popen (f,'cat /etc/issue|grep ROSA','R');
 If not eof(f) then mandriva:=true;
 PClose(f);
-{Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep Ubuntu > /tmp/version');
-If FileSize ('/tmp/version')<>0 then ubuntu:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep Debian > /tmp/version');
-If FileSize ('/tmp/version')<>0 then debian:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep Fedora > /tmp/version');
-If FileSize ('/tmp/version')<>0 then fedora:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep RFRemix > /tmp/version');
-If FileSize ('/tmp/version')<>0 then fedora:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep openSUSE > /tmp/version');
-If FileSize ('/tmp/version')<>0 then suse:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep Mandriva > /tmp/version');
-If FileSize ('/tmp/version')<>0 then mandriva:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep PCLinuxOS > /tmp/version');
-If FileSize ('/tmp/version')<>0 then mandriva:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep MagOS > /tmp/version');
-If FileSize ('/tmp/version')<>0 then mandriva:=true;
-Shell('rm -f /tmp/version');
-Shell ('cat /etc/issue|grep ROSA > /tmp/version');
-If FileSize ('/tmp/version')<>0 then mandriva:=true;
-Shell('rm -f /tmp/version');}
 ComboBoxDistr.Text:=message151;
 ComboBoxDistr.Items.Add('Mandriva '+message150);
 ComboBoxDistr.Items.Add('Ubuntu '+message150);
 ComboBoxDistr.Items.Add('Debian '+message150);
 ComboBoxDistr.Items.Add('Fedora '+message150);
 ComboBoxDistr.Items.Add('openSUSE '+message150);
-//CountInterface:=1;
 PressCreate:=false;
-//отмена реализации в дистрибутиве отличных от мандривы механизмов работы с resolv.conf (для PCLinuxOS)
-{Shell ('rm -f /var/run/ppp/resolv.conf');
-If not FileExists('/etc/resolv.conf') then
-    begin
-       Shell ('rm -f /etc/resolv.conf');
-       Shell ('rm -f /var/run/ppp/resolv.conf');
-       Shell ('resolvconf -u');
-    end;}
 //присваивание хинтов элементам формы и их настройка
 HintWindowClass := TMyHintWindow;
 Application.HintColor:=$0092FFF8;
@@ -3257,12 +3126,6 @@ If Screen.Height>1000 then
                              Memo_route.Width:=650;
                          end;
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
-   {Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart');
-   Shell('printf "none" >> /tmp/tmpnostart');
-   Form1.tmpnostart.Clear;
-   If FileExists('/tmp/tmpnostart') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart');
-   Shell('rm -f /tmp/tmpnostart');
-   If not (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') then}
   nostart:=false;
   popen (f,'ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39),'R');
   If eof(f) then nostart:=true;
@@ -3591,26 +3454,6 @@ StartMessage:=true;
                                    end;
   Shell ('rm -f '+TmpDir+'gate');
   Memo_gate.Lines.Clear;
-end;
-
-procedure TForm1.Reconnect_pptpChange(Sender: TObject);
-begin
-    //проверка версии пакета xl2tpd
-    {If ComboBoxVPN.Text='VPN L2TP' then If Reconnect_pptp.Checked then
-                               begin
-                                 Shell ('rm -f /tmp/ver_xl2tpd');
-                                 If FileExists ('/bin/rpm') then Shell ('rpm xl2tpd -qa|grep edm >> /tmp/ver_xl2tpd') else
-                                                                 Shell ('dpkg --list |grep xl2tpd |grep edm >> /tmp/ver_xl2tpd');
-                                 If FileSize ('/tmp/ver_xl2tpd') = 0 then If StartMessage then
-                                                                 begin
-                                                                      Form3.MyMessageBox(message0,message106+' '+message146,'','',message122,'/opt/vpnpptp/vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                                      Reconnect_pptp.Checked:=false;
-                                                                      Application.ProcessMessages;
-                                                                      Shell ('rm -f /tmp/ver_xl2tpd');
-                                                                      exit;
-                                                                 end;
-                                 Shell ('rm -f /tmp/ver_xl2tpd');
-                               end;}
 end;
 
 procedure TForm1.Sudo_configureChange(Sender: TObject);

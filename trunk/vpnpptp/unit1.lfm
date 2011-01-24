@@ -3369,7 +3369,6 @@ object Form1: TForm1
         Top = 27
         Width = 661
         Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
-        OnChange = Reconnect_pptpChange
         TabOrder = 1
       end
       object Pppd_log: TCheckBox
