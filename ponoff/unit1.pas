@@ -81,7 +81,7 @@ var
   Form1: TForm1;
   Lang,FallbackLang:string; // язык системы
   Translate:boolean; // переведено или еще не переведено
-  POFileName : String; //файл перевода
+  POFileName : string; //файл перевода
   BindUtils:boolean; //установлен ли пакет bind-utils
   StartMessage:boolean; //запускать ли сообщения
   NewIPS:boolean; //найден новый, неизвестный ранее ip-адрес vpn-сервера
@@ -105,7 +105,6 @@ var
   suse:boolean; // используется ли дистрибутив suse
   mandriva:boolean; // используется ли дистрибутив mandriva
   CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
-  //CountKillallpppd:integer; //счетчик сколько раз убивался pppd
   DoubleRunPonoff:boolean; //многократный запуск ponoff
   NetServiceStr:string; //какой сервис управляет сетью
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
@@ -218,8 +217,6 @@ procedure Ifdown (Iface:string);
 //опускает интерфейс
 begin
           AProcess := TProcess.Create(nil);
-          //If FileExists ('/sbin/ifdown') then if not ubuntu then if not fedora then Shell ('ifdown '+Iface);
-          //If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' down');
           If FileExists ('/sbin/ifdown') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifdown '+Iface;
           If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' down';
           AProcess.Execute;
@@ -230,8 +227,6 @@ procedure Ifup (Iface:string);
 //поднимает интерфейс
 begin
           AProcess := TProcess.Create(nil);
-          //If FileExists ('/sbin/ifup') then if not ubuntu then if not fedora then Shell ('ifup '+Iface);
-          //If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' up');
           If FileExists ('/sbin/ifup') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifup '+Iface;
           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' up';
           AProcess.Execute;
@@ -313,7 +308,6 @@ begin
        If Form1.Memo_gate.Lines[0]='none' then
                                begin
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networking') then
-                                                                                                //Shell (ServiceCommand+NetServiceStr+' restart');
                                                                                                 begin
                                                                                                      AProcess := TProcess.Create(nil);
                                                                                                      AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
@@ -461,23 +455,11 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                                                                                                             //изменение скрипта ip-up
                                                                                                             If FileExists('/etc/ppp/ip-up.d/ip-up') then
                                                                                                                                                        Shell ('printf "'+'/sbin/route add -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
-                                                                                                                                                   // begin
-                                                                                                                                                         //If not suse then if not fedora then Shell ('printf "'+'/sbin/route add -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
-                                                                                                                                                         //If suse or fedora then Shell ('printf "'+'/sbin/route add -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-up.d/ip-up');
-                                                                                                                                                    //end;
                                                                                                             //изменение скрипта ip-down
                                                                                                             If Memo_Config.Lines[7]='reconnect-pptp' then if FileExists('/etc/ppp/ip-down.d/ip-down') then
                                                                                                                                                         Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                                                                                                                    // begin
-                                                                                                                                                          //If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                                                                                                                          //If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /etc/ppp/ip-down.d/ip-down');
-                                                                                                                                                     //end;
                                                                                                             If Memo_Config.Lines[7]='noreconnect-pptp' then if FileExists(LibDir+'ip-down') then
                                                                                                                                                          Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+LibDir+'ip-down');
-                                                                                                                                                     //begin
-                                                                                                                                                          //If not suse then if not fedora then Shell ('printf "'+'/sbin/route del -host \$PPP_REMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
-                                                                                                                                                          //If suse or fedora then Shell ('printf "'+'/sbin/route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> /opt/vpnpptp/tmp/ip-down');
-                                                                                                                                                      //end;
                                                                                                             Shell('rm -f '+LibDir+'hosts');
                                                                                                           end;
                                                                                  end;
@@ -568,11 +550,9 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                 For h:=1 to CountInterface do
                                                             Shell ('route del default');
                                 Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
-                                //Ifup(Form1.Memo_Config.Lines[3]);
                                 If not DhclientStart then
                                                       begin
                                                            if fedora then Shell('killall dhclient');
-                                                           //Shell ('dhclient '+Memo_Config.Lines[3]);
                                                            AProcessDhclient.Execute;
                                                            Mysleep(3000);
                                                            Application.ProcessMessages;
@@ -795,7 +775,7 @@ If not Code_up_ppp then If link=1 then
                                                                                                                              Shell (ServiceCommand+'xl2tpd start');
                                                                                                                              Form1.Repaint;
                                                                                                                              BalloonMessage (3000,message47);
-                                                                                                                             If Memo_Config.Lines[24]<>'balloon-no' then Mysleep(3000);
+                                                                                                                             Mysleep(3000);
                                                                                                                         end;
                                                                                                                   Shell ('rm -f '+TmpDir+'tmpnostart1');
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
@@ -835,7 +815,6 @@ begin
   TXSpeed:='0b/s';
   Count:=0;
   CountInterface:=1;
-//  CountKillallpppd:=0;
   FlagMtu:=false;
   FlagLengthSyslog:=false;
   Form1.Visible:=false;
@@ -858,12 +837,6 @@ begin
   If Screen.Height>550 then AFont:=8;
   If Screen.Height>1000 then AFont:=10;
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
-   {Shell('ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39)+' > /tmp/tmpnostart1');
-   Shell('printf "none" >> /tmp/tmpnostart1');
-   Form1.tmpnostart.Clear;
-   If FileExists('/tmp/tmpnostart1') then tmpnostart.Lines.LoadFromFile('/tmp/tmpnostart1');
-   Shell('rm -f /tmp/tmpnostart1');
-   If not (LeftStr(tmpnostart.Lines[0],6)='ponoff') then}
    nostart:=false;
    popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
    If eof(f) then nostart:=true;
@@ -876,7 +849,6 @@ begin
                       Form1.Hide;
                       TrayIcon1.Hide;
                       Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
-                      //Shell('rm -f /tmp/tmpnostart1');
                       halt;
                    end;
   If not FileExists(TmpDir) then Shell ('mkdir '+TmpDir);
@@ -898,10 +870,8 @@ begin
     Form1.Hide;
     TrayIcon1.Hide;
     Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
-    //Shell('rm -f '+TmpDir+'tmpnostart1');
     halt;
    end;
-  //Shell('rm -f '+TmpDir+'tmpnostart1');
   If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
   If Memo_Config.Lines[43]='ubuntu' then ubuntu:=true;
   If Memo_Config.Lines[43]='debian' then debian:=true;
@@ -1016,7 +986,6 @@ If suse then
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
-                   //Shell (ServiceCommand+NetServiceStr+' restart');
                    AProcess := TProcess.Create(nil);
                    AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                    AProcess.Execute;
@@ -1082,10 +1051,8 @@ begin
  If (LeftStr(tmp_pppd.Lines[i],4)='pppd') then
                                         begin
                                              Shell('killall pppd');
-                                             //CountKillallpppd:=CountKillallpppd+1;
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
                                                                                   begin
-                                                                                       //Shell (ServiceCommand+NetServiceStr+' restart');
                                                                                        AProcess := TProcess.Create(nil);
                                                                                        AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                                                                                        AProcess.Execute;
@@ -1143,14 +1110,6 @@ begin
               Shell ('route del default');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
   Shell('rm -f '+TmpDir+'xl2tpd.conf');
-//  If CountKillallpppd=2 then If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then
-  //                                                                                                      Shell (ServiceCommand+NetServiceStr+' restart');
-                                                                                                        //begin
-                                                                                                          //   AProcess := TProcess.Create(nil);
-                                                                                                            // AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
-                                                                                                      //       AProcess.Execute;
-                                                                                                        //     AProcess.Free;
-                                                                                                     //   end;
   If FileExists(LibDir+'resolv.conf.before') then If FileExists('/etc/resolv.conf') then
          If not CompareFiles (LibDir+'resolv.conf.before', '/etc/resolv.conf') then
                          Shell ('cp -f '+LibDir+'resolv.conf.before /etc/resolv.conf');
@@ -1233,8 +1192,6 @@ begin
   Shell ('rm -f '+TmpDir+'ObnullTX');
   Shell ('rm -f '+TmpDir+'mtu.checked');
   Shell ('rm -f '+TmpDir+'status3.ppp');
-  //if CountInterface=1 then
-    //                    Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
   halt;
 end;
 
