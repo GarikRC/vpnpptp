@@ -1,0 +1,522 @@
+==Что нам нужно для работы==
+Сначала рассмотрим настройку VPN PPTP.
+
+Особой разницы в конфигурировании клиентского vpn соединения для различных дистрибутивов Linux нет. Для поднятия и настройки VPN-соединения нам потребуются всего две программы - '''ppp''' (http://samba.org/ppp/) и '''pptp''' (http://pptpclient.sourceforge.net/). Программа '''ppp''' с вероятностью 99% уже стоит в вашем дистрибутиве, пакет, содержащий '''pptp''', в разных дистрибутивах называется по-разному, в основном '''pptp-linux''' или '''pptp'''. После установки в системе должны присутствовать два исполняемых файла - '''/usr/sbin/pppd''' и '''/usr/sbin/pptp'''. Вкратце - '''pptp''' создает туннель к VPN-серверу, через который '''ppp''' соединяется и работает как обычное модемное соединение.
+
+Внимание! Файрвол мандривы блокирует все новые сетевые интерфейсы, поэтому в настройках файрвола нужно поставить галочку разрешения, и всё заработает.
+Настройка VPN осуществляется с правами администратора.
+
+Естественно, для поднятия соединения нам необходима рабочая локальная сеть и данные провайдера об IP (или имени) VPN-сервера, VPN-логине и VPN-пароле. Также пригодится информация об используемом протоколе аутентификации и о наличии шифрования траффика (если ее нет - ничего страшного). Подавляющее большинство провайдеров используют протокол аутентификации MS-CHAP v2, а о наличии шифрования нам подскажут логи ошибок '''pppd'''. Подсказка: если у вас стоит MS Windows и там поднято VPN-соединение, его параметры можно посмотреть на вкладке соединения "Сведения". Нас интересуют параметры "Проверка подлинности" и "Шифрование".
+
+Все манипуляции мы будем проводить на имеющейся под рукой домашней сети Корбина телеком. Итак, провайдер снабдил нас следующей информацией: 
+
+ Локальная сеть:
+                         IP: 10.167.17.38 
+                         Маска подсети: 255.255.0.0. 
+                         Шлюз (gateway): 10.167.0.17 
+                         DNS1: 195.14.50.1 
+                         DNS2: 195.14.50.21 
+
+Параметры локальной сети могут получаться нами автоматически от провайдера.
+
+ VPN параметры:
+                         Имя VPN-сервера: vpn.corbina.net 
+                         Логин: VPN_LOGIN 
+                         Пароль: VPN_PASSWORD
+
+==Проверка работоспособности локальной сети==
+Перед началом настройки самого VPN соединения необходимо до конца разобраться с настройками локальной сети: или вписать их вручную, или получить автоматически (не забудьте в последнем случае установить DHCP-клиента, если он еще не установлен, например dhclient, который входит в пакет dhcp-client).
+Если сеть уже настроена, мы должны увидеть примерно следующее:
+ [root@myhost sergo]# ifconfig eth0
+ eth0      Link encap:Ethernet  HWaddr 00:13:D4:68:B2:3E  
+           inet addr:10.167.17.38  Bcast:10.167.255.255  Mask:255.255.0.0
+           inet6 addr: fe80::213:d4ff:fe68:b23e/64 Scope:Link
+           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+           RX packets:2884 errors:0 dropped:0 overruns:0 frame:0
+           TX packets:25 errors:0 dropped:0 overruns:0 carrier:0
+           collisions:0 txqueuelen:1000 
+           RX bytes:243742 (238.0 Kb)  TX bytes:2242 (2.1 Kb)
+           Interrupt:19 
+или
+ [root@myhost sergo]# ip a sh dev eth0
+ 3: eth0: <BROADCAST,MULTICAST,UP,10000> mtu 1500 qdisc pfifo_fast qlen 1000
+     link/ether 00:13:D4:68:B2:3E brd ff:ff:ff:ff:ff:ff
+     inet 10.167.17.38/16 brd 10.167.255.255 scope global eth0
+
+ [root@myhost sergo]# route -n
+ Kernel IP routing table
+ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+ 10.167.0.0      0.0.0.0         255.255.0.0     U     0      0        0 eth0
+ 0.0.0.0         10.167.0.17     0.0.0.0         UG    0      0        0 eth0
+или
+ [root@myhost sergo]# ip r
+ 10.167.0.0/16 dev eth0  proto kernel  scope link  src 10.167.17.38
+ default via 10.167.0.17 dev eth0 scope link
+
+Если ничего подобного не выводится, поднимаем сеть и указываем в качестве шлюза по умолчанию наш шлюз локальной сети, выданный провайдером:
+ ifconfig eth0 10.167.17.38 netmask 255.255.0.0 up
+ route add default gw 10.167.0.17
+или
+ ip a a 10.167.17.18/16 dev eth0
+ ip l s up dev eth0
+ ip r a default via 10.167.0.17
+Если IP DNS-серверов провайдер присылает автоматически, то получаем их из файла '''/etc/resolv.conf''', но предварительно отключите все другие интерфейсы, кроме настраиваемого, который включите. Если же IP DNS-серверов провайдер выдал и автоматически не присылает, то их необходимо вписать в файл '''/etc/resolv.conf''':
+ [root@myhost sergo]# cat /etc/resolv.conf
+ nameserver 195.14.50.1
+ nameserver 195.14.50.21
+Если сеть работоспособна, должны пинговаться шлюз и VPN-сервер, а также DNS-сервера. Проверяем:
+ [root@myhost sergo]# ping -c5 10.167.0.17
+ PING 10.167.0.17 (10.167.0.17) 56(84) bytes of data.
+ 64 bytes from 10.167.0.17: icmp_seq=1 ttl=255 time=3.95 ms
+ 64 bytes from 10.167.0.17: icmp_seq=2 ttl=255 time=0.526 ms
+ 64 bytes from 10.167.0.17: icmp_seq=3 ttl=255 time=0.528 ms
+ 64 bytes from 10.167.0.17: icmp_seq=4 ttl=255 time=3.31 ms
+ 64 bytes from 10.167.0.17: icmp_seq=5 ttl=255 time=0.534 ms
+
+ [root@myhost sergo]# ping -c5 vpn.someserver.net
+ PING vpn.corbina.net (195.14.38.8) 56(84) bytes of data.
+ 64 bytes from vpn8-l0.msk.corbina.net (195.14.38.8): icmp_seq=1 ttl=248  time=1.17 ms
+ 64 bytes from vpn8-l0.msk.corbina.net (195.14.38.8): icmp_seq=2 ttl=248 time=1.16 ms
+ 64 bytes from vpn8-l0.msk.corbina.net (195.14.38.8): icmp_seq=3 ttl=248 time=1.19 ms
+ 64 bytes from vpn8-l0.msk.corbina.net (195.14.38.8): icmp_seq=4 ttl=248 time=1.17 ms
+ 64 bytes from vpn8-l0.msk.corbina.net (195.14.38.8): icmp_seq=5 ttl=248 time=1.00 ms
+
+==Предварительная настройка роутинга==
+Настоятельно рекомендуем отложить ненадолго это руководство и прочитать Linux Network Administrators Guide Russian (http://www.linux.yaroslavl.ru/docs/book/lnag/lnag.html). Главы 2 и 5 снимут большинство ваших вопросов относительно роутинга. 
+
+Примечание: Предварительная настройка роутинга необходима в том случае, когда VPN и/или DNS-сервера находятся в других подсетях. Если это не так (да вы счастливчик!) - смело пропускайте этот шаг.  
+
+Из таблицы маршрутизации (см. выше) мы видим, что в настоящий момент доступ ко всем хостам сети (включая DNS и VPN сервера) осуществляется по маршруту по умолчанию (default route), то есть через интерфейс локальной сети. Это означает, что любой хост, расположенный за пределами нашего сегмента сети, машина будет искать, обращаясь к шлюзу, указанному в этом маршруте. Когда мы поднимаем VPN-соединение, VPN-сервер дает нам новый шлюз, через который доступны интернет-хосты. Мы должны удалить из маршрута старый шлюз, используемый по-умолчанию, и заменить его на новый. Проблема в том, что после удаления старого шлюза машина скорее всего перестанет видеть VPN-сервер и сама разорвет VPN-соединение. Чтобы этого не произошло, наша машина всегда должна знать, где искать VPN и DNS сервера вне зависимости от наличия или отсутствия маршрута по умолчанию. Для этого мы пропишем статические маршруты на каждый VPN и DNS сервер (DNS-сервера для данной категории настройки VPN часто доступны и через локальную сеть, и через внешнюю, поэтому часто необязательно прописывать маршруты на DNS-сервера). Также статические маршруты на VPN сервера избавят нас от возможной проблемы, когда удаленный IP адрес, выдаваемый нам VPN сервером, равен IP адресу самого сервера. Подробнее об этом здесь (http://pptpclient.sourceforge.net/howto-diagnosis.phtml#ip_loop пункт 4с.). Тем не менее часто если маршрутизировать локальные DNS-сервера в шлюз локальной сети, то открытие web-страниц происходит быстрее.  
+
+Для начала узнаем IP нашего VPN-сервера с помощью команды '''ping''':
+ [root@myhost sergo]# ping -c5 vpn.corbina.net
+ PING vpn.corbina.net (195.14.38.8) 56(84) bytes of data.
+Как видно из команды ping, IP VPN сервера 195.14.38.8
+
+Примечание: Чтобы не копаться в частностях, мы допускаем в данном примере, что '''vpn.corbina.net''' имеет только один IP. Ситуацию, когда хост '''vpn.corbina.net''' имеет не один а несколько IP адресов мы рассмотрим в шаге "Автоматизация".
+
+Добавляем в нашу таблицу роутинга статические маршруты на VPN и DNS сервера:
+ route add -host 195.14.50.1 gw 10.167.0.17
+ route add -host 195.14.50.21 gw 10.167.0.17
+ route add -host 195.14.38.8  gw 10.167.0.17
+или
+ ip r a 195.14.50.1 via 10.167.0.17
+ ip r a 195.14.50.21 via 10.167.0.17
+ ip r a 195.14.38.8 via 10.167.0.17
+Удаляем маршрут по умолчанию:
+ route del default
+или
+ ip r d default
+Таблица маршрутизации будет выглядеть так:
+ [root@myhost sergo]# route -n
+ Kernel IP routing table
+ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+ 195.14.50.21    10.167.0.17     255.255.255.255 UGH   0      0        0 eth0
+ 195.14.50.1     10.167.0.17     255.255.255.255 UGH   0      0        0 eth0
+ 195.14.38.8     10.167.0.17     255.255.255.255 UGH   0      0        0 eth0
+ 10.167.0.0      0.0.0.0         255.255.0.0     U     0      0        0 eth0
+или
+ [root@myhost sergo]# ip r
+ 195.14.50.21 via 10.167.0.17 dev eth0
+ 195.14.50.1 via 10.167.0.17 dev eth0
+ 195.14.38.8 via 10.167.0.17 dev eth0
+ 10.167.0.0/16 dev eth0 proto kernel skope link src 10.167.17.38
+Проверка: мы должны успешно пинговать DNS и VPN сервера:
+ [root@myhost sergo]# ping -c5 195.14.50.1
+ PING 195.14.50.1 (195.14.50.1) 56(84) bytes of data.
+ 64 bytes from 195.14.50.1: icmp_seq=1 ttl=56 time=4.45 ms
+ 64 bytes from 195.14.50.1: icmp_seq=2 ttl=56 time=1.30 ms
+ 64 bytes from 195.14.50.1: icmp_seq=3 ttl=56 time=1.22 ms
+
+ [root@myhost sergo]# ping -c5 195.14.50.21
+ PING 195.14.50.21 (195.14.50.21) 56(84) bytes of data.
+ 64 bytes from 195.14.50.21: icmp_seq=1 ttl=56 time=0.982 ms
+ 64 bytes from 195.14.50.21: icmp_seq=2 ttl=56 time=0.954 ms
+ 64 bytes from 195.14.50.21: icmp_seq=3 ttl=56 time=1.02 ms
+
+ [root@myhost sergo]# ping -c5 195.14.38.8
+ PING 195.14.38.8 (195.14.38.8) 56(84) bytes of data.
+ 64 bytes from 195.14.38.8: icmp_seq=1 ttl=248 time=1.34 ms
+ 64 bytes from 195.14.38.8: icmp_seq=2 ttl=248 time=2.60 ms
+ 64 bytes from 195.14.38.8: icmp_seq=3 ttl=248 time=1.09 ms
+
+==Настройка параметров VPN-соединения. Тестовый запуск==
+Все параметры нашего VPN соединения мы запишем в файле '''/etc/ppp/peers/corbina'''. Создадим его и наполним следующим содержанием: 
+ pty "pptp 195.14.38.8 --nolaunchpppd --nobuffer" 
+ remotename pptp
+ user VPN_LOGIN 
+ password "VPN_PASSWORD"
+ unit 0
+ lock
+ usepeerdns 
+ nodeflate 
+ nobsdcomp 
+ noauth
+ nopcomp
+ noaccomp
+ logfile /var/log/syslog
+Параметры user и password в комментариях не нуждаются, значение остальных можно посмотреть в файле справки '''man pppd''' (http://www.opennet.ru/man.shtml?topic=pppd&category=8). Обратим внимание на то, что пароль забран в кавычки.
+При анализе проблем поможет указание параметра debug и чтение логов.
+
+Убеждаемся, что в файле '''/etc/ppp/options''' нет незакомментированных параметров, которыми бы система могла затереть наши настройки. Если есть - комментируем. Очищать содержимое файлов '''/etc/ppp/chap-secrets''' , '''/etc/ppp/pap-secrets''' необязательно, так как пароль у нас уже вписан в файл '''/etc/ppp/peers/corbina''', поэтому файлы '''/etc/ppp/chap-secrets''', '''/etc/ppp/pap-secrets''' сами использоваться не будут.
+
+Поднимаем VPN соединение:
+ pppd call corbina debug nodetach
+Появятся логи соединения. Если все прошло успешно, они будут выглядеть примерно так:
+ [root@myhost sergo]# pppd call corbina debug nodetach
+ using channel 2
+ Using interface ppp0
+ Connect: ppp0 <--> /dev/pts/0
+ sent [LCP ConfReq id=0x1 <asyncmap 0x0> <magic 0x33368137> <pcomp> <accomp>]
+ rcvd [LCP ConfReq id=0x1 <auth chap MD5> <magic 0x36da4966>]
+ sent [LCP ConfAck id=0x1 <auth chap MD5> <magic 0x36da4966>]
+ sent [LCP ConfReq id=0x1 <asyncmap 0x0> <magic 0x33368137> <pcomp> <accomp>]
+ rcvd [LCP ConfAck id=0x1 <asyncmap 0x0> <magic 0x33368137> <pcomp> <accomp>]
+ sent [LCP EchoReq id=0x0 magic=0x33368137]
+ rcvd [CHAP Challenge id=0x1 <f872f6df5542429b46d6cf7e89a3386c>, name = "bras8"]
+ sent [CHAP Response id=0x1 <ebb4965e871c49a07565b148dc2dbf29>, name = "unicorn2"]
+ rcvd [LCP EchoRep id=0x0 magic=0x36da4966]
+ rcvd [CHAP Success id=0x1 ""]
+ CHAP authentication succeeded
+ CHAP authentication succeeded
+ sent [IPCP ConfReq id=0x1 <compress VJ 0f 01> <addr 0.0.0.0>]
+ rcvd [IPCP ConfReq id=0x1 <addr 195.14.38.8>]
+ sent [IPCP ConfAck id=0x1 <addr 195.14.38.8>]
+ rcvd [IPCP ConfRej id=0x1 <compress VJ 0f 01>]
+ sent [IPCP ConfReq id=0x2 <addr 0.0.0.0>]
+ rcvd [IPCP ConfNak id=0x2 <addr 89.178.77.182>]
+ sent [IPCP ConfReq id=0x3 <addr 89.178.77.182>]
+ rcvd [IPCP ConfAck id=0x3 <addr 89.178.77.182>]
+ Cannot determine ethernet address for proxy ARP
+ local  IP address 89.178.77.182
+ remote IP address 195.14.38.8
+ Script /etc/ppp/ip-up started (pid 4072)
+ Script /etc/ppp/ip-up finished (pid 4072), status = 0x0
+На соседнем терминале убедимся, что VPN-соединение установлено. Должен появиться сетевой интерфейс '''ppp0''' (если указать unit не 0, а к примеру, 999, то будет '''ppp999'''):
+ [root@myhost sergo]# ifconfig
+ eth0      Link encap:Ethernet  HWaddr 00:13:D4:68:B2:3E  
+           inet addr:10.167.17.38  Bcast:10.167.255.255  Mask:255.255.0.0
+           inet6 addr: fe80::213:d4ff:fe68:b23e/64 Scope:Link
+           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+           RX packets:24990 errors:0 dropped:0 overruns:0 frame:0
+           TX packets:97 errors:0 dropped:0 overruns:0 carrier:0
+           collisions:0 txqueuelen:1000 
+           RX bytes:2327027 (2.2 Mb)  TX bytes:8516 (8.3 Kb)
+           Interrupt:19 
+ 
+ lo        Link encap:Local Loopback  
+           inet addr:127.0.0.1  Mask:255.0.0.0
+           inet6 addr: ::1/128 Scope:Host
+           UP LOOPBACK RUNNING  MTU:16436  Metric:1
+           RX packets:13496 errors:0 dropped:0 overruns:0 frame:0
+           TX packets:13496 errors:0 dropped:0 overruns:0 carrier:0
+           collisions:0 txqueuelen:0 
+           RX bytes:1387313 (1.3 Mb)  TX bytes:1387313 (1.3 Mb)
+ 
+ ppp0      Link encap:Point-to-Point Protocol  
+           inet addr:89.178.77.182  P-t-P:195.14.38.8  Mask:255.255.255.255
+           UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1500  Metric:1
+           RX packets:4 errors:0 dropped:0 overruns:0 frame:0
+           TX packets:4 errors:0 dropped:0 overruns:0 carrier:0
+           collisions:0 txqueuelen:3 
+           RX bytes:40 (40.0 b)  TX bytes:46 (46.0 b)
+
+Если VPN сервер использует шифрование, то соединение закончится ошибкой. Часто используется 128-битное шифрование. В этом случае добавим в файл /etc/ppp/peers/corbina строчку:
+
+ mppe required,stateless,no40,no56
+
+(то есть отрицая все ненужные из списка: no40,no56,no128 и неотрицая нужную). Запускаем снова. Все должно заработать.
+
+Возможна иная запись того же самого для 128-битного шифрования:
+
+ require-mppe
+ nomppe-stateful
+ nomppe-40
+
+(то есть mppe вначале не пишется, вместо required используется require-mppe, вместо stateless используется nomppe-stateful, вместо no40 используется nomppe-40, вместо no56 ничего не используется, вместо no128 используется nomppe-128, и все это пишется с новой строки).
+
+Обратите внимание на параметр '''MTU''' интерфейса '''ppp0'''. По умолчанию он равен 1500. Если ваш провайдер использует другую величину '''MTU''' (допустим, 1460) - в тот же файл конфигурации '''etc/ppp/peers/corbina''' добавляем строчку
+ mtu 1460
+
+Можно mtu не вписывать, тогда без указания опции default-mru (мы ее и не указываем) провайдер пришлет mtu сам, а система примет его.
+
+Если некоторые сайты не открываются и/или тормозит интернет, то уменьшите значение mtu.
+Также замечено, что проблема с соединением может быть из-за неправильной аутентификации, потому могут помочь такие настройки в файле etc/ppp/peers/corbina (показан случай надобности в mschap v2, который чаще всего используется для MS VPN):
+
+ refuse-eap
+ refuse-chap
+ refuse-mschap
+ refuse-pap
+
+(то есть отрицая все ненужные аутентификации и неотрицая нужную).
+==Окончательная настройка роутинга==
+Итак, мы подняли VPN соединение, но в интернет выйти не можем - машина пока не знает где искать интернет-хосты. Для этого мы должны добавить маршрут по умолчанию через интерфейс '''ppp0''' в нашу таблицу маршрутизации (помните - старый маршрут по умолчанию мы удалили). В качестве шлюза по умолчанию теперь выступает remote IP address, который нам любезно предоставил VPN сервер - 195.14.38.8 (да-да, в нашем случае он совпадает с IP VPN сервера - но это не всегда так; это лишь шлюз, предоставленный нам VPN сервером и через него доступны интернет хосты). Этот '''remote IP address''' присутствует как в логах '''pppd''' (remote IP address 195.14.38.8), так и в параметрах интерфейса '''ppp0''', которые выводятся на экран командой ifconfig (P-t-P:195.14.38.8) - этот адрес мы увидим как шлюз, когда сеть уже будет поднята на интерфейсе ppp0. Вводим:
+ route add default gw 195.14.38.8
+или
+ route add default dev ppp0
+что в данном контексте - одно и то же.
+
+Теперь попробуем пропинговать какой-нибудь интернет-хост:
+ [root@myhost sergo]# ping -c5 www.ya.ru
+ PING ya.ru (213.180.204.8) 56(84) bytes of data.
+ 64 bytes from ya.ru (213.180.204.8): icmp_seq=1 ttl=61 time=2.11 ms
+ 64 bytes from ya.ru (213.180.204.8): icmp_seq=2 ttl=61 time=2.23 ms
+ 64 bytes from ya.ru (213.180.204.8): icmp_seq=3 ttl=61 time=2.39 ms    
+Работает! 
+
+Для того чтобы одновременно работали и внешние ресурсы (интернет), и локальные ресурсы необходимо в таблицу маршрутизации добавить маршруты на локальные ресурсы либо вручную, либо автоматически. Многие провайдеры (но не все) присылают эти дополнительные маршруты по DHCP, а также присылают ряд полезных служебных маршрутов (http://wiki.mandriva.com/ru/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5_%D0%BC%D0%B0%D1%80%D1%88%D1%80%D1%83%D1%82%D0%BE%D0%B2_%D1%87%D0%B5%D1%80%D0%B5%D0%B7_DHCP).
+==Автоматизация==
+Теперь, когда соединение оттестировано, можно подумать и об автоматизации. Когда '''pppd''' устанавливает соединение, он автоматически выполняет скрипт '''/etc/ppp/ip-up.d/ip-up''', когда соединение рвется - выполняется скрипт '''/etc/ppp/ip-down.d/ip-down'''. Значит, в эти файлы и надо забить весь роутинг, который в предыдущих пунктах мы вводили руками. Создаем директории '''/etc/ppp/ip-up.d/''', '''/etc/ppp/ip-down.d/''', а в них скрипты '''ip-up''', '''ip-down''' соответственно.
+
+Мы не случайно сначала рассмотрели идеальный вариант, когда VPN сервер провайдера представлен в единственном числе и имеет один IP. В этом случае именем хоста ('''vpn.corbina.net''') можно пренебречь и использовать в настройках только его IP, что мы и сделали. Однако если провайдер большой, под именем VPN сервера скрывается несколько серверов с разными IP, что позволяет провайдеру динамически регулировать нагрузку на них (примечание: вы можете выбрать один из этих IP и работать только с ним, что мы и делали ранее). Для того, чтобы выяснить, какие IP имеет хост '''vpn.corbina.net''', воспользуемся командой '''host''' из пакета '''bind-utils''' (примечание: при повторных запусках команды вывод команды часто может быть иным по сравнению с предыдущими выводами команды, и видно, что при однократном запуске команды часто предоставляется не полный список IP адресов VPN сервера, а только список актуальных на данный момент):
+ [root@myhost sergo]# host vpn.corbina.net
+ vpn.corbina.net has address 195.14.38.19
+ vpn.corbina.net has address 195.14.38.20
+ vpn.corbina.net has address 195.14.38.1
+ vpn.corbina.net has address 195.14.38.2
+ vpn.corbina.net has address 195.14.38.3
+ vpn.corbina.net has address 195.14.38.4
+ vpn.corbina.net has address 195.14.38.5
+ vpn.corbina.net has address 195.14.38.6
+ vpn.corbina.net has address 195.14.38.7
+ vpn.corbina.net has address 195.14.38.8
+ vpn.corbina.net has address 195.14.38.9
+ vpn.corbina.net has address 195.14.38.10
+ vpn.corbina.net has address 195.14.38.11
+ vpn.corbina.net has address 195.14.38.12
+ vpn.corbina.net has address 195.14.38.13
+ vpn.corbina.net has address 195.14.38.14
+ vpn.corbina.net has address 195.14.38.15
+ vpn.corbina.net has address 195.14.38.16
+ vpn.corbina.net has address 195.14.38.17
+ vpn.corbina.net has address 195.14.38.18
+Роутинг на всю эту прорву серверов нам нужно один раз внести в файл '''/etc/ppp/ip-up.d/ip-up''' и привести файл к следующему виду:
+ #!/bin/sh
+ #
+ # This script is run by pppd when there's a successful ppp connection.
+ #
+ route add -host 195.14.38.1 gw 10.167.0.17
+ route add -host 195.14.38.2 gw 10.167.0.17
+ route add -host 195.14.38.3 gw 10.167.0.17
+ ....
+ route add -host 195.14.38.19 gw 10.167.0.17
+ route add -host 195.14.38.20 gw 10.167.0.17
+ route del default
+ route add default dev ppp0
+Хотел бы добавить, что часто, но не всегда, в скрипте '''/etc/ppp/ip-up.d/ip-up''' не обязательно забивать весь этот список, можно обойтись лишь строкой
+
+ route add -host $IPREMOTE gw 10.167.0.17 
+
+т.к. $IPREMOTE - переменная, содержащая remote IP address, который часто, но не всегда, совпадает с адресом vpn сервера. Такой подход маршрутизирует remote IP address в шлюз локальной сети, а если remote IP address совпадает с адресом vpn сервера, то это будет наилучшая маршрутизация vpn сервера.
+
+А в скрипт '''/etc/ppp/ip-down.d/ip-down''' мы запишем строчки, которые вернут нам шлюз по умолчанию после обрыва соединения:
+ #!/bin/sh
+ #
+ # This script is run by pppd after the connection has ended.
+ #
+ route del default
+ route add default gw 10.167.0.17
+Надо вписать в файл '''/etc/ppp/ip-up.d/ip-up''' строчку '''route add default dev ppp0''' (или лучше строчку '''route add default dev $IFNAME''', так как $IFNAME - переменная, содержащая интерфейс), иначе нет соединения.
+
+Строку в скрипте '''/etc/ppp/ip-up.d/ip-up'''
+
+ route del default
+
+требуется повторить столько раз сколько сетевых интерфейсов присутствует в системе, но не менее одного раза.
+
+Дадим скрипту '''/etc/ppp/ip-up.d/ip-up''' и скрипту '''/etc/ppp/ip-down.d/ip-down''' права на выполнение.
+
+Не рекомендуется, но можно альтернативно записать роутинг в скриптах '''/etc/ppp/ip-up''' и '''/etc/ppp/ip-down'''.
+
+В результате наш файл настроек '''/etc/ppp/peers/corbina''' будет выглядеть следующим образом:
+ pty "pptp vpn.corbina.net --nolaunchpppd --nobuffer" 
+ remotename pptp
+ user VPN_LOGIN 
+ password "VPN_PASSWORD"
+ unit 0
+ lock
+ usepeerdns 
+ nodeflate 
+ nobsdcomp 
+ noauth
+ nopcomp
+ noaccomp
+ logfile /var/log/syslog
+Мы заменили IP VPN-сервера на его имя.
+Запускать и прерывать соединение можно командами:
+ pppd call corbina
+ killall pppd (или pptp-command stop)
+Запускать и прерывать соединение можно также командами:
+ pon corbina
+ poff corbina
+но предварительно выполнив команды:
+ cp /usr/share/doc/ppp/scripts/pon /usr/sbin/ && chmod u+x /usr/sbin/pon
+ cp /usr/share/doc/ppp/scripts/poff /usr/sbin/ && chmod u+x /usr/sbin/poff
+Если есть необходимость запускать соединение от простого пользователя, установите программу '''sudo''' и в файл '''/etc/sudoers''' впишите:
+ sergo   myhost = NOPASSWD: /usr/bin/pon, /usr/bin/poff
+Соответственно, замените '''sergo''' и '''myhost''' на имя вашего пользователя и его машины. Он сможет запускать и прерывать соединение командами:
+ sudo pon corbina
+ sudo poff corbina
+==Использование DNS и их маршрутизация==
+'''До поднятия VPN:'''
+
+Нам провайдер предоставил DNS1, DNS2 или через DHCP-сервер автоматически, или дал их нам, а мы сами их вписали в файл /etc/resolv.conf.
+
+DNS1, DNS2 - это такие DNS, которые доступны через локальную сеть провайдера, а потому назовем их локальными DNS провайдера.
+
+'''После поднятия VPN:'''
+
+Нам провайдер предоставил DNS3, DNS4 или ничего не предоставил.
+
+DNS3, DNS4 - это такие DNS, которые по умолчанию не доступны через локальную сеть провайдера, а потому назовем их внешними DNS.
+
+
+Правило1: DNS3, DNS4 - они необязательно фактически принадлежат провайдеру, они могут быть использованы любые.
+
+Правило2: DNS3, DNS4 не обязаны ничего знать об имени vpn-сервера (поэтому часто не могут быть использованы для поднятия vpn), но могут знать.
+
+Правило3: Если при поднятом VPN использовать DNS1, DNS2, то они работать не обязаны, но могут, так как они локальны и необязательно доступны через внешку или они ничего не знают о внешних хостах.
+
+Правило4: Если при поднятом VPN использовать DNS1, DNS2, то если маршрутизировать их в шлюз локальной сети, то они могут заработать, но не обязаны, так как они могут не знать о внешних хостах.
+
+Правило5: DNS3, DNS4 не обязаны быть доступны через локальную сеть, но могут.
+
+Правило6: Если DNS1, DNS2 доступны и через локальную сеть, и через внешнюю, и при поднятом VPN на них работает интернет, значит, они знают имена и локальных ресурсов и внешних, то если маршрутизировать их в шлюз локальной сети, то скорость открытия web-страниц может ускориться, однако даже в этом случае скорость открытия web-страниц может быть недостаточно быстрой.
+
+Правило7: DNS1, DNS2 могут знать лишь имена vpn-сервера, локальных сайтов провайдера, другие служебные адреса провайдера, но при этом ничего не знать об именах внешних хостов.
+
+и т.д.
+
+В столь сложном многообразии вариантов и правил разобраться порой сложно, но есть универсальный метод, который будет работать всегда.
+
+Создадим файл '''/root/resolv.conf.after''' (использовать можно любую директорию) и впишем в него те DNS, которые мы бы хотели видеть при поднятом VPN в виде:
+ nameserver 213.234.192.7
+ nameserver 85.21.192.5
+
+В скрипт '''/etc/ppp/ip-up.d/ip-up''' добавим строчку:
+ cp -f /root/resolv.conf.after /etc/resolv.conf
+
+При опускании соединения мы должны вернуться к DNS до поднятия VPN, поэтому создадим файл '''/root/resolv.conf.before''' как копию текущего файла '''/etc/resolv.conf''' командой:
+ cp -f /etc/resolv.conf /root/resolv.conf.before
+
+В скрипт '''/etc/ppp/ip-down.d/ip-down''' добавим строчку:
+ cp -f /root/resolv.conf.before /etc/resolv.conf
+
+Теперь при поднятом VPN будут использоваться DNS, заданные нами в файле '''/root/resolv.conf.after''', а при опускании соединения произойдет возврат к DNS до поднятия VPN.
+
+Если мы хотим использовать DNS, полученные от VPN-сервера, и указали опцию usepeerdns, то вновь воспользуемся файлом '''/root/resolv.conf.after''', в который по умолчанию скопируем DNS, доступные сейчас до поднятия VPN, на тот случай, если VPN-сервер не предоставит своих DNS:
+ cp -f /etc/resolv.conf /root/resolv.conf.after
+
+Теперь допишем в скрипт '''/etc/ppp/ip-up.d/ip-up''' строки:
+ if [ $USEPEERDNS = "1" ]
+ then
+      [ -n "$DNS1" ] && rm -f /root/resolv.conf.after
+      [ -n "$DNS2" ] && rm -f /root/resolv.conf.after
+      [ -n "$DNS1" ] && echo "nameserver $DNS1" >> /root/resolv.conf.after
+      [ -n "$DNS2" ] && echo "nameserver $DNS2" >> /root/resolv.conf.after
+ fi
+ cp -f /root/resolv.conf.after /etc/resolv.conf
+
+где $DNS1, $DNS2 - это DNS3, DNS4 в терминологии, изложенной выше.
+
+Теперь при поднятом VPN будут использоваться те DNS, которые мы хотим использовать (или вписанные Вами, или полученные от провайдера в зависимости от опции '''usepeerdns''' и реакции провайдера на нее), а при опускании VPN всё будет возвращаться как было. Не забудьте если Вы используете DNS1, DNS2 в этом случае при поднятом VPN, то попробовать маршрутизировать их в шлюз локальной сети.
+
+==Реконнект интернета==
+Для автоматического поднятия интернета необходимо в файл '''/etc/ppp/peers/corbina''' добавить строчки:
+ persist
+ maxfail 0
+ holdoff 20
+ lcp-echo-interval 20
+ lcp-echo-failure 4
+==Автозагрузка интернета при старте системы==
+Для автозагрузки интернета при старте системы добавьте в конец файла '''/etc/rc.d/rc.local''' (или если его не существует, то в конец файла '''/etc/rc.local''') строчку:
+ pppd call corbina
+
+==Использование терминальной программы pptp-command для настройки VPN PPTP==
+http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
+
+==Настройка VPN L2TP без IPSec==
+Всё вышеизложенное справедливо для настройки VPN L2TP - это и не удивительно, ведь это один из типов VPN, впитавший в себя всё лучшее от VPN PPTP, у них много общего. Рассмотрим лишь отличия в настройке. Сначала настроим файлы конфигурации VPN PPTP как то написано выше. Плюсом ко всему нам потребуется еще установить пакет '''xl2tpd'''.
+
+Описание опций VPN L2TP в интернете:
+  http://manpages.ylsoftware.com/dokuwiki/man/xl2tpd.conf_5
+  http://manpages.ylsoftware.com/dokuwiki/man/xl2tpd_8
+Обратите внимание: в официальной документации ошибочно указано max redial, а на самом деле используется max redials.
+
+Приступим к настройке VPN L2TP без IPSec.
+
+В файле '''/etc/xl2tpd/xl2tpd.conf''' впишем следующее:
+ [global]
+ access control = yes
+
+ [lac corbina]
+ name = VPN_LOGIN
+ lns = tp.corbina.net
+ pppoptfile = /etc/ppp/peers/corbina
+ autodial = yes
+Также в файле '''/etc/xl2tpd/xl2tpd.conf''' можно добавить:
+ ppp debug = yes
+для вывода отладочной информации в лог /var/log/syslog.
+
+Также в файле '''/etc/xl2tpd/xl2tpd.conf''' можно добавить:
+ redial = yes
+ redial timeout = 30
+ max redials = 1000
+для реконнекта.
+
+Если max redials не указать или указать равным 0, то это будет означать бесконечный коннект.
+
+Для того, чтобы реконнект действительно работал - воспользуйтесь пакетом xl2tpd из репозитория Edumandriva.
+
+Комментируем в файле '''/etc/ppp/peers/corbina''' строчку (или удаляем ее):
+ #pty "pptp 195.14.38.8 --nolaunchpppd --nobuffer" 
+
+Не забудьте учесть, что для VPN L2TP значение mtu меньше как минимум на 20 байт, чем для VPN PPTP - впишите mtu в файл '''/etc/ppp/peers/corbina'''.
+
+Шифрование mppe не используется, используется IPSec, убираем mppe.
+
+Запускается соединение командой:
+ /etc/init.d/xl2tpd restart
+Для автозагрузки интернета при старте системы впишите в конец файла '''/etc/rc.d/rc.local''' (или если его не существует, то в конец файла '''/etc/rc.local''') строчку:
+ /etc/init.d/xl2tpd restart
+
+Если не указывать опцию autodial = yes, то запускайте xl2tpd как сервис, а поднимайте и опускайте соединение командами:
+ echo "c corbina" > /var/run/xl2tpd/l2tp-control #соединение
+ echo "d corbina" > /var/run/xl2tpd/l2tp-control #отключение
+Нет ничего проще, чем настроить VPN L2TP если уже настроен VPN PPTP.
+
+Альтернативная инструкция для VPN L2TP без IPSec: http://romanrm.ru/gnulinux-beeline-l2tp
+
+==Особенности настройки VPN в различных дистрибутивах Linux==
+Рассмотрим лишь отличия в настройке от настоящей инструкции.
+
+'''PCLinuxOS:'''
+
+Никаких отличий от настоящей инструкции нет.
+
+'''Ubuntu:'''
+
+Для автозапуска интернета при старте системы по протоколу VPN L2TP опции autodial = yes достаточно.
+
+'''Debian:'''
+
+Если существует файл '''/etc/ppp/ip-up.d/exim4''', то комментируем в нем все строки. Для автозапуска интернета при старте системы по протоколу VPN L2TP опции autodial = yes достаточно.
+
+'''Fedora:'''
+
+Дополнительно к вышеизложенному создаем символические ссылки:
+ ln -s /etc/ppp/ip-up.d/ip-up /etc/ppp/ip-up.local
+ ln -s /etc/ppp/ip-down.d/ip-down /etc/ppp/ip-down.local
+
+'''openSUSE:'''
+
+Для автозапуска интернета при старте системы не используется ни файл '''/etc/rc.d/rc.local''', ни файл '''/etc/rc.local''', а используется файл '''/etc/init.d/after.local'''.
+
+==Графические утилиты для настройки VPN==
+Есть простая графическая программа для настройки VPN для любого DE - vpnpptp (http://code.google.com/p/vpnpptp/), которая включает в себя графический конфигуратор, основанный на этой инструкции (и настоящая инструкция основана на проекте vpnpptp), а также программу для дозвона (при этом оба эти приложения достаточно независимы друг от друга).
+
+Для KDE есть программа KVpnc.
+
+Также настроить VPN можно через Network Manager.
+
+Также в различных дистрибутивах могут быть свои утилиты для настройки VPN.
