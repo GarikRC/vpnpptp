@@ -69,6 +69,15 @@ tar -xf vpnpptp-src-$1.tar.gz
 cd ./vpnpptp-src-$1/modules/
 
 /usr/bin/fpc $(cat ./MyMessageBox.compiled | grep "Params Value" | cut -d\" -f2)
+if [ ! -f ./mymessagebox ]
+then
+     echo "Compillation mymessagebox error!"
+     cd ..
+     cd ..
+     rm -rf ./build/
+     rm -rf ./vpnpptp-src-$1/
+     exit 0
+fi
 /usr/bin/strip -s ./mymessagebox
 
 cd ..
@@ -76,6 +85,15 @@ cd ..
 cd ./vpnpptp-src-$1/vpnpptp/
 
 /usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
+if [ ! -f ./vpnpptp ]
+then
+     echo "Compillation vpnpptp error!"
+     cd ..
+     cd ..
+     rm -rf ./build/
+     rm -rf ./vpnpptp-src-$1/
+     exit 0
+fi
 /usr/bin/strip -s ./vpnpptp
 
 cd ..
@@ -83,6 +101,15 @@ cd ..
 cd ./vpnpptp-src-$1/ponoff/
 
 /usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
+if [ ! -f ./ponoff ]
+then
+     echo "Compillation ponoff error!"
+     cd ..
+     cd ..
+     rm -rf ./build/
+     rm -rf ./vpnpptp-src-$1/
+     exit 0
+fi
 /usr/bin/strip -s ./ponoff
 
 cd ..

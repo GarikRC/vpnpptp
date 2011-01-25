@@ -851,7 +851,7 @@ begin
                       Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                       halt;
                    end;
-  If not FileExists(TmpDir) then Shell ('mkdir '+TmpDir);
+  If not FileExists(TmpDir) then Shell ('mkdir -p '+TmpDir);
   //обеспечение совместимости старого config с новым
   If FileExists(LibDir+'config') then
      begin
