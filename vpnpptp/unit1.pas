@@ -628,10 +628,10 @@ Shell ('rm -f '+LibDir+'resolv.conf');
 Shell ('rm -f '+LibDir+'resolv.conf.copy');
 Shell ('rm -f '+LibDir+'resolv.conf.before');
 Shell ('rm -f '+LibDir+'resolv.conf.after');
-If not DirectoryExists(TmpDir) then Shell ('mkdir '+TmpDir);
-If not DirectoryExists('/etc/ppp/peers/') then Shell ('mkdir /etc/ppp/peers/');
-If not DirectoryExists(LibDir) then Shell ('mkdir '+LibDir);
-If fedora then If not DirectoryExists('/etc/ppp/dhcp/') then Shell ('mkdir /etc/ppp/dhcp/');
+If not DirectoryExists(TmpDir) then Shell ('mkdir -p '+TmpDir);
+If not DirectoryExists('/etc/ppp/peers/') then Shell ('mkdir -p /etc/ppp/peers/');
+If not DirectoryExists(LibDir) then Shell ('mkdir -p '+LibDir);
+If fedora then If not DirectoryExists('/etc/ppp/dhcp/') then Shell ('mkdir -p /etc/ppp/dhcp/');
 For i:=1 to CountInterface do
                            Shell('/sbin/route del default');
 Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
@@ -954,7 +954,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
  If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
                               If FileExists(DataDir+'scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
-                                                                Shell ('sh '+DataDir+'scripts/peermodify.sh '+Label_peername.Caption);
+                                                                Shell ('sh '+DataDir+'scripts/peermodify.sh '+Edit_peer.Text);
  Shell ('chmod 600 '+Label_peername.Caption);
 //удаляем временные, старые файлы и ссылки
  Shell('rm -f '+TmpDir+'gate');
@@ -971,7 +971,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
  Shell('rm -f /etc/dhcp/dhclient-exit-hooks');
  Shell('rm -f /etc/dhcp/dhclient.conf');
 //перезаписываем скрипт поднятия соединения ip-up
- If not DirectoryExists('/etc/ppp/ip-up.d/') then Shell ('mkdir /etc/ppp/ip-up.d/');
+ If not DirectoryExists('/etc/ppp/ip-up.d/') then Shell ('mkdir -p /etc/ppp/ip-up.d/');
  If fedora then Shell ('ln -s /etc/ppp/ip-up.d/ip-up /etc/ppp/ip-up.local');
  Shell('rm -f '+ Label_ip_up.Caption);
  Memo_ip_up.Clear;
@@ -1072,7 +1072,7 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
                                                 Shell ('printf "Program vpnpptp moved script exim4 in directory '+DataDir+'scripts\n" > /etc/ppp/ip-up.d/exim4.move');
                                            end;
 //перезаписываем скрипт опускания соединения ip-down
- If not DirectoryExists('/etc/ppp/ip-down.d/') then Shell ('mkdir /etc/ppp/ip-down.d/');
+ If not DirectoryExists('/etc/ppp/ip-down.d/') then Shell ('mkdir -p /etc/ppp/ip-down.d/');
  If fedora then Shell ('ln -s /etc/ppp/ip-down.d/ip-down /etc/ppp/ip-down.local');
  Shell('rm -f '+ Label_ip_down.Caption);
  Memo_ip_down.Clear;
@@ -3137,7 +3137,7 @@ If Screen.Height>1000 then
                     Application.ProcessMessages;
                     halt;
                 end;
- If not FileExists(TmpDir) then Shell ('mkdir '+TmpDir);
+ If not FileExists(TmpDir) then Shell ('mkdir -p '+TmpDir);
  CountInterface:=1;
  DoCountInterface;
 //обеспечение совместимости старого config с новым

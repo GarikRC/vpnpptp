@@ -1,4 +1,4 @@
-%define rel 5
+%define rel 7
 
 %{?dist: %{expand: %%define %dist 1}}
 
@@ -20,8 +20,6 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: fpc-src >= 2.2.4, fpc >= 2.2.4, lazarus
 Requires: gksu, pptp-linux, xl2tpd
-Obsoletes: vpnpptp-allde < 0.0.6
-Obsoletes: vpnpptp-kde-one < 0.0.6
 
 %description
 Tools for easy and quick setup and control VPN via PPTP/L2TP
@@ -49,14 +47,8 @@ rm -f /usr/bin/ponoff
 rm -f %{_datadir}/pixmaps/ponoff.png
 rm -f %{_datadir}/pixmaps/vpnpptp.png
 #обеспечить переход с allde на kde-one или наоборот
-if [ -a %{_datadir}/applications/ponoff.desktop.old ]
-then
-	rm -f %{_datadir}/applications/ponoff.desktop.old
-fi
-if [ -a %{_datadir}/applications/vpnpptp.desktop.old ]
-then
-	rm -f %{_datadir}/applications/vpnpptp.desktop.old
-fi
+rm -f %{_datadir}/applications/ponoff.desktop.old
+rm -f %{_datadir}/applications/vpnpptp.desktop.old
 
 %preun
 
@@ -64,19 +56,14 @@ fi
 ./mandriva.compile.sh
 
 %install
-mkdir $RPM_BUILD_ROOT/usr
-mkdir $RPM_BUILD_ROOT/usr/share
-mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp
-mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp/scripts
-mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp/wiki
-mkdir $RPM_BUILD_ROOT/usr/share/vpnpptp/lang
-mkdir $RPM_BUILD_ROOT/usr/bin
-mkdir $RPM_BUILD_ROOT/usr/share/applications
-mkdir $RPM_BUILD_ROOT/usr/share/pixmaps
-mkdir $RPM_BUILD_ROOT/usr/lib
-mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX
-mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX/network
-mkdir $RPM_BUILD_ROOT/usr/lib/libDrakX/network/connection
+mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp
+mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp/scripts
+mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp/wiki
+mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp/lang
+mkdir -p $RPM_BUILD_ROOT/usr/bin
+mkdir -p $RPM_BUILD_ROOT/usr/share/applications
+mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
+mkdir -p $RPM_BUILD_ROOT/usr/lib/libDrakX/network/connection
 
 cp -f ./vpnpptp/vpnpptp $RPM_BUILD_ROOT/usr/bin/
 cp -f ./ponoff/ponoff $RPM_BUILD_ROOT/usr/bin/
