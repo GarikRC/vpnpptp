@@ -42,7 +42,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Label1Click(Sender: TObject);
-    procedure Obrabotka (str_peer:string; more:boolean; var AFont:integer);
+    procedure Obrabotka (str_peer:string; more:boolean; var AFont:integer; LibDir0:string);
   private
     { private declarations }
   public
@@ -56,14 +56,14 @@ implementation
 
 { TForm2 }
 
-procedure TForm2.Obrabotka (str_peer:string; more:boolean; var AFont:integer);
+procedure TForm2.Obrabotka (str_peer:string; more:boolean; var AFont:integer; LibDir0:string);
 //восстанавливает сохраненные значения или устанавливает значения по-умолчанию
 var
 File_peer:textfile;
 str:string;
 begin
 Form2.Font.Size:=AFont;
-if ((not FileExists ('/etc/ppp/peers/'+str_peer)) and (not more)) or (not FileExists ('/opt/vpnpptp/config')) then
+if ((not FileExists ('/etc/ppp/peers/'+str_peer)) and (not more)) or (not FileExists (LibDir0)) then
                                         begin
                                              CheckBoxlock.Checked:=true;
                                              CheckBoxusepeerdns.Checked:=true;
@@ -74,7 +74,7 @@ if ((not FileExists ('/etc/ppp/peers/'+str_peer)) and (not more)) or (not FileEx
                                              CheckBoxnopcomp.Checked:=true;
                                              CheckBoxnoaccomp.Checked:=true;
                                         end;
-If FileExists ('/opt/vpnpptp/config') then if FileExists ('/etc/ppp/peers/'+str_peer) then if not more then
+If FileExists (LibDir0) then if FileExists ('/etc/ppp/peers/'+str_peer) then if not more then
                                         begin
                                            AssignFile (File_peer,'/etc/ppp/peers/'+str_peer);
                                            reset (File_peer);
