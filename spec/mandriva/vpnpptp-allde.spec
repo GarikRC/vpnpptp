@@ -1,4 +1,4 @@
-%define rel 7
+%define rel 8
 
 %{?dist: %{expand: %%define %dist 1}}
 

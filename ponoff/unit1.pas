@@ -910,22 +910,30 @@ If not Code_up_ppp then If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.Lo
 TrayIcon1.Show;
 Application.ProcessMessages;
 //проверка ponoff в процессах root, обработка двойного запуска программы
-  If LeftStr(tmpnostart.Lines[0],6)='ponoff' then if LeftStr(tmpnostart.Lines[1],6)='ponoff' then
-                                             begin
-                                                  DoubleRunPonoff:=true;
-                                                  Apid:=FpGetpid;
-                                                  Shell('ps -e|grep ponoff|awk '+chr(39)+'{print$1}'+chr(39)+' >'+TmpDir+'doublerun');
-                                                  AssignFile (FileDoubleRun,TmpDir+'doublerun');
-                                                  reset (FileDoubleRun);
-                                                  While not eof(FileDoubleRun) do
-                                                        begin
-                                                             Readln (FileDoubleRun,str);
-                                                             If str<>IntToStr(Apid) then
-                                                             FpKill(StrToInt(str),9);
-                                                        end;
-                                                  closefile (FileDoubleRun);
-                                                  Shell('rm -f '+TmpDir+'doublerun')
-                                             end;
+popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
+i:=0;
+while not eof(f) do
+begin
+    readln(f,str);
+    i:=i+1;
+end;
+PClose(f);
+If i>1 then
+           begin
+               DoubleRunPonoff:=true;
+               Apid:=FpGetpid;
+               Shell('ps -e|grep ponoff|awk '+chr(39)+'{print$1}'+chr(39)+' >'+TmpDir+'doublerun');
+               AssignFile (FileDoubleRun,TmpDir+'doublerun');
+               reset (FileDoubleRun);
+               While not eof(FileDoubleRun) do
+                        begin
+                            Readln (FileDoubleRun,str);
+                            If str<>IntToStr(Apid) then
+                            FpKill(StrToInt(str),9);
+                        end;
+               closefile (FileDoubleRun);
+               Shell('rm -f '+TmpDir+'doublerun')
+           end;
 If not FileExists (TmpDir+'DateStart') then DateStart:=0 else
                                        begin
                                             AssignFile (FileDateStart,TmpDir+'DateStart');

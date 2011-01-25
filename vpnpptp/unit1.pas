@@ -883,7 +883,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                   end;
  If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
  Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
- Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont);
+ Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont, LibDir);
  If Children then Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
  Shell('rm -f '+ Label_peername.Caption);
  Memo_peer.Clear;
@@ -2110,7 +2110,7 @@ end;
 
 procedure TForm1.Button_moreClick(Sender: TObject);
 begin
-     Unit2.Form2.Obrabotka(Edit_peer.Text,more, AFont);
+     Unit2.Form2.Obrabotka(Edit_peer.Text,more, AFont, LibDir);
      Form2.Hint:=MakeHint(message143+' '+message149,5);
      Unit2.Form2.OnMouseDown:=Form1.OnMouseDown;
      Unit2.Form2.ShowModal;
@@ -2769,7 +2769,7 @@ begin
                                         exit;
                                       end;
 end;
-Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont);
+Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont, LibDir);
 If ComboBoxVPN.Text='VPN L2TP' then
                                begin
                                    nobuffer.Enabled:=false;
