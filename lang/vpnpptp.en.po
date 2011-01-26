@@ -910,10 +910,6 @@ msgstr "No default gateway, and it can not be corrected automatically."
 msgid "Укажите в#209�учную сетевой инте#209�фейс и шлюз локальной сети - п#209�ог#209�амма сама сделает его дефолтным."
 msgstr "Enter manually the network interface and gateway - the program itself will make its default."
 
-#: unit1.message146
-msgid "Для #209�еализации этой опции подлежит использовать п#209�опатченный xl2tpd с суффиксом edm в имени пакета."
-msgstr "To implement this option will be to use a patched l2tpd containing the suffix edm package name."
-
 #: unit1.message147
 msgid "Наст#209�ойте sudo с#209�едствами Вашего дист#209�ибутива."
 msgstr "Configure sudo with help your distribution."
@@ -1013,3 +1009,11 @@ msgstr "If the remote IP address matches with the IP-address of the VPN-server, 
 #: unit1.message167
 msgid "без необходимости иных методов ма#209�ш#209�утизации VPN-се#209�ве#209�а."
 msgstr "without the necessary other methods of routing VPN-server."
+
+#: unit1.message146
+msgid "Конфигу#209�ато#209� не смог све#209�ить наст#209�ойку шиф#209�ования mppe c man pppd из-за неполноты man pppd."
+msgstr "Configurator could not verify the setting encryption mppe from man pppd, because man pppd is incomplete."
+
+#: unit1.message168
+msgid "П#209�авильность автоматической наст#209�ойки конфигу#209�ато#209�ом шиф#209�ования mppe не га#209�анти#209�уется."
+msgstr "The correctness of the automatic settings encryption mppe can not be guaranteed."

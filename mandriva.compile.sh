@@ -1,13 +1,32 @@
 #!/bin/sh
 
+#Передайте этому скрипту в качестве первого параметра архитектуру Lazarus'а i386, x86_64 и т.д.
+#Передайте этому скрипту в качестве второго параметра параметр lib или lib64 в зависимости от архитектуры Lazarus'а
+
+FPC=/usr/bin/fpc
+LAZARUS_ARCH=$1
+LIBDIRPART=$2
+LAZARUS_LIB=/usr/$LIBDIRPART/lazarus/lcl/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_PKG=/usr/$LIBDIRPART/lazarus/packages/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_COMP=/usr/$LIBDIRPART/lazarus/components/synedit/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/ideintf/units/$LAZARUS_ARCH-linux
+
 cd ./modules
-/usr/bin/fpc $(cat ./MyMessageBox.compiled | grep "Params Value" | cut -d\" -f2)
+
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu./modules/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./modules/ -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
+
 /usr/bin/strip -s ./mymessagebox
+
 cd ..
 cd ./vpnpptp
-/usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
+
+$FPC  -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 project1.pas -Fu../modules/
+
 /usr/bin/strip -s ./vpnpptp
+
 cd ..
 cd ./ponoff
-/usr/bin/fpc $( cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
+
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -oponoff -dLCL -dLCLgtk2 project1.lpr -Fu../modules/
+
 /usr/bin/strip -s ./ponoff

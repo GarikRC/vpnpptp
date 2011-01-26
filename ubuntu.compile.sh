@@ -1,17 +1,31 @@
 #!/bin/sh
 
-# Передайте этому скрипту 2 параметра: номер версии собираемого пакета и архитектуру (i386, amd64 и т.д.)
-# выполните этот скрипт под root
+#Передайте этому скрипту в качестве первого параметра архитектуру Lazarus'а i386, x86_64 и т.д.
+#Передайте этому скрипту в качестве второго параметра параметр lib или lib64 в зависимости от архитектуры Lazarus'а
+#Передайте этому скрипту в качестве третьего параметра номер версии собираемого пакета
+#Выполните этот скрипт под root
+
+FPC=/usr/bin/fpc
+LAZARUS_ARCH=$1
+LIBDIRPART=$2
+NUM_VERSION=$3
+LAZARUS_LIB=/usr/$LIBDIRPART/lazarus/*/lcl/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_PKG=/usr/$LIBDIRPART/lazarus/*/packages/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_COMP=/usr/$LIBDIRPART/lazarus/*/components/synedit/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/*/ideintf/units/$LAZARUS_ARCH-linux
 
 if [ -z "$(env | grep USER=root)" ];then
 	echo "You're not the root!"
 	exit 0
 fi
 
-if [ $# -ne 2 ];then
-	echo "For this script you must write a two parameters"
+if [ $# -ne 3 ];then
+	echo "For this script you must write a 3 parameters"
 	exit 0
 fi
+
+rm -rf ./build/
+rm -rf ./vpnpptp-src-$NUM_VERSION/
 
 mkdir -p ./build/usr/share/applications/
 
@@ -64,50 +78,50 @@ StartupNotify=false
 EOF
 chmod 0644 ./build/usr/share/applications/vpnpptp.desktop
 
-tar -xf vpnpptp-src-$1.tar.gz
+tar -xf vpnpptp-src-$NUM_VERSION.tar.gz
 
-cd ./vpnpptp-src-$1/modules/
+cd ./vpnpptp-src-$NUM_VERSION/modules/
 
-/usr/bin/fpc $(cat ./MyMessageBox.compiled | grep "Params Value" | cut -d\" -f2)
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu./modules/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./modules/ -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
 if [ ! -f ./mymessagebox ]
 then
      echo "Compillation mymessagebox error!"
      cd ..
      cd ..
      rm -rf ./build/
-     rm -rf ./vpnpptp-src-$1/
+     rm -rf ./vpnpptp-src-$NUM_VERSION/
      exit 0
 fi
 /usr/bin/strip -s ./mymessagebox
 
 cd ..
 cd ..
-cd ./vpnpptp-src-$1/vpnpptp/
+cd ./vpnpptp-src-$NUM_VERSION/vpnpptp/
 
-/usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
+$FPC  -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 project1.pas -Fu../modules/
 if [ ! -f ./vpnpptp ]
 then
      echo "Compillation vpnpptp error!"
      cd ..
      cd ..
      rm -rf ./build/
-     rm -rf ./vpnpptp-src-$1/
+     rm -rf ./vpnpptp-src-$NUM_VERSION/
      exit 0
 fi
 /usr/bin/strip -s ./vpnpptp
 
 cd ..
 cd ..
-cd ./vpnpptp-src-$1/ponoff/
+cd ./vpnpptp-src-$NUM_VERSION/ponoff/
 
-/usr/bin/fpc $(cat ./project1.compiled | grep "Params Value" | cut -d\" -f2) -Fu../modules/
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -oponoff -dLCL -dLCLgtk2 project1.lpr -Fu../modules/
 if [ ! -f ./ponoff ]
 then
      echo "Compillation ponoff error!"
      cd ..
      cd ..
      rm -rf ./build/
-     rm -rf ./vpnpptp-src-$1/
+     rm -rf ./vpnpptp-src-$NUM_VERSION/
      exit 0
 fi
 /usr/bin/strip -s ./ponoff
@@ -117,32 +131,32 @@ cd ..
 
 mkdir -p ./build/usr/bin
 
-cp -f ./vpnpptp-src-$1/ponoff/ponoff ./build/usr/bin/ponoff
-cp -f ./vpnpptp-src-$1/vpnpptp/vpnpptp ./build/usr/bin/vpnpptp
+cp -f ./vpnpptp-src-$NUM_VERSION/ponoff/ponoff ./build/usr/bin/ponoff
+cp -f ./vpnpptp-src-$NUM_VERSION/vpnpptp/vpnpptp ./build/usr/bin/vpnpptp
 
 mkdir -p ./build/usr/share/pixmaps
 
-cp -f ./vpnpptp-src-$1/vpnpptp.png ./build/usr/share/pixmaps
-cp -f ./vpnpptp-src-$1/ponoff.png ./build/usr/share/pixmaps
+cp -f ./vpnpptp-src-$NUM_VERSION/vpnpptp.png ./build/usr/share/pixmaps
+cp -f ./vpnpptp-src-$NUM_VERSION/ponoff.png ./build/usr/share/pixmaps
 
 mkdir -p ./build/usr/share/vpnpptp/
 
-cp -rf ./vpnpptp-src-$1/scripts ./build/usr/share/vpnpptp/
-cp -rf ./vpnpptp-src-$1/wiki ./build/usr/share/vpnpptp/
-cp -rf ./vpnpptp-src-$1/lang ./build/usr/share/vpnpptp/
-cp -f ./vpnpptp-src-$1/vpnpptp.png ./build/usr/share/vpnpptp/
-cp -f ./vpnpptp-src-$1/ponoff.png ./build/usr/share/vpnpptp/
-cp -f ./vpnpptp-src-$1/on.ico ./build/usr/share/vpnpptp/
-cp -f ./vpnpptp-src-$1/off.ico ./build/usr/share/vpnpptp/
+cp -rf ./vpnpptp-src-$NUM_VERSION/scripts ./build/usr/share/vpnpptp/
+cp -rf ./vpnpptp-src-$NUM_VERSION/wiki ./build/usr/share/vpnpptp/
+cp -rf ./vpnpptp-src-$NUM_VERSION/lang ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$NUM_VERSION/vpnpptp.png ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$NUM_VERSION/ponoff.png ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$NUM_VERSION/on.ico ./build/usr/share/vpnpptp/
+cp -f ./vpnpptp-src-$NUM_VERSION/off.ico ./build/usr/share/vpnpptp/
 
 mkdir -p ./build/DEBIAN/
 
-cp -f ./vpnpptp-src-$1/DEBIAN/ubuntu/preinst ./build/DEBIAN/
+cp -f ./vpnpptp-src-$NUM_VERSION/DEBIAN/ubuntu/preinst ./build/DEBIAN/
 chmod 0775 ./build/DEBIAN/preinst
-cp -f ./vpnpptp-src-$1/DEBIAN/ubuntu/control ./build/DEBIAN/
+cp -f ./vpnpptp-src-$NUM_VERSION/DEBIAN/ubuntu/control ./build/DEBIAN/
 chmod 0775 ./build/DEBIAN/control
 
-dpkg -b ./build/ vpnpptp-allde-$1_$2.deb
+dpkg -b ./build/ vpnpptp-allde-$NUM_VERSION-$LAZARUS_ARCH.deb
 
 rm -rf ./build/
-rm -rf ./vpnpptp-src-$1/
+rm -rf ./vpnpptp-src-$NUM_VERSION/
