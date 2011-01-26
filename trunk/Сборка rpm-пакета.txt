@@ -2,10 +2,13 @@
 2) создать в папке /root папку rpmbuild, в которой создать папки BUILD, BUILDROOT, RPMS, SOURCES, SPECS, SRPMS (в PCLinuxOS они уже созданы и находятся в /usr/src/rpm вместо /root; в openSUSE они уже созданы и находятся в /usr/src/packages),
 3) в папку /root/rpmbuild/SPECS скопировать файлы из папки spec в исходниках,
 4) в папку /root/rpmbuild/SOURCES скопировать файлы из папки patch в исходниках,
-5) в папку /root/rpmbuild/SOURCES скопировать всю папку trunk из исходников, переименовав ее в vpnpptp-src-0.1.9, где 0.1.9 - номер версии, 
-6) сжать получившуюся папку /root/rpmbuild/SOURCES/vpnpptp-src-0.1.9 в .tar.gz,
+5) в папку /root/rpmbuild/SOURCES скопировать всю папку trunk из исходников, переименовав ее в vpnpptp-src-0.2.9, где 0.2.9 - номер версии, 
+6) сжать получившуюся папку /root/rpmbuild/SOURCES/vpnpptp-src-0.2.9 в .tar.gz,
 7) перейти в папку SPECS командой cd /root/rpmbuild/SPECS,
 8) выполнить команды под root:
 rpmbuild -ba ./vpnpptp-allde.spec
 rpmbuild -ba ./vpnpptp-kde-one.spec
 9) собранные пакеты будут в /root/rpmbuild/RPMS, сурсы в /root/rpmbuild/SRPMS
+
+Исходники имеют вид: vpnpptp-src-0.2.9.tar.gz, где 0.2.9 - версия.
+Если возникает ошибка компиляции, то есть не создаются исполняемые файлы vpnpptp и ponoff, то проверьте пути в скрипте mandriva.compile.sh для используемых директорий Lazarus'a, а также проверьте правильность передаваемых в spec-файле скрипту mandriva.compile.sh параметров.

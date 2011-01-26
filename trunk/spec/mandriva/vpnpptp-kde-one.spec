@@ -1,4 +1,4 @@
-%define rel 8
+%define rel 2
 
 %{?dist: %{expand: %%define %dist 1}}
 
@@ -6,7 +6,7 @@ Summary: Tools for setup and control VPN via PPTP/L2TP
 #Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
 #Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-kde-one
-Version: 0.2.9
+Version: 0.3.0
 Release: %mkrel %{rel}
 License: GPL2
 Group: Network
@@ -53,7 +53,11 @@ rm -f %{_datadir}/applications/vpnpptp.desktop.old
 %preun
 
 %build
-./mandriva.compile.sh
+%ifarch x86_64
+./mandriva.compile.sh x86_64 lib64
+%else
+./mandriva.compile.sh i386 lib
+%endif
 
 %install
 mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp

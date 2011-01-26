@@ -396,7 +396,7 @@ resourcestring
   message143='При низких разрешениях экрана одновременное нажатие клавиши Alt и левой кнопки мыши поможет переместить окно.';
   message144='Отсутствует дефолтный шлюз, и это невозможно исправить автоматически.';
   message145='Укажите вручную сетевой интерфейс и шлюз локальной сети - программа сама сделает его дефолтным.';
-  //message146='Для реализации этой опции подлежит использовать пропатченный xl2tpd с суффиксом edm в имени пакета.';
+  message146='Конфигуратор не смог сверить настройку шифрования mppe c man pppd из-за неполноты man pppd.';
   message147='Настройте sudo средствами Вашего дистрибутива.';
   message148='Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска.';
   message149='Нажатие левой/правой кнопкой мыши на пустом месте окна изменяет шрифт.';
@@ -418,6 +418,7 @@ resourcestring
   message165='Если remote IP address не совпадает с IP-адресом VPN-сервера, то может потребоваться маршрутизировать его в шлюз локальной сети.';
   message166='Если remote IP address совпадает с IP-адресом VPN-сервера, то эта опция позволит наилучшим способом маршрутизировать VPN-сервер';
   message167='без необходимости иных методов маршрутизации VPN-сервера.';
+  message168='Правильность автоматической настройки конфигуратором шифрования mppe не гарантируется.';
 
 implementation
 
@@ -717,6 +718,17 @@ Shell ('/sbin/route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           StartMessage:=true;
                           Application.ProcessMessages;
                        end;
+If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
+                    begin
+                       popen (f,'man pppd|grep mppe','R');
+                       If eof(f) then
+                                   begin
+                                      Label14.Caption:=message146+' '+message168;
+                                      Form3.MyMessageBox(message0,message146+' '+message168,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                      Application.ProcessMessages;
+                                   end;
+                       PClose(f);
+                    end;
 Button_more.Visible:=false;
 Button_create.Enabled:=false;
 Button_exit.Enabled:=false;
