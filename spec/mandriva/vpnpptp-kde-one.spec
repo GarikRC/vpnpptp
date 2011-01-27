@@ -1,15 +1,12 @@
 %define rel 2
 
-%{?dist: %{expand: %%define %dist 1}}
-
 Summary: Tools for setup and control VPN via PPTP/L2TP
-#Summary(ru): Инструмент для установки и управления соединением VPN через PPTP/L2TP
-#Summary(uk): Інструмент для встановлення та керування з'єднанням VPN через PPTP/L2TP
 Name: vpnpptp-kde-one
 Version: 0.3.0
 Release: %mkrel %{rel}
 License: GPL2
-Group: Network
+Group: System/Configuration/Networking
+
 
 Packager: Alex Loginov <loginov_alex@inbox.ru>, <loginov.alex.valer@gmail.com>
 Vendor: Mandriva Russia, http://www.mandriva.ru
@@ -29,10 +26,6 @@ Tools for easy and quick setup and control VPN via PPTP/L2TP
 Інструмент для легкого і швидкого підключення і керування з'єднанням VPN через PPTP/L2TP
 
 %prep
-
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT
-
 %setup -n vpnpptp-src-%{version}
 
 
@@ -42,8 +35,8 @@ mkdir -p $RPM_BUILD_ROOT
 
 %pre
 #удалить ссылки если есть
-rm -f /usr/bin/vpnpptp 
-rm -f /usr/bin/ponoff
+rm -f %{_bindir}/vpnpptp
+rm -f %{_bindir}/ponoff
 rm -f %{_datadir}/pixmaps/ponoff.png
 rm -f %{_datadir}/pixmaps/vpnpptp.png
 #обеспечить переход с allde на kde-one или наоборот
@@ -60,26 +53,28 @@ rm -f %{_datadir}/applications/vpnpptp.desktop.old
 %endif
 
 %install
-mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp
-mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp/scripts
-mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp/wiki
-mkdir -p $RPM_BUILD_ROOT/usr/share/vpnpptp/lang
-mkdir -p $RPM_BUILD_ROOT/usr/bin
-mkdir -p $RPM_BUILD_ROOT/usr/share/applications
-mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
-mkdir -p $RPM_BUILD_ROOT/usr/lib/libDrakX/network/connection
+rm -rf %{buildroot}
 
-cp -f ./vpnpptp/vpnpptp $RPM_BUILD_ROOT/usr/bin/
-cp -f ./ponoff/ponoff $RPM_BUILD_ROOT/usr/bin/
-cp -f ./ponoff.png $RPM_BUILD_ROOT/usr/share/pixmaps/
-cp -f ./vpnpptp.png $RPM_BUILD_ROOT/usr/share/pixmaps/
-chmod 0644 $RPM_BUILD_ROOT/usr/share/pixmaps/ponoff.png
-chmod 0644 $RPM_BUILD_ROOT/usr/share/pixmaps/vpnpptp.png
-cp -f ./*.ico $RPM_BUILD_ROOT/usr/share/vpnpptp
-cp -f ./*.png $RPM_BUILD_ROOT/usr/share/vpnpptp
-cp -rf ./scripts $RPM_BUILD_ROOT/usr/share/vpnpptp/
-cp -rf ./wiki $RPM_BUILD_ROOT/usr/share/vpnpptp/
-cp -rf ./lang $RPM_BUILD_ROOT/usr/share/vpnpptp/
+mkdir -p %{buildroot}%{_datadir}/vpnpptp
+mkdir -p %{buildroot}%{_datadir}/vpnpptp/scripts
+mkdir -p %{buildroot}%{_datadir}/vpnpptp/wiki
+mkdir -p %{buildroot}%{_datadir}/vpnpptp/lang
+mkdir -p %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_datadir}/applications
+mkdir -p %{buildroot}%{_datadir}/pixmaps
+mkdir -p %{buildroot}/usr/lib/libDrakX/network/connection
+
+cp -f ./vpnpptp/vpnpptp %{buildroot}%{_bindir}
+cp -f ./ponoff/ponoff %{buildroot}%{_bindir}
+cp -f ./ponoff.png %{buildroot}%{_datadir}/pixmaps/
+cp -f ./vpnpptp.png %{buildroot}%{_datadir}/pixmaps/
+chmod 0644 %{buildroot}%{_datadir}/pixmaps/ponoff.png
+chmod 0644 %{buildroot}%{_datadir}/pixmaps/vpnpptp.png
+cp -f ./*.ico %{buildroot}%{_datadir}/vpnpptp
+cp -f ./*.png %{buildroot}%{_datadir}/vpnpptp
+cp -rf ./scripts %{buildroot}%{_datadir}/vpnpptp/
+cp -rf ./wiki %{buildroot}%{_datadir}/vpnpptp/
+cp -rf ./lang %{buildroot}%{_datadir}/vpnpptp/
 
 install -dm 755 %{buildroot}%{_datadir}/applications
 cat > ponoff.desktop << EOF
@@ -141,15 +136,15 @@ install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp_kd
 %files
 %defattr(-,root, root)
 
-/usr/bin/vpnpptp
-/usr/bin/ponoff
-/usr/share/vpnpptp/lang
-/usr/share/pixmaps/ponoff.png
-/usr/share/pixmaps/vpnpptp.png
-/usr/share/vpnpptp/*.ico
-/usr/share/vpnpptp/*.png
-/usr/share/vpnpptp/scripts
-/usr/share/vpnpptp/wiki
+%{_bindir}/vpnpptp
+%{_bindir}/ponoff
+%{_datadir}/vpnpptp/lang
+%{_datadir}/pixmaps/ponoff.png
+%{_datadir}/pixmaps/vpnpptp.png
+%{_datadir}/vpnpptp/*.ico
+%{_datadir}/vpnpptp/*.png
+%{_datadir}/vpnpptp/scripts
+%{_datadir}/vpnpptp/wiki
 %{_datadir}/applications/ponoff.desktop
 %{_datadir}/applications/vpnpptp.desktop
 /usr/lib/libDrakX/network/vpn/vpnpptp_kde_one.pm
