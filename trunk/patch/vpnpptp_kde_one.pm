@@ -12,7 +12,7 @@ sub get_packages { 'vpnpptp-kde-one' }
 
 sub read_config {
 
-run_program::rooted($::prefix,'/opt/vpnpptp/vpnpptp');
+run_program::rooted($::prefix,'vpnpptp');
 end => 1;
 }
 
