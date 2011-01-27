@@ -13,20 +13,20 @@ LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/ideintf/units/$LAZARUS_ARCH-linux
 
 cd ./modules
 
-$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu./modules/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./modules/ -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fi./modules/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
 
 /usr/bin/strip -s ./mymessagebox
 
 cd ..
 cd ./vpnpptp
 
-$FPC  -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 project1.pas -Fu../modules/
+$FPC  -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP -Fu$LAZARUS_LIB_IDEINTF -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 project1.pas
 
 /usr/bin/strip -s ./vpnpptp
 
 cd ..
 cd ./ponoff
 
-$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -oponoff -dLCL -dLCLgtk2 project1.lpr -Fu../modules/
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./ponoff/ -Fu. -oponoff -dLCL -dLCLgtk2 project1.pas
 
 /usr/bin/strip -s ./ponoff
