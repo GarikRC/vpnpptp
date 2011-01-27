@@ -1,4 +1,4 @@
-%define rel 2
+%define rel 3
 
 Summary: Tools for setup and control VPN via PPTP/L2TP
 Name: vpnpptp-kde-one
