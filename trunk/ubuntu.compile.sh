@@ -82,7 +82,7 @@ tar -xf vpnpptp-src-$NUM_VERSION.tar.gz
 
 cd ./vpnpptp-src-$NUM_VERSION/modules/
 
-$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu./modules/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./modules/ -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fi./modules/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
 if [ ! -f ./mymessagebox ]
 then
      echo "Compillation mymessagebox error!"
@@ -98,7 +98,7 @@ cd ..
 cd ..
 cd ./vpnpptp-src-$NUM_VERSION/vpnpptp/
 
-$FPC  -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 project1.pas -Fu../modules/
+$FPC  -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP -Fu$LAZARUS_LIB_IDEINTF -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 project1.pas
 if [ ! -f ./vpnpptp ]
 then
      echo "Compillation vpnpptp error!"
@@ -114,7 +114,7 @@ cd ..
 cd ..
 cd ./vpnpptp-src-$NUM_VERSION/ponoff/
 
-$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP/ -Fu$LAZARUS_LIB_IDEINTF/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./vpnpptp/ -Fu. -oponoff -dLCL -dLCLgtk2 project1.lpr -Fu../modules/
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./ponoff/ -Fu. -oponoff -dLCL -dLCLgtk2 project1.pas
 if [ ! -f ./ponoff ]
 then
      echo "Compillation ponoff error!"
