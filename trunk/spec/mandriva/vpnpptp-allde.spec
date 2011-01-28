@@ -7,10 +7,6 @@ Release: %mkrel %{rel}
 License: GPL2
 Group: System/Configuration/Networking
 
-
-Packager: Alex Loginov <loginov_alex@inbox.ru>, <loginov.alex.valer@gmail.com>
-Vendor: Mandriva Russia, http://www.mandriva.ru
-
 Source0: vpnpptp-src-%{version}.tar.gz
 Source1: vpnpptp_allde.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
@@ -20,18 +16,10 @@ Requires: gksu, pptp-linux, xl2tpd
 
 %description
 Tools for easy and quick setup and control VPN via PPTP/L2TP
-%description -l ru
-Инструмент для легкого и быстрого подключения и управления соединением VPN через PPTP/L2TP
-%description -l uk
-Інструмент для легкого і швидкого підключення і керування з'єднанням VPN через PPTP/L2TP
 
 %prep
-%setup -n vpnpptp-src-%{version}
 
-
-%postun
-
-%post
+%setup -q -n vpnpptp-src-%{version}
 
 %pre
 #удалить ссылки если есть
@@ -43,8 +31,6 @@ rm -f %{_datadir}/pixmaps/vpnpptp.png
 rm -f %{_datadir}/applications/ponoff.desktop.old
 rm -f %{_datadir}/applications/vpnpptp.desktop.old
 
-%preun
-
 %build
 %ifarch x86_64
 ./mandriva.compile.sh x86_64 lib64
@@ -54,7 +40,6 @@ rm -f %{_datadir}/applications/vpnpptp.desktop.old
 
 %install
 rm -rf %{buildroot}
-
 mkdir -p %{buildroot}%{_datadir}/vpnpptp
 mkdir -p %{buildroot}%{_datadir}/vpnpptp/scripts
 mkdir -p %{buildroot}%{_datadir}/vpnpptp/wiki
@@ -62,7 +47,7 @@ mkdir -p %{buildroot}%{_datadir}/vpnpptp/lang
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/applications
 mkdir -p %{buildroot}%{_datadir}/pixmaps
-mkdir -p %{buildroot}/usr/lib/libDrakX/network/connection
+mkdir -p %{buildroot}%/lib/libDrakX/network/connection
 
 cp -f ./vpnpptp/vpnpptp %{buildroot}%{_bindir}
 cp -f ./ponoff/ponoff %{buildroot}%{_bindir}
@@ -132,6 +117,7 @@ install -m 0644 vpnpptp.desktop \
 install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp_allde.pm
 
 %clean
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root, root)
