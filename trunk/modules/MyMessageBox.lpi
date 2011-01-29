@@ -1,18 +1,20 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="7"/>
+    <Version Value="9"/>
     <General>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=""/>
       <Title Value="Модуль работы с MyMessageBox"/>
-      <Icon Value="0"/>
       <UseXPManifest Value="True"/>
-      <ActiveEditorIndexAtStart Value="0"/>
+      <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
-      <ProjectVersion Value=""/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>
@@ -35,11 +37,14 @@
         <Filename Value="MyMessageBox.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="MyMessageBox"/>
-        <CursorPos X="1" Y="19"/>
-        <TopLine Value="1"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="19"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="unitmymessagebox.pas"/>
@@ -47,34 +52,36 @@
         <ComponentName Value="Form3"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UnitMyMessageBox"/>
-        <CursorPos X="27" Y="12"/>
-        <TopLine Value="1"/>
         <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="8" Y="1"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="MyMessageBox.lrs"/>
-        <CursorPos X="1" Y="5236"/>
         <TopLine Value="5201"/>
+        <CursorPos X="1" Y="5236"/>
         <UsageCount Value="10"/>
       </Unit2>
       <Unit3>
         <Filename Value="../../usr/lib/lazarus/lcl/include/application.inc"/>
-        <CursorPos X="1" Y="1258"/>
         <TopLine Value="1240"/>
+        <CursorPos X="1" Y="1258"/>
         <UsageCount Value="10"/>
       </Unit3>
       <Unit4>
         <Filename Value="../../usr/lib/lazarus/lcl/include/customform.inc"/>
-        <CursorPos X="1" Y="694"/>
         <TopLine Value="676"/>
+        <CursorPos X="1" Y="694"/>
         <UsageCount Value="10"/>
       </Unit4>
       <Unit5>
         <Filename Value="../../usr/lib/lazarus/lcl/include/icon.inc"/>
-        <CursorPos X="1" Y="735"/>
         <TopLine Value="717"/>
+        <CursorPos X="1" Y="735"/>
         <UsageCount Value="10"/>
       </Unit5>
     </Units>
@@ -182,13 +189,18 @@
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <Target>
       <Filename Value="mymessagebox"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)/"/>
+      <IncludeFiles Value="$(ProjOutDir)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Options>
         <Win32>

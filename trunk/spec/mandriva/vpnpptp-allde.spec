@@ -6,6 +6,7 @@ Version: 0.3.0
 Release: %mkrel %{rel}
 License: GPL2
 Group: System/Configuration/Networking
+Url: http://code.google.com/p/vpnpptp
 
 Source0: vpnpptp-src-%{version}.tar.gz
 Source1: vpnpptp_allde.pm
