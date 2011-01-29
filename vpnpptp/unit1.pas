@@ -237,6 +237,8 @@ var
   DhclientStartGood:boolean; //false если dhclient стартанул неудачно или не стартовал вообще
   NumberUnit:string; //номер параметра unit в провайдерском файле настроек
   f: text;//текстовый поток
+  Code_up_ppp:boolean; //существует ли интерфейс pppN
+  pppiface:string; //точный интерфейс pppN
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -469,7 +471,26 @@ begin
   Content := UTF8ToSystemCharSet(Content); // перевод UTF8 в текущую локаль
 end;
 
-{ TForm1 }
+procedure CheckVPN;
+//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
+var
+  str:string;
+begin
+  str:='';
+  pppiface:='';
+  popen (f,'ifconfig | grep Link','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then if LeftStr(str,3)='ppp' then
+                               begin
+                                    Code_up_ppp:=true;
+                                    pppiface:=LeftStr(str,4);
+                               end;
+     end;
+  PClose(f);
+end;
 
 Procedure FindStroowriter (str0:string;n:byte);
 var
@@ -477,7 +498,7 @@ var
      str:string;
 begin
      Shell('rm -f '+TmpDir+'oowriter_find');
-     Shell ('find /usr/bin/ -name '+str0+'* > '+TmpDir+'oowriter_find');
+     Shell('find /usr/bin/ -name '+str0+'* > '+TmpDir+'oowriter_find');
      Shell('printf "none" >> '+TmpDir+'oowriter_find');
      AssignFile (Fileoowriter_find,TmpDir+'oowriter_find');
      reset (Fileoowriter_find);
@@ -551,6 +572,8 @@ begin
           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' up');
 end;
 
+{ TForm1 }
+
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i:integer;
@@ -621,8 +644,8 @@ Label43.Caption:=' ';
 Application.ProcessMessages;
 DoCountInterface;
 PressCreate:=true;
-Shell ('rm -f '+LibDir+'resolv.conf');
-Shell ('rm -f '+LibDir+'resolv.conf.copy');
+//Shell ('rm -f '+LibDir+'resolv.conf');
+//Shell ('rm -f '+LibDir+'resolv.conf.copy');
 Shell ('rm -f '+LibDir+'resolv.conf.before');
 Shell ('rm -f '+LibDir+'resolv.conf.after');
 If not DirectoryExists(TmpDir) then Shell ('mkdir -p '+TmpDir);
@@ -738,12 +761,12 @@ If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 If FileExists ('/etc/hosts.old') then Shell ('cp -f /etc/hosts.old /etc/hosts');
 Shell('rm -f '+LibDir+'hosts');
 Shell('rm -rf /opt/vpnpptp');
-If FileExists('/etc/ppp/ip-up.old') then //оставлено для совместимости с пред.версиями
-                                   begin
-                                      Shell('cp -f /etc/ppp/ip-up.old /etc/ppp/ip-up');
-                                      Shell('chmod a+x /etc/ppp/ip-up');
+//If FileExists('/etc/ppp/ip-up.old') then //оставлено для совместимости с пред.версиями
+  //                                 begin
+    //                                  Shell('cp -f /etc/ppp/ip-up.old /etc/ppp/ip-up');
+      //                                Shell('chmod a+x /etc/ppp/ip-up');
                                       Shell('rm -f /etc/ppp/ip-up.old');
-                                   end;
+        //                           end;
 if FileExists('/etc/ppp/options.pptp.old') then //для совместимости с пред.версиями
                                    begin
                                       Shell('cp -f /etc/ppp/options.pptp.old /etc/ppp/options.pptp');
@@ -806,7 +829,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Sleep(3000);
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >'+TmpDir+'dhclienttest2');
                           //проверка поднялся ли интерфейс после dhclient
-                          Shell ('rm -f '+TmpDir+'gate');
+                          //Shell ('rm -f '+TmpDir+'gate');
                           Shell('/sbin/ip r|grep '+Edit_eth.Text+' > '+TmpDir+'gate');
                           Shell('printf "none" >> '+TmpDir+'gate');
                           Memo_gate.Clear;
@@ -965,11 +988,11 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                 Shell ('sh '+DataDir+'scripts/peermodify.sh '+Edit_peer.Text);
  Shell ('chmod 600 '+'/etc/ppp/peers/'+Edit_peer.Text);
 //удаляем временные, старые файлы и ссылки
- Shell('rm -f '+TmpDir+'gate');
- Shell('rm -f '+TmpDir+'eth');
- Shell('rm -f '+TmpDir+'users');
- Shell('rm -f '+TmpDir+'tmpsetup');
- Shell('rm -f '+TmpDir+'tmpnostart');
+// Shell('rm -f '+TmpDir+'gate');
+// Shell('rm -f '+TmpDir+'eth');
+// Shell('rm -f '+TmpDir+'users');
+// Shell('rm -f '+TmpDir+'tmpsetup');
+// Shell('rm -f '+TmpDir+'tmpnostart');
  Shell('rm -f /etc/resolv.conf.lock');
  Shell('rm -f '+LibDir+'ip-down');
  Shell('rm -f /etc/ppp/ip-up.d/ip-up.old');
@@ -1457,7 +1480,7 @@ If suse then if not Autostartpppd.Checked then
 If FileExists('/etc/ppp/chap-secrets.old') then
                                             begin
                                                Shell('cp -f /etc/ppp/chap-secrets.old /etc/ppp/chap-secrets');
-                                               Shell ('rm -f /etc/ppp/chap-secrets.old');
+                                               Shell('rm -f /etc/ppp/chap-secrets.old');
                                             end;
 //настройка /etc/xl2tpd/xl2tpd.conf
  If ComboBoxVPN.Text='VPN L2TP' then If not FileExists('/etc/xl2tpd/xl2tpd.conf.old') then Shell('cp -f /etc/xl2tpd/xl2tpd.conf /etc/xl2tpd/xl2tpd.conf.old');
@@ -1648,6 +1671,7 @@ begin
   Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > '+TmpDir+'users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile(TmpDir+'users');
+  Shell('rm -f '+TmpDir+'users');
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
@@ -1666,6 +1690,7 @@ begin
   Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > '+TmpDir+'users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile(TmpDir+'users');
+  Shell('rm -f '+TmpDir+'users');
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
@@ -1693,6 +1718,7 @@ end;
   Shell('cat /etc/passwd | grep 100 | cut -d: -f1 > '+TmpDir+'users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile(TmpDir+'users');
+  Shell('rm -f '+TmpDir+'users');
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
@@ -1708,6 +1734,7 @@ end;
   Shell('cat /etc/passwd | grep 50 | cut -d: -f1 > '+TmpDir+'users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile(TmpDir+'users');
+  Shell('rm -f '+TmpDir+'users');
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
@@ -1747,20 +1774,20 @@ end;
  If FallbackLang='uk' then If FileExists (DataDir+'lang/success.uk') then begin Memo_create.Lines.LoadFromFile(DataDir+'lang/success.uk'); Translate:=true; end;
  If not Translate then If FileExists (DataDir+'lang/success.en') then Memo_create.Lines.LoadFromFile(DataDir+'lang/success.en');
  Button_create.Visible:=False;
- Shell('rm -f '+TmpDir+'users');
+// Shell('rm -f '+TmpDir+'users');
  Button_exit.Enabled:=true;
  ButtonTest.Caption:=message109;
  ButtonTest.Visible:=true;
  Application.ProcessMessages;
- Shell ('rm -f /usr/share/pixmaps/ponoff.png');
- Shell ('rm -f /usr/share/pixmaps/vpnpptp.png');
- Shell ('cp -f '+DataDir+'ponoff.png /usr/share/pixmaps/ponoff.png');
- Shell ('chmod 0644 /usr/share/pixmaps/ponoff.png');
- Shell ('cp -f '+DataDir+'vpnpptp.png /usr/share/pixmaps/vpnpptp.png');
- Shell ('chmod 0644 /usr/share/pixmaps/vpnpptp.png');
+// Shell ('rm -f /usr/share/pixmaps/ponoff.png');
+ //Shell ('rm -f /usr/share/pixmaps/vpnpptp.png');
+ //Shell ('cp -f '+DataDir+'ponoff.png /usr/share/pixmaps/ponoff.png');
+ //Shell ('chmod 0644 /usr/share/pixmaps/ponoff.png');
+ //Shell ('cp -f '+DataDir+'vpnpptp.png /usr/share/pixmaps/vpnpptp.png');
+ //Shell ('chmod 0644 /usr/share/pixmaps/vpnpptp.png');
  if not(FileExists('/bin/ip')) then Shell('ln -s /sbin/ip /bin/ip');
- Shell (ServiceCommand+'syslog restart');
- Shell (ServiceCommand+'rsyslog restart');
+ //Shell (ServiceCommand+'syslog restart');
+ //Shell (ServiceCommand+'rsyslog restart');
  Shell('rm -f /etc/resolv.conf.old');
 end;
 
@@ -1907,8 +1934,10 @@ var
  i,j,l,k:integer;
  flag:boolean;
  str_log:string;
- Code_up_ppp,FlagMtu:boolean;
- pppiface,MtuUsed:string;
+ //Code_up_ppp,
+ FlagMtu:boolean;
+ //pppiface,
+ MtuUsed:string;
 begin
  Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,DataDir+'vpnpptp.png',true,true,true,AFont,Form1.Icon);
  Application.ProcessMessages;
@@ -2003,7 +2032,7 @@ begin
        If not FlagMtu then
            begin
                  //Проверяем поднялось ли соединение
-                 Shell('rm -f '+TmpDir+'status.ppp');
+                 {Shell('rm -f '+TmpDir+'status.ppp');
                  Memo2.Clear;
                  Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
                  Code_up_ppp:=False;
@@ -2017,7 +2046,8 @@ begin
                               pppiface:=LeftStr(Memo2.Lines[j],4);
                          end;
                  end;
-                 Shell('rm -f '+TmpDir+'status.ppp');
+                 Shell('rm -f '+TmpDir+'status.ppp');}
+                 CheckVPN;
                  //Проверяем используемое mtu
                  MtuUsed:='';
                  If Code_up_ppp then
@@ -2037,7 +2067,7 @@ begin
     end;
 end;
  Shell ('rm -f '+TmpDir+'test_vpn');
- Shell ('rm -f '+TmpDir+'statusv.ppp');
+// Shell ('rm -f '+TmpDir+'statusv.ppp');
  if Form3.Kod.Text='1' then AProcess.Free;
 end;
 
@@ -2106,13 +2136,13 @@ end;
 
 procedure TForm1.Button_exitClick(Sender: TObject);
 begin
-  Shell('rm -f '+TmpDir+'gate');
-  Shell('rm -f '+TmpDir+'eth');
-  Shell('rm -f '+TmpDir+'users');
-  Shell('rm -f '+TmpDir+'tmpsetup');
-  Shell('rm -f '+TmpDir+'tmpnostart');
+//  Shell('rm -f '+TmpDir+'gate');
+//  Shell('rm -f '+TmpDir+'eth');
+//  Shell('rm -f '+TmpDir+'users');
+//  Shell('rm -f '+TmpDir+'tmpsetup');
+ // Shell('rm -f '+TmpDir+'tmpnostart');
   Shell('rm -f '+TmpDir+'test_vpn');
-  Shell('rm -f '+TmpDir+'statusv.ppp');
+//  Shell('rm -f '+TmpDir+'statusv.ppp');
   halt;
 end;
 
@@ -2398,11 +2428,13 @@ If not y then IPS:=true else IPS:=false;
   If FileExists(TmpDir+'gate') then Memo_gate.Lines.LoadFromFile(TmpDir+'gate');
   Edit_gate.Text:=Memo_gate.Lines[0];
   If (LeftStr(Edit_gate.Text,3)='eth') or (LeftStr(Edit_gate.Text,4)='wlan') or (LeftStr(Edit_gate.Text,2)='br') then Edit_gate.Text:='none';
+  Shell('rm -f '+TmpDir+'gate');
 //определяем сетевой интерфейс по умолчанию
   Shell('/sbin/ip r|grep default| awk '+chr(39)+'{print $5}'+chr(39)+' > '+TmpDir+'eth');
   Shell('printf "none" >> '+TmpDir+'eth');
   Memo_eth.Clear;
   If FileExists(TmpDir+'eth') then Memo_eth.Lines.LoadFromFile(TmpDir+'eth');
+  Shell('rm -f '+TmpDir+'eth');
   Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
   If Edit_eth.Text='link' then Edit_eth.Text:='none';
   If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
@@ -2460,11 +2492,11 @@ If not y then IPS:=true else IPS:=false;
   EditDNS3.Text:=DNSA;
   EditDNS4.Text:=DNSB;
   If not FileExists (LibDir+'route') then Memo_route.Clear;
-  Shell('rm -f '+TmpDir+'gate');
-  Shell('rm -f '+TmpDir+'eth');
-  Shell('rm -f '+TmpDir+'users');
-  Shell('rm -f '+TmpDir+'tmpsetup');
-  Shell('rm -f '+TmpDir+'tmpnostart');
+//  Shell('rm -f '+TmpDir+'gate');
+//  Shell('rm -f '+TmpDir+'eth');
+//  Shell('rm -f '+TmpDir+'users');
+//  Shell('rm -f '+TmpDir+'tmpsetup');
+//  Shell('rm -f '+TmpDir+'tmpnostart');
   If ComboBoxVPN.Text='VPN L2TP' then Reconnect_pptp.Caption:=message96;
   If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
   If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
@@ -3256,7 +3288,12 @@ If Screen.Height>1000 then
   If FileExists (LibDir+'route') then Memo_route.Lines.LoadFromFile(LibDir+'route'); //восстановление маршрутов
   Form1.Font.Size:=AFont;
 //проверка vpnpptp в процессах root, исключение двойного запуска программы
-  If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then
+Shell('ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39)+' > '+TmpDir+'tmpnostart');
+Shell('printf "none" >> '+TmpDir+'tmpnostart');
+Form1.tmpnostart.Clear;
+If FileExists(TmpDir+'tmpnostart') then tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart');
+Shell('rm -f '+TmpDir+'tmpnostart');
+If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then
                                                                                                     begin
                                                                                                       //двойной запуск
                                                                                                       Form3.MyMessageBox(message0,message19,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
@@ -3274,6 +3311,7 @@ If suse then
                                            Shell('rm -f '+TmpDir+'gate');
                                            halt;
                                          end;
+                 Shell('rm -f '+TmpDir+'gate');
             end;
 //определяем произошел ли запуск при поднятом pppN
   Shell('/sbin/ip r|grep ppp > '+TmpDir+'gate');
@@ -3300,6 +3338,7 @@ Shell ('killall l2tpd');
 Shell ('rm -f '+TmpDir+'ObnullRX');
 Shell ('rm -f '+TmpDir+'ObnullTX');
 Shell ('rm -f '+TmpDir+'DateStart');
+Shell ('rm -f '+TmpDir+'gate');
 Stroowriter:='none';
 FindStroowriter ('oowriter',17);
 If Stroowriter='none' then FindStroowriter ('openoffice.org',23);
@@ -3312,10 +3351,11 @@ If not Translate then Label25.Caption:='              '+Label25.Caption;
    Shell('printf "none" >> '+TmpDir+'tmpnostart');
    Form1.tmpnostart.Clear;
    If FileExists(TmpDir+'tmpnostart') then tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart');
+   Shell('rm -f '+TmpDir+'tmpnostart');
    If LeftStr(tmpnostart.Lines[0],6)='ponoff' then
                                                        begin
                                                          Form3.MyMessageBox(message0,message4,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                         Shell('rm -f '+TmpDir+'tmpnostart');
+                                                         //Shell('rm -f '+TmpDir+'tmpnostart');
                                                          Application.ProcessMessages;
                                                          halt;
                                                        end;
@@ -3337,21 +3377,22 @@ If NetServiceStr='none' then
    Shell('printf "none" >> '+TmpDir+'tmpnostart');
    Form1.tmpnostart.Clear;
    If FileExists(TmpDir+'tmpnostart') then tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart');
+   Shell('rm -f '+TmpDir+'tmpnostart');
    If not (LeftStr(tmpnostart.Lines[0],8)='dhclient') then If not FileExists ('/sbin/dhclient') then
                                                        begin
                                                          dhclient:=false;
                                                          Form3.MyMessageBox(message0,message25,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                         Shell('rm -f '+TmpDir+'tmpnostart');
+                                                         //Shell('rm -f '+TmpDir+'tmpnostart');
                                                          Application.ProcessMessages;
                                                        end;
 //проверка установлен ли пакет Sudo
 If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
-  Shell('rm -f '+TmpDir+'tmpnostart');
-  Shell('rm -f '+TmpDir+'gate');
-  Shell('rm -f '+TmpDir+'eth');
-  Shell('rm -f '+TmpDir+'users');
-  Shell('rm -f '+TmpDir+'tmpsetup');
-  Shell('rm -f '+TmpDir+'tmpnostart');
+  //Shell('rm -f '+TmpDir+'tmpnostart');
+//  Shell('rm -f '+TmpDir+'gate');
+//  Shell('rm -f '+TmpDir+'eth');
+//  Shell('rm -f '+TmpDir+'users');
+//  Shell('rm -f '+TmpDir+'tmpsetup');
+ // Shell('rm -f '+TmpDir+'tmpnostart');
   Shell('rm -f '+LibDir+'ip-down');
  If not FileExists('/usr/sbin/pptp') then
                                     begin
@@ -3369,7 +3410,7 @@ If FileExists ('/usr/bin/sudo') then Sudo:=true else Sudo:=false;
 If FileExists ('/usr/bin/host') then BindUtils:=true else BindUtils:=false;
 StartMessage:=true;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть
-  Shell ('rm -f '+TmpDir+'gate');
+//  Shell ('rm -f '+TmpDir+'gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'gate');
   Shell('printf "none" >> '+TmpDir+'gate');
   Memo_gate.Clear;
@@ -3384,7 +3425,7 @@ StartMessage:=true;
 //повторная проверка дефолтного шлюза
   If Memo_gate.Lines[0]='none' then Sleep(3000);
   Memo_gate.Lines.Clear;
-  Shell ('rm -f '+TmpDir+'gate');
+  //Shell ('rm -f '+TmpDir+'gate');
   Shell('/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39)+' > '+TmpDir+'gate');
   Shell('printf "none" >> '+TmpDir+'gate');
   Memo_gate.Clear;
@@ -3457,7 +3498,7 @@ StartMessage:=true;
   If Memo_gate.Lines[0]='none' then //ничего не помогло
                                    begin
                                         Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,DataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                        Shell ('rm -f '+TmpDir+'gate');
+                                        //Shell ('rm -f '+TmpDir+'gate');
                                         Application.ProcessMessages;
                                    end;
   Shell ('rm -f '+TmpDir+'gate');

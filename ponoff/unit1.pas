@@ -99,6 +99,8 @@ var
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
   FlagMtu:boolean; //необходимость проверки mtu
   FlagLengthSyslog:boolean; //проверен ли размер файла-лога /var/log/syslog
+  Code_up_ppp:boolean; //существует ли интерфейс pppN
+  pppiface:string; //точный интерфейс pppN
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -200,6 +202,27 @@ begin
     f2.Free;
     f1.Free;
   end
+end;
+
+procedure CheckVPN;
+//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
+var
+  str:string;
+begin
+  str:='';
+  pppiface:='';
+  popen (f,'ifconfig | grep Link','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then if LeftStr(str,3)='ppp' then
+                               begin
+                                    Code_up_ppp:=true;
+                                    pppiface:=LeftStr(str,4);
+                               end;
+     end;
+  PClose(f);
 end;
 
 procedure Ifdown (Iface:string);
@@ -350,12 +373,13 @@ end;
 procedure TForm1.MenuItem1Click(Sender: TObject);
 var
     i,h:integer;
-    Code_up_ppp:boolean;
+    //Code_up_ppp:boolean;
     link:byte;//1-link ok, 2-no link, 3-none, 4-еще не определено
     str,MtuUsed:string;
     Str_networktest, Str_RemoteIPaddress:string;
     FindRemoteIPaddress:boolean;
-    pppiface, realpppiface, realpppifacedefault:string;
+    //pppiface,
+    realpppiface, realpppifacedefault:string;
     none:boolean;
 begin
   NewIPS:=true;
@@ -375,21 +399,22 @@ begin
                Application.ProcessMessages;
           end;
    FlagLengthSyslog:=true;
-  //Проверяем поднялось ли соединение
-  str:='';
-  pppiface:='';
-  popen (f,'ifconfig | grep Link','R');
-  Code_up_ppp:=False;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then if LeftStr(str,3)='ppp' then
-                               begin
-                                    Code_up_ppp:=True;
-                                    pppiface:=LeftStr(str,4);
-                               end;
-     end;
-  PClose(f);
+   //Проверяем поднялось ли соединение
+   CheckVPN;
+{   str:='';
+   pppiface:='';
+   popen (f,'ifconfig | grep Link','R');
+   Code_up_ppp:=False;
+   While not eof(f) do
+      begin
+          Readln (f,str);
+          If str<>'' then if LeftStr(str,3)='ppp' then
+                                begin
+                                     Code_up_ppp:=True;
+                                     pppiface:=LeftStr(str,4);
+                                end;
+      end;
+   PClose(f); }
 {  Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
   Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
@@ -458,7 +483,7 @@ If Code_up_ppp then
 If Code_up_ppp then If FileExists (LibDir+'resolv.conf.after') then If FileExists ('/etc/resolv.conf') then
                        If not CompareFiles (LibDir+'resolv.conf.after', '/etc/resolv.conf') then
                                             Shell ('cp -f '+LibDir+'resolv.conf.after /etc/resolv.conf');
-Shell('rm -f '+TmpDir+'hosts.tmp');
+//Shell('rm -f '+TmpDir+'hosts.tmp');
 If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
 //Проверяем используемое mtu
 If not Code_up_ppp then FlagMtu:=false;
@@ -750,7 +775,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                            //closefile (Filenetworktest);
                                            PClose(f);
                                            end;
-                                           Shell('rm -f '+TmpDir+'hosts');
+                                           //Shell('rm -f '+TmpDir+'hosts');
 If Code_up_ppp then If link<>1 then //когда связи по факту нет, но в NetApplet и в ifconfig ppp0 числится, а pppd продолжает сидеть в процессах
                                begin
                                  MenuItem2Click(Self);
@@ -903,7 +928,8 @@ var
   i,h:integer;
   str:string;
   Apid:tpid;
-  Code_up_ppp,nostart:boolean;
+  //Code_up_ppp,
+  //nostart:boolean;
 begin
   Application.CreateForm(TForm2, Form2);
   If FileExists ('/sbin/service') or FileExists ('/usr/sbin/service') then ServiceCommand:='service ' else ServiceCommand:='/etc/init.d/';
@@ -949,11 +975,10 @@ begin
   If Screen.Height>550 then AFont:=8;
   If Screen.Height>1000 then AFont:=10;
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
-   nostart:=false;
+  // nostart:=false;
    popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
-   If eof(f) then nostart:=true;
-   PClose(f);
-   If nostart then
+   If eof(f) then //nostart:=true;
+//   If nostart then
                    begin
                       //запуск не под root
                       Timer1.Enabled:=False;
@@ -961,8 +986,10 @@ begin
                       Form1.Hide;
                       TrayIcon1.Hide;
                       Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,DataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                      PClose(f);
                       halt;
                    end;
+  PClose(f);
   If not FileExists(TmpDir) then Shell ('mkdir -p '+TmpDir);
   //обеспечение совместимости старого config с новым
   If FileExists(LibDir+'config') then
@@ -1004,7 +1031,8 @@ begin
                                Application.ProcessMessages;
                             end;
   //Проверяем поднялось ли соединение
-  str:='';
+  CheckVPN;
+{  str:='';
 //  pppiface:='';
   popen (f,'ifconfig | grep Link','R');
   Code_up_ppp:=False;
@@ -1017,7 +1045,7 @@ begin
                                     //pppiface:=LeftStr(str,4);
                                end;
      end;
-  PClose(f);
+  PClose(f);}
 {  //Проверяем поднялось ли соединение
   Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
@@ -1238,15 +1266,15 @@ begin
  Shell('killall openl2tpd');
  Shell('killall l2tpd');
  Application.ProcessMessages;
- Shell('rm -f '+TmpDir+'status.ppp');
- Shell('rm -f '+TmpDir+'tmp');
- Shell('rm -f '+TmpDir+'gate');
- Shell('rm -f '+TmpDir+'gate1');
- Shell('rm -f '+TmpDir+'gate2');
- Shell('rm -f '+TmpDir+'users');
+// Shell('rm -f '+TmpDir+'status.ppp');
+// Shell('rm -f '+TmpDir+'tmp');
+// Shell('rm -f '+TmpDir+'gate');
+// Shell('rm -f '+TmpDir+'gate1');
+ //Shell('rm -f '+TmpDir+'gate2');
+// Shell('rm -f '+TmpDir+'users');
 // Shell('rm -f '+TmpDir+'tmpnostart1');
- Shell('rm -f '+TmpDir+'status3.ppp');
- Shell('rm -f '+TmpDir+'status.ppp');
+// Shell('rm -f '+TmpDir+'status3.ppp');
+// Shell('rm -f '+TmpDir+'status.ppp');
 // Shell('rm -f '+TmpDir+'tmp_pppd');
 end;
 
@@ -1275,7 +1303,7 @@ begin
   Shell ('echo "d '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
   If FileExists (DataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(DataDir+'off.ico');
   Application.ProcessMessages;
-  Shell ('rm -f '+TmpDir+'gate');
+//  Shell ('rm -f '+TmpDir+'gate');
   For h:=1 to CountInterface do
               Shell ('route del default');
   If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
@@ -1288,7 +1316,7 @@ begin
   Shell ('rm -f '+TmpDir+'ObnullRX');
   Shell ('rm -f '+TmpDir+'ObnullTX');
   Shell ('rm -f '+TmpDir+'mtu.checked');
-  Shell ('rm -f '+TmpDir+'status3.ppp');
+//  Shell ('rm -f '+TmpDir+'status3.ppp');
   MakeDefaultGW;
   halt;
 end;
@@ -1364,21 +1392,23 @@ begin
   Shell ('rm -f '+TmpDir+'ObnullRX');
   Shell ('rm -f '+TmpDir+'ObnullTX');
   Shell ('rm -f '+TmpDir+'mtu.checked');
-  Shell ('rm -f '+TmpDir+'status3.ppp');
+//  Shell ('rm -f '+TmpDir+'status3.ppp');
   halt;
 end;
 
 procedure TForm1.MenuItem5Click(Sender: TObject);
-var
+//var
   //j:integer;
-  Code_up_ppp:boolean;
-  pppiface,str:string;
+  //Code_up_ppp:boolean;
+  //pppiface,
+  //str:string;
 begin
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
-  str:='';
+  CheckVPN;
+{  str:='';
   pppiface:='';
   popen (f,'ifconfig | grep Link','R');
   Code_up_ppp:=False;
@@ -1391,7 +1421,7 @@ begin
                                     pppiface:=LeftStr(str,4);
                                end;
      end;
-  PClose(f);
+  PClose(f);}
 {  //Проверяем поднялось ли соединение
   Application.ProcessMessages;
   TrayIcon1.Show;
@@ -1434,8 +1464,9 @@ procedure TForm1.Timer2Timer(Sender: TObject);
 //индикация иконки в трее, балуны и тест интернета
 var
   //j:integer;
-  Code_up_ppp:boolean;
-  pppiface,Str:string;
+  //Code_up_ppp:boolean;
+  //pppiface,
+  Str:string;
   RXbyte1,TXbyte1:string;
   TV : timeval;
   DNS3,DNS4:string;
@@ -1446,7 +1477,8 @@ begin
   TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
-  str:='';
+  CheckVPN;
+{  str:='';
   pppiface:='';
   popen (f,'ifconfig | grep Link','R');
   Code_up_ppp:=False;
@@ -1459,7 +1491,7 @@ begin
                                     //pppiface:=LeftStr(str,4);
                                end;
      end;
-  PClose(f);
+  PClose(f);}
   {//Проверяем поднялось ли соединение
   Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
@@ -1624,7 +1656,8 @@ procedure TForm1.TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
   //j:integer;
-  Code_up_ppp,find_net_monitor:boolean;
+  //Code_up_ppp,
+  find_net_monitor:boolean;
   str:string;
 begin
   If Button=MBLEFT then exit;
@@ -1634,7 +1667,8 @@ begin
   TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
-  str:='';
+  CheckVPN;
+{  str:='';
 //  pppiface:='';
   popen (f,'ifconfig | grep Link','R');
   Code_up_ppp:=False;
@@ -1647,7 +1681,7 @@ begin
                                     //pppiface:=LeftStr(str,4);
                                end;
      end;
-  PClose(f);
+  PClose(f);}
   {Shell('rm -f '+TmpDir+'status.ppp');
   Memo2.Clear;
   Shell('ifconfig | grep Link > '+TmpDir+'status.ppp');
@@ -1689,9 +1723,9 @@ procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
 // Вывод информации о соединении
 var
   //j:integer;
-  Code_up_ppp:boolean;
+  //Code_up_ppp:boolean;
   str:string;
-  pppiface:string;
+  //pppiface:string;
   SecondsPastRun:int64;
   hour,min,sec:int64;
   Time:string;
@@ -1716,7 +1750,8 @@ begin
   pppiface:='';
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
-  str:='';
+  CheckVPN;
+{  str:='';
   pppiface:='';
   popen (f,'ifconfig | grep Link','R');
   Code_up_ppp:=False;
@@ -1729,7 +1764,7 @@ begin
                                     pppiface:=LeftStr(str,4);
                                end;
      end;
-  PClose(f);
+  PClose(f);}
   {Shell('rm -f '+TmpDir+'status3.ppp');
   Memo2.Clear;
   Shell('ifconfig | grep Link > '+TmpDir+'status3.ppp');
