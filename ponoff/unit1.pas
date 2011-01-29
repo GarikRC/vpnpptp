@@ -927,7 +927,7 @@ var
   link:byte; //1-link ok, 2-no link, 3-none
   i,h:integer;
   str:string;
-  Apid:tpid;
+  Apid,Apidroot:tpid;
   //Code_up_ppp,
   //nostart:boolean;
 begin
@@ -976,8 +976,14 @@ begin
   If Screen.Height>1000 then AFont:=10;
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
   // nostart:=false;
+   Apid:=FpGetpid;
+   Apidroot:=FpGetpid;
+   popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $1}'+chr(39),'R');
+   while not eof(f) do
+           readln(f,Apidroot);
+   PClose(f);
    popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
-   If eof(f) then //nostart:=true;
+   If eof(f) or (Apid<>Apidroot) then //nostart:=true;
 //   If nostart then
                    begin
                       //запуск не под root

@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, UnitMyMessageBox,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Unit2, Process,Typinfo,Gettext;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Unit2, Process,Typinfo,Gettext,BaseUnix;
 
 type
 
@@ -2867,6 +2867,7 @@ var i,N, CountGateway:integer;
     wlanCount:array[0..9] of integer;
     brCount:array[0..9] of integer;
     nostart:boolean;
+    Apid,Apidroot:tpid;
 begin
 Application.CreateForm(TForm3, Form3);
 ubuntu:=false;
@@ -3166,9 +3167,15 @@ If Screen.Height>1000 then
                              Memo_route.Width:=650;
                          end;
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
+  Apid:=FpGetpid;
+  Apidroot:=FpGetpid;
+  popen (f,'ps -u root | grep vpnpptp | awk '+chr(39)+'{print $1}'+chr(39),'R');
+  while not eof(f) do
+          readln(f,Apidroot);
+  PClose(f);
   nostart:=false;
   popen (f,'ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39),'R');
-  If eof(f) then nostart:=true;
+  If eof(f) or (Apid<>Apidroot) then nostart:=true;
   PClose(f);
   If nostart then
                 begin
