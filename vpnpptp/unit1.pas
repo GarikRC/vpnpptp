@@ -3168,10 +3168,13 @@ If Screen.Height>1000 then
                          end;
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
   Apid:=FpGetpid;
-  Apidroot:=FpGetpid;
+  Apidroot:=0;
   popen (f,'ps -u root | grep vpnpptp | awk '+chr(39)+'{print $1}'+chr(39),'R');
   while not eof(f) do
-          readln(f,Apidroot);
+     begin
+        readln(f,Apidroot);
+        If Apid=Apidroot then break;
+     end;
   PClose(f);
   nostart:=false;
   popen (f,'ps -u root | grep vpnpptp | awk '+chr(39)+'{print $4}'+chr(39),'R');
