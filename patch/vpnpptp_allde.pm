@@ -12,7 +12,7 @@ sub get_packages { 'vpnpptp-allde' }
 
 sub read_config {
 
-run_program::rooted($::prefix,'vpnpptp');
+run_program::rooted($::prefix,'/usr/bin/vpnpptp');
 end => 1;
 }
 
