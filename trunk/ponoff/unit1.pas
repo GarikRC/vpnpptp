@@ -977,10 +977,14 @@ begin
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
   // nostart:=false;
    Apid:=FpGetpid;
-   Apidroot:=FpGetpid;
+   //Apidroot:=FpGetpid;
+   Apidroot:=0;
    popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $1}'+chr(39),'R');
    while not eof(f) do
+        begin
            readln(f,Apidroot);
+           If Apid=Apidroot then break;
+        end;
    PClose(f);
    popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
    If eof(f) or (Apid<>Apidroot) then //nostart:=true;
