@@ -2142,61 +2142,6 @@ object Form1: TForm1
     TabOrder = 0
     Visible = False
   end
-  object Memo2: TMemo
-    Left = 170
-    Height = 37
-    Top = 0
-    Width = 112
-    Lines.Strings = (
-      'Memo2'
-    )
-    TabOrder = 1
-    Visible = False
-  end
-  object Memo3: TMemo
-    Left = 288
-    Height = 37
-    Top = 0
-    Width = 113
-    Lines.Strings = (
-      'Memo3'
-    )
-    TabOrder = 2
-    Visible = False
-  end
-  object Memo4: TMemo
-    Left = 408
-    Height = 37
-    Top = 0
-    Width = 113
-    Lines.Strings = (
-      'Memo4'
-    )
-    TabOrder = 3
-    Visible = False
-  end
-  object Memo_gate1: TMemo
-    Left = 232
-    Height = 37
-    Top = 136
-    Width = 110
-    Lines.Strings = (
-      'Memo_gate1'
-    )
-    TabOrder = 4
-    Visible = False
-  end
-  object tmpnostart: TMemo
-    Left = 96
-    Height = 42
-    Top = 136
-    Width = 111
-    Lines.Strings = (
-      'tmp'
-    )
-    TabOrder = 5
-    Visible = False
-  end
   object Memo_ip_down: TMemo
     Left = 51
     Height = 40
@@ -2205,40 +2150,7 @@ object Form1: TForm1
     Lines.Strings = (
       'Memo_ip_down'
     )
-    TabOrder = 6
-    Visible = False
-  end
-  object tmp_pppd: TMemo
-    Left = 289
-    Height = 38
-    Top = 40
-    Width = 112
-    Lines.Strings = (
-      'tmp_pppd'
-    )
-    TabOrder = 7
-    Visible = False
-  end
-  object Memo_gatevpn: TMemo
-    Left = 170
-    Height = 40
-    Top = 40
-    Width = 112
-    Lines.Strings = (
-      'Memo_gatevpn'
-    )
-    TabOrder = 8
-    Visible = False
-  end
-  object Memo_gate: TMemo
-    Left = 408
-    Height = 40
-    Top = 40
-    Width = 112
-    Lines.Strings = (
-      'Memo_gate'
-    )
-    TabOrder = 9
+    TabOrder = 1
     Visible = False
   end
   object Memo_bindutilshost0: TMemo
@@ -2249,40 +2161,7 @@ object Form1: TForm1
     Lines.Strings = (
       'Memo_bindutilshost0'
     )
-    TabOrder = 10
-    Visible = False
-  end
-  object Memo_testonstart: TMemo
-    Left = 376
-    Height = 40
-    Top = 88
-    Width = 142
-    Lines.Strings = (
-      'Memo_testonstart'
-    )
-    TabOrder = 11
-    Visible = False
-  end
-  object Memo_networktest: TMemo
-    Left = 52
-    Height = 40
-    Top = 88
-    Width = 148
-    Lines.Strings = (
-      'Memo_networktest'
-    )
-    TabOrder = 12
-    Visible = False
-  end
-  object Memo_etc_ppp_ip_up: TMemo
-    Left = 365
-    Height = 43
-    Top = 135
-    Width = 156
-    Lines.Strings = (
-      'Memo_etc_ppp_ip_up'
-    )
-    TabOrder = 13
+    TabOrder = 2
     Visible = False
   end
   object Panel1: TPanel
@@ -2300,7 +2179,7 @@ object Form1: TForm1
     BorderSpacing.Top = 1
     ClientHeight = 152
     ClientWidth = 533
-    TabOrder = 14
+    TabOrder = 3
     object Image1: TImage
       AnchorSideLeft.Control = Owner
       AnchorSideBottom.Control = Owner

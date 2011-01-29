@@ -257,14 +257,6 @@ msgstr ""
 msgid "Провайдер (IP или имя):"
 msgstr ""
 
-#: TFORM1.LABEL_IP_DOWN.CAPTION
-msgid "/etc/ppp/ip-down.d/ip-down"
-msgstr ""
-
-#: TFORM1.LABEL_IP_UP.CAPTION
-msgid "/etc/ppp/ip-up.d/ip-up"
-msgstr ""
-
 #: TFORM1.LABEL_MRU.CAPTION
 msgid "MRU (если задано):"
 msgstr ""
@@ -275,10 +267,6 @@ msgstr ""
 
 #: TFORM1.LABEL_PEER.CAPTION
 msgid "Имя соединения:"
-msgstr ""
-
-#: TFORM1.LABEL_PEERNAME.CAPTION
-msgid "Label_peername"
 msgstr ""
 
 #: TFORM1.LABEL_PSWD.CAPTION

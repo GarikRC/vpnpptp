@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 439
+  Left = 400
   Height = 580
-  Top = 94
+  Top = 153
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -3222,33 +3222,6 @@ object Form1: TForm1
         ParentBidiMode = False
         ParentColor = False
       end
-      object Label_peername: TLabel
-        Left = 279
-        Height = 14
-        Top = 9
-        Width = 89
-        Caption = 'Label_peername'
-        ParentColor = False
-        Visible = False
-      end
-      object Label_ip_up: TLabel
-        Left = 383
-        Height = 14
-        Top = 9
-        Width = 120
-        Caption = '/etc/ppp/ip-up.d/ip-up'
-        ParentColor = False
-        Visible = False
-      end
-      object Label_ip_down: TLabel
-        Left = 519
-        Height = 14
-        Top = 9
-        Width = 150
-        Caption = '/etc/ppp/ip-down.d/ip-down'
-        ParentColor = False
-        Visible = False
-      end
       object Label14: TLabel
         AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = Label42
@@ -3266,9 +3239,9 @@ object Form1: TForm1
         OnMouseDown = TabSheet1MouseDown
       end
       object Memo_peer: TMemo
-        Left = 711
-        Height = 39
-        Top = 318
+        Left = 735
+        Height = 35
+        Top = 310
         Width = 70
         Lines.Strings = (
           ''
@@ -3277,8 +3250,8 @@ object Form1: TForm1
         Visible = False
       end
       object Memo_ip_up: TMemo
-        Left = 711
-        Height = 39
+        Left = 735
+        Height = 35
         Top = 238
         Width = 71
         Lines.Strings = (
@@ -3288,9 +3261,9 @@ object Form1: TForm1
         Visible = False
       end
       object Memo_ip_down: TMemo
-        Left = 711
-        Height = 39
-        Top = 198
+        Left = 735
+        Height = 35
+        Top = 203
         Width = 70
         Lines.Strings = (
           ''
@@ -3299,58 +3272,47 @@ object Form1: TForm1
         Visible = False
       end
       object Memo_users: TMemo
-        Left = 711
-        Height = 39
-        Top = 278
+        Left = 735
+        Height = 35
+        Top = 275
         Width = 70
         Lines.Strings = (
-          'Memo7'
+          ''
         )
         TabOrder = 20
         Visible = False
       end
-      object Memo_pptp: TMemo
-        Left = 711
-        Height = 39
-        Top = 46
+      object Memo_eth: TMemo
+        Left = 735
+        Height = 35
+        Top = 99
         Width = 70
         Lines.Strings = (
-          'Memo5'
+          ''
         )
         TabOrder = 21
         Visible = False
       end
-      object Memo_eth: TMemo
-        Left = 711
-        Height = 39
-        Top = 6
+      object Memo_gate: TMemo
+        Left = 735
+        Height = 35
+        Top = 383
         Width = 70
         Lines.Strings = (
-          'Memo5'
+          ''
         )
         TabOrder = 22
         Visible = False
       end
-      object Memo_gate: TMemo
-        Left = 711
-        Height = 39
-        Top = 398
+      object Tmpnostart: TMemo
+        Left = 735
+        Height = 35
+        Top = 347
         Width = 70
         Lines.Strings = (
-          'Memo5'
+          ''
         )
         TabOrder = 23
-        Visible = False
-      end
-      object Tmpnostart: TMemo
-        Left = 711
-        Height = 39
-        Top = 358
-        Width = 70
-        Lines.Strings = (
-          'Memo5'
-        )
-        TabOrder = 24
         Visible = False
       end
       object Mii_tool_no: TCheckBox
@@ -3397,14 +3359,14 @@ object Form1: TForm1
         TabOrder = 3
       end
       object Memo_config: TMemo
-        Left = 711
-        Height = 58
-        Top = 142
+        Left = 735
+        Height = 35
+        Top = 168
         Width = 70
         Lines.Strings = (
-          'Memo_config'
+          ''
         )
-        TabOrder = 25
+        TabOrder = 24
         Visible = False
       end
       object CheckBox_shorewall: TCheckBox
@@ -3421,25 +3383,25 @@ object Form1: TForm1
         TabOrder = 4
       end
       object Memo_shorewall: TMemo
-        Left = 711
-        Height = 58
-        Top = 86
+        Left = 735
+        Height = 35
+        Top = 133
         Width = 70
         Lines.Strings = (
-          'Memo_config'
+          ''
         )
-        TabOrder = 26
+        TabOrder = 25
         Visible = False
       end
       object Memo_ip_IPS: TMemo
-        Left = 711
-        Height = 48
-        Top = 438
+        Left = 735
+        Height = 35
+        Top = 419
         Width = 70
         Lines.Strings = (
-          'Memo_ip_IPS'
+          ''
         )
-        TabOrder = 27
+        TabOrder = 26
         Visible = False
       end
       object routevpnauto: TCheckBox
@@ -3456,14 +3418,14 @@ object Form1: TForm1
         TabOrder = 5
       end
       object Memo_bindutilshost: TMemo
-        Left = 639
-        Height = 48
-        Top = 86
+        Left = 735
+        Height = 35
+        Top = 63
         Width = 70
         Lines.Strings = (
-          'Memo_bindutilshost'
+          ''
         )
-        TabOrder = 28
+        TabOrder = 27
         Visible = False
       end
       object networktest: TCheckBox
@@ -3489,14 +3451,14 @@ object Form1: TForm1
         TabOrder = 10
       end
       object Memo_networktest: TMemo
-        Left = 639
-        Height = 52
-        Top = 134
+        Left = 735
+        Height = 35
+        Top = 27
         Width = 70
         Lines.Strings = (
-          'Memo_networktest'
+          ''
         )
-        TabOrder = 29
+        TabOrder = 28
         Visible = False
       end
       object Sudo_ponoff: TCheckBox
@@ -3522,25 +3484,22 @@ object Form1: TForm1
         TabOrder = 12
       end
       object Memo_vpnpptp_ponoff_desktop: TMemo
-        Left = 639
-        Height = 47
-        Top = 190
+        Left = 663
+        Height = 35
+        Top = 239
         Width = 70
         Lines.Strings = (
-          'Memo_vpnpptp_desktop'
+          ''
         )
-        TabOrder = 30
+        TabOrder = 29
         Visible = False
       end
       object Memo_sudo: TMemo
-        Left = 639
-        Height = 41
-        Top = 238
+        Left = 663
+        Height = 35
+        Top = 274
         Width = 70
-        Lines.Strings = (
-          'Memo_sudo'
-        )
-        TabOrder = 31
+        TabOrder = 30
         Visible = False
       end
       object Autostart_ponoff: TCheckBox
@@ -3566,14 +3525,14 @@ object Form1: TForm1
         TabOrder = 14
       end
       object Memo_Autostartpppd: TMemo
-        Left = 639
-        Height = 41
-        Top = 278
+        Left = 663
+        Height = 35
+        Top = 311
         Width = 70
         Lines.Strings = (
-          'Memo_Autostartpppd'
+          ''
         )
-        TabOrder = 32
+        TabOrder = 31
         Visible = False
       end
       object pppnotdefault: TCheckBox
@@ -3588,25 +3547,25 @@ object Form1: TForm1
         TabOrder = 15
       end
       object Memonew1: TMemo
-        Left = 639
-        Height = 42
-        Top = 318
+        Left = 663
+        Height = 35
+        Top = 346
         Width = 70
         Lines.Strings = (
-          'Memonew1'
+          ''
         )
-        TabOrder = 33
+        TabOrder = 32
         Visible = False
       end
       object Memonew2: TMemo
-        Left = 639
-        Height = 42
-        Top = 358
+        Left = 663
+        Height = 35
+        Top = 383
         Width = 70
         Lines.Strings = (
-          'Memonew1'
+          ''
         )
-        TabOrder = 34
+        TabOrder = 33
         Visible = False
       end
       object routeDNSauto: TCheckBox
@@ -3620,25 +3579,22 @@ object Form1: TForm1
         TabOrder = 8
       end
       object MemoTest: TMemo
-        Left = 639
-        Height = 41
-        Top = 398
+        Left = 663
+        Height = 35
+        Top = 419
         Width = 70
-        Lines.Strings = (
-          'MemoTest'
-        )
-        TabOrder = 35
+        TabOrder = 34
         Visible = False
       end
       object Memo2: TMemo
-        Left = 639
-        Height = 48
-        Top = 438
+        Left = 663
+        Height = 35
+        Top = 202
         Width = 70
         Lines.Strings = (
-          'Memo2'
+          ''
         )
-        TabOrder = 36
+        TabOrder = 35
         Visible = False
       end
       object etc_hosts: TCheckBox

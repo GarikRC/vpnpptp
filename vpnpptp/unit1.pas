@@ -135,15 +135,11 @@ type
     Label8: TLabel;
     Label_IPS: TLabel;
     Label_gate: TLabel;
-    Label_ip_down: TLabel;
-    Label_ip_up: TLabel;
     Label_peer: TLabel;
-    Label_peername: TLabel;
     Label_route: TLabel;
     Label_user: TLabel;
     Label_pswd: TLabel;
     Memo_eth: TMemo;
-    Memo_pptp: TMemo;
     Memo_peer: TMemo;
     Memo_ip_up: TMemo;
     Memo_ip_down: TMemo;
@@ -795,11 +791,11 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Application.ProcessMessages;
                           Ifdown(Edit_eth.Text);
                           Application.ProcessMessages;
-                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
+                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then sleep (10000);
                           Ifup(Edit_eth.Text);
                           Application.ProcessMessages;
                           Shell ('rm -f '+TmpDir+'dhclienttest1');
-                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') then sleep (10000);
+                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then sleep (10000);
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >'+TmpDir+'dhclienttest1');
                           Shell ('rm -f '+TmpDir+'dhclienttest2');
                           Label14.Caption:=message49;
@@ -894,10 +890,10 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                                                         Shell (ServiceCommand+'shorewall restart');
                                                                   end;
  If FileExists('/etc/ppp/peers/'+Edit_peer.Text) then Shell('cp -f /etc/ppp/peers/'+Edit_peer.Text+' /etc/ppp/peers/'+Edit_peer.Text+chr(46)+'old');
- Label_peername.Caption:='/etc/ppp/peers/'+Edit_peer.Text;
+// Label_peername.Caption:=;
  Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont, LibDir);
  If Children then Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
- Shell('rm -f '+ Label_peername.Caption);
+ Shell('rm -f /etc/ppp/peers/'+Edit_peer.Text);
  Memo_peer.Clear;
  NumberUnit:='1';
  If ComboBoxVPN.Text='VPN PPTP' then
@@ -963,11 +959,11 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
       if CheckBox_no56.Checked then if CheckBox_no128.Checked then mppe_string:=mppe_string+',';
    if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
    If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
- Memo_peer.Lines.SaveToFile(Label_peername.Caption); //записываем провайдерский профиль подключения
+ Memo_peer.Lines.SaveToFile('/etc/ppp/peers/'+Edit_peer.Text); //записываем провайдерский профиль подключения
  If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
                               If FileExists(DataDir+'scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
                                                                 Shell ('sh '+DataDir+'scripts/peermodify.sh '+Edit_peer.Text);
- Shell ('chmod 600 '+Label_peername.Caption);
+ Shell ('chmod 600 '+'/etc/ppp/peers/'+Edit_peer.Text);
 //удаляем временные, старые файлы и ссылки
  Shell('rm -f '+TmpDir+'gate');
  Shell('rm -f '+TmpDir+'eth');
@@ -985,7 +981,7 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
 //перезаписываем скрипт поднятия соединения ip-up
  If not DirectoryExists('/etc/ppp/ip-up.d/') then Shell ('mkdir -p /etc/ppp/ip-up.d/');
  If fedora then Shell ('ln -s /etc/ppp/ip-up.d/ip-up /etc/ppp/ip-up.local');
- Shell('rm -f '+ Label_ip_up.Caption);
+ Shell('rm -f /etc/ppp/ip-up.d/ip-up');
  Memo_ip_up.Clear;
  Memo_ip_up.Lines.Add('#!/bin/sh');
  Memo_ip_up.Lines.Add('if [ ! -f '+BinDir+'ponoff ]');
@@ -1072,10 +1068,10 @@ If not dhcp_route.Checked then If FileExists('/etc/dhclient-exit-hooks.old') the
                                         end;
  If route_IP_remote.Checked then
                                 Memo_ip_up.Lines.Add ('/sbin/route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
- Memo_ip_up.Lines.SaveToFile(Label_ip_up.Caption);
+ Memo_ip_up.Lines.SaveToFile('/etc/ppp/ip-up.d/ip-up');
  if Memo_route.Lines.Text <> '' then Memo_route.Lines.SaveToFile(LibDir+'route'); //сохранение введенных пользователем маршрутов в файл
  if Memo_route.Lines.Text = '' then Shell ('rm -f '+LibDir+'route');
- Shell('chmod a+x '+ Label_ip_up.Caption);
+ Shell('chmod a+x /etc/ppp/ip-up.d/ip-up');
 //поправка на debian
 if FileExists('/etc/ppp/ip-up.d/exim4') then
                                            begin
@@ -1086,7 +1082,7 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
 //перезаписываем скрипт опускания соединения ip-down
  If not DirectoryExists('/etc/ppp/ip-down.d/') then Shell ('mkdir -p /etc/ppp/ip-down.d/');
  If fedora then Shell ('ln -s /etc/ppp/ip-down.d/ip-down /etc/ppp/ip-down.local');
- Shell('rm -f '+ Label_ip_down.Caption);
+ Shell('rm -f /etc/ppp/ip-down.d/ip-down');
  Memo_ip_down.Clear;
  Memo_ip_down.Lines.Add('#!/bin/sh');
  Memo_ip_down.Lines.Add('if [ ! -f '+BinDir+'ponoff ]');
@@ -1130,8 +1126,8 @@ if FileExists('/etc/ppp/ip-up.d/exim4') then
          end;
  If route_IP_remote.Checked then
                                 Memo_ip_down.Lines.Add ('/sbin/route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
- Memo_ip_down.Lines.SaveToFile(Label_ip_down.Caption);
- Shell('chmod a+x '+ Label_ip_down.Caption);
+ Memo_ip_down.Lines.SaveToFile('/etc/ppp/ip-down.d/ip-down');
+ Shell('chmod a+x /etc/ppp/ip-down.d/ip-down');
 //Записываем готовый конфиг, кроме логина и пароля
  If Edit_MinTime.Text<>'0' then Edit_MinTime.Text:=Edit_MinTime.Text+'000';
  Edit_MaxTime.Text:=Edit_MaxTime.Text+'000';
@@ -1621,7 +1617,7 @@ begin
   Memo_create.Lines.Add('Comment=Control VPN via PPTP/L2TP');
   If not Sudo_ponoff.Checked then
      begin
-         If not gksu then if not beesu then Memo_create.Lines.Add('Exec='+BinDir+'ponoff');
+         If not gksu then if not beesu then Memo_create.Lines.Add('Exec=ponoff');
          If not debian then if gksu then Memo_create.Lines.Add('Exec=gksu -u root -l '+BinDir+'ponoff');
          If debian then if gksu then Memo_create.Lines.Add('Exec=gksu '+BinDir+'ponoff');
          If beesu then Memo_create.Lines.Add('Exec=beesu '+BinDir+'ponoff');
