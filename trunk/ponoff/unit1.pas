@@ -1565,7 +1565,7 @@ begin
                              If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
                              If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
                              If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
-                             If FileExists ('/usr/bin/vnstat') then Shell ('vnstat -u -i '+pppiface);
+                             //If FileExists ('/usr/bin/vnstat') then Shell ('vnstat -u -i '+pppiface);
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
                              begin
                                  Mysleep(1000);
