@@ -16,3 +16,5 @@
 
 7) модуль ponoff более не влияет на vnstat,
 
+8) модуль ponoff более не порождает зомби-процессы dhclient, net_monitor,
+

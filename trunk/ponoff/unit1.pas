@@ -87,7 +87,7 @@ var
   Count:byte;//счетчик времени
   ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
   AFont:integer; //шрифт приложения
-  AProcess,AProcessDhclient: TProcess; //для запуска внешних приложений
+  AProcess,AProcessDhclient,AProcessNet_Monitor: TProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
   debian:boolean; // используется ли дистрибутив debian
   fedora:boolean; // используется ли дистрибутив fedora
@@ -101,6 +101,7 @@ var
   FlagLengthSyslog:boolean; //проверен ли размер файла-лога /var/log/syslog
   Code_up_ppp:boolean; //существует ли интерфейс pppN
   pppiface:string; //точный интерфейс pppN
+  Net_MonitorRun:boolean; //запущен ли net_monitor
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -375,6 +376,40 @@ begin
       // Form1.Memo_gate.Lines.Clear;
 end;
 
+procedure KillZombieNet_Monitor;
+//следит за дочерним процессом AProcessNet_Monitor, и если он уже только как зомби, то убирает его
+var
+   find_net_monitor:boolean;
+   str:string;
+begin
+  find_net_monitor:=false;
+  If FileExists ('/usr/bin/net_monitor') then if FileExists ('/usr/bin/vnstat') then if Net_MonitorRun then
+                    begin
+                         //проверка net_monitor в процессах root, игнорируя зомби
+                         popen(f,'ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39),'R');
+                         //Shell('ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39)+' > '+TmpDir+'tmpnostart1');
+                         //Shell('printf "none" >> '+TmpDir+'tmpnostart1');
+                         //Form1.tmpnostart.Clear;
+                         //If FileExists(TmpDir+'tmpnostart1') then
+                         str:='';
+                         While not eof(f) do
+                              begin
+                                   Readln(f,str);
+                                   //tmpnostart.Lines.LoadFromFile(TmpDir+'tmpnostart1');
+                                   //For j:=0 to tmpnostart.Lines.Count-1 do
+                                     //       If tmpnostart.Lines[j]='net_monitor' then find_net_monitor:=true;
+                                   If str='net_monitor' then find_net_monitor:=true;
+                              end;
+                         PClose(f);
+                         If not find_net_monitor then
+                                                 begin
+                                                      Net_MonitorRun:=false;
+                                                      AProcessNet_Monitor.WaitOnExit;
+                                                      AProcessNet_Monitor.Free;
+                                                 end;
+                    end;
+end;
+
 procedure TForm1.MenuItem1Click(Sender: TObject);
 var
     i,h:integer;
@@ -386,6 +421,7 @@ var
     //pppiface,
     realpppiface, realpppifacedefault:string;
     none:boolean;
+    //ID:integer;
 begin
   NewIPS:=true;
   NoPingIPS:=false;
@@ -659,12 +695,12 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
                                  PClose(f);
                             end;
 If not Code_up_ppp then DhclientStart:=false;
-If not Code_up_ppp then If link=1 then //старт dhclient
+If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' then //старт dhclient
                            begin
                               AProcessDhclient := TProcess.Create(nil);
                               AProcessDhclient.CommandLine :='dhclient '+Memo_Config.Lines[3];
                               Application.ProcessMessages;
-                              If not NoPingIPS then If not NoDNS then If not NoPingGW then If Memo_Config.Lines[9]='dhcp-route-yes' then
+                              If not NoPingIPS then If not NoDNS then If not NoPingGW then //If Memo_Config.Lines[9]='dhcp-route-yes' then
                               begin
                                 For h:=1 to CountInterface do
                                                             Shell ('route del default');
@@ -678,7 +714,7 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                                       end;
                                 DhclientStart:=true;
                               end;
-                              If link=1 then If NoInternet then If Memo_Config.Lines[9]='dhcp-route-yes' then //проверка поднялся ли интерфейс после dhclient
+                              If link=1 then If NoInternet then //If Memo_Config.Lines[9]='dhcp-route-yes' then //проверка поднялся ли интерфейс после dhclient
                               begin
                                    none:=false;
                                    popen (f,'/sbin/ip r|grep '+Memo_Config.Lines[3],'R');
@@ -712,9 +748,12 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                  //Shell ('rm -f '+TmpDir+'gate');
                                  //Memo_gate.Lines.Clear;
                               end;
+                              //ID:=0;
+                              //ID:=AProcessDhclient.ProcessID;
+                              //If ID<>0 then Shell ('kill '+IntToStr(ID));
                               //Unix.WaitProcess(AProcessDhclient.ProcessID);
                               //AProcessDhclient.WaitOnExit;
-                              AProcessDhclient.Free;
+                              //AProcessDhclient.Free;
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
   If not FileExists(LibDir+'hosts') then NewIPS:=false;
@@ -925,6 +964,12 @@ If not Code_up_ppp then If link=1 then
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > /var/run/xl2tpd/l2tp-control');
                                                                                                               end;
                                                    end;
+                                  //If not Code_up_ppp then If link=1 then
+                                  If Memo_Config.Lines[9]='dhcp-route-yes' then
+                                                begin
+                                                     AProcessDhclient.WaitOnExit;
+                                                     AProcessDhclient.Free;
+                                                end;
                            end;
 Application.ProcessMessages;
 end;
@@ -959,6 +1004,7 @@ begin
   RXSpeed:='0b/s';
   TXSpeed:='0b/s';
   Count:=0;
+  Net_MonitorRun:=false;
   CountInterface:=1;
   FlagMtu:=false;
   FlagLengthSyslog:=false;
@@ -1304,6 +1350,7 @@ begin
  DoubleRunPonoff:=false;
  Timer1.Enabled:=False;
  Timer2.Enabled:=False;
+ KillZombieNet_Monitor;
  Shell ('killall net_monitor');
  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
  If Memo_Config.Lines[7]='noreconnect-pptp' then
@@ -1348,6 +1395,7 @@ begin
   DoubleRunPonoff:=false;
   Timer1.Enabled:=False;
   Timer2.Enabled:=False;
+  KillZombieNet_Monitor;
   Shell ('killall net_monitor');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   If FileExists(LibDir+'resolv.conf.before') then If FileExists('/etc/resolv.conf') then
@@ -1417,6 +1465,7 @@ end;
 
 procedure TForm1.MenuItem5Click(Sender: TObject);
 //var
+  //ID:integer;
   //j:integer;
   //Code_up_ppp:boolean;
   //pppiface,
@@ -1459,14 +1508,18 @@ begin
        Code_up_ppp:=True;
       end;
    end;}
-  If Code_up_ppp then
+  If Code_up_ppp then If not Net_MonitorRun then
              begin
-                AProcess := TProcess.Create(nil);
-                AProcess.CommandLine := '/usr/bin/net_monitor -i '+pppiface;
-                AProcess.Execute;
+                AProcessNet_Monitor := TProcess.Create(nil);
+                AProcessNet_Monitor.CommandLine := '/usr/bin/net_monitor -i '+pppiface;
+                AProcessNet_Monitor.Execute;
+                Net_MonitorRun:=true;
                 //Unix.WaitProcess(AProcess.ProcessID);
                 //AProcess.WaitOnExit;
-                AProcess.Free;
+                //ID:=0;
+                //ID:=AProcess.ProcessID;
+                //AProcess.Free;
+                //If ID<>0 then Shell ('kill '+IntToStr(ID));
              end;
 end;
 
@@ -1491,6 +1544,7 @@ var
   RXbyte1,TXbyte1:string;
   TV : timeval;
   DNS3,DNS4:string;
+ // find_net_monitor:boolean;
 begin
   Count:=Count+1;
   If Count=3 then Count:=1;
@@ -1499,6 +1553,7 @@ begin
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
+  KillZombieNet_Monitor;
 {  str:='';
   pppiface:='';
   popen (f,'ifconfig | grep Link','R');
@@ -1684,6 +1739,8 @@ begin
   If Button=MBLEFT then exit;
   If not FileExists ('/usr/bin/net_monitor') then begin MenuItem5.Visible:=false; exit;end;
   If not FileExists ('/usr/bin/vnstat') then begin MenuItem5.Visible:=false; exit;end;
+  If Net_MonitorRun then begin MenuItem5.Enabled:=false; exit;end;
+  If not Net_MonitorRun then MenuItem5.Enabled:=true;
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
@@ -1736,7 +1793,7 @@ begin
                               end;
                          PClose(f);
                     end;
-  If not find_net_monitor then MenuItem5.Enabled:=true else MenuItem5.Enabled:=false;
+  If not find_net_monitor then If not Net_MonitorRun then MenuItem5.Enabled:=true else MenuItem5.Enabled:=false;
   If not Code_up_ppp then MenuItem5.Enabled:=false;
 end;
 
