@@ -225,23 +225,27 @@ begin
   PClose(f);
 end;
 
-procedure Ifdown (Iface:string);
+procedure Ifdown (Iface:string;wait:boolean);
 //опускает интерфейс
 begin
           AProcess := TProcess.Create(nil);
           If FileExists ('/sbin/ifdown') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifdown '+Iface;
           If (not FileExists ('/sbin/ifdown')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' down';
+          if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
           AProcess.Execute;
+          //Unix.WaitProcess(AProcess.ProcessID);
           AProcess.Free;
 end;
 
-procedure Ifup (Iface:string);
+procedure Ifup (Iface:string;wait:boolean);
 //поднимает интерфейс
 begin
           AProcess := TProcess.Create(nil);
           If FileExists ('/sbin/ifup') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifup '+Iface;
           If (not FileExists ('/sbin/ifup')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' up';
+          if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
           AProcess.Execute;
+          //Unix.WaitProcess(AProcess.ProcessID);
           AProcess.Free;
 end;
 
@@ -358,12 +362,13 @@ begin
                                                                                                      AProcess := TProcess.Create(nil);
                                                                                                      AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                                                                                                      AProcess.Execute;
+                                                                                                     //Unix.WaitProcess(AProcess.ProcessID);
                                                                                                      AProcess.Free;
                                                                                                 end;
-                                 Ifdown(Form1.Memo_Config.Lines[3]);
+                                 Ifdown(Form1.Memo_Config.Lines[3],false);
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
-                                 Ifup(Form1.Memo_Config.Lines[3]);
-                                 Ifup('lo');
+                                 Ifup(Form1.Memo_Config.Lines[3],false);
+                                 Ifup('lo',false);
                                  If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
                                end;
       // Shell ('rm -f '+TmpDir+'gate');
@@ -700,13 +705,15 @@ If not Code_up_ppp then If link=1 then //старт dhclient
                                          //If Memo_gate.Lines[0]='none' then
                                          if none then
                                                  begin
-                                                      Ifup(Form1.Memo_Config.Lines[3]);
+                                                      Ifup(Form1.Memo_Config.Lines[3],false);
                                                       DhclientStart:=false;
                                                  end;
                                     end;
                                  //Shell ('rm -f '+TmpDir+'gate');
                                  //Memo_gate.Lines.Clear;
                               end;
+                              //Unix.WaitProcess(AProcessDhclient.ProcessID);
+                              //AProcessDhclient.WaitOnExit;
                               AProcessDhclient.Free;
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
@@ -882,8 +889,8 @@ If not Code_up_ppp then If link=1 then
                                                    begin
                                                       For h:=1 to CountInterface do
                                                                                 Shell ('route del default');
-                                                      Ifdown(Memo_Config.Lines[3]);
-                                                      Ifup(Form1.Memo_Config.Lines[3]);
+                                                      Ifdown(Memo_Config.Lines[3],false);
+                                                      Ifup(Form1.Memo_Config.Lines[3],false);
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
@@ -893,7 +900,7 @@ If not Code_up_ppp then If link=1 then
                                                       If not FileExists(TmpDir+'ObnullRX') then ObnullRX:=false else ObnullRX:=true;
                                                       If not FileExists(TmpDir+'ObnullTX') then ObnullTX:=false else ObnullTX:=true;
                                                       If not FileExists(TmpDir+'DateStart') then DateStart:=0;
-                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
+                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo',false);
                                                       For h:=1 to CountInterface do
                                                                           Shell ('route del default');
                                                       Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
@@ -1179,12 +1186,13 @@ If suse then
                    AProcess := TProcess.Create(nil);
                    AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                    AProcess.Execute;
+                   //Unix.WaitProcess(AProcess.ProcessID);
                    AProcess.Free;
                    For h:=1 to CountInterface do
                                           Shell ('route del default');
-                   Ifdown(Memo_Config.Lines[3]);
+                   Ifdown(Memo_Config.Lines[3],false);
                    Mysleep(3000);
-                   Ifup(Memo_Config.Lines[3]);
+                   Ifup(Memo_Config.Lines[3],false);
                    //повторная проверка состояния сетевого интерфейса
                    If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep(3000);
                    popen (f,'/sbin/mii-tool '+Memo_Config.Lines[3],'R');
@@ -1262,6 +1270,7 @@ begin
                                                                                        AProcess := TProcess.Create(nil);
                                                                                        AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                                                                                        AProcess.Execute;
+                                                                                       //Unix.WaitProcess(AProcess.ProcessID);
                                                                                        AProcess.Free;
                                                                                        Mysleep(3000);
                                                                                   end;
@@ -1316,7 +1325,7 @@ begin
 //  Shell ('rm -f '+TmpDir+'gate');
   For h:=1 to CountInterface do
               Shell ('route del default');
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo',false);
   Shell('rm -f '+TmpDir+'xl2tpd.conf');
   If FileExists(LibDir+'resolv.conf.before') then If FileExists('/etc/resolv.conf') then
          If not CompareFiles (LibDir+'resolv.conf.before', '/etc/resolv.conf') then
@@ -1362,13 +1371,13 @@ begin
   Application.ProcessMessages;
   For i:=0 to 9 do
       begin
-        Ifdown('eth'+IntToStr(i));
-        Ifdown('wlan'+IntToStr(i));
-        Ifdown('br'+IntToStr(i));
+        Ifdown('eth'+IntToStr(i),true);
+        Ifdown('wlan'+IntToStr(i),true);
+        Ifdown('br'+IntToStr(i),true);
       end;
   Shell (ServiceCommand+NetServiceStr+' restart'); // организация конкурса интерфейсов
   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep(3000);
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo',true);
   Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
   popen(f,'/sbin/ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39),'R');
@@ -1382,18 +1391,18 @@ begin
      begin
          For i:=0 to 9 do
              begin
-              Ifdown('eth'+IntToStr(i));
-              Ifdown('wlan'+IntToStr(i));
-              Ifdown('br'+IntToStr(i));
+              Ifdown('eth'+IntToStr(i),true);
+              Ifdown('wlan'+IntToStr(i),true);
+              Ifdown('br'+IntToStr(i),true);
              end;
             Shell (ServiceCommand+NetServiceStr+' restart');
             For i:=0 to 9 do
                  begin
-                    Ifup('eth'+IntToStr(i));
-                    Ifup('wlan'+IntToStr(i));
-                    Ifup('br'+IntToStr(i));
+                    Ifup('eth'+IntToStr(i),true);
+                    Ifup('wlan'+IntToStr(i),true);
+                    Ifup('br'+IntToStr(i),true);
                  end;
-           Ifup('lo');
+           Ifup('lo',true);
      end;
   PClose(f);
   //Shell ('rm -f '+TmpDir+'gate');
@@ -1455,6 +1464,8 @@ begin
                 AProcess := TProcess.Create(nil);
                 AProcess.CommandLine := '/usr/bin/net_monitor -i '+pppiface;
                 AProcess.Execute;
+                //Unix.WaitProcess(AProcess.ProcessID);
+                //AProcess.WaitOnExit;
                 AProcess.Free;
              end;
 end;
