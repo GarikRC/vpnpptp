@@ -266,10 +266,6 @@ msgstr "Run this program requires root user rights or root's permission. Press <
 msgid "Д#209�угая такая же п#209�ог#209�амма уже пытается сконфигу#209�и#209�овать VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска."
 msgstr "Another copy of program try to configure VPN PPTP/L2TP. Press <OK> for cancel double run."
 
-#: unit1.message2
-msgid "Так как Вы отказались от конт#209�оля state сетевого кабеля, то в целях снижения наг#209�узки на систему в#209�емя дозвона установлено в 20 сек."
-msgstr "Since you didn't selected control of state network cable, then dial time set to 20 seconds to reduce the load on the system."
-
 #: unit1.message3
 msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd(xl2tpd) #209�еконнекта п#209�оигно#209�и#209�ован."
 msgstr "Select internal pppd(xl2tpd) daemon reconnect is ignore since you have not selected reconnect option."
@@ -350,10 +346,6 @@ msgstr "When receiving routes via DHCP will stop, simultaneously work the Intern
 #: unit1.message36
 msgid "Отменить наст#209�ойку файе#209�вола п#209�ог#209�аммой стоит только если файе#209�вол отключен, или файе#209�вол Вами самостоятельно наст#209�аивается."
 msgstr "Canceling setting firewall by this program is only if the firewall is disabled, or your own firewall is configured."
-
-#: unit1.message37
-msgid "Если инте#209�нет хо#209�ошо #209�аботает без опции п#209�ог#209�аммного добавления ма#209�ш#209�ута к VPN-се#209�ве#209�у, то не стоит наг#209�ужать систему."
-msgstr "If the Internet works fine without the software options add a route to VPN-server, then you should not load the system."
 
 #: unit1.message38
 msgid "П#209�и выбо#209�е этой опции п#209�ове#209�яется пинг VPN-, DNS-се#209�ве#209�а, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные п#209�облемы, выводя сообщения."
@@ -700,14 +692,6 @@ msgstr "I) Enter VPN-server adress... (for example vpn.internet.beeline.ru)"
 msgid "I) Введите ад#209�ес VPN-се#209�ве#209�а... (нап#209�име#209�, tp.internet.beeline.ru)"
 msgstr "I) Enter VPN-server adress... (for example tp.internet.beeline.ru)"
 
-#: unit1.message101
-msgid "Для VPN L2TP значение MTU должно быть меньше, чем для VPN PPTP как минимум на 20 байт, но не более чем 1460 байт."
-msgstr "For VPN L2TP MTU value must be less than for VPN PPTP at least 20 bytes, but not more than 1460 bytes."
-
-#: unit1.message102
-msgid "Рекомендуется значение MTU 1400 байт."
-msgstr "It is recommended MTU value 1400 bytes."
-
 #: unit1.message103
 msgid "Наст#209�ойка VPN PPTP/L2TP"
 msgstr "Configure VPN PPTP/L2TP"
@@ -1017,3 +1001,12 @@ msgstr "Configurator could not verify the setting encryption mppe from man pppd,
 #: unit1.message168
 msgid "П#209�авильность автоматической наст#209�ойки конфигу#209�ато#209�ом шиф#209�ования mppe не га#209�анти#209�уется."
 msgstr "The correctness of the automatic settings encryption mppe can not be guaranteed."
+
+#: unit1.message37
+msgid "Ма#209�ш#209�утизи#209�уйте VPN-се#209�ве#209� всегда, к#209�оме случаев если его ма#209�ш#209�утизация в силу #209�азличных п#209�ичин не т#209�ебуется."
+msgstr "You have to route the VPN-server always, except in cases when it routing is not required."
+
+#: unit1.message2
+msgctxt "unit1.message2"
+msgid "Не найдено офисное п#209�иложение для вывода сп#209�авки, читающее фо#209�мат doc. Вы можете самостоятельно п#209�очитать сп#209�авку, кото#209�ая находится:"
+msgstr "Does not found Office application to display Help that read the doc. You can to read help, which is:"
