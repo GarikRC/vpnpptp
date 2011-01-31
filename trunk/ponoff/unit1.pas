@@ -709,7 +709,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                                                       begin
                                                            if fedora then Shell('killall dhclient');
                                                            AProcessDhclient.Execute;
-                                                           Mysleep(3000);
+                                                           Mysleep(StrToInt(Memo_Config.Lines[5]) div 3);
                                                            Application.ProcessMessages;
                                                       end;
                                 DhclientStart:=true;
@@ -728,7 +728,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                                  //If Memo_gate.Lines[0]='none' then
                                  if none then
                                     begin
-                                         Mysleep(3000);
+                                         Mysleep(StrToInt(Memo_Config.Lines[5]) div 3);
                                          none:=false;
                                          popen (f,'/sbin/ip r|grep '+Memo_Config.Lines[3],'R');
                                          If eof(f) then none:=true;
@@ -1515,7 +1515,7 @@ begin
                 AProcessNet_Monitor.Execute;
                 Net_MonitorRun:=true;
                 //Unix.WaitProcess(AProcess.ProcessID);
-                //AProcess.WaitOnExit;
+                //AProcessNet_Monitor.WaitOnExit;
                 //ID:=0;
                 //ID:=AProcess.ProcessID;
                 //AProcess.Free;
