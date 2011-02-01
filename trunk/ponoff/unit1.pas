@@ -1552,6 +1552,7 @@ var
 begin
   Count:=Count+1;
   If Count=3 then Count:=1;
+  //If Count=4 then Count:=1;
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
@@ -1610,22 +1611,32 @@ begin
   If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch '+TmpDir+'ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
   If Count=2 then
   begin
-     DoCount:=true;
-     RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
+     If DoCount then RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
+     If not DoCount then RXSpeed:='?';
      If RXSpeed='' then RXSpeed:='0';
-     TXSpeed:=IntToStr((abs(StrToInt64(TXbyte1)-StrToInt64(TXbyte)) div (Timer2.Interval div 1000)) div Count);
+     If DoCount then TXSpeed:=IntToStr((abs(StrToInt64(TXbyte1)-StrToInt64(TXbyte)) div (Timer2.Interval div 1000)) div Count);
+     If not DoCount then TXSpeed:='?';
      If TXSpeed='' then TXSpeed:='0';
      RXbyte:=RXbyte1;
      TXbyte:=TXbyte1;
+     If RXSpeed<>'?' then
+     begin
      If StrToInt64(RXSpeed)>1048576 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1048576)+'MiB/s'
            else If StrToInt64(RXSpeed)>1024 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1024)+'KiB/s'
                                                                              else RXSpeed:=RXSpeed+'b/s';
+     end;
+     If TXSpeed<>'?' then
+     begin
      If StrToInt64(TXSpeed)>1048576 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1048576)+'MiB/s'
            else If StrToInt64(TXSpeed)>1024 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1024)+'KiB/s'
                                                                              else TXSpeed:=TXSpeed+'b/s';
+     end;
+     DoCount:=true;
   end;
   If Count<2 then If not DoCount then
   begin
+      RXbyte:=RXbyte1;
+      TXbyte:=TXbyte1;
       RXSpeed:='?';
       TXSpeed:='?';
   end;
