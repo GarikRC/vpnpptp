@@ -85,6 +85,7 @@ var
   DateStart,DateStop:int64;//время запуска/время текущее
   RXSpeed,TXSpeed:string;//скорость загрузки/отдачи
   Count:byte;//счетчик времени
+  DoCount:boolean;//выводить ли скорость
   ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
   AFont:integer; //шрифт приложения
   AProcess,AProcessDhclient,AProcessNet_Monitor: TProcess; //для запуска внешних приложений
@@ -1005,6 +1006,7 @@ begin
   RXSpeed:='0b/s';
   TXSpeed:='0b/s';
   Count:=0;
+  DoCount:=false;
   Net_MonitorRun:=false;
   CountInterface:=1;
   FlagMtu:=false;
@@ -1608,6 +1610,7 @@ begin
   If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch '+TmpDir+'ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
   If Count=2 then
   begin
+     DoCount:=true;
      RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
      If RXSpeed='' then RXSpeed:='0';
      TXSpeed:=IntToStr((abs(StrToInt64(TXbyte1)-StrToInt64(TXbyte)) div (Timer2.Interval div 1000)) div Count);
@@ -1620,6 +1623,11 @@ begin
      If StrToInt64(TXSpeed)>1048576 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1048576)+'MiB/s'
            else If StrToInt64(TXSpeed)>1024 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1024)+'KiB/s'
                                                                              else TXSpeed:=TXSpeed+'b/s';
+  end;
+  If Count<2 then If not DoCount then
+  begin
+      RXSpeed:='?';
+      TXSpeed:='?';
   end;
   If Code_up_ppp then If DateStart=0 then
                       begin
