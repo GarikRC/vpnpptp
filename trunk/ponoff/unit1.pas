@@ -830,6 +830,7 @@ If Code_up_ppp then If link<>1 then //когда связи по факту не
                                end;
 
 If Code_up_ppp then Timer1.Interval:=StrToInt64(Memo_Config.Lines[4]) else Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
+//If Code_up_ppp then Timer1.Interval:=StrToInt(Memo_Config.Lines[4]) else Timer1.Interval:=StrToInt(Memo_Config.Lines[5]);
 If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 
 If not Code_up_ppp then If link=3 then
@@ -1166,7 +1167,7 @@ If not FileExists (TmpDir+'DateStart') then DateStart:=0 else
                                                  readln(FileDateStart, str);
                                             end;
                                             closefile (FileDateStart);
-                                            DateStart:=StrToInt(str);
+                                            If str<>'' then DateStart:=StrToInt(str) else DateStart:=0;
                                        end;
 //учитывание особенностей openSUSE
 If suse then
@@ -1279,6 +1280,7 @@ If suse then
                  halt;
                 end;
   Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
+  //Timer1.Interval:=StrToInt(Memo_Config.Lines[5]);
   MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
   If Memo_Config.Lines[7]='reconnect-pptp' then
                                              begin
@@ -1591,6 +1593,7 @@ begin
        Readln (f,RXbyte1);
      end;
   PClose(f);
+  If RXbyte1='' then RXbyte1:='0';
   popen (f,'ifconfig '+pppiface+'|grep TX|grep bytes|awk '+chr(39)+'{print $6}'+chr(39),'R');
   If eof(f) then TXbyte1:='0';
   While not eof(f) do
@@ -1598,6 +1601,7 @@ begin
        Readln (f,TXbyte1);
      end;
   PClose(f);
+  If TXbyte1='' then TXbyte1:='0';
   Delete(RXbyte1,1,6);
   Delete(TXbyte1,1,6);
   If StrToInt64(RXbyte1)>=4242538496 then begin ObnullRX:=true; Shell ('touch '+TmpDir+'ObnullRX'); end;//реакция программы за 3сек до факта обнуления значений
@@ -1605,7 +1609,9 @@ begin
   If Count=2 then
   begin
      RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
+     If RXSpeed='' then RXSpeed:='0';
      TXSpeed:=IntToStr((abs(StrToInt64(TXbyte1)-StrToInt64(TXbyte)) div (Timer2.Interval div 1000)) div Count);
+     If TXSpeed='' then TXSpeed:='0';
      RXbyte:=RXbyte1;
      TXbyte:=TXbyte1;
      If StrToInt64(RXSpeed)>1048576 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1048576)+'MiB/s'
