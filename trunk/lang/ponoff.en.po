@@ -209,3 +209,13 @@ msgstr "Possible problems with establishing a connection..."
 #: unit1.message47
 msgid "Запускается се#209�вис xl2tpd..."
 msgstr "Service xl2tpd is starting..."
+
+#: unit1.message48
+msgctxt "unit1.message48"
+msgid "Отсутствуют нек#209�итичные файлы: "
+msgstr "Missing uncritical files: "
+
+#: unit1.message49
+msgctxt "unit1.message49"
+msgid "Отсутствуют к#209�итичные файлы: "
+msgstr "Missing critical files: "

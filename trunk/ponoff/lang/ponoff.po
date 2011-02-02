@@ -226,6 +226,16 @@ msgstr ""
 msgid "Запускается се#209�вис xl2tpd..."
 msgstr ""
 
+#: unit1.message48
+msgctxt "unit1.message48"
+msgid "Отсутствуют нек#209�итичные файлы: "
+msgstr ""
+
+#: unit1.message49
+msgctxt "unit1.message49"
+msgid "Отсутствуют к#209�итичные файлы: "
+msgstr ""
+
 #: unit1.message5
 msgid "No link. Сетевой кабель для VPN PPTP/L2TP неподключен."
 msgstr ""

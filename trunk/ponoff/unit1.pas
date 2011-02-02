@@ -175,17 +175,12 @@ resourcestring
   message45='Размер файла-лога /var/log/syslog больше 1 GiB.';
   message46='Возможны проблемы с установлением соединения...';
   message47='Запускается сервис xl2tpd...';
+  message48='Отсутствуют некритичные файлы: ';
+  message49='Отсутствуют критичные файлы: ';
 
 implementation
 
 { TForm1 }
-
-Function DeleteSym(d, s: string): string;
-//Удаление любого символа из строки s, где d - символ для удаления
-Begin
-  While pos(d, s) <> 0 do
-  Delete(s, (pos(d, s)), 1); result := s;
-End;
 
 procedure MySleep (sec:integer);
 //пауза
@@ -201,6 +196,58 @@ begin
          Application.ProcessMessages;
    until i+100>sec;
 end;
+
+procedure BalloonMessage (i:integer;str1:string);
+begin
+     If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
+     If Form1.Memo_Config.Lines[23]<>'networktest-yes' then MySleep(1000);
+     Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+     Application.ProcessMessages;
+end;
+
+procedure CheckFiles;
+//проверяет наличие необходимых программе файлов
+var
+    str:string;
+begin
+    //критичные файлы
+    str:=message49;
+    If not FileExists(MyDataDir+'off.ico') then str:=str+MyDataDir+'off.ico, ';
+    If not FileExists(MyDataDir+'on.ico') then str:=str+MyDataDir+'on.ico, ';
+    If not FileExists(MyLibDir+'resolv.conf.before') then str:=str+MyLibDir+'resolv.conf.before, ';
+    If not FileExists(MyLibDir+'resolv.conf.after') then str:=str+MyLibDir+'resolv.conf.after, ';
+    If str<>message49 then
+                     begin
+                          Form1.Timer1.Enabled:=False;
+                          Form1.Timer2.Enabled:=False;
+                          Form1.Hide;
+                          Form1.TrayIcon1.Hide;
+                          str:=LeftStr(str,Length(str)-2);
+                          Form3.MyMessageBox(message0,str,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                          halt;
+                     end;
+    //некритичные файлы
+    str:=message48;
+    If not FileExists(MyDataDir+'ponoff.png') then str:=str+MyDataDir+'ponoff.png, ';
+    If FallbackLang='ru' then If not FileExists(MyDataDir+'lang/ponoff.ru.po') then str:=str+MyDataDir+'lang/ponoff.ru.po, ';
+    If FallbackLang='en' then If not FileExists(MyDataDir+'lang/ponoff.en.po') then str:=str+MyDataDir+'lang/ponoff.en.po, ';
+    If FallbackLang='uk' then If not FileExists(MyDataDir+'lang/ponoff.uk.po') then str:=str+MyDataDir+'lang/ponoff.uk.po, ';
+    If str<>message48 then
+                     begin
+                          str:=LeftStr(str,Length(str)-2);
+                          Form1.TrayIcon1.Show;
+                          BalloonMessage (8000,str);
+                          MySleep(8000);
+                          Application.ProcessMessages;
+                     end;
+end;
+
+Function DeleteSym(d, s: string): string;
+//Удаление любого символа из строки s, где d - символ для удаления
+Begin
+  While pos(d, s) <> 0 do
+  Delete(s, (pos(d, s)), 1); result := s;
+End;
 
 function CompareFiles(const FirstFile, SecondFile: string): Boolean;
 //сравнение файлов
@@ -319,14 +366,6 @@ begin
   CountInterface:=i;
 end;
 
-procedure BalloonMessage (i:integer;str1:string);
-begin
-     If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
-     If Form1.Memo_Config.Lines[23]<>'networktest-yes' then MySleep(1000);
-     Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
-     Application.ProcessMessages;
-end;
-
 procedure MakeDefaultGW;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN
 var
@@ -413,7 +452,7 @@ begin
                BalloonMessage (8000,message45+' '+message46);
                MySleep(3000);
                Application.ProcessMessages;
-          end;
+           end;
    FlagLengthSyslog:=true;
 //Проверяем поднялось ли соединение
 CheckVPN;
@@ -854,9 +893,6 @@ begin
   Form1.Visible:=false;
   Form1.WindowState:=wsMinimized;
   Form1.Hide;
-  Application.ProcessMessages;
-  TrayIcon1.Show;
-  Application.ProcessMessages;
   NoInternet:=true;
   DhclientStart:=false;
   RemoteIPaddress:='none';
@@ -921,6 +957,10 @@ begin
   If Memo_Config.Lines[43]='suse' then suse:=true;
   If Memo_Config.Lines[43]='mandriva' then mandriva:=true;
   Form1.Font.Size:=AFont;
+  CheckFiles;//проверка наличия необходимых программе файлов
+  Application.ProcessMessages;
+  TrayIcon1.Show;
+  Application.ProcessMessages;
   //определение управляющего сетью сервиса
   NetServiceStr:='none';
   If FileExists (EtcInitDDir+'network') then NetServiceStr:='network';
@@ -930,7 +970,14 @@ begin
   If FileExists (EtcInitDDir+'networkmanager') then NetServiceStr:='networkmanager';
   If NetServiceStr='none' then
                             begin
+                               Form1.Timer1.Enabled:=False;
+                               Form1.Timer2.Enabled:=False;
+                               Form1.Hide;
+                               Form1.TrayIcon1.Hide;
                                Form3.MyMessageBox(message0,message2,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                               Form1.Timer1.Enabled:=true;
+                               Form1.Timer2.Enabled:=true;
+                               Form1.TrayIcon1.Show;
                                Application.ProcessMessages;
                             end;
 //Проверяем поднялось ли соединение
@@ -1530,6 +1577,7 @@ initialization
                             end;
   If not Translate then
                             begin
+                               FallbackLang:='en';
                                POFileName:= MyDataDir+'lang/ponoff.en.po';
                                If FileExists (POFileName) then
                                              Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
