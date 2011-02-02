@@ -1010,3 +1010,13 @@ msgstr "You have to route the VPN-server always, except in cases when it routing
 msgctxt "unit1.message2"
 msgid "Не найдено офисное п#209�иложение для вывода сп#209�авки, читающее фо#209�мат doc. Вы можете самостоятельно п#209�очитать сп#209�авку, кото#209�ая находится:"
 msgstr "Does not found Office application to display Help that read the doc. You can to read help, which is:"
+
+#: unit1.message101
+msgctxt "unit1.message101"
+msgid "Отсутствуют нек#209�итичные файлы: "
+msgstr "Missing uncritical files: "
+
+#: unit1.message102
+msgctxt "unit1.message102"
+msgid "Шиф#209�ование mppe может быть наст#209�оено неве#209�но, так как отсутствует файл: "
+msgstr "Encryption mppe may be configured incorrect, because there is no file: "

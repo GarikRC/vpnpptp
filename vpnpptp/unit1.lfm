@@ -2146,10 +2146,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 816
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight]
     BorderSpacing.Bottom = 33
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -3201,7 +3201,7 @@ object Form1: TForm1
         Left = 146
         Height = 14
         Top = 481
-        Width = 522
+        Width = 523
         Anchors = [akLeft, akBottom]
         Caption = 'Нажмите на кнопку "Создать подключение" для сохранения сконфигурированных настроек'
         ParentColor = False
@@ -3216,7 +3216,7 @@ object Form1: TForm1
         Left = 120
         Height = 14
         Top = 495
-        Width = 575
+        Width = 574
         Anchors = [akLeft, akBottom]
         Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
         ParentBidiMode = False
@@ -3329,7 +3329,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 27
-        Width = 661
+        Width = 660
         Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
         TabOrder = 1
       end
@@ -3339,7 +3339,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 48
-        Width = 306
+        Width = 304
         Caption = 'Вести подробный лог pppd(xl2tpd) в /var/log/syslog'
         Checked = True
         State = cbChecked
@@ -3351,7 +3351,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 69
-        Width = 209
+        Width = 204
         Caption = 'Получать маршруты через DHCP'
         Checked = True
         OnChange = dhcp_routeChange
@@ -3375,7 +3375,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 90
-        Width = 420
+        Width = 417
         Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
         Checked = True
         OnChange = CheckBox_shorewallChange
@@ -3410,7 +3410,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 111
-        Width = 293
+        Width = 290
         Caption = 'Программно добавлять маршрут к VPN-серверу'
         Checked = True
         OnChange = routevpnautoChange
@@ -3434,7 +3434,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 195
-        Width = 419
+        Width = 417
         Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
         OnChange = networktestChange
         TabOrder = 9
@@ -3445,7 +3445,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 216
-        Width = 313
+        Width = 309
         Caption = 'Блокировать все всплывающие сообщения из трея'
         OnChange = balloonChange
         TabOrder = 10
@@ -3467,7 +3467,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 237
-        Width = 326
+        Width = 320
         Caption = 'Разрешить пользователям управлять подключением'
         OnChange = Sudo_ponoffChange
         TabOrder = 11
@@ -3478,7 +3478,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 258
-        Width = 348
+        Width = 346
         Caption = 'Разрешить пользователям конфигурировать соединение'
         OnChange = Sudo_configureChange
         TabOrder = 12
@@ -3508,7 +3508,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 279
-        Width = 356
+        Width = 347
         Caption = 'Автозапуск интернета при старте системы (графический)'
         OnChange = Autostart_ponoffChange
         TabOrder = 13
@@ -3519,7 +3519,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 300
-        Width = 620
+        Width = 615
         Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
         OnChange = AutostartpppdChange
         TabOrder = 14
@@ -3541,7 +3541,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 321
-        Width = 346
+        Width = 344
         Caption = 'Не изменять дефолтный шлюз, запустив VPN PPTP в фоне'
         OnChange = pppnotdefaultChange
         TabOrder = 15
@@ -3574,7 +3574,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 174
-        Width = 284
+        Width = 281
         Caption = 'Программно маршрутизировать DNS-сервера'
         TabOrder = 8
       end
@@ -3603,7 +3603,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 132
-        Width = 662
+        Width = 661
         Caption = 'Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)'
         Checked = True
         OnChange = etc_hostsChange
@@ -3616,7 +3616,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 342
-        Width = 294
+        Width = 295
         Caption = 'Средне- или высокоскоростная линия (nobuffer)'
         Checked = True
         OnChange = pppnotdefaultChange
@@ -3629,7 +3629,7 @@ object Form1: TForm1
         Left = 8
         Height = 21
         Top = 153
-        Width = 367
+        Width = 366
         Caption = 'Маршрутизировать remote IP address в шлюз локальной сети'
         TabOrder = 7
       end

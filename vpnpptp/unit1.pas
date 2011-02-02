@@ -363,8 +363,8 @@ resourcestring
   message98='Автозапуск интернета при старте системы демоном xl2tpd без графики (не рекомендуется использовать)';
   message99='I) Введите адрес VPN-сервера... (например, vpn.internet.beeline.ru)';
   message100='I) Введите адрес VPN-сервера... (например, tp.internet.beeline.ru)';
-  //message101='Для VPN L2TP значение MTU должно быть меньше, чем для VPN PPTP как минимум на 20 байт, но не более чем 1460 байт.';
-  //message102='Рекомендуется значение MTU 1400 байт.';
+  message101='Отсутствуют некритичные файлы: ';
+  message102='Шифрование mppe может быть настроено неверно, так как отсутствует файл: ';
   message103='Настройка VPN PPTP/L2TP';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message105='Обнаружено, что VPN PPTP/L2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
@@ -483,6 +483,43 @@ begin
       Content := FPOFile.Translate(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.'+ PropInfo^.Name), Content);
     end;
   Content := UTF8ToSystemCharSet(Content); // перевод UTF8 в текущую локаль
+end;
+
+procedure CheckFiles;
+//проверяет наличие необходимых программе файлов
+var
+    str:string;
+begin
+    //некритичные файлы
+    str:=message101;
+    If not FileExists(MyDataDir+'vpnpptp.png') then str:=str+MyDataDir+'vpnpptp.png, ';
+    If not FileExists(MyDataDir+'scripts/dhclient-exit-hooks') then str:=str+MyDataDir+'scripts/dhclient-exit-hooks, ';
+    If not FileExists(MyDataDir+'scripts/dhclient.conf') then str:=str+MyDataDir+'scripts/dhclient.conf, ';
+    If not FileExists(MyDataDir+'scripts/peermodify.sh') then str:=str+MyDataDir+'scripts/peermodify.sh, ';
+    If FallbackLang='ru' then
+                     begin
+                          If not FileExists(MyDataDir+'lang/vpnpptp.ru.po') then str:=str+MyDataDir+'lang/vpnpptp.ru.po, ';
+                          If not FileExists(MyDataDir+'lang/success.ru') then str:=str+MyDataDir+'lang/success.ru, ';
+                          If not FileExists(MyDataDir+'wiki/Help_ru.doc') then str:=str+MyDataDir+'wiki/Help_ru.doc, ';
+                     end;
+    If FallbackLang='en' then
+                     begin
+                          If not FileExists(MyDataDir+'lang/vpnpptp.en.po') then str:=str+MyDataDir+'lang/vpnpptp.en.po, ';
+                          If not FileExists(MyDataDir+'lang/success.en') then str:=str+MyDataDir+'lang/success.en, ';
+                          If not FileExists(MyDataDir+'wiki/Help_en.doc') then str:=str+MyDataDir+'wiki/Help_en.doc, ';
+                     end;
+    If FallbackLang='uk' then
+                     begin
+                          If not FileExists(MyDataDir+'lang/vpnpptp.uk.po') then str:=str+MyDataDir+'lang/vpnpptp.uk.po, ';
+                          If not FileExists(MyDataDir+'lang/success.uk') then str:=str+MyDataDir+'lang/success.uk, ';
+                          If not FileExists(MyDataDir+'wiki/Help_uk.doc') then str:=str+MyDataDir+'wiki/Help_uk.doc, ';
+                     end;
+    If str<>message101 then
+                       begin
+                            str:=LeftStr(str,Length(str)-2);
+                            Form3.MyMessageBox(message0,str,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                       end;
+
 end;
 
 procedure CheckVPN;
@@ -766,6 +803,14 @@ If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Chec
                                    end;
                        PClose(f);
                     end;
+If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
+          If not FileExists(MyDataDir+'scripts/peermodify.sh') then
+                                   begin
+                                      Label14.Caption:=message102+MyDataDir+'scripts/peermodify.sh';
+                                      Form3.MyMessageBox(message0,message102+MyDataDir+'scripts/peermodify.sh','','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                      Application.ProcessMessages;
+                                      Form1.Repaint;
+                                   end;
 Button_more.Visible:=false;
 Button_create.Enabled:=false;
 Button_exit.Enabled:=false;
@@ -844,7 +889,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           DhclientStartGood:=true;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Sleep(3000);
+                          Sleep(6000);
                           Shell ('route -n|grep '+Edit_eth.Text+ '|grep '+Edit_gate.Text+' >'+MyTmpDir+'dhclienttest2');
                           //проверка поднялся ли интерфейс после dhclient
                           Shell(SBinDir+'ip r|grep '+Edit_eth.Text+' > '+MyTmpDir+'gate');
@@ -890,7 +935,7 @@ If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') t
                           Application.ProcessMessages;
                           Form1.Repaint;
                           Shell (ServiceCommand+NetServiceStr+' restart');
-                          Sleep(3000);
+                          Sleep(6000);
                        end;
  If CheckBox_shorewall.Checked then If not FileExists(EtcShorewallDir+'interfaces.old') then
                        begin
@@ -2603,6 +2648,20 @@ If not y then IPS:=true else IPS:=false;
                      dhcp_route.Checked:=false;
                      StartMessage:=true;
                 end;
+  If not FileExists(MyDataDir+'scripts/dhclient-exit-hooks') then
+                begin
+                     StartMessage:=false;
+                     dhcp_route.Checked:=false;
+                     dhcp_route.Enabled:=false;
+                     StartMessage:=true;
+                end;
+  If not FileExists(MyDataDir+'scripts/dhclient.conf') then
+               begin
+                     StartMessage:=false;
+                     dhcp_route.Checked:=false;
+                     dhcp_route.Enabled:=false;
+                     StartMessage:=true;
+               end;
   Application.ProcessMessages;
   Form1.Repaint;
 end;
@@ -3243,6 +3302,7 @@ If Screen.Height>1000 then
                              Button_more.BorderSpacing.Left:=350;
                              Memo_route.Width:=650;
                          end;
+ CheckFiles;//проверка наличия необходимых программе файлов
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
   Apid:=FpGetpid;
   Apidroot:=0;
@@ -3674,6 +3734,7 @@ initialization
                             end;
   If not Translate then
                             begin
+                               FallbackLang:='en';
                                POFileName:= MyDataDir+'lang/vpnpptp.en.po';
                                If FileExists (POFileName) then
                                           Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
