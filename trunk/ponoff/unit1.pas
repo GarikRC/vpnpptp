@@ -226,8 +226,6 @@ begin
                      end;
     //некритичные файлы
     str:=message48;
-    If not FileExists(MyDataDir+'off.ico') then str:=str+MyDataDir+'off.ico, ';
-    If not FileExists(MyDataDir+'on.ico') then str:=str+MyDataDir+'on.ico, ';
     If not FileExists(MyDataDir+'ponoff.png') then str:=str+MyDataDir+'ponoff.png, ';
     If FallbackLang='ru' then If not FileExists(MyDataDir+'lang/ponoff.ru.po') then str:=str+MyDataDir+'lang/ponoff.ru.po, ';
     If FallbackLang='en' then If not FileExists(MyDataDir+'lang/ponoff.en.po') then str:=str+MyDataDir+'lang/ponoff.en.po, ';
@@ -712,7 +710,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
 If Code_up_ppp then If link<>1 then //когда связи по факту нет, но в NetApplet и в ifconfig ppp0 числится, а pppd продолжает сидеть в процессах
                                begin
                                  MenuItem2Click(Self);
-                                 If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                                 If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
                                  exit;
                                end;
 
@@ -722,7 +720,7 @@ If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 If not Code_up_ppp then If link=3 then
                                   begin
                                    MenuItem2Click(Self);
-                                   If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                                   If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Timer1.Enabled:=False;
@@ -749,7 +747,7 @@ If not Code_up_ppp then If link=3 then
 If not Code_up_ppp then If link=2 then
                                   begin
                                    MenuItem2Click(Self);
-                                   If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                                   If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Timer1.Enabled:=False;
@@ -957,13 +955,6 @@ begin
   If Memo_Config.Lines[43]='suse' then suse:=true;
   If Memo_Config.Lines[43]='mandriva' then mandriva:=true;
   Form1.Font.Size:=AFont;
-  CheckFiles;//проверка наличия необходимых программе файлов
-  If (not FileExists(MyDataDir+'on.ico')) or (not FileExists(MyDataDir+'off.ico')) then TrayIcon1.Icon:=Form1.Icon;
-  If Code_up_ppp then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
-  If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
-  Application.ProcessMessages;
-  TrayIcon1.Show;
-  Application.ProcessMessages;
   //определение управляющего сетью сервиса
   NetServiceStr:='none';
   If FileExists (EtcInitDDir+'network') then NetServiceStr:='network';
@@ -983,12 +974,6 @@ begin
                                Form1.TrayIcon1.Show;
                                Application.ProcessMessages;
                             end;
-//Проверяем поднялось ли соединение
-CheckVPN;
-If Code_up_ppp then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
-If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
-TrayIcon1.Show;
-Application.ProcessMessages;
 //проверка ponoff в процессах root, обработка двойного запуска программы
 popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
 i:=0;
@@ -1012,6 +997,14 @@ If i>1 then
                         end;
                PClose(f);
            end;
+CheckFiles;//проверка наличия необходимых программе файлов
+//Проверяем поднялось ли соединение
+CheckVPN;
+If Code_up_ppp then If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
+If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+Application.ProcessMessages;
+TrayIcon1.Show;
+Application.ProcessMessages;
 If not FileExists (MyTmpDir+'DateStart') then DateStart:=0 else
                                        begin
                                             AssignFile (FileDateStart,MyTmpDir+'DateStart');
@@ -1184,7 +1177,7 @@ begin
                                             end;
   MenuItem2Click(Self);
   Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
-  If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+  If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
   Application.ProcessMessages;
   For h:=1 to CountInterface do
               Shell ('route del default');
@@ -1230,7 +1223,7 @@ begin
                                             end;
   MenuItem2Click(Self);
   Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
-  If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+  If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
   Application.ProcessMessages;
   For i:=0 to 9 do
       begin
@@ -1372,7 +1365,7 @@ begin
                                                 If not CompareFiles (MyLibDir+'resolv.conf.after', EtcDir+'resolv.conf') then
                                                        Shell ('cp -f '+MyLibDir+'resolv.conf.after '+EtcDir+'resolv.conf');
                              Application.ProcessMessages;
-                             If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
+                             If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
                              If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
                              If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
                              If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
@@ -1450,7 +1443,7 @@ begin
                                          Shell('rm -f '+MyTmpDir+'ObnullRX');
                                          Shell('rm -f '+MyTmpDir+'ObnullTX');
                                     end;
-                             If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                             If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
                              StartMessage:=true;
                            end;
   Application.ProcessMessages;
