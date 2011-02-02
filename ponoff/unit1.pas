@@ -212,8 +212,6 @@ var
 begin
     //критичные файлы
     str:=message49;
-    If not FileExists(MyDataDir+'off.ico') then str:=str+MyDataDir+'off.ico, ';
-    If not FileExists(MyDataDir+'on.ico') then str:=str+MyDataDir+'on.ico, ';
     If not FileExists(MyLibDir+'resolv.conf.before') then str:=str+MyLibDir+'resolv.conf.before, ';
     If not FileExists(MyLibDir+'resolv.conf.after') then str:=str+MyLibDir+'resolv.conf.after, ';
     If str<>message49 then
@@ -228,6 +226,8 @@ begin
                      end;
     //некритичные файлы
     str:=message48;
+    If not FileExists(MyDataDir+'off.ico') then str:=str+MyDataDir+'off.ico, ';
+    If not FileExists(MyDataDir+'on.ico') then str:=str+MyDataDir+'on.ico, ';
     If not FileExists(MyDataDir+'ponoff.png') then str:=str+MyDataDir+'ponoff.png, ';
     If FallbackLang='ru' then If not FileExists(MyDataDir+'lang/ponoff.ru.po') then str:=str+MyDataDir+'lang/ponoff.ru.po, ';
     If FallbackLang='en' then If not FileExists(MyDataDir+'lang/ponoff.en.po') then str:=str+MyDataDir+'lang/ponoff.en.po, ';
@@ -958,6 +958,9 @@ begin
   If Memo_Config.Lines[43]='mandriva' then mandriva:=true;
   Form1.Font.Size:=AFont;
   CheckFiles;//проверка наличия необходимых программе файлов
+  If (not FileExists(MyDataDir+'on.ico')) or (not FileExists(MyDataDir+'off.ico')) then TrayIcon1.Icon:=Form1.Icon;
+  If Code_up_ppp then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
+  If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
@@ -1577,7 +1580,6 @@ initialization
                             end;
   If not Translate then
                             begin
-                               FallbackLang:='en';
                                POFileName:= MyDataDir+'lang/ponoff.en.po';
                                If FileExists (POFileName) then
                                              Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
