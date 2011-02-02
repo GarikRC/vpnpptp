@@ -213,9 +213,9 @@ msgstr "Запускається сервіс xl2tpd..."
 #: unit1.message48
 msgctxt "unit1.message48"
 msgid "Отсутствуют нек#209�итичные файлы: "
-msgstr ""
+msgstr "Відсутні некритичні файли: "
 
 #: unit1.message49
 msgctxt "unit1.message49"
 msgid "Отсутствуют к#209�итичные файлы: "
-msgstr ""
+msgstr "Відсутні критичні файли: "
