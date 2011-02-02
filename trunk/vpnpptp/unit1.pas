@@ -3734,7 +3734,6 @@ initialization
                             end;
   If not Translate then
                             begin
-                               FallbackLang:='en';
                                POFileName:= MyDataDir+'lang/vpnpptp.en.po';
                                If FileExists (POFileName) then
                                           Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
