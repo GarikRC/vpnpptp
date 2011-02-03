@@ -244,6 +244,10 @@ const
   MyLibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
   MyTmpDir='/tmp/vpnpptp/'; //директория для временных файлов
   MyDataDir='/usr/share/vpnpptp/'; //директория для основных неизменных файлов программы
+  MyLangDir='/usr/share/vpnpptp/lang/'; //директория для файлов переводов программы
+  MyScriptsDir='/usr/share/vpnpptp/scripts/'; //директория для скриптов программы
+  MyWikiDir='/usr/share/vpnpptp/wiki/'; //директория для вики программы
+  MyPixmapsDir='/usr/share/pixmaps/'; //директория для значков программы
   EtcPppIpUpDDir='/etc/ppp/ip-up.d/';
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
@@ -492,32 +496,32 @@ var
 begin
     //некритичные файлы
     str:=message101;
-    If not FileExists(MyDataDir+'vpnpptp.png') then str:=str+MyDataDir+'vpnpptp.png, ';
-    If not FileExists(MyDataDir+'scripts/dhclient-exit-hooks') then str:=str+MyDataDir+'scripts/dhclient-exit-hooks, ';
-    If not FileExists(MyDataDir+'scripts/dhclient.conf') then str:=str+MyDataDir+'scripts/dhclient.conf, ';
-    If not FileExists(MyDataDir+'scripts/peermodify.sh') then str:=str+MyDataDir+'scripts/peermodify.sh, ';
+    If not FileExists(MyPixmapsDir+'vpnpptp.png') then str:=str+MyPixmapsDir+'vpnpptp.png, ';
+    If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then str:=str+MyScriptsDir+'dhclient-exit-hooks, ';
+    If not FileExists(MyScriptsDir+'dhclient.conf') then str:=str+MyScriptsDir+'dhclient.conf, ';
+    If not FileExists(MyScriptsDir+'peermodify.sh') then str:=str+MyScriptsDir+'peermodify.sh, ';
     If FallbackLang='ru' then
                      begin
-                          If not FileExists(MyDataDir+'lang/vpnpptp.ru.po') then str:=str+MyDataDir+'lang/vpnpptp.ru.po, ';
-                          If not FileExists(MyDataDir+'lang/success.ru') then str:=str+MyDataDir+'lang/success.ru, ';
-                          If not FileExists(MyDataDir+'wiki/Help_ru.doc') then str:=str+MyDataDir+'wiki/Help_ru.doc, ';
+                          If not FileExists(MyLangDir+'vpnpptp.ru.po') then str:=str+MyLangDir+'vpnpptp.ru.po, ';
+                          If not FileExists(MyLangDir+'success.ru') then str:=str+MyLangDir+'success.ru, ';
+                          If not FileExists(MyWikiDir+'Help_ru.doc') then str:=str+MyWikiDir+'Help_ru.doc, ';
                      end;
     If FallbackLang='en' then
                      begin
-                          If not FileExists(MyDataDir+'lang/vpnpptp.en.po') then str:=str+MyDataDir+'lang/vpnpptp.en.po, ';
-                          If not FileExists(MyDataDir+'lang/success.en') then str:=str+MyDataDir+'lang/success.en, ';
-                          If not FileExists(MyDataDir+'wiki/Help_en.doc') then str:=str+MyDataDir+'wiki/Help_en.doc, ';
+                          If not FileExists(MyLangDir+'vpnpptp.en.po') then str:=str+MyLangDir+'vpnpptp.en.po, ';
+                          If not FileExists(MyLangDir+'success.en') then str:=str+MyLangDir+'success.en, ';
+                          If not FileExists(MyWikiDir+'Help_en.doc') then str:=str+MyWikiDir+'Help_en.doc, ';
                      end;
     If FallbackLang='uk' then
                      begin
-                          If not FileExists(MyDataDir+'lang/vpnpptp.uk.po') then str:=str+MyDataDir+'lang/vpnpptp.uk.po, ';
-                          If not FileExists(MyDataDir+'lang/success.uk') then str:=str+MyDataDir+'lang/success.uk, ';
-                          If not FileExists(MyDataDir+'wiki/Help_uk.doc') then str:=str+MyDataDir+'wiki/Help_uk.doc, ';
+                          If not FileExists(MyLangDir+'vpnpptp.uk.po') then str:=str+MyLangDir+'vpnpptp.uk.po, ';
+                          If not FileExists(MyLangDir+'success.uk') then str:=str+MyLangDir+'success.uk, ';
+                          If not FileExists(MyWikiDir+'Help_uk.doc') then str:=str+MyWikiDir+'Help_uk.doc, ';
                      end;
     If str<>message101 then
                        begin
                             str:=LeftStr(str,Length(str)-2);
-                            Form3.MyMessageBox(message0,str,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                            Form3.MyMessageBox(message0,str,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                        end;
 
 end;
@@ -626,7 +630,7 @@ Children:=false;
 DhclientStartGood:=false;
 If Unit2.Form2.CheckBoxusepeerdns.Checked then If ((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') or (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) then
                                          begin //автоматическая поправка на детские DNS
-                                            Form3.MyMessageBox(message0,message153,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                            Form3.MyMessageBox(message0,message153,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                             Children:=true;
                                             Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
                                             Application.ProcessMessages;
@@ -635,14 +639,14 @@ If Unit2.Form2.CheckBoxusepeerdns.Checked then If ((EditDNS3.Text='81.176.72.82'
 If (((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83')) and (EditDNS4.Text<>'81.176.72.82') and (EditDNS4.Text<>'81.176.72.83')) or
    (((EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) and (EditDNS3.Text<>'81.176.72.82') and (EditDNS3.Text<>'81.176.72.83')) then
                                          begin //игнорирование недетских DNS
-                                            Form3.MyMessageBox(message0,message161,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                            Form3.MyMessageBox(message0,message161,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                          end;
 //сообщения, которые могут привести к выходу из Создания подключения
 If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaultmru.Checked then
                                       begin
-                                        Form3.MyMessageBox(message0,message119+' '+message120,'',message122,message125,MyDataDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message119+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                         if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then
                                                                                   begin
                                                                                       Label14.Caption:='';
@@ -655,7 +659,7 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
                                       end;
 If Unit2.Form2.CheckBoxusepeerdns.Checked then
                                          begin
-                                            Form3.MyMessageBox(message0,message80+' '+message120,'',message122,message125,MyDataDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
+                                            Form3.MyMessageBox(message0,message80+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                             if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then
                                                                                  begin
                                                                                       Label14.Caption:='';
@@ -668,7 +672,7 @@ If Unit2.Form2.CheckBoxusepeerdns.Checked then
                                          end;
 If fedora then If dhcp_route.Checked then if Autostartpppd.Checked then
                                          begin
-                                            Form3.MyMessageBox(message0,message158+' '+message159+' '+message120,'',message122,message125,MyDataDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
+                                            Form3.MyMessageBox(message0,message158+' '+message159+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                             if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then
                                                                                  begin
                                                                                       Label14.Caption:='';
@@ -699,7 +703,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
    If IPS then If etc_hosts.Checked then
                      begin
                           Label14.Caption:=message114;
-                          Form3.MyMessageBox(message0,message114,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message114,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           etc_hosts.Checked:=false;
                           StartMessage:=true;
@@ -711,7 +715,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Label14.Caption:=message94+' '+message95;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Form3.MyMessageBox(message0,message94+' '+message95,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message94+' '+message95,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           ComboBoxVPN.Text:='VPN PPTP';
                           Application.ProcessMessages;
                           Form1.Repaint;
@@ -719,7 +723,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
                        begin
                           Label14.Caption:=message57;
-                          Form3.MyMessageBox(message0,message57,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message57,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Sudo_ponoff.Checked:=false;
                           StartMessage:=true;
@@ -731,7 +735,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Label14.Caption:=message6;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Form3.MyMessageBox(message0,message6,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message6,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Sudo_configure.Checked:=false;
                           StartMessage:=true;
@@ -743,7 +747,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Label14.Caption:=message24;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Form3.MyMessageBox(message0,message24,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message24,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Autostart_ponoff.Checked:=false;
                           StartMessage:=true;
@@ -755,7 +759,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Label14.Caption:=message27;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Form3.MyMessageBox(message0,message27,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message27,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           dhcp_route.Checked:=false;
                           StartMessage:=true;
@@ -768,7 +772,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Label14.Caption:=message121+' '+message29+' '+message115;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Form3.MyMessageBox(message0,message121+' '+message29+' '+message115,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message121+' '+message29+' '+message115,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           Application.ProcessMessages;
                           Form1.Repaint;
                      end;
@@ -777,14 +781,14 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Label14.Caption:=message121+' '+message29;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Form3.MyMessageBox(message0,message121+' '+message29,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message121+' '+message29,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
    If StartMessage then If not IPS then If etc_hosts.Checked then If not routevpnauto.Checked then
                        begin
                           Label14.Caption:=message116;
-                          Form3.MyMessageBox(message0,message116,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message116,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           routevpnauto.Checked:=true;
                           StartMessage:=true;
@@ -797,17 +801,17 @@ If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Chec
                        If eof(f) then
                                    begin
                                       Label14.Caption:=message146+' '+message168;
-                                      Form3.MyMessageBox(message0,message146+' '+message168,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                      Form3.MyMessageBox(message0,message146+' '+message168,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                       Application.ProcessMessages;
                                       Form1.Repaint;
                                    end;
                        PClose(f);
                     end;
 If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
-          If not FileExists(MyDataDir+'scripts/peermodify.sh') then
+          If not FileExists(MyScriptsDir+'peermodify.sh') then
                                    begin
-                                      Label14.Caption:=message102+MyDataDir+'scripts/peermodify.sh';
-                                      Form3.MyMessageBox(message0,message102+MyDataDir+'scripts/peermodify.sh','','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                      Label14.Caption:=message102+MyScriptsDir+'peermodify.sh';
+                                      Form3.MyMessageBox(message0,message102+MyScriptsDir+'peermodify.sh','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                       Application.ProcessMessages;
                                       Form1.Repaint;
                                    end;
@@ -841,7 +845,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Label14.Caption:=message3;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          Form3.MyMessageBox(message0,message3,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message3,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Reconnect_pptp.Checked:=False;
                           StartMessage:=true;
@@ -857,10 +861,10 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                        begin
                           if FileExists(EtcDir+'dhclient.conf') then Shell('cp -f '+EtcDir+'dhclient.conf '+EtcDir+'dhclient.conf.old');
                           Shell('rm -f '+EtcDir+'dhclient.conf');
-                          if FileExists(MyDataDir+'scripts/dhclient.conf') then Shell('cp -f '+MyDataDir+'scripts/dhclient.conf '+EtcDir+'dhclient.conf');
+                          if FileExists(MyScriptsDir+'dhclient.conf') then Shell('cp -f '+MyScriptsDir+'dhclient.conf '+EtcDir+'dhclient.conf');
                           if FileExists(EtcDir+'dhclient-exit-hooks') then Shell('cp -f '+EtcDir+'dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks.old');
                           Shell('rm -f '+EtcDir+'dhclient-exit-hooks');
-                          if FileExists(MyDataDir+'scripts/dhclient-exit-hooks') then Shell('cp -f '+MyDataDir+'scripts/dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks');
+                          if FileExists(MyScriptsDir+'dhclient-exit-hooks') then Shell('cp -f '+MyScriptsDir+'dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks');
                           if fedora then
                                         begin
                                            Shell('ln -s '+EtcDir+'dhclient-exit-hooks '+EtcDhcpDir+'dhclient-exit-hooks');
@@ -904,7 +908,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                                                                                  Label14.Caption:=message41+' '+message42;
                                                                                                  Application.ProcessMessages;
                                                                                                  Form1.Repaint;
-                                                                                                 Form3.MyMessageBox(message0,message41+' '+message42,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                                                                 Form3.MyMessageBox(message0,message41+' '+message42,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                                                                  StartMessage:=false;
                                                                                                  dhcp_route.Checked:=false;
                                                                                                  DhclientStartGood:=false;
@@ -1049,8 +1053,8 @@ If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') t
    If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
  Memo_peer.Lines.SaveToFile(EtcPppPeersDir+Edit_peer.Text); //записываем провайдерский профиль подключения
  If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
-                              If FileExists(MyDataDir+'scripts/peermodify.sh') then //коррекция шифрования в соответствии с man pppd
-                                                                Shell ('sh '+MyDataDir+'scripts/peermodify.sh '+Edit_peer.Text);
+                              If FileExists(MyScriptsDir+'peermodify.sh') then //коррекция шифрования в соответствии с man pppd
+                                                                Shell ('sh '+MyScriptsDir+'peermodify.sh '+Edit_peer.Text);
  Shell ('chmod 600 '+EtcPppPeersDir+Edit_peer.Text);
 //удаляем временные, старые файлы и ссылки
  Shell('rm -f '+EtcDir+'resolv.conf.lock');
@@ -1109,8 +1113,8 @@ If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') t
                                                                                                   If BindUtils then Label14.Caption:=message54 else Label14.Caption:=message43;
                                                                                                   Application.ProcessMessages;
                                                                                                   Form1.Repaint;
-                                                                                                  If BindUtils then Form3.MyMessageBox(message0,message54,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                                                                                                  If not BindUtils then Form3.MyMessageBox(message0,message43,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                                                                  If BindUtils then Form3.MyMessageBox(message0,message54,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                                                                  If not BindUtils then Form3.MyMessageBox(message0,message43,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                                                                   Application.ProcessMessages;
                                                                                                   Form1.Repaint;
                                                                                              end;
@@ -1162,9 +1166,9 @@ If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') t
 //поправка на debian
 if FileExists(EtcPppIpUpDDir+'exim4') then
                                            begin
-                                                Shell ('cp -f '+EtcPppIpUpDDir+'exim4 '+MyDataDir+'scripts');
+                                                Shell ('cp -f '+EtcPppIpUpDDir+'exim4 '+MyScriptsDir);
                                                 Shell ('rm -f '+EtcPppIpUpDDir+'exim4');
-                                                Shell ('printf "Program vpnpptp moved script exim4 in directory '+MyDataDir+'scripts\n" > '+EtcPppIpUpDDir+'exim4.move');
+                                                Shell ('printf "Program vpnpptp moved script exim4 in directory '+MyScriptsDir+'\n" > '+EtcPppIpUpDDir+'exim4.move');
                                            end;
 //перезаписываем скрипт опускания соединения ip-down
  If not DirectoryExists(EtcPppIpDownDDir) then Shell ('mkdir -p '+EtcPppIpDownDDir);
@@ -1611,11 +1615,11 @@ If (not EditDNS1ping) and (not EditDNS2ping) then
                                                 Label14.Caption:=message74;
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
-                                                Form3.MyMessageBox(message0,message74,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message74,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 Label14.Caption:=message76;
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
-                                                Form3.MyMessageBox(message0,message76,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message76,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
                                          end;
@@ -1624,7 +1628,7 @@ If (EditDNS1ping) and (not EditDNS2ping) then
                                                 Label14.Caption:=message84;
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
-                                                Form3.MyMessageBox(message0,message84,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message84,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
                                          end;
@@ -1633,7 +1637,7 @@ If (not EditDNS1ping) and (EditDNS2ping) then
                                                 Label14.Caption:=message85;
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
-                                                Form3.MyMessageBox(message0,message85,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message85,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
                                          end;
@@ -1656,7 +1660,7 @@ If not flag then
                                                 Label14.Caption:=message43;
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
-                                                Form3.MyMessageBox(message0,message43,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message43,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
                                          end;
@@ -1679,7 +1683,7 @@ If not flag then
                                                 Label14.Caption:=message44;
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
-                                                Form3.MyMessageBox(message0,message44,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message44,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
                                          end;
@@ -1706,7 +1710,7 @@ Shell ('cp -f '+EtcDir+'resolv.conf '+MyLibDir+'resolv.conf.before');
                                                                    Label14.Caption:=message23;
                                                                    Application.ProcessMessages;
                                                                    Form1.Repaint;
-                                                                   Form3.MyMessageBox(message0,message23,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                                   Form3.MyMessageBox(message0,message23,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                                    StartMessage:=false;
                                                                    CheckBox_desktop.Checked:=false;
                                                                    StartMessage:=true;
@@ -1737,7 +1741,7 @@ begin
   Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP/L2TP');
   Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP/L2TP');
   Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP Control');
-  Memo_create.Lines.Add('Icon=/usr/share/pixmaps/ponoff.png');
+  Memo_create.Lines.Add('Icon='+MyPixmapsDir+'ponoff.png');
   Memo_create.Lines.Add('MimeType=');
   Memo_create.Lines.Add('Name[ru]=Подключение '+Edit_peer.Text);
   Memo_create.Lines.Add('Name[uk]=Підключення '+Edit_peer.Text);
@@ -1797,7 +1801,7 @@ end;
                                     Label14.Caption:=message22;
                                     Application.ProcessMessages;
                                     Form1.Repaint;
-                                    Form3.MyMessageBox(message0,message22,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                    Form3.MyMessageBox(message0,message22,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                     Application.ProcessMessages;
                                     Form1.Repaint;
                                end;
@@ -1840,7 +1844,7 @@ end;
                                     Label14.Caption:=message60;
                                     Application.ProcessMessages;
                                     Form1.Repaint;
-                                    Form3.MyMessageBox(message0,message60,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                    Form3.MyMessageBox(message0,message60,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                     Application.ProcessMessages;
                                     Form1.Repaint;
                                end;
@@ -1849,7 +1853,7 @@ end;
                                     Label14.Caption:=message61;
                                     Application.ProcessMessages;
                                     Form1.Repaint;
-                                    Form3.MyMessageBox(message0,message61,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                    Form3.MyMessageBox(message0,message61,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                     Application.ProcessMessages;
                                     Form1.Repaint;
                                end;
@@ -1861,9 +1865,9 @@ end;
               PageControl1.ActivePageIndex:=3;
               Button_next2.Visible:=False;
  Memo_create.Clear;
- If FallbackLang='ru' then If FileExists (MyDataDir+'lang/success.ru') then begin Memo_create.Lines.LoadFromFile(MyDataDir+'lang/success.ru'); Translate:=true; end;
- If FallbackLang='uk' then If FileExists (MyDataDir+'lang/success.uk') then begin Memo_create.Lines.LoadFromFile(MyDataDir+'lang/success.uk'); Translate:=true; end;
- If not Translate then If FileExists (MyDataDir+'lang/success.en') then Memo_create.Lines.LoadFromFile(MyDataDir+'lang/success.en');
+ If FallbackLang='ru' then If FileExists (MyLangDir+'success.ru') then begin Memo_create.Lines.LoadFromFile(MyLangDir+'success.ru'); Translate:=true; end;
+ If FallbackLang='uk' then If FileExists (MyLangDir+'success.uk') then begin Memo_create.Lines.LoadFromFile(MyLangDir+'success.uk'); Translate:=true; end;
+ If not Translate then If FileExists (MyLangDir+'success.en') then Memo_create.Lines.LoadFromFile(MyLangDir+'success.en');
  Button_create.Visible:=False;
  Button_exit.Enabled:=true;
  ButtonTest.Caption:=message109;
@@ -1889,7 +1893,7 @@ begin
                                                 ButtonVPN.Caption:=str0;
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
-                                                Form3.MyMessageBox(message0,message28,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message28,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 Application.ProcessMessages;
                                                 Form1.Repaint;
                                                 exit;
@@ -1904,7 +1908,7 @@ begin
                                           ButtonVPN.Caption:=str0;
                                           Application.ProcessMessages;
                                           Form1.Repaint;
-                                          Form3.MyMessageBox(message0,message26,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                          Form3.MyMessageBox(message0,message26,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                           Application.ProcessMessages;
                                           Form1.Repaint;
                                           exit;
@@ -1945,14 +1949,14 @@ begin
         end;
      If StrOffice='' then
                          begin
-                              If FallbackLang='ru' then Form3.MyMessageBox(message0,message2+' '+MyDataDir+'wiki/Help_ru.doc','','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
-                              If FallbackLang='uk' then Form3.MyMessageBox(message0,message2+' '+MyDataDir+'wiki/Help_uk.doc','','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                              If FallbackLang='ru' then Form3.MyMessageBox(message0,message2+' '+MyWikiDir+'Help_ru.doc','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                              If FallbackLang='uk' then Form3.MyMessageBox(message0,message2+' '+MyWikiDir+'Help_uk.doc','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          end;
      If StrOffice<>'' then
                           begin
                                AProcess := TProcess.Create(nil);
-                               If FallbackLang='ru' then AProcess.CommandLine :=StrOffice+' '+MyDataDir+'wiki/Help_ru.doc';
-                               If FallbackLang='uk' then AProcess.CommandLine :=StrOffice+' '+MyDataDir+'wiki/Help_uk.doc';
+                               If FallbackLang='ru' then AProcess.CommandLine :=StrOffice+' '+MyWikiDir+'Help_ru.doc';
+                               If FallbackLang='uk' then AProcess.CommandLine :=StrOffice+' '+MyWikiDir+'Help_uk.doc';
                                AProcess.Options:=AProcess.Options+[poWaitOnExit];
                                AProcess.Execute;
                                AProcess.Free;
@@ -2057,7 +2061,7 @@ var
  FlagMtu:boolean;
  MtuUsed:string;
 begin
- Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,MyDataDir+'vpnpptp.png',true,true,true,AFont,Form1.Icon);
+ Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,MyPixmapsDir+'vpnpptp.png',true,true,true,AFont,Form1.Icon);
  Application.ProcessMessages;
  Form1.Repaint;
  if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; Form1.Repaint; exit; end;
@@ -2185,7 +2189,7 @@ begin
    If FileExists (UsrBinDir+'sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Autostart_ponoff.Checked then If not Sudo then
                        begin
-                          Form3.MyMessageBox(message0,message24,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message24,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Autostart_ponoff.Checked:=false;
                           StartMessage:=true;
@@ -2195,7 +2199,7 @@ begin
                        end;
    If StartMessage then If Autostart_ponoff.Checked then If not Sudo_ponoff.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message59,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message59,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Sudo_ponoff.Checked:=true;
                           StartMessage:=true;
@@ -2204,7 +2208,7 @@ begin
                        end;
    If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message63,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message63,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Autostartpppd.Checked:=false;
                           StartMessage:=true;
@@ -2217,7 +2221,7 @@ procedure TForm1.balloonChange(Sender: TObject);
 begin
   If StartMessage then If balloon.Checked then if networktest.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message142,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message142,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           networktest.Checked:=false;
                           StartMessage:=true;
@@ -2230,7 +2234,7 @@ procedure TForm1.AutostartpppdChange(Sender: TObject);
 begin
 If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message63,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message63,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Autostart_ponoff.Checked:=false;
                           StartMessage:=true;
@@ -2239,7 +2243,7 @@ If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked t
                        end;
 If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message65,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message65,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Autostartpppd.Checked:=false;
                           StartMessage:=true;
@@ -2279,7 +2283,7 @@ procedure TForm1.CheckBox_shorewallChange(Sender: TObject);
 begin
    If StartMessage then If CheckBox_shorewall.Checked then if not FileExists(EtcInitDDir+'shorewall') then
                                              begin
-                                                Form3.MyMessageBox(message0,message140,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                Form3.MyMessageBox(message0,message140,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                 CheckBox_shorewall.Checked:=false;
                                              end;
    Application.ProcessMessages;
@@ -2298,7 +2302,7 @@ procedure TForm1.ComboBoxVPNChange(Sender: TObject);
 begin
    If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
                      begin
-                          Form3.MyMessageBox(message0,message94,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           ComboBoxVPN.Text:='VPN PPTP';
                      end;
    If ComboBoxVPN.Text='VPN L2TP' then Label1.Caption:=message100 else Label1.Caption:=message99;
@@ -2337,7 +2341,7 @@ procedure TForm1.etc_hostsChange(Sender: TObject);
 begin
   If StartMessage then If IPS then If etc_hosts.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message114,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message114,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           etc_hosts.Checked:=false;
                           StartMessage:=true;
@@ -2347,7 +2351,7 @@ begin
                        end;
   If StartMessage then If not IPS then If etc_hosts.Checked then If not routevpnauto.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message116,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message116,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           routevpnauto.Checked:=true;
                           StartMessage:=true;
@@ -2358,7 +2362,7 @@ begin
    If FileExists (UsrBinDir+'host') then BindUtils:=true else BindUtils:=false;
    If StartMessage then If etc_hosts.Checked then If not BindUtils then
                        begin
-                          Form3.MyMessageBox(message0,message121+' '+message115,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message121+' '+message115,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
@@ -2368,7 +2372,7 @@ procedure TForm1.networktestChange(Sender: TObject);
 begin
   If StartMessage then If networktest.Checked then If balloon.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message142,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message142,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           balloon.Checked:=false;
                           StartMessage:=true;
@@ -2381,7 +2385,7 @@ procedure TForm1.pppnotdefaultChange(Sender: TObject);
 begin
 If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message65,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message65,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           pppnotdefault.Checked:=false;
                           StartMessage:=true;
@@ -2395,7 +2399,7 @@ begin
    If FileExists (UsrBinDir+'host') then BindUtils:=true else BindUtils:=false;
    If StartMessage then If not IPS then If etc_hosts.Checked then If not routevpnauto.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message116,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message116,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           etc_hosts.Checked:=false;
                           StartMessage:=true;
@@ -2405,7 +2409,7 @@ begin
                        end;
    If StartMessage then If routevpnauto.Checked then If not BindUtils then
                        begin
-                          Form3.MyMessageBox(message0,message121+' '+message29,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message121+' '+message29,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
@@ -2415,7 +2419,7 @@ procedure TForm1.dhcp_routeChange(Sender: TObject);
 begin
   If StartMessage then If dhcp_route.Checked then if not dhclient then
                        begin
-                          Form3.MyMessageBox(message0,message27,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message27,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           dhcp_route.Checked:=false;
                           StartMessage:=true;
@@ -2425,7 +2429,7 @@ begin
                        end;
   If StartMessage then if ubuntu or debian or suse then
                        begin
-                          Form3.MyMessageBox(message0,message141,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message141,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           dhcp_route.Checked:=false;
                           StartMessage:=true;
@@ -2450,7 +2454,7 @@ begin
         if not (Edit_MaxTime.Text[i] in ['0'..'9']) then y:=true;
     if y or (Edit_MaxTime.Text='') or (Edit_MaxTime.Text='0') or (Length(Edit_MaxTime.Text)>3) then
             begin
-              Form3.MyMessageBox(message0,message8,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+              Form3.MyMessageBox(message0,message8,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
               Edit_MaxTime.Text:='10';
               Application.ProcessMessages;
               Form1.Repaint;
@@ -2458,7 +2462,7 @@ begin
             end;
     if (StrToInt(Edit_MaxTime.Text)<5) or (StrToInt(Edit_MaxTime.Text)>255) then
              begin
-               Form3.MyMessageBox(message0,message8,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+               Form3.MyMessageBox(message0,message8,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                Edit_MaxTime.Text:='10';
                Application.ProcessMessages;
                Form1.Repaint;
@@ -2471,7 +2475,7 @@ y:=false;
         if not (Edit_MinTime.Text[i] in ['0'..'9']) then y:=true;
     if y or (Edit_MinTime.Text='') or (StrToInt(Edit_MinTime.Text)>255) or (Length(Edit_MinTime.Text)>3) then
             begin
-              Form3.MyMessageBox(message0,message10,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+              Form3.MyMessageBox(message0,message10,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
               Edit_MinTime.Text:='3';
               Application.ProcessMessages;
               Form1.Repaint;
@@ -2480,7 +2484,7 @@ y:=false;
 //проверка корректности ввода иных полей настроек подключения
 if (Edit_IPS.Text='') or (Edit_peer.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                             begin
-                                Form3.MyMessageBox(message0,message1,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                Form3.MyMessageBox(message0,message1,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                 Application.ProcessMessages;
                                 Form1.Repaint;
                                 exit;
@@ -2488,7 +2492,7 @@ if (Edit_IPS.Text='') or (Edit_peer.Text='') or (Edit_user.Text='') or (Edit_pas
 //проверка выбора дистрибутива
 if ComboBoxDistr.Text=message151 then
                             begin
-                                Form3.MyMessageBox(message0,message152,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                Form3.MyMessageBox(message0,message152,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                 Application.ProcessMessages;
                                 Form1.Repaint;
                                 exit;
@@ -2566,7 +2570,7 @@ If not y then IPS:=true else IPS:=false;
   If Edit_eth.Text='none' then
                            begin
                              Edit_gate.Text:='none';
-                             Form3.MyMessageBox(message0,message12,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                             Form3.MyMessageBox(message0,message12,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                              Application.ProcessMessages;
                              Form1.Repaint;
                            end;
@@ -2574,14 +2578,14 @@ If not y then IPS:=true else IPS:=false;
                            begin
                              Edit_eth.Text:='none';
                              Edit_gate.Text:='none';
-                             Form3.MyMessageBox(message0,message13,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                             Form3.MyMessageBox(message0,message13,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                              Application.ProcessMessages;
                              Form1.Repaint;
                            end;
   If Edit_gate.Text='none' then
                            begin
                              Edit_eth.Text:='none';
-                             Form3.MyMessageBox(message0,message14,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                             Form3.MyMessageBox(message0,message14,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                              Application.ProcessMessages;
                              Form1.Repaint;
                            end;
@@ -2608,7 +2612,7 @@ If not y then IPS:=true else IPS:=false;
   If DNSA='none' then if DNSB='none' then
                            begin
                              DNS_auto:=false;
-                             Form3.MyMessageBox(message0,message66,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                             Form3.MyMessageBox(message0,message66,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                              Application.ProcessMessages;
                              Form1.Repaint;
                            end;
@@ -2648,14 +2652,14 @@ If not y then IPS:=true else IPS:=false;
                      dhcp_route.Checked:=false;
                      StartMessage:=true;
                 end;
-  If not FileExists(MyDataDir+'scripts/dhclient-exit-hooks') then
+  If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then
                 begin
                      StartMessage:=false;
                      dhcp_route.Checked:=false;
                      dhcp_route.Enabled:=false;
                      StartMessage:=true;
                 end;
-  If not FileExists(MyDataDir+'scripts/dhclient.conf') then
+  If not FileExists(MyScriptsDir+'dhclient.conf') then
                begin
                      StartMessage:=false;
                      dhcp_route.Checked:=false;
@@ -2677,7 +2681,7 @@ y:=false;
 //проверка корректности ввода сетевого интерфейса
 If (Edit_eth.Text='none') or (Edit_eth.Text='') then
                     begin
-                         Form3.MyMessageBox(message0,message15,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                         Form3.MyMessageBox(message0,message15,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                          If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
                          If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
@@ -2693,7 +2697,7 @@ If (Edit_eth.Text='none') or (Edit_eth.Text='') then
                     end;
 if not Length(Edit_eth.Text) in [3,4,5] then
                     begin
-                         Form3.MyMessageBox(message0,message15,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                         Form3.MyMessageBox(message0,message15,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                          If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
                          If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
@@ -2708,7 +2712,7 @@ if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[
 if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
 if y then
                     begin
-                          Form3.MyMessageBox(message0,message15,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message15,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                           If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
                           If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
@@ -2747,7 +2751,7 @@ If not FileExists(MyLibDir+'config') then if (Edit_gate.Text=EditDNS3.Text) then
 //проверка корректности ввода шлюза локальной сети
 If (Edit_gate.Text='none') or (Edit_gate.Text='') or (Length(Edit_gate.Text)>15) then //15-макс.длина шлюза 255.255.255.255
                     begin
-                         Form3.MyMessageBox(message0,message16,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                         Form3.MyMessageBox(message0,message16,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          Edit_gate.Text:=Memo_gate.Lines[0];
                          If LeftStr(Edit_gate.Text,3)='ppp' then Edit_gate.Text:='none';
                          Application.ProcessMessages;
@@ -2779,7 +2783,7 @@ Try
   end;
 If y then
          begin
-           Form3.MyMessageBox(message0,message16,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+           Form3.MyMessageBox(message0,message16,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
            Edit_gate.Text:=Memo_gate.Lines[0];
            Application.ProcessMessages;
            Form1.Repaint;
@@ -2792,7 +2796,7 @@ If not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
 If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
 If y then
          begin
-           Form3.MyMessageBox(message0,message16,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+           Form3.MyMessageBox(message0,message16,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
            Edit_gate.Text:=Memo_gate.Lines[0];
            Application.ProcessMessages;
            Form1.Repaint;
@@ -2802,7 +2806,7 @@ If y then
 //проверка корректности ввода EditDNS3
 If Length(EditDNS3.Text)>15 then //15-макс.длина шлюза 255.255.255.255
                     begin
-                         Form3.MyMessageBox(message0,message81,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                         Form3.MyMessageBox(message0,message81,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          EditDNS3.Text:='none';
                          Application.ProcessMessages;
                          Form1.Repaint;
@@ -2834,7 +2838,7 @@ Try
   end;
 If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
          begin
-           Form3.MyMessageBox(message0,message81,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+           Form3.MyMessageBox(message0,message81,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
            EditDNS3.Text:='none';
            Application.ProcessMessages;
            Form1.Repaint;
@@ -2850,7 +2854,7 @@ If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
 end;
 If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
          begin
-           Form3.MyMessageBox(message0,message81,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+           Form3.MyMessageBox(message0,message81,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
            EditDNS3.Text:='none';
            Application.ProcessMessages;
            Form1.Repaint;
@@ -2860,7 +2864,7 @@ if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then EditDNS3.Text:=IntToStr(
 //проверка корректности ввода EditDNS4
 If Length(EditDNS4.Text)>15 then //15-макс.длина шлюза 255.255.255.255
                     begin
-                         Form3.MyMessageBox(message0,message82,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                         Form3.MyMessageBox(message0,message82,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                          EditDNS4.Text:='none';
                          Application.ProcessMessages;
                          Form1.Repaint;
@@ -2892,7 +2896,7 @@ Try
   end;
 If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
          begin
-           Form3.MyMessageBox(message0,message82,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+           Form3.MyMessageBox(message0,message82,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
            EditDNS4.Text:='none';
            Application.ProcessMessages;
            Form1.Repaint;
@@ -2908,7 +2912,7 @@ If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
 end;
 If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
          begin
-           Form3.MyMessageBox(message0,message82,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+           Form3.MyMessageBox(message0,message82,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
            EditDNS4.Text:='none';
            Application.ProcessMessages;
            Form1.Repaint;
@@ -2917,7 +2921,7 @@ If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
 if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then EditDNS4.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
 If ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if ((EditDNS4.Text='none') or (EditDNS4.Text='')) then
                            begin
-                             Form3.MyMessageBox(message0,message83,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                             Form3.MyMessageBox(message0,message83,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                              Application.ProcessMessages;
                              Form1.Repaint;
                              exit;
@@ -2929,7 +2933,7 @@ For i:=1 to Length(Edit_mtu.Text) do
 begin
    if not (Edit_mtu.Text[i] in ['0'..'9']) then
                                       begin
-                                        Form3.MyMessageBox(message0,message17,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message17,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Edit_mtu.Clear;
                                         Application.ProcessMessages;
                                         Form1.Repaint;
@@ -2937,7 +2941,7 @@ begin
                                       end;
 If (StrToInt(Edit_mtu.Text)>1500) or (StrToInt(Edit_mtu.Text)<576) then
                                       begin
-                                        Form3.MyMessageBox(message0,message17,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message17,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Edit_mtu.Clear;
                                         Application.ProcessMessages;
                                         Form1.Repaint;
@@ -2949,7 +2953,7 @@ For i:=1 to Length(Edit_mru.Text) do
 begin
    If not (Edit_mru.Text[i] in ['0'..'9']) then
                                       begin
-                                        Form3.MyMessageBox(message0,message104,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message104,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Edit_mru.Clear;
                                         Application.ProcessMessages;
                                         Form1.Repaint;
@@ -2957,7 +2961,7 @@ begin
                                       end;
   If (StrToInt(Edit_mru.Text)>1500) or (StrToInt(Edit_mru.Text)<576) then
                                       begin
-                                        Form3.MyMessageBox(message0,message104,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message104,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Edit_mru.Clear;
                                         Application.ProcessMessages;
                                         Form1.Repaint;
@@ -2972,14 +2976,14 @@ If ComboBoxVPN.Text='VPN L2TP' then
                                end;
 If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1460) then
                                       begin
-                                        Form3.MyMessageBox(message0,message118+' '+message120,'',message122,message125,MyDataDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message118+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                         if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; Form1.Repaint; exit; end;
                                         Application.ProcessMessages;
                                         Form1.Repaint;
                                       end;
 If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaultmru.Checked then
                                       begin
-                                        Form3.MyMessageBox(message0,message117+' '+message118+' '+message120,'',message122,message125,MyDataDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message117+' '+message118+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                         if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; Form1.Repaint; exit; end;
                                         Application.ProcessMessages;
                                         Form1.Repaint;
@@ -3319,8 +3323,8 @@ If Screen.Height>1000 then
   PClose(f);
   If nostart then
                 begin
-                    If mandriva then Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon)
-                                          else Form3.MyMessageBox(message0,message18,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                    If mandriva then Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon)
+                                          else Form3.MyMessageBox(message0,message18,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                     Application.ProcessMessages;
                     Form1.Repaint;
                     halt;
@@ -3444,7 +3448,7 @@ Shell('rm -f '+MyTmpDir+'tmpnostart');
 If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then
                                                                                                     begin
                                                                                                       //двойной запуск
-                                                                                                      Form3.MyMessageBox(message0,message19,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                                                                      Form3.MyMessageBox(message0,message19,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                                                                       Shell('rm -f '+MyTmpDir+'tmpnostart');
                                                                                                       Application.ProcessMessages;
                                                                                                       Form1.Repaint;
@@ -3456,7 +3460,7 @@ If suse then
                  Shell(SBinDir+'ip r|grep dsl > '+MyTmpDir+'gate');
                  If FileExists (MyTmpDir+'gate') then if FileSize(MyTmpDir+'gate')<>0 then
                                          begin
-                                           Form3.MyMessageBox(message0,message148,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                           Form3.MyMessageBox(message0,message148,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                            Shell('rm -f '+MyTmpDir+'gate');
                                            halt;
                                          end;
@@ -3466,7 +3470,7 @@ If suse then
   Shell(SBinDir+'ip r|grep ppp > '+MyTmpDir+'gate');
   If FileExists (MyTmpDir+'gate') then if FileSize(MyTmpDir+'gate')<>0 then
                                          begin
-                                           Form3.MyMessageBox(message0,message105,'',message122,message125,MyDataDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
+                                           Form3.MyMessageBox(message0,message105,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon);
                                            if (Form3.Kod.Text='3') or (Form3.Kod.Text='0') then begin Application.ProcessMessages; Form1.Repaint; halt; end;
                                            Application.ProcessMessages;
                                            Form1.Repaint;
@@ -3489,8 +3493,8 @@ Shell ('rm -f '+MyTmpDir+'ObnullRX');
 Shell ('rm -f '+MyTmpDir+'ObnullTX');
 Shell ('rm -f '+MyTmpDir+'DateStart');
 Shell ('rm -f '+MyTmpDir+'gate');
-If FallbackLang='ru' then If FileExists(MyDataDir+'wiki/Help_ru.doc') then ButtonHelp.Enabled:=true;
-If FallbackLang='uk' then If FileExists(MyDataDir+'wiki/Help_uk.doc') then ButtonHelp.Enabled:=true;
+If FallbackLang='ru' then If FileExists(MyWikiDir+'Help_ru.doc') then ButtonHelp.Enabled:=true;
+If FallbackLang='uk' then If FileExists(MyWikiDir+'Help_uk.doc') then ButtonHelp.Enabled:=true;
 DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получаются автоматически пока не будет доказано обратного
 If not Translate then Label25.Caption:='              '+Label25.Caption;
 //проверка ponoff в процессах root
@@ -3501,7 +3505,7 @@ If not Translate then Label25.Caption:='              '+Label25.Caption;
    Shell('rm -f '+MyTmpDir+'tmpnostart');
    If LeftStr(tmpnostart.Lines[0],6)='ponoff' then
                                                        begin
-                                                         Form3.MyMessageBox(message0,message4,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                         Form3.MyMessageBox(message0,message4,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                          Application.ProcessMessages;
                                                          Form1.Repaint;
                                                          halt;
@@ -3515,7 +3519,7 @@ If FileExists (EtcInitDDir+'NetworkManager') then NetServiceStr:='NetworkManager
 If FileExists (EtcInitDDir+'networkmanager') then NetServiceStr:='networkmanager';
 If NetServiceStr='none' then
                             begin
-                               Form3.MyMessageBox(message0,message160,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                               Form3.MyMessageBox(message0,message160,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                Application.ProcessMessages;
                                Form1.Repaint;
                             end;
@@ -3529,7 +3533,7 @@ If NetServiceStr='none' then
    If not (LeftStr(tmpnostart.Lines[0],8)='dhclient') then If not FileExists (SBinDir+'dhclient') then
                                                        begin
                                                          dhclient:=false;
-                                                         Form3.MyMessageBox(message0,message25,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                                         Form3.MyMessageBox(message0,message25,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                                          Application.ProcessMessages;
                                                          Form1.Repaint;
                                                        end;
@@ -3538,7 +3542,7 @@ If NetServiceStr='none' then
  Shell('rm -f '+MyLibDir+'ip-down');
  If not FileExists(UsrSBinDir+'pptp') then
                                     begin
-                                       Form3.MyMessageBox(message0,message20,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                       Form3.MyMessageBox(message0,message20,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                        Application.ProcessMessages;
                                        Form1.Repaint;
                                     end;
@@ -3559,7 +3563,7 @@ StartMessage:=true;
   If FileExists(MyTmpDir+'gate') then Memo_gate.Lines.LoadFromFile(MyTmpDir+'gate');
   If Memo_gate.Lines[0]='none' then
                                begin
-                                    Form3.MyMessageBox(message0,message162,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                    Form3.MyMessageBox(message0,message162,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                     Application.ProcessMessages;
                                     Form1.Repaint;
                                     Shell (ServiceCommand+NetServiceStr+' restart');
@@ -3639,7 +3643,7 @@ StartMessage:=true;
   If FileExists(MyTmpDir+'gate') then Memo_gate.Lines.LoadFromFile(MyTmpDir+'gate');
   If Memo_gate.Lines[0]='none' then //ничего не помогло
                                    begin
-                                        Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                                        Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                                         Application.ProcessMessages;
                                         Form1.Repaint;
                                    end;
@@ -3653,7 +3657,7 @@ begin
    If FileExists (UsrBinDir+'sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Sudo_configure.Checked then If not Sudo then
                        begin
-                          Form3.MyMessageBox(message0,message6,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message6,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Sudo_configure.Checked:=false;
                           StartMessage:=true;
@@ -3669,7 +3673,7 @@ begin
    If FileExists (UsrBinDir+'sudo') then Sudo:=true else Sudo:=false;
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
                        begin
-                          Form3.MyMessageBox(message0,message57,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message57,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Sudo_ponoff.Checked:=false;
                           StartMessage:=true;
@@ -3679,7 +3683,7 @@ begin
                        end;
    If StartMessage then If Autostart_ponoff.Checked then If not Sudo_ponoff.Checked then
                        begin
-                          Form3.MyMessageBox(message0,message59,'','',message122,MyDataDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,message59,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon);
                           StartMessage:=false;
                           Autostart_ponoff.Checked:=false;
                           StartMessage:=true;
@@ -3716,7 +3720,7 @@ initialization
   //FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
-                               POFileName:= MyDataDir+'lang/vpnpptp.ru.po';
+                               POFileName:= MyLangDir+'vpnpptp.ru.po';
                                If FileExists (POFileName) then
                                begin
                                     Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
@@ -3725,7 +3729,7 @@ initialization
                             end;
   If FallbackLang='uk' then
                             begin
-                               POFileName:= MyDataDir+'lang/vpnpptp.uk.po';
+                               POFileName:= MyLangDir+'vpnpptp.uk.po';
                                If FileExists (POFileName) then
                                begin
                                     Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
@@ -3734,7 +3738,7 @@ initialization
                             end;
   If not Translate then
                             begin
-                               POFileName:= MyDataDir+'lang/vpnpptp.en.po';
+                               POFileName:= MyLangDir+'vpnpptp.en.po';
                                If FileExists (POFileName) then
                                           Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
                             end;

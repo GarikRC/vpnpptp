@@ -109,6 +109,10 @@ const
   MyLibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
   MyTmpDir='/tmp/vpnpptp/'; //директория для временных файлов
   MyDataDir='/usr/share/vpnpptp/'; //директория для основных неизменных файлов программы
+  MyLangDir='/usr/share/vpnpptp/lang/'; //директория для файлов переводов программы
+  MyScriptsDir='/usr/share/vpnpptp/scripts/'; //директория для скриптов программы
+  MyWikiDir='/usr/share/vpnpptp/wiki/'; //директория для вики программы
+  MyPixmapsDir='/usr/share/pixmaps/'; //директория для значков программы
   EtcPppIpUpDDir='/etc/ppp/ip-up.d/';
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
@@ -221,15 +225,15 @@ begin
                           Form1.Hide;
                           Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
-                          Form3.MyMessageBox(message0,str,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                          Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                           halt;
                      end;
     //некритичные файлы
     str:=message48;
-    If not FileExists(MyDataDir+'ponoff.png') then str:=str+MyDataDir+'ponoff.png, ';
-    If FallbackLang='ru' then If not FileExists(MyDataDir+'lang/ponoff.ru.po') then str:=str+MyDataDir+'lang/ponoff.ru.po, ';
-    If FallbackLang='en' then If not FileExists(MyDataDir+'lang/ponoff.en.po') then str:=str+MyDataDir+'lang/ponoff.en.po, ';
-    If FallbackLang='uk' then If not FileExists(MyDataDir+'lang/ponoff.uk.po') then str:=str+MyDataDir+'lang/ponoff.uk.po, ';
+    If not FileExists(MyPixmapsDir+'ponoff.png') then str:=str+MyPixmapsDir+'ponoff.png, ';
+    If FallbackLang='ru' then If not FileExists(MyLangDir+'ponoff.ru.po') then str:=str+MyLangDir+'ponoff.ru.po, ';
+    If FallbackLang='en' then If not FileExists(MyLangDir+'ponoff.en.po') then str:=str+MyLangDir+'ponoff.en.po, ';
+    If FallbackLang='uk' then If not FileExists(MyLangDir+'ponoff.uk.po') then str:=str+MyLangDir+'ponoff.uk.po, ';
     If str<>message48 then
                      begin
                           str:=LeftStr(str,Length(str)-2);
@@ -727,7 +731,7 @@ If not Code_up_ppp then If link=3 then
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
                                                                 Unit2.Form2.Hide;
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
@@ -754,7 +758,7 @@ If not Code_up_ppp then If link=2 then
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
                                                                 Unit2.Form2.Hide;
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                                                                 MenuItem2Click(Self);
                                                                 If Memo_Config.Lines[7]='noreconnect-pptp' then
                                                                    begin
@@ -873,7 +877,7 @@ begin
   Application.CreateForm(TForm3, Form3);
   Application.ShowMainForm:=false;
   Application.Minimize;
-  If FileExists (MyDataDir+'ponoff.png') then Image1.Picture.LoadFromFile(MyDataDir+'ponoff.png');
+  If FileExists (MyPixmapsDir+'ponoff.png') then Image1.Picture.LoadFromFile(MyPixmapsDir+'ponoff.png');
   Panel1.Caption:=message37+' '+message38;
   Form1.Height:=152;
   Form1.Width:=670;
@@ -922,7 +926,7 @@ begin
                       Timer2.Enabled:=False;
                       Form1.Hide;
                       TrayIcon1.Hide;
-                      Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                      Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                       PClose(f);
                       halt;
                    end;
@@ -945,7 +949,7 @@ begin
     Timer2.Enabled:=False;
     Form1.Hide;
     TrayIcon1.Hide;
-    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
     halt;
    end;
   If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
@@ -968,7 +972,7 @@ begin
                                Form1.Timer2.Enabled:=False;
                                Form1.Hide;
                                Form1.TrayIcon1.Hide;
-                               Form3.MyMessageBox(message0,message2,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                               Form3.MyMessageBox(message0,message2,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                                Form1.Timer1.Enabled:=true;
                                Form1.Timer2.Enabled:=true;
                                Form1.TrayIcon1.Show;
@@ -1026,7 +1030,7 @@ If suse then
                                            Timer2.Enabled:=False;
                                            Form1.Hide;
                                            TrayIcon1.Hide;
-                                           Form3.MyMessageBox(message0,message41,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                                           Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                                            PClose(f);
                                            halt;
                                          end;
@@ -1094,12 +1098,12 @@ If suse then
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
-                 Form3.MyMessageBox(message0,message4,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                 Form3.MyMessageBox(message0,message4,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                  halt;
                 end;
    if link=2 then
                 begin
-                 Form3.MyMessageBox(message0,message5,'','',message33,MyDataDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
+                 Form3.MyMessageBox(message0,message5,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon);
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
@@ -1555,7 +1559,7 @@ initialization
   //FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
-                               POFileName:= MyDataDir+'lang/ponoff.ru.po';
+                               POFileName:= MyLangDir+'ponoff.ru.po';
                                If FileExists (POFileName) then
                                begin
                                     Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
@@ -1564,7 +1568,7 @@ initialization
                             end;
   If FallbackLang='uk' then
                             begin
-                               POFileName:= MyDataDir+'lang/ponoff.uk.po';
+                               POFileName:= MyLangDir+'ponoff.uk.po';
                                If FileExists (POFileName) then
                                begin
                                     Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
@@ -1573,7 +1577,7 @@ initialization
                             end;
   If not Translate then
                             begin
-                               POFileName:= MyDataDir+'lang/ponoff.en.po';
+                               POFileName:= MyLangDir+'ponoff.en.po';
                                If FileExists (POFileName) then
                                              Translations.TranslateUnitResourceStrings('Unit1',POFileName,lang,Fallbacklang);
                             end;

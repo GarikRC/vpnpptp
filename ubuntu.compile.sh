@@ -82,7 +82,7 @@ tar -xf vpnpptp-src-$NUM_VERSION.tar.gz
 
 cd ./vpnpptp-src-$NUM_VERSION/modules/
 
-$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fi./modules/ -Fu$LAZARUS_LIB/ -Fu$LAZARUS_LIB/gtk2/ -Fu$LAZARUS_LIB_PKG/ -Fu./modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
 if [ ! -f ./mymessagebox ]
 then
      echo "Compillation mymessagebox error!"
@@ -144,8 +144,6 @@ mkdir -p ./build/usr/share/vpnpptp/
 cp -rf ./vpnpptp-src-$NUM_VERSION/scripts ./build/usr/share/vpnpptp/
 cp -rf ./vpnpptp-src-$NUM_VERSION/wiki ./build/usr/share/vpnpptp/
 cp -rf ./vpnpptp-src-$NUM_VERSION/lang ./build/usr/share/vpnpptp/
-cp -f ./vpnpptp-src-$NUM_VERSION/vpnpptp.png ./build/usr/share/vpnpptp/
-cp -f ./vpnpptp-src-$NUM_VERSION/ponoff.png ./build/usr/share/vpnpptp/
 cp -f ./vpnpptp-src-$NUM_VERSION/on.ico ./build/usr/share/vpnpptp/
 cp -f ./vpnpptp-src-$NUM_VERSION/off.ico ./build/usr/share/vpnpptp/
 
