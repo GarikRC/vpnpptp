@@ -1,4 +1,4 @@
-%define rel 3
+%define rel 4
 
 Summary: Tools for setup and control VPN via PPTP/L2TP
 Name: vpnpptp-kde-one
@@ -57,7 +57,6 @@ cp -f ./vpnpptp.png %{buildroot}%{_datadir}/pixmaps/
 chmod 0644 %{buildroot}%{_datadir}/pixmaps/ponoff.png
 chmod 0644 %{buildroot}%{_datadir}/pixmaps/vpnpptp.png
 cp -f ./*.ico %{buildroot}%{_datadir}/vpnpptp
-cp -f ./*.png %{buildroot}%{_datadir}/vpnpptp
 cp -rf ./scripts %{buildroot}%{_datadir}/vpnpptp/
 cp -rf ./wiki %{buildroot}%{_datadir}/vpnpptp/
 cp -rf ./lang %{buildroot}%{_datadir}/vpnpptp/
@@ -129,7 +128,6 @@ rm -rf %{buildroot}
 %{_datadir}/pixmaps/ponoff.png
 %{_datadir}/pixmaps/vpnpptp.png
 %{_datadir}/vpnpptp/*.ico
-%{_datadir}/vpnpptp/*.png
 %{_datadir}/vpnpptp/scripts
 %{_datadir}/vpnpptp/wiki
 %{_datadir}/applications/ponoff.desktop

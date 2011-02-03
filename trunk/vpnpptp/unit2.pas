@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, unix;
+  StdCtrls, unix, LazHelpHTML, UTF8Process, LCLProc;
 
 type
 
@@ -159,8 +159,32 @@ begin
 end;
 
 procedure TForm2.Label1Click(Sender: TObject);
+//поиск браузера по-умолчанию и открытие в нем страницы
+var
+  v: THTMLBrowserHelpViewer;
+  BrowserPath, BrowserParams: string;
+  p: LongInt;
+  URL: String;
+  BrowserProcess: TProcessUTF8;
 begin
-  Shell ('firefox www.opennet.ru/man.shtml?topic=pppd&category=8');
+   v:=THTMLBrowserHelpViewer.Create(nil);
+   try
+     v.FindDefaultBrowser(BrowserPath,BrowserParams);
+     debugln(['Path=',BrowserPath,' Params=',BrowserParams]);
+     URL:='www.opennet.ru/man.shtml?topic=pppd&category=8';
+     p:=System.Pos('%s', BrowserParams);
+     System.Delete(BrowserParams,p,2);
+     System.Insert(URL,BrowserParams,p);
+     BrowserProcess:=TProcessUTF8.Create(nil);
+     try
+       BrowserProcess.CommandLine:=BrowserPath+' '+BrowserParams;
+       BrowserProcess.Execute;
+     finally
+       BrowserProcess.Free;
+     end;
+   finally
+     v.Free;
+   end;
 end;
 
 procedure TForm2.Button1Click(Sender: TObject);
