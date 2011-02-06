@@ -5,7 +5,7 @@ You can connect to the Internet:
 2) Run ponoff (Connection Management VPN PPTP/L2TP) from the menu to launch applications;
 3) Enter in the console as admin the command ponoff;
 4) Enter in the console as admin the command /usr/sbin/pppd call connection_name (in this case the VPN PPTP will work without a GUI) to connect, and to disconnect - the command killall pppd;
-5) Run xl2tpd as a service and entering in the console as admin the command echo "c connection_name"> /var/run/xl2tpd/l2tp-control (in this case the VPN L2TP will run without a GUI) to connect, and to disconnect - the command echo "d connection_name"> /var/run/xl2tpd/l2tp-control.
+5) Run xl2tpd as a service and entering in the console as admin the command echo "c connection_name"> /var/run/xl2tpd/l2tp-control (in this case the VPN L2TP will run without a GUI) to connect, and to disconnect - the command killall pppd and the command echo "d connection_name"> /var/run/xl2tpd/l2tp-control.
 
 This configurator vpnpptp (Connection setup VPN PPTP/L2TP) can be called in the console as admin the command vpnpptp or from the menu to launch applications, or from the Control Center of your distribution (for example, section Network and Internet-> Setting VPN-connections-> VPN PPTP/L2TP).
 
