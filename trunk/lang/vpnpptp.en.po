@@ -288,8 +288,8 @@ msgid "Невозможно создать я#209�лык на #209�абоч�
 msgstr "Unable to create link on the Desktop, as it uses a non-standard user ID and/or localization."
 
 #: unit1.message23
-msgid "Невозможно создать я#209�лык на #209�абочем столе, так как отсутствует файл /usr/share/applications/ponoff.desktop."
-msgstr "Unable to create link on the Desktop, as there is no file /usr/share/applications/ponoff.desktop."
+msgid "Невозможно создать я#209�лык на #209�абочем столе, так как отсутствует файл"
+msgstr "Unable to create link on the Desktop, as there is no file"
 
 #: TFORM1.BUTTON1.CAPTION
 msgid "Определить IP, проверить VPN-сервер"

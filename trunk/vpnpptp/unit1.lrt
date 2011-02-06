@@ -25,6 +25,7 @@ TFORM1.EDIT_MINTIME.TEXT=3
 TFORM1.BUTTONVPN.CAPTION=Определить IP, проверить VPN-сервер
 TFORM1.BUTTONHIDEPASS.CAPTION=ButtonHidePass
 TFORM1.BUTTONRESTART.CAPTION=ButtonRestart
+TFORM1.DELETE.CAPTION=Delete profile
 TFORM1.TABSHEET2.CAPTION=Этап 2
 TFORM1.LABEL_GATE.CAPTION=Шлюз локал. сети по умолчанию (определяется автоматически):
 TFORM1.LABEL_ROUTE.CAPTION=Дополнительные маршруты (необязательно, но желательно):
