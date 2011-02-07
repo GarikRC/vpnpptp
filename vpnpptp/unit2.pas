@@ -63,7 +63,8 @@ File_peer:textfile;
 str:string;
 begin
 Form2.Font.Size:=AFont;
-if ((not FileExists (PeersDir+str_peer)) and (not more)) or ((not FileExists (LibDir+str_peer+'/config')) and (not more)) then
+if more then exit;
+if (not FileExists (PeersDir+str_peer)) or (not FileExists (LibDir+str_peer+'/config')) then
                                         begin
                                              CheckBoxlock.Checked:=true;
                                              CheckBoxusepeerdns.Checked:=true;
@@ -74,7 +75,7 @@ if ((not FileExists (PeersDir+str_peer)) and (not more)) or ((not FileExists (Li
                                              CheckBoxnopcomp.Checked:=true;
                                              CheckBoxnoaccomp.Checked:=true;
                                         end;
-If FileExists (LibDir+str_peer+'/config') then if FileExists (PeersDir+str_peer) then if not more then
+If FileExists (LibDir+str_peer+'/config') then if FileExists (PeersDir+str_peer) then
                                         begin
                                            AssignFile (File_peer,PeersDir+str_peer);
                                            reset (File_peer);

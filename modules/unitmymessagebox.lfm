@@ -1,8 +1,8 @@
 object Form3: TForm3
   AnchorSideBottom.Side = asrBottom
-  Left = 439
+  Left = 472
   Height = 152
-  Top = 246
+  Top = 125
   Width = 756
   ActiveControl = Panel1
   BorderIcons = [biSystemMenu]
@@ -45,7 +45,6 @@ object Form3: TForm3
       AnchorSideTop.Control = Panel1
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = Button3
       Left = 136
       Height = 105
       Top = 11
@@ -56,9 +55,33 @@ object Form3: TForm3
       ParentColor = False
       WordWrap = True
     end
+    object ComboBoxProfile: TComboBox
+      Left = 136
+      Height = 27
+      Top = 116
+      Width = 424
+      ItemHeight = 0
+      OnKeyDown = ComboBoxProfileKeyDown
+      Style = csSimple
+      TabOrder = 0
+      Visible = False
+    end
+    object Button1: TButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideBottom.Control = Owner
+      AnchorSideBottom.Side = asrBottom
+      Left = 472
+      Height = 25
+      Top = 116
+      Width = 87
+      Anchors = [akRight, akBottom]
+      BorderSpacing.Right = 10
+      BorderSpacing.Bottom = 10
+      OnClick = Button1Click
+      TabOrder = 1
+    end
     object Button2: TButton
       AnchorSideLeft.Side = asrBottom
-      AnchorSideRight.Control = Button3
       AnchorSideBottom.Control = Owner
       AnchorSideBottom.Side = asrBottom
       Left = 569
@@ -69,7 +92,7 @@ object Form3: TForm3
       BorderSpacing.Right = 10
       BorderSpacing.Bottom = 10
       OnClick = Button2Click
-      TabOrder = 0
+      TabOrder = 2
     end
     object Button3: TButton
       AnchorSideLeft.Side = asrBottom
@@ -85,35 +108,6 @@ object Form3: TForm3
       BorderSpacing.Right = 10
       BorderSpacing.Bottom = 10
       OnClick = Button3Click
-      TabOrder = 1
-    end
-    object Kod: TEdit
-      AnchorSideLeft.Control = Image1
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideBottom.Control = Owner
-      AnchorSideBottom.Side = asrBottom
-      Left = 137
-      Height = 25
-      Top = 116
-      Width = 80
-      Anchors = [akLeft, akBottom]
-      BorderSpacing.Bottom = 10
-      TabOrder = 2
-      Visible = False
-    end
-    object Button1: TButton
-      AnchorSideLeft.Side = asrBottom
-      AnchorSideRight.Control = Button2
-      AnchorSideBottom.Control = Owner
-      AnchorSideBottom.Side = asrBottom
-      Left = 472
-      Height = 25
-      Top = 116
-      Width = 87
-      Anchors = [akRight, akBottom]
-      BorderSpacing.Right = 10
-      BorderSpacing.Bottom = 10
-      OnClick = Button1Click
       TabOrder = 3
     end
   end
