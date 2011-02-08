@@ -32,6 +32,7 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    CheckBox_shorewall: TCheckBox;
     Delete: TButton;
     ButtonTest: TButton;
     ButtonRestart: TButton;
@@ -46,6 +47,8 @@ type
     balloon: TCheckBox;
     Autostart_ponoff: TCheckBox;
     Autostartpppd: TCheckBox;
+    GroupBox1: TGroupBox;
+    Pppd_log: TCheckBox;
     route_IP_remote: TCheckBox;
     ComboBoxDistr: TComboBox;
     etc_hosts: TCheckBox;
@@ -80,22 +83,18 @@ type
     Memo_Autostartpppd: TMemo;
     Memo_sudo: TMemo;
     Memo_vpnpptp_ponoff_desktop: TMemo;
-    Sudo_configure: TCheckBox;
     Label45: TLabel;
     Label46: TLabel;
     Label47: TLabel;
-    Sudo_ponoff: TCheckBox;
     Memo_networktest: TMemo;
     networktest: TCheckBox;
     Memo_bindutilshost: TMemo;
     routevpnauto: TCheckBox;
     Memo_ip_IPS: TMemo;
-    CheckBox_shorewall: TCheckBox;
     dhcp_route: TCheckBox;
     Metka: TLabel;
     Memo_config: TMemo;
     Memo_shorewall: TMemo;
-    Pppd_log: TCheckBox;
     Reconnect_pptp: TCheckBox;
     Mii_tool_no: TCheckBox;
     CheckBox_desktop: TCheckBox;
@@ -149,6 +148,8 @@ type
     Memo_route: TMemo;
     Memo_users: TMemo;
     PageControl1: TPageControl;
+    Sudo_configure: TCheckBox;
+    Sudo_ponoff: TCheckBox;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
@@ -179,6 +180,8 @@ type
       var Handled: Boolean);
     procedure Edit_peerChange(Sender: TObject);
     procedure etc_hostsChange(Sender: TObject);
+    procedure GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure networktestChange(Sender: TObject);
     procedure pppnotdefaultChange(Sender: TObject);
     procedure routevpnautoChange(Sender: TObject);
@@ -452,7 +455,7 @@ resourcestring
   message170='Имени соединения';
   message171='не найдено. Будет предложено создать новое соединение с именем';
   message172='Выберите соединение из выпадающего списка, которое Вы хотели бы отредактировать или удалить.';
-  message173='<ОК> - выбрать из списка. <Отмена> - создать новое соединение.';
+  message173='<ОК> - выбрать из списка. <Новое> - создать новое соединение.';
   message174='По-умолчанию модулем ponoff используется имя соединения';
   message175='Установить соединение с именем';
   message176='соединением по-умолчанию? <ОК> - установить, <Отмена> - оставить соединение по-умолчанию без изменений.';
@@ -466,6 +469,7 @@ resourcestring
   message184='Будьте осторожны, так как Вы пытаетесь удалить соединение, используемое по-умолчанию!';
   message185='Необходимо будет потом самостоятельно выбрать имя соединения, которое использовать по-умолчанию.';
   message186='которое не может быть использовано, так как оно зарезервировано программой.';
+  message187='Новое';
 
 implementation
 
@@ -1281,10 +1285,19 @@ If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') t
  Shell('rm -f '+MyLibDir+'resolv.conf.before');
  Shell('rm -f '+MyLibDir+'resolv.conf.after');
  Shell('rm -f '+MyLibDir+'hosts');
- If not DirectoryExists(EtcPppIpDownLDir) then Shell ('mkdir -p '+EtcPppIpDownLDir);
-//перезаписываем скрипт поднятия соединения имя_соединения-ip-up
+ //If not DirectoryExists(EtcPppIpDownLDir) then Shell ('mkdir -p '+EtcPppIpDownLDir);
+ //переписываем скрипт ip-up.local
+If fedora then //Shell ('ln -s '+EtcPppIpUpDDir+'ip-up '+EtcPppDir+'ip-up.local');
+ begin
+    Shell('rm -f '+EtcPppDir+'ip-up.local');
+    Shell('echo "#!/bin/sh" > '+EtcPppDir+'ip-up.local');
+    Shell('echo "if [ -d /etc/ppp/ip-up.d/ -a -x /usr/bin/run-parts ]; then" >> '+EtcPppDir+'ip-up.local');
+    Shell('echo "    /usr/bin/run-parts /etc/ppp/ip-up.d/" >> '+EtcPppDir+'ip-up.local');
+    Shell('echo "fi" >> '+EtcPppDir+'ip-up.local');
+    shell('chmod a+x '+EtcPppDir+'ip-up.local')
+ end;
+ //перезаписываем скрипт поднятия соединения имя_соединения-ip-up
  If not DirectoryExists(EtcPppIpUpDDir) then Shell ('mkdir -p '+EtcPppIpUpDDir);
- //If fedora then Shell ('ln -s '+EtcPppIpUpDDir+'ip-up '+EtcPppDir+'ip-up.local');
  Shell('rm -f '+EtcPppIpUpDDir+Edit_peer.Text+'-ip-up');
  Memo_ip_up.Clear;
  Memo_ip_up.Lines.Add('#!/bin/sh');
@@ -1376,7 +1389,7 @@ If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') t
                                         end;
  If route_IP_remote.Checked then
                                 Memo_ip_up.Lines.Add (SBinDir+'route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
- Memo_ip_up.Lines.Add('echo "#!bin/sh" > '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
+ Memo_ip_up.Lines.Add('echo "#!/bin/sh" > '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
  Memo_ip_up.Lines.Add('export >> '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
  Memo_ip_up.Lines.Add('echo "'+EtcPppIpDownLDir+'$LINKNAME-ip-down" >> '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
  Memo_ip_up.Lines.Add('chmod +x '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
@@ -1393,6 +1406,16 @@ if FileExists(EtcPppIpUpDDir+'exim4') then
                                                 Shell ('rm -f '+EtcPppIpUpDDir+'exim4');
                                                 Shell ('printf "Program vpnpptp moved script exim4 in directory '+MyScriptsDir+'\n" > '+EtcPppIpUpDDir+'exim4.move');
                                            end;
+//переписываем скрипт ip-down.local
+If fedora then
+begin
+   Shell('rm -f '+EtcPppDir+'ip-down.local');
+   Shell('echo "#!/bin/sh" > '+EtcPppDir+'ip-down.local');
+   Shell('echo "if [ -d /etc/ppp/ip-down.d/ -a -x /usr/bin/run-parts ]; then" >> '+EtcPppDir+'ip-down.local');
+   Shell('echo "    /usr/bin/run-parts /etc/ppp/ip-down.d/" >> '+EtcPppDir+'ip-down.local');
+   Shell('echo "fi" >> '+EtcPppDir+'ip-down.local');
+   shell('chmod a+x '+EtcPppDir+'ip-down.local')
+end;
 //перезаписываем скрипт опускания соединения имя_соединения-ip-down
  If not DirectoryExists(EtcPppIpDownDDir) then Shell ('mkdir -p '+EtcPppIpDownDDir);
  //If fedora then Shell ('ln -s '+EtcPppIpDownDDir+'ip-down '+EtcPppDir+'ip-down.local');
@@ -2015,6 +2038,33 @@ DoIconDesktopForAll('vpnpptp');
                                     Application.ProcessMessages;
                                     Form1.Repaint;
                                end;
+ //корректирование конфигов для каждого соединения (общие для всех соединений настройки)
+ If FileExists(MyLibDir+'profiles') then
+                                    begin
+                                       AssignFile(FileProfiles,MyLibDir+'profiles');
+                                       reset(FileProfiles);
+                                              while not eof(FileProfiles) do
+                                                        begin
+                                                          readln(FileProfiles,str);
+                                                          if str<>'' then If FileExists(MyLibDir+str+'/config') then
+                                                                       begin
+                                                                          Memo_config.Clear;
+                                                                          Memo_config.Lines.LoadFromFile(MyLibDir+str+'/config');
+                                                                          for i:=0 to Memo_config.Lines.Count-1 do
+                                                                             begin
+                                                                               if Memo_config.Lines[i]='shorewall-no' then If CheckBox_shorewall.Checked then Memo_config.Lines[i]:='shorewall-yes';
+                                                                               if Memo_config.Lines[i]='shorewall-yes' then If not CheckBox_shorewall.Checked then Memo_config.Lines[i]:='shorewall-no';
+                                                                               if Memo_config.Lines[i]='sudo-no' then If Sudo_ponoff.Checked then Memo_config.Lines[i]:='sudo-yes';
+                                                                               if Memo_config.Lines[i]='sudo-yes' then If not Sudo_ponoff.Checked then Memo_config.Lines[i]:='sudo-no';
+                                                                               if Memo_config.Lines[i]='sudo-configure-no' then If Sudo_configure.Checked then Memo_config.Lines[i]:='sudo-configure-yes';
+                                                                               if Memo_config.Lines[i]='sudo-configure-yes' then If not Sudo_configure.Checked then Memo_config.Lines[i]:='sudo-configure-no';
+                                                                             end;
+                                                                          Memo_config.Lines.SaveToFile(MyLibDir+str+'/config');
+                                                                          Memo_config.Clear;
+                                                                       end;
+                                                        end;
+                                       CloseFile(FileProfiles);
+                                    end;
  //обработка соединения по-умолчанию
   If not FileExists(MyLibDir+'default/default') then Shell ('echo "'+Edit_peer.Text+'" > '+MyLibDir+'default/default');
   found:=false;
@@ -2635,6 +2685,26 @@ begin
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
+end;
+
+procedure TForm1.GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+   If PressCreate then exit;
+   If Button=mbLeft then If Form1.Font.Size<15 then
+                            begin
+                                 Form1.Font.Size:=Form1.Font.Size+1;
+                                 Form2.Font.Size:=Form2.Font.Size+1;
+                            end;
+   If Button=mbRight then If Form1.Font.Size>1 then
+                             begin
+                                 Form1.Font.Size:=Form1.Font.Size-1;
+                                 Form2.Font.Size:=Form2.Font.Size-1;
+                             end;
+   AFont:=Form1.Font.Size;
+   Form1.Repaint;
+   Application.ProcessMessages;
+   Form1.Repaint;
 end;
 
 procedure TForm1.networktestChange(Sender: TObject);
@@ -3283,7 +3353,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var i,N, CountGateway:integer;
     len:integer;
-    FileFind:textfile;
+    FileFind,FileProfiles:textfile;
     strIface, strGateway, str:string;
     ethCount:array[0..9] of integer;
     wlanCount:array[0..9] of integer;
@@ -3292,6 +3362,7 @@ var i,N, CountGateway:integer;
     Apid,Apidroot:tpid;
 begin
 if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
+if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
 Application.CreateForm(TForm3, Form3);
 ubuntu:=false;
 debian:=false;
@@ -3649,8 +3720,9 @@ If Screen.Height>1000 then
  //подсказка о желательности параметра приложению
  If ProfileName='' then If FileExists(MyLibDir+'profiles') then
                              begin
-                                    Form3.MyMessageBox(message0,message172+' '+message173,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,true,MyLibDir);
+                                    Form3.MyMessageBox(message0,message172+' '+message173,'',message122,message187,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,true,MyLibDir);
                                     If Form3.Tag=2 then If Form3.ComboBoxProfile.Text<>'' then ProfileName:=Form3.ComboBoxProfile.Text;
+                                    If Form3.Tag=0 then halt;
                              end;
  //проверка существования соединения
   str:=ProfileName;
@@ -3668,6 +3740,36 @@ If Screen.Height>1000 then
                                  Form3.MyMessageBox(message0,message170+' '+ProfileName+' '+message171+' '+ProfileName+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                  Edit_peer.Text:=ProfileName;
                             end;
+   //создание общих для всех соединений настроек)
+   If FileExists(MyLibDir+'profiles') then
+                                      begin
+                                         AssignFile(FileProfiles,MyLibDir+'profiles');
+                                         reset(FileProfiles);
+                                                while not eof(FileProfiles) do
+                                                          begin
+                                                            readln(FileProfiles,str);
+                                                            if str<>'' then If FileExists(MyLibDir+str+'/config') then
+                                                                         begin
+                                                                            Memo_config.Clear;
+                                                                            Memo_config.Lines.LoadFromFile(MyLibDir+str+'/config');
+                                                                            for i:=0 to Memo_config.Lines.Count-1 do
+                                                                               begin
+                                                                                 if Memo_config.Lines[i]='shorewall-no' then CheckBox_shorewall.Checked:=false;
+                                                                                 if Memo_config.Lines[i]='shorewall-yes' then  CheckBox_shorewall.Checked:=true;
+                                                                                 if Memo_config.Lines[i]='sudo-no' then Sudo_ponoff.Checked:=false;
+                                                                                 if Memo_config.Lines[i]='sudo-yes' then Sudo_ponoff.Checked:=true;
+                                                                                 if Memo_config.Lines[i]='sudo-configure-no' then Sudo_configure.Checked:=false;
+                                                                                 if Memo_config.Lines[i]='sudo-configure-yes' then Sudo_configure.Checked:=true;
+                                                                               end;
+                                                                            Memo_config.Lines.SaveToFile(MyLibDir+str+'/config');
+                                                                            Memo_config.Clear;
+                                                                         end;
+                                                          end;
+                                         CloseFile(FileProfiles);
+                                      end;
+
+
+
 //обеспечение совместимости старого config с новым
  If FileExists(MyLibDir+ProfileName+'/config') then
      begin

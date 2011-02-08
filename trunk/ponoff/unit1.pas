@@ -853,6 +853,7 @@ var
   Apid:tpid;
 begin
 if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
+if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
   Application.CreateForm(TForm2, Form2);
   If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
   DoubleRunPonoff:=false;

@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 219
+  Left = 388
   Height = 580
-  Top = 89
+  Top = 114
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2663,7 +2663,7 @@ object Form1: TForm1
         Left = 16
         Height = 14
         Top = 44
-        Width = 367
+        Width = 366
         Anchors = [akTop, akRight]
         Caption = 'Шлюз локал. сети по умолчанию (определяется автоматически):'
         ParentColor = False
@@ -2675,7 +2675,7 @@ object Form1: TForm1
         Left = 7
         Height = 14
         Top = 238
-        Width = 351
+        Width = 349
         BorderSpacing.Top = 10
         Caption = 'Дополнительные маршруты (необязательно, но желательно):'
         ParentColor = False
@@ -2712,7 +2712,7 @@ object Form1: TForm1
         Left = 581
         Height = 14
         Top = 159
-        Width = 75
+        Width = 74
         BorderSpacing.Top = 10
         Caption = 'Примечания:'
         ParentColor = False
@@ -2728,7 +2728,7 @@ object Form1: TForm1
         Left = 5
         Height = 14
         Top = 14
-        Width = 378
+        Width = 377
         Anchors = [akLeft]
         BorderSpacing.Left = 5
         Caption = 'Сетевой интерфейс по умолчанию (определяется автоматически):'
@@ -2761,7 +2761,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrCenter
         Left = 581
-        Height = 78
+        Height = 94
         Top = 251
         Width = 233
         Anchors = [akTop, akLeft, akRight]
@@ -2779,8 +2779,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrBottom
         Left = 581
-        Height = 159
-        Top = 329
+        Height = 143
+        Top = 345
         Width = 233
         Anchors = [akTop, akLeft, akRight, akBottom]
         Caption = '- без занесения маршрутов не гарантируется одновременная работа интернета и локальной сети, но интернет в любом случае будет работать'
@@ -2792,10 +2792,10 @@ object Form1: TForm1
         AnchorSideTop.Control = EditDNS1
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = EditDNS1
-        Left = 70
+        Left = 75
         Height = 14
         Top = 71
-        Width = 313
+        Width = 307
         Anchors = [akTop, akRight]
         Caption = 'DNS1 до поднятия VPN (определяется автоматически):'
         ParentColor = False
@@ -2805,10 +2805,10 @@ object Form1: TForm1
         AnchorSideTop.Control = EditDNS2
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = EditDNS2
-        Left = 70
+        Left = 76
         Height = 14
         Top = 102
-        Width = 313
+        Width = 306
         Anchors = [akTop, akRight]
         Caption = 'DNS2 до поднятия VPN (определяется автоматически):'
         ParentColor = False
@@ -2818,10 +2818,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_mtu
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = Edit_mtu
-        Left = 275
+        Left = 272
         Height = 14
         Top = 183
-        Width = 108
+        Width = 110
         Anchors = [akTop, akRight]
         Caption = 'MTU (если задано):'
         ParentColor = False
@@ -2833,10 +2833,10 @@ object Form1: TForm1
         AnchorSideTop.Control = EditDNS3
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = EditDNS3
-        Left = 50
+        Left = 57
         Height = 14
         Top = 129
-        Width = 333
+        Width = 325
         Anchors = [akTop, akRight]
         Caption = 'DNS1 при поднятом VPN (для детей введите 81.176.72.82):'
         ParentColor = False
@@ -2846,10 +2846,10 @@ object Form1: TForm1
         AnchorSideTop.Control = EditDNS4
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = EditDNS4
-        Left = 50
+        Left = 57
         Height = 14
         Top = 156
-        Width = 333
+        Width = 325
         Anchors = [akTop, akRight]
         Caption = 'DNS2 при поднятом VPN (для детей введите 81.176.72.83):'
         ParentColor = False
@@ -2862,7 +2862,7 @@ object Form1: TForm1
         Left = 581
         Height = 14
         Top = 10
-        Width = 100
+        Width = 97
         Caption = 'Аутентификация:'
         ParentColor = False
         OnMouseDown = TabSheet1MouseDown
@@ -2874,7 +2874,7 @@ object Form1: TForm1
         Left = 581
         Height = 14
         Top = 93
-        Width = 111
+        Width = 114
         BorderSpacing.Top = 10
         Caption = 'Шифрование mppe:'
         ParentColor = False
@@ -2884,10 +2884,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_mru
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Control = Edit_mtu
-        Left = 275
+        Left = 272
         Height = 14
         Top = 214
-        Width = 108
+        Width = 110
         Anchors = [akTop, akRight]
         Caption = 'MRU (если задано):'
         ParentColor = False
@@ -2899,10 +2899,10 @@ object Form1: TForm1
         AnchorSideTop.Control = TabSheet2
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 10
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -2916,10 +2916,10 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 41
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -2935,7 +2935,7 @@ object Form1: TForm1
         Left = 581
         Height = 21
         Top = 21
-        Width = 86
+        Width = 88
         Anchors = [akLeft]
         Caption = 'refuse-chap'
         TabOrder = 8
@@ -2946,10 +2946,10 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_rchap
         AnchorSideBottom.Control = CheckBox_desktop
         AnchorSideBottom.Side = asrCenter
-        Left = 667
+        Left = 669
         Height = 21
         Top = 21
-        Width = 79
+        Width = 82
         Anchors = [akLeft]
         Caption = 'refuse-eap'
         TabOrder = 9
@@ -2963,7 +2963,7 @@ object Form1: TForm1
         Left = 581
         Height = 21
         Top = 41
-        Width = 102
+        Width = 104
         Anchors = [akLeft]
         Caption = 'refuse-mschap'
         TabOrder = 10
@@ -2973,10 +2973,10 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_required
         AnchorSideBottom.Side = asrBottom
-        Left = 648
+        Left = 650
         Height = 21
         Top = 107
-        Width = 68
+        Width = 70
         Caption = 'stateless'
         TabOrder = 14
       end
@@ -2988,7 +2988,7 @@ object Form1: TForm1
         Left = 581
         Height = 21
         Top = 128
-        Width = 50
+        Width = 51
         Caption = 'no40'
         TabOrder = 15
       end
@@ -2997,7 +2997,7 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_no40
         AnchorSideBottom.Side = asrBottom
-        Left = 631
+        Left = 632
         Height = 21
         Top = 128
         Width = 50
@@ -3026,7 +3026,7 @@ object Form1: TForm1
         Left = 7
         Height = 21
         Top = 488
-        Width = 212
+        Width = 210
         Anchors = [akLeft, akBottom]
         Caption = 'Создать ярлык на рабочем столе'
         Checked = True
@@ -3041,10 +3041,10 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 68
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -3059,10 +3059,10 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 99
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -3077,10 +3077,10 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 180
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -3112,10 +3112,10 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 126
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -3129,10 +3129,10 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 153
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -3147,7 +3147,7 @@ object Form1: TForm1
         Left = 581
         Height = 21
         Top = 107
-        Width = 67
+        Width = 69
         Caption = 'required'
         TabOrder = 13
       end
@@ -3156,7 +3156,7 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_no56
         AnchorSideBottom.Side = asrBottom
-        Left = 681
+        Left = 682
         Height = 21
         Top = 128
         Width = 57
@@ -3167,10 +3167,10 @@ object Form1: TForm1
         AnchorSideLeft.Control = CheckBox_rmschap
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_rmschap
-        Left = 683
+        Left = 685
         Height = 21
         Top = 41
-        Width = 80
+        Width = 82
         Caption = 'refuse-pap'
         TabOrder = 11
       end
@@ -3181,7 +3181,7 @@ object Form1: TForm1
         Left = 581
         Height = 21
         Top = 62
-        Width = 119
+        Width = 120
         Caption = 'refuse-mschap-v2'
         TabOrder = 12
       end
@@ -3192,10 +3192,10 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 383
+        Left = 382
         Height = 21
         Top = 211
-        Width = 193
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         BorderSpacing.Right = 5
@@ -3261,7 +3261,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 17
+        TabOrder = 13
         Visible = False
       end
       object Memo_ip_up: TMemo
@@ -3272,7 +3272,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 18
+        TabOrder = 14
         Visible = False
       end
       object Memo_ip_down: TMemo
@@ -3283,7 +3283,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 19
+        TabOrder = 15
         Visible = False
       end
       object Memo_users: TMemo
@@ -3294,7 +3294,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 20
+        TabOrder = 16
         Visible = False
       end
       object Memo_eth: TMemo
@@ -3305,7 +3305,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 21
+        TabOrder = 17
         Visible = False
       end
       object Memo_gate: TMemo
@@ -3316,7 +3316,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 22
+        TabOrder = 18
         Visible = False
       end
       object Tmpnostart: TMemo
@@ -3327,51 +3327,47 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 23
+        TabOrder = 19
         Visible = False
       end
       object Mii_tool_no: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideTop.Control = TabSheet3
         Left = 8
         Height = 21
-        Top = 6
+        Top = 10
         Width = 258
+        BorderSpacing.Left = 8
+        BorderSpacing.Top = 10
         Caption = 'Не контролировать state сетевого кабеля'
         TabOrder = 0
       end
       object Reconnect_pptp: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = Mii_tool_no
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 27
+        Top = 31
         Width = 660
+        BorderSpacing.Left = 8
         Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
         TabOrder = 1
       end
-      object Pppd_log: TCheckBox
-        AnchorSideTop.Control = Reconnect_pptp
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 48
-        Width = 304
-        Caption = 'Вести подробный лог pppd(xl2tpd) в /var/log/syslog'
-        Checked = True
-        State = cbChecked
-        TabOrder = 2
-      end
       object dhcp_route: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = Pppd_log
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 69
+        Top = 73
         Width = 204
+        BorderSpacing.Left = 8
         Caption = 'Получать маршруты через DHCP'
         Checked = True
         OnChange = dhcp_routeChange
         State = cbChecked
-        TabOrder = 3
+        TabOrder = 2
       end
       object Memo_config: TMemo
         Left = 735
@@ -3381,21 +3377,8 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 24
+        TabOrder = 20
         Visible = False
-      end
-      object CheckBox_shorewall: TCheckBox
-        AnchorSideTop.Control = dhcp_route
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 90
-        Width = 417
-        Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
-        Checked = True
-        OnChange = CheckBox_shorewallChange
-        State = cbChecked
-        TabOrder = 4
       end
       object Memo_shorewall: TMemo
         Left = 735
@@ -3405,7 +3388,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 25
+        TabOrder = 21
         Visible = False
       end
       object Memo_ip_IPS: TMemo
@@ -3416,21 +3399,23 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 26
+        TabOrder = 22
         Visible = False
       end
       object routevpnauto: TCheckBox
-        AnchorSideTop.Control = CheckBox_shorewall
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideTop.Control = dhcp_route
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 111
+        Top = 94
         Width = 290
+        BorderSpacing.Left = 8
         Caption = 'Программно добавлять маршрут к VPN-серверу'
         Checked = True
         OnChange = routevpnautoChange
         State = cbChecked
-        TabOrder = 5
+        TabOrder = 3
       end
       object Memo_bindutilshost: TMemo
         Left = 735
@@ -3440,30 +3425,34 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 27
+        TabOrder = 23
         Visible = False
       end
       object networktest: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = routeDNSauto
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 195
+        Top = 178
         Width = 417
+        BorderSpacing.Left = 8
         Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
         OnChange = networktestChange
-        TabOrder = 9
+        TabOrder = 7
       end
       object balloon: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = networktest
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 216
+        Top = 199
         Width = 309
+        BorderSpacing.Left = 8
         Caption = 'Блокировать все всплывающие сообщения из трея'
         OnChange = balloonChange
-        TabOrder = 10
+        TabOrder = 8
       end
       object Memo_networktest: TMemo
         Left = 735
@@ -3473,30 +3462,8 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 28
+        TabOrder = 24
         Visible = False
-      end
-      object Sudo_ponoff: TCheckBox
-        AnchorSideTop.Control = balloon
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 237
-        Width = 320
-        Caption = 'Разрешить пользователям управлять подключением'
-        OnChange = Sudo_ponoffChange
-        TabOrder = 11
-      end
-      object Sudo_configure: TCheckBox
-        AnchorSideTop.Control = Sudo_ponoff
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 258
-        Width = 346
-        Caption = 'Разрешить пользователям конфигурировать соединение'
-        OnChange = Sudo_configureChange
-        TabOrder = 12
       end
       object Memo_vpnpptp_ponoff_desktop: TMemo
         Left = 663
@@ -3506,7 +3473,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 29
+        TabOrder = 25
         Visible = False
       end
       object Memo_sudo: TMemo
@@ -3514,30 +3481,34 @@ object Form1: TForm1
         Height = 35
         Top = 274
         Width = 70
-        TabOrder = 30
+        TabOrder = 26
         Visible = False
       end
       object Autostart_ponoff: TCheckBox
-        AnchorSideTop.Control = Sudo_configure
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideTop.Control = balloon
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 279
+        Top = 220
         Width = 347
+        BorderSpacing.Left = 8
         Caption = 'Автозапуск интернета при старте системы (графический)'
         OnChange = Autostart_ponoffChange
-        TabOrder = 13
+        TabOrder = 9
       end
       object Autostartpppd: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = Autostart_ponoff
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 300
+        Top = 241
         Width = 615
+        BorderSpacing.Left = 8
         Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
         OnChange = AutostartpppdChange
-        TabOrder = 14
+        TabOrder = 10
       end
       object Memo_Autostartpppd: TMemo
         Left = 663
@@ -3547,19 +3518,21 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 31
+        TabOrder = 27
         Visible = False
       end
       object pppnotdefault: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = Autostartpppd
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 321
+        Top = 262
         Width = 344
+        BorderSpacing.Left = 8
         Caption = 'Не изменять дефолтный шлюз, запустив VPN PPTP в фоне'
         OnChange = pppnotdefaultChange
-        TabOrder = 15
+        TabOrder = 11
       end
       object Memonew1: TMemo
         Left = 663
@@ -3569,7 +3542,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 32
+        TabOrder = 28
         Visible = False
       end
       object Memonew2: TMemo
@@ -3580,25 +3553,27 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 33
+        TabOrder = 29
         Visible = False
       end
       object routeDNSauto: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = route_IP_remote
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 174
+        Top = 157
         Width = 281
+        BorderSpacing.Left = 8
         Caption = 'Программно маршрутизировать DNS-сервера'
-        TabOrder = 8
+        TabOrder = 6
       end
       object MemoTest: TMemo
         Left = 663
         Height = 35
         Top = 419
         Width = 70
-        TabOrder = 34
+        TabOrder = 30
         Visible = False
       end
       object Memo2: TMemo
@@ -3609,44 +3584,127 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 35
+        TabOrder = 31
         Visible = False
       end
       object etc_hosts: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = routevpnauto
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 132
+        Top = 115
         Width = 661
+        BorderSpacing.Left = 8
         Caption = 'Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)'
         Checked = True
         OnChange = etc_hostsChange
         State = cbChecked
-        TabOrder = 6
+        TabOrder = 4
       end
       object nobuffer: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = pppnotdefault
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 342
+        Top = 283
         Width = 295
+        BorderSpacing.Left = 8
         Caption = 'Средне- или высокоскоростная линия (nobuffer)'
         Checked = True
         OnChange = pppnotdefaultChange
         State = cbChecked
-        TabOrder = 16
+        TabOrder = 12
       end
       object route_IP_remote: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
         AnchorSideTop.Control = etc_hosts
         AnchorSideTop.Side = asrBottom
         Left = 8
         Height = 21
-        Top = 153
+        Top = 136
         Width = 366
+        BorderSpacing.Left = 8
         Caption = 'Маршрутизировать remote IP address в шлюз локальной сети'
-        TabOrder = 7
+        TabOrder = 5
+      end
+      object GroupBox1: TGroupBox
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideTop.Control = nobuffer
+        AnchorSideTop.Side = asrBottom
+        AnchorSideRight.Control = TabSheet3
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = Label42
+        Left = 5
+        Height = 157
+        Top = 314
+        Width = 805
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Left = 5
+        BorderSpacing.Top = 10
+        BorderSpacing.Right = 4
+        BorderSpacing.Bottom = 10
+        Caption = 'Общие для всех соединений настройки'
+        ClientHeight = 142
+        ClientWidth = 801
+        TabOrder = 32
+        OnMouseDown = GroupBox1MouseDown
+        object CheckBox_shorewall: TCheckBox
+          AnchorSideLeft.Control = GroupBox1
+          AnchorSideTop.Control = GroupBox1
+          Left = 1
+          Height = 21
+          Top = 10
+          Width = 417
+          BorderSpacing.Left = 1
+          BorderSpacing.Top = 10
+          Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
+          Checked = True
+          OnChange = CheckBox_shorewallChange
+          State = cbChecked
+          TabOrder = 0
+        end
+        object Sudo_ponoff: TCheckBox
+          AnchorSideLeft.Control = GroupBox1
+          AnchorSideTop.Control = CheckBox_shorewall
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 31
+          Width = 320
+          BorderSpacing.Left = 1
+          Caption = 'Разрешить пользователям управлять подключением'
+          OnChange = Sudo_ponoffChange
+          TabOrder = 1
+        end
+        object Sudo_configure: TCheckBox
+          AnchorSideLeft.Control = GroupBox1
+          AnchorSideTop.Control = Sudo_ponoff
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 52
+          Width = 346
+          BorderSpacing.Left = 1
+          Caption = 'Разрешить пользователям конфигурировать соединение'
+          OnChange = Sudo_configureChange
+          TabOrder = 2
+        end
+      end
+      object Pppd_log: TCheckBox
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideTop.Control = Reconnect_pptp
+        AnchorSideTop.Side = asrBottom
+        Left = 8
+        Height = 21
+        Top = 52
+        Width = 304
+        BorderSpacing.Left = 8
+        Caption = 'Вести подробный лог pppd(xl2tpd) в /var/log/syslog'
+        Checked = True
+        State = cbChecked
+        TabOrder = 33
       end
     end
     object TabSheet4: TTabSheet
