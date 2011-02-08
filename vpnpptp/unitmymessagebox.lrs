@@ -1,6 +1,8 @@
+{ This is an automatically generated lazarus resource file }
+
 LazarusResources.Add('TForm3','FORMDATA',[
   'TPF0'#6'TForm3'#5'Form3'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#3
-  +#216#1#6'Height'#3#152#0#3'Top'#2'}'#5'Width'#3#244#2#13'ActiveControl'#7#6
+  +#143#2#6'Height'#3#152#0#3'Top'#2'w'#5'Width'#3#244#2#13'ActiveControl'#7#6
   +'Panel1'#11'BorderIcons'#11#12'biSystemMenu'#0#11'BorderStyle'#7#8'bsSingle'
   +#7'Caption'#6#5'Form3'#12'ClientHeight'#3#152#0#11'ClientWidth'#3#244#2#8'On'
   +'Create'#7#10'FormCreate'#8'Position'#7#15'poDesktopCenter'#10'LCLVersion'#6

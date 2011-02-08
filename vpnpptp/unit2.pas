@@ -50,7 +50,8 @@ type
   end; 
 
 var
-  Form2: TForm2; 
+  Form2: TForm2;
+  CaptionWell:boolean;
 
 implementation
 
@@ -64,6 +65,11 @@ str:string;
 begin
 Form2.Font.Size:=AFont;
 if more then exit;
+If not CaptionWell then
+                     begin
+                          Form2.Caption:=Form2.Caption+' '+str_peer+')';
+                          CaptionWell:=true;
+                     end;
 if (not FileExists (PeersDir+str_peer)) or (not FileExists (LibDir+str_peer+'/config')) then
                                         begin
                                              CheckBoxlock.Checked:=true;
@@ -112,8 +118,8 @@ end;
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin
+   CaptionWell:=false;
    Form2.Hide;
-
 //масштабирование формы в зависимости от разрешения экрана
    Form2.Height:=300;
    Form2.Width:=397;
