@@ -2346,7 +2346,7 @@ object Form2: TForm2
     TabOrder = 18
   end
   object CheckBoxpersist: TCheckBox
-    Left = 9
+    Left = 8
     Height = 21
     Top = 128
     Width = 69

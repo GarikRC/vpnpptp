@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 388
+  Left = 401
   Height = 580
-  Top = 114
+  Top = 64
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -3261,7 +3261,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 13
+        TabOrder = 0
         Visible = False
       end
       object Memo_ip_up: TMemo
@@ -3272,7 +3272,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 14
+        TabOrder = 1
         Visible = False
       end
       object Memo_ip_down: TMemo
@@ -3283,7 +3283,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 15
+        TabOrder = 2
         Visible = False
       end
       object Memo_users: TMemo
@@ -3294,7 +3294,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 16
+        TabOrder = 3
         Visible = False
       end
       object Memo_eth: TMemo
@@ -3305,7 +3305,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 17
+        TabOrder = 4
         Visible = False
       end
       object Memo_gate: TMemo
@@ -3316,7 +3316,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 18
+        TabOrder = 5
         Visible = False
       end
       object Tmpnostart: TMemo
@@ -3327,47 +3327,8 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 19
+        TabOrder = 6
         Visible = False
-      end
-      object Mii_tool_no: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = TabSheet3
-        Left = 8
-        Height = 21
-        Top = 10
-        Width = 258
-        BorderSpacing.Left = 8
-        BorderSpacing.Top = 10
-        Caption = 'Не контролировать state сетевого кабеля'
-        TabOrder = 0
-      end
-      object Reconnect_pptp: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = Mii_tool_no
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 31
-        Width = 660
-        BorderSpacing.Left = 8
-        Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
-        TabOrder = 1
-      end
-      object dhcp_route: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = Pppd_log
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 73
-        Width = 204
-        BorderSpacing.Left = 8
-        Caption = 'Получать маршруты через DHCP'
-        Checked = True
-        OnChange = dhcp_routeChange
-        State = cbChecked
-        TabOrder = 2
       end
       object Memo_config: TMemo
         Left = 735
@@ -3377,7 +3338,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 20
+        TabOrder = 7
         Visible = False
       end
       object Memo_shorewall: TMemo
@@ -3388,7 +3349,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 21
+        TabOrder = 8
         Visible = False
       end
       object Memo_ip_IPS: TMemo
@@ -3399,23 +3360,8 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 22
+        TabOrder = 9
         Visible = False
-      end
-      object routevpnauto: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = dhcp_route
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 94
-        Width = 290
-        BorderSpacing.Left = 8
-        Caption = 'Программно добавлять маршрут к VPN-серверу'
-        Checked = True
-        OnChange = routevpnautoChange
-        State = cbChecked
-        TabOrder = 3
       end
       object Memo_bindutilshost: TMemo
         Left = 735
@@ -3425,34 +3371,8 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 23
+        TabOrder = 10
         Visible = False
-      end
-      object networktest: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = routeDNSauto
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 178
-        Width = 417
-        BorderSpacing.Left = 8
-        Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
-        OnChange = networktestChange
-        TabOrder = 7
-      end
-      object balloon: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = networktest
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 199
-        Width = 309
-        BorderSpacing.Left = 8
-        Caption = 'Блокировать все всплывающие сообщения из трея'
-        OnChange = balloonChange
-        TabOrder = 8
       end
       object Memo_networktest: TMemo
         Left = 735
@@ -3462,7 +3382,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 24
+        TabOrder = 11
         Visible = False
       end
       object Memo_vpnpptp_ponoff_desktop: TMemo
@@ -3473,7 +3393,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 25
+        TabOrder = 12
         Visible = False
       end
       object Memo_sudo: TMemo
@@ -3481,34 +3401,8 @@ object Form1: TForm1
         Height = 35
         Top = 274
         Width = 70
-        TabOrder = 26
+        TabOrder = 13
         Visible = False
-      end
-      object Autostart_ponoff: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = balloon
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 220
-        Width = 347
-        BorderSpacing.Left = 8
-        Caption = 'Автозапуск интернета при старте системы (графический)'
-        OnChange = Autostart_ponoffChange
-        TabOrder = 9
-      end
-      object Autostartpppd: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = Autostart_ponoff
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 241
-        Width = 615
-        BorderSpacing.Left = 8
-        Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
-        OnChange = AutostartpppdChange
-        TabOrder = 10
       end
       object Memo_Autostartpppd: TMemo
         Left = 663
@@ -3518,21 +3412,8 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 27
+        TabOrder = 14
         Visible = False
-      end
-      object pppnotdefault: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = Autostartpppd
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 262
-        Width = 344
-        BorderSpacing.Left = 8
-        Caption = 'Не изменять дефолтный шлюз, запустив VPN PPTP в фоне'
-        OnChange = pppnotdefaultChange
-        TabOrder = 11
       end
       object Memonew1: TMemo
         Left = 663
@@ -3542,7 +3423,7 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 28
+        TabOrder = 15
         Visible = False
       end
       object Memonew2: TMemo
@@ -3553,27 +3434,15 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 29
+        TabOrder = 16
         Visible = False
-      end
-      object routeDNSauto: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = route_IP_remote
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 157
-        Width = 281
-        BorderSpacing.Left = 8
-        Caption = 'Программно маршрутизировать DNS-сервера'
-        TabOrder = 6
       end
       object MemoTest: TMemo
         Left = 663
         Height = 35
         Top = 419
         Width = 70
-        TabOrder = 30
+        TabOrder = 17
         Visible = False
       end
       object Memo2: TMemo
@@ -3584,81 +3453,39 @@ object Form1: TForm1
         Lines.Strings = (
           ''
         )
-        TabOrder = 31
+        TabOrder = 18
         Visible = False
-      end
-      object etc_hosts: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = routevpnauto
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 115
-        Width = 661
-        BorderSpacing.Left = 8
-        Caption = 'Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)'
-        Checked = True
-        OnChange = etc_hostsChange
-        State = cbChecked
-        TabOrder = 4
-      end
-      object nobuffer: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = pppnotdefault
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 283
-        Width = 295
-        BorderSpacing.Left = 8
-        Caption = 'Средне- или высокоскоростная линия (nobuffer)'
-        Checked = True
-        OnChange = pppnotdefaultChange
-        State = cbChecked
-        TabOrder = 12
-      end
-      object route_IP_remote: TCheckBox
-        AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = etc_hosts
-        AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 136
-        Width = 366
-        BorderSpacing.Left = 8
-        Caption = 'Маршрутизировать remote IP address в шлюз локальной сети'
-        TabOrder = 5
       end
       object GroupBox1: TGroupBox
         AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = nobuffer
+        AnchorSideTop.Control = GroupBox2
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = TabSheet3
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label42
         Left = 5
-        Height = 157
-        Top = 314
+        Height = 105
+        Top = 366
         Width = 805
-        Anchors = [akTop, akLeft, akRight, akBottom]
+        Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
-        BorderSpacing.Top = 10
+        BorderSpacing.Top = 5
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 10
         Caption = 'Общие для всех соединений настройки'
-        ClientHeight = 142
+        ClientHeight = 90
         ClientWidth = 801
-        TabOrder = 32
+        TabOrder = 20
         OnMouseDown = GroupBox1MouseDown
         object CheckBox_shorewall: TCheckBox
           AnchorSideLeft.Control = GroupBox1
           AnchorSideTop.Control = GroupBox1
           Left = 1
           Height = 21
-          Top = 10
+          Top = 5
           Width = 417
           BorderSpacing.Left = 1
-          BorderSpacing.Top = 10
+          BorderSpacing.Top = 5
           Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
           Checked = True
           OnChange = CheckBox_shorewallChange
@@ -3671,7 +3498,7 @@ object Form1: TForm1
           AnchorSideTop.Side = asrBottom
           Left = 1
           Height = 21
-          Top = 31
+          Top = 26
           Width = 320
           BorderSpacing.Left = 1
           Caption = 'Разрешить пользователям управлять подключением'
@@ -3684,7 +3511,7 @@ object Form1: TForm1
           AnchorSideTop.Side = asrBottom
           Left = 1
           Height = 21
-          Top = 52
+          Top = 47
           Width = 346
           BorderSpacing.Left = 1
           Caption = 'Разрешить пользователям конфигурировать соединение'
@@ -3692,19 +3519,233 @@ object Form1: TForm1
           TabOrder = 2
         end
       end
-      object Pppd_log: TCheckBox
+      object GroupBox2: TGroupBox
         AnchorSideLeft.Control = TabSheet3
-        AnchorSideTop.Control = Reconnect_pptp
+        AnchorSideTop.Control = GroupBox3
         AnchorSideTop.Side = asrBottom
-        Left = 8
-        Height = 21
-        Top = 52
-        Width = 304
-        BorderSpacing.Left = 8
-        Caption = 'Вести подробный лог pppd(xl2tpd) в /var/log/syslog'
-        Checked = True
-        State = cbChecked
-        TabOrder = 33
+        AnchorSideRight.Control = TabSheet3
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = GroupBox1
+        Left = 5
+        Height = 74
+        Top = 287
+        Width = 805
+        Anchors = [akLeft, akRight, akBottom]
+        BorderSpacing.Left = 5
+        BorderSpacing.Top = 5
+        BorderSpacing.Right = 4
+        Caption = 'Взаимоисключающие для всех соединений настройки'
+        ClientHeight = 59
+        ClientWidth = 801
+        TabOrder = 19
+        OnMouseDown = GroupBox2MouseDown
+        object Autostart_ponoff: TCheckBox
+          AnchorSideLeft.Control = GroupBox2
+          AnchorSideTop.Control = GroupBox2
+          Left = 1
+          Height = 21
+          Top = 5
+          Width = 347
+          BorderSpacing.Left = 1
+          BorderSpacing.Top = 5
+          Caption = 'Автозапуск интернета при старте системы (графический)'
+          OnChange = Autostart_ponoffChange
+          TabOrder = 0
+        end
+        object Autostartpppd: TCheckBox
+          AnchorSideLeft.Control = GroupBox2
+          AnchorSideTop.Control = Autostart_ponoff
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 26
+          Width = 615
+          BorderSpacing.Left = 1
+          Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
+          OnChange = AutostartpppdChange
+          TabOrder = 1
+        end
+      end
+      object GroupBox3: TGroupBox
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideTop.Control = TabSheet3
+        AnchorSideRight.Control = TabSheet3
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = GroupBox2
+        Left = 5
+        Height = 277
+        Top = 5
+        Width = 805
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Left = 5
+        BorderSpacing.Top = 5
+        BorderSpacing.Right = 4
+        Caption = 'Настройки для соединения'
+        ClientHeight = 262
+        ClientWidth = 801
+        TabOrder = 21
+        OnMouseDown = GroupBox3MouseDown
+        object Mii_tool_no: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = GroupBox3
+          Left = 1
+          Height = 21
+          Top = 5
+          Width = 258
+          BorderSpacing.Left = 1
+          BorderSpacing.Top = 5
+          Caption = 'Не контролировать state сетевого кабеля'
+          TabOrder = 0
+        end
+        object Reconnect_pptp: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = Mii_tool_no
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 26
+          Width = 660
+          BorderSpacing.Left = 1
+          Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
+          TabOrder = 1
+        end
+        object Pppd_log: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = Reconnect_pptp
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 47
+          Width = 304
+          BorderSpacing.Left = 1
+          Caption = 'Вести подробный лог pppd(xl2tpd) в /var/log/syslog'
+          Checked = True
+          State = cbChecked
+          TabOrder = 2
+        end
+        object dhcp_route: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = Pppd_log
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 68
+          Width = 204
+          BorderSpacing.Left = 1
+          Caption = 'Получать маршруты через DHCP'
+          Checked = True
+          OnChange = dhcp_routeChange
+          State = cbChecked
+          TabOrder = 3
+        end
+        object routevpnauto: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = dhcp_route
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 89
+          Width = 290
+          BorderSpacing.Left = 1
+          Caption = 'Программно добавлять маршрут к VPN-серверу'
+          Checked = True
+          OnChange = routevpnautoChange
+          State = cbChecked
+          TabOrder = 4
+        end
+        object etc_hosts: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = routevpnauto
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 110
+          Width = 661
+          BorderSpacing.Left = 1
+          Caption = 'Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)'
+          Checked = True
+          OnChange = etc_hostsChange
+          State = cbChecked
+          TabOrder = 5
+        end
+        object route_IP_remote: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = etc_hosts
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 131
+          Width = 366
+          BorderSpacing.Left = 1
+          Caption = 'Маршрутизировать remote IP address в шлюз локальной сети'
+          TabOrder = 6
+        end
+        object routeDNSauto: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = route_IP_remote
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 152
+          Width = 281
+          BorderSpacing.Left = 1
+          Caption = 'Программно маршрутизировать DNS-сервера'
+          TabOrder = 7
+        end
+        object networktest: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = routeDNSauto
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 173
+          Width = 417
+          BorderSpacing.Left = 1
+          Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
+          OnChange = networktestChange
+          TabOrder = 8
+        end
+        object balloon: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = networktest
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 194
+          Width = 309
+          BorderSpacing.Left = 1
+          Caption = 'Блокировать все всплывающие сообщения из трея'
+          OnChange = balloonChange
+          TabOrder = 9
+        end
+        object pppnotdefault: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = balloon
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 215
+          Width = 344
+          BorderSpacing.Left = 1
+          Caption = 'Не изменять дефолтный шлюз, запустив VPN PPTP в фоне'
+          OnChange = pppnotdefaultChange
+          TabOrder = 10
+        end
+        object nobuffer: TCheckBox
+          AnchorSideLeft.Control = GroupBox3
+          AnchorSideTop.Control = pppnotdefault
+          AnchorSideTop.Side = asrBottom
+          Left = 1
+          Height = 21
+          Top = 236
+          Width = 295
+          BorderSpacing.Left = 1
+          Caption = 'Средне- или высокоскоростная линия (nobuffer)'
+          Checked = True
+          OnChange = pppnotdefaultChange
+          State = cbChecked
+          TabOrder = 11
+        end
       end
     end
     object TabSheet4: TTabSheet

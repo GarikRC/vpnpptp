@@ -2917,7 +2917,7 @@ LazarusResources.Add('TForm2','FORMDATA',[
   +'rBottom'#4'Left'#3#24#1#6'Height'#2#21#3'Top'#2#8#5'Width'#2'6'#7'Caption'#6
   +#4'auth'#8'TabOrder'#2#17#0#0#9'TCheckBox'#15'CheckBoxpassive'#4'Left'#3#24#1
   +#6'Height'#2#21#3'Top'#2' '#5'Width'#2'I'#7'Caption'#6#7'passive'#8'TabOrder'
-  +#2#18#0#0#9'TCheckBox'#15'CheckBoxpersist'#4'Left'#2#9#6'Height'#2#21#3'Top'
+  +#2#18#0#0#9'TCheckBox'#15'CheckBoxpersist'#4'Left'#2#8#6'Height'#2#21#3'Top'
   +#3#128#0#5'Width'#2'E'#7'Caption'#6#7'persist'#8'TabOrder'#2#6#0#0#9'TCheckB'
   +'ox'#22'CheckBoxnodefaultroute'#4'Left'#2'x'#6'Height'#2#21#3'Top'#3#152#0#5
   +'Width'#2'|'#7'Caption'#6#14'nodefaultroute'#8'TabOrder'#2#15#0#0#9'TCheckBo'

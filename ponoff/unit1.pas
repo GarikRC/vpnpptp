@@ -35,11 +35,12 @@ type
 
   TForm1 = class(TForm)
     Image1: TImage;
+    Memo_General_conf: TMemo;
     Memo_bindutilshost0: TMemo;
     MenuItem5: TMenuItem;
-    Panel1: TPanel;
     Memo_Config: TMemo;
     MenuItem4: TMenuItem;
+    Panel1: TPanel;
     Timer2: TTimer;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
@@ -107,6 +108,7 @@ var
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  General_conf_n=5;//определяет сколько строк (кол-во) в файле general.conf программы максимально уже существует, считая от 1, а не от 0
   MyLibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
   MyTmpDir='/tmp/vpnpptp/'; //директория для временных файлов
   MyDataDir='/usr/share/vpnpptp/'; //директория для основных неизменных файлов программы
@@ -184,8 +186,8 @@ resourcestring
   message47='Запускается сервис xl2tpd...';
   message48='Отсутствуют некритичные файлы: ';
   message49='Отсутствуют критичные файлы: ';
-  message50='Не найдено соединение:';
-  message51='Обнаружено активное соединение с именем:';
+  message50='Не найдено соединение';
+  message51='Обнаружено активное соединение с именем';
   message52='Одновременный запуск нескольких соединений с разными именами недопустим.';
   message53='Отсутствует дефолтное соединение.';
   message54='Выберите одно из доступных соединений, неявляющихся дефолтными, из выпадающего списка. Это соединение станет дефолтным.';
@@ -703,12 +705,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                                                   If NewIPS then
                                                      begin //определился новый, неизвестный ранее ip-адрес vpn-сервера
                                                         Shell('printf "'+Str_networktest+'\n'+'" >> '+MyLibDir+Memo_Config.Lines[0]+'/hosts');
-                                                        //проверка на наличие добавляемого маршрута в таблице маршрутизации и его добавление если нету
-                                                        popen (f1,SBinDir+'route -n|grep '+Str_networktest+'|grep '+Memo_config.Lines[2]+'|grep '+Memo_config.Lines[3]+'|awk '+ chr(39)+'{print $0}'+chr(39),'R');
-                                                        //немедленно добавить маршрут в таблицу маршрутизации
-                                                        if eof(f1) then
-                                                                                        Shell (SBinDir+'route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]);
-                                                        PClose(f1);
+                                                        Shell (SBinDir+'route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]);
                                                         //изменение скрипта имя_соединения-ip-up
                                                         If FileExists(EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up') then
                                                                                         Shell ('printf "'+SBinDir+'route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up');
@@ -852,8 +849,8 @@ var
   str,stri:string;
   Apid:tpid;
 begin
-if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
-if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
+  if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
+  if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
   Application.CreateForm(TForm2, Form2);
   If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
   DoubleRunPonoff:=false;
@@ -969,6 +966,27 @@ If str='DEFAULT' then
                                                   Shell('printf "none\n" >> '+MyLibDir+ProfileName+'/config');
                                             end;
      end;
+  //обеспечение совместимости старого general.conf с новым
+  If FileExists(MyLibDir+'general.conf') then
+          begin
+             Memo_General_conf.Lines.LoadFromFile(MyLibDir+'general.conf');
+             If Memo_General_conf.Lines.Count<General_conf_n then
+                                                 begin
+                                                    for i:=Memo_General_conf.Lines.Count to General_conf_n do
+                                                       Shell('printf "none\n" >> '+MyLibDir+'general.conf');
+                                                 end;
+          end;
+ If FileExists(MyLibDir+'general.conf') then begin Memo_General_conf.Lines.LoadFromFile(MyLibDir+'general.conf');end
+          else
+           begin
+            Timer1.Enabled:=False;
+            Timer2.Enabled:=False;
+            Form1.Hide;
+            TrayIcon1.Hide;
+            Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+            Shell('rm -f '+VarRunVpnpptp+ProfileName);
+            halt;
+           end;
   If FileExists(MyLibDir+ProfileName+'/config') then begin Memo_Config.Lines.LoadFromFile(MyLibDir+ProfileName+'/config');end
   else
    begin
@@ -980,13 +998,13 @@ If str='DEFAULT' then
     Shell('rm -f '+VarRunVpnpptp+ProfileName);
     halt;
    end;
-  If Memo_Config.Lines[42]<>'none' then AFont:=StrToInt(Memo_Config.Lines[42]);
-  If Memo_Config.Lines[43]='ubuntu' then ubuntu:=true;
-  If Memo_Config.Lines[43]='debian' then debian:=true;
-  If Memo_Config.Lines[43]='fedora' then fedora:=true;
-  If Memo_Config.Lines[43]='suse' then suse:=true;
-  If Memo_Config.Lines[43]='mandriva' then mandriva:=true;
-  Form1.Font.Size:=AFont;
+   if Memo_General_conf.Lines[3]<>'none' then AFont:=StrToInt(Memo_General_conf.Lines[3]);
+   If Memo_General_conf.Lines[4]='ubuntu' then ubuntu:=true;
+   If Memo_General_conf.Lines[4]='debian' then debian:=true;
+   If Memo_General_conf.Lines[4]='fedora' then fedora:=true;
+   If Memo_General_conf.Lines[4]='suse' then suse:=true;
+   If Memo_General_conf.Lines[4]='mandriva' then mandriva:=true;
+   Form1.Font.Size:=AFont;
   //определение управляющего сетью сервиса
   NetServiceStr:='none';
   If FileExists (EtcInitDDir+'network') then NetServiceStr:='network';
