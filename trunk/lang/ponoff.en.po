@@ -219,3 +219,35 @@ msgstr "Missing uncritical files: "
 msgctxt "unit1.message49"
 msgid "Отсутствуют к#209�итичные файлы: "
 msgstr "Missing critical files: "
+
+#: unit1.message50
+msgid "Не найдено соединение"
+msgstr "Not found a connection"
+
+#: unit1.message51
+msgid "Обна#209�ужено активное соединение с именем"
+msgstr "Detect an active connection with the name"
+
+#: unit1.message52
+msgid "Однов#209�еменный запуск нескольких соединений с #209�азными именами недопустим."
+msgstr "Simultaneous run of several connections with different names is not allowed."
+
+#: unit1.message53
+msgid "Отсутствует дефолтное соединение."
+msgstr "There is no connection that is used by default."
+
+#: unit1.message54
+msgid "Выбе#209�ите одно из доступных соединений, неявляющихся дефолтными, из выпадающего списка. Это соединение станет дефолтным."
+msgstr "Select one of the available connections, which are not defaulted from the dropdown list. This connection will be defaulted."
+
+#: unit1.message55
+msgid "<ОК> - выб#209�ать. <Отмена> - отказаться и выйти."
+msgstr "<OK> - select. <Cancel> - refuse and quit."
+
+#: unit1.message56
+msgid "Соединение с именем"
+msgstr "Connection with the name"
+
+#: unit1.message57
+msgid "не может существовать, так как это имя за#209�езе#209�ви#209�овано п#209�ог#209�аммой."
+msgstr "does not exist, as this name is reserved by the program."

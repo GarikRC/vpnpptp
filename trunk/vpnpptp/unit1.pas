@@ -32,6 +32,9 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    Autostartpppd: TCheckBox;
+    Autostart_ponoff: TCheckBox;
+    balloon: TCheckBox;
     CheckBox_shorewall: TCheckBox;
     Delete: TButton;
     ButtonTest: TButton;
@@ -44,14 +47,12 @@ type
     Button_more: TButton;
     Button_next1: TButton;
     Button_next2: TButton;
-    balloon: TCheckBox;
-    Autostart_ponoff: TCheckBox;
-    Autostartpppd: TCheckBox;
-    GroupBox1: TGroupBox;
-    Pppd_log: TCheckBox;
-    route_IP_remote: TCheckBox;
-    ComboBoxDistr: TComboBox;
+    dhcp_route: TCheckBox;
     etc_hosts: TCheckBox;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
+    ComboBoxDistr: TComboBox;
     CheckBox_required: TCheckBox;
     CheckBox_no128: TCheckBox;
     CheckBox_rpap: TCheckBox;
@@ -68,8 +69,6 @@ type
     Label_mru: TLabel;
     Memo2: TMemo;
     MemoTest: TMemo;
-    nobuffer: TCheckBox;
-    routeDNSauto: TCheckBox;
     EditDNSdop3: TEdit;
     EditDNS1: TEdit;
     EditDNS2: TEdit;
@@ -79,7 +78,6 @@ type
     Label_mtu: TLabel;
     Memonew1: TMemo;
     Memonew2: TMemo;
-    pppnotdefault: TCheckBox;
     Memo_Autostartpppd: TMemo;
     Memo_sudo: TMemo;
     Memo_vpnpptp_ponoff_desktop: TMemo;
@@ -87,16 +85,11 @@ type
     Label46: TLabel;
     Label47: TLabel;
     Memo_networktest: TMemo;
-    networktest: TCheckBox;
     Memo_bindutilshost: TMemo;
-    routevpnauto: TCheckBox;
     Memo_ip_IPS: TMemo;
-    dhcp_route: TCheckBox;
     Metka: TLabel;
     Memo_config: TMemo;
     Memo_shorewall: TMemo;
-    Reconnect_pptp: TCheckBox;
-    Mii_tool_no: TCheckBox;
     CheckBox_desktop: TCheckBox;
     CheckBox_no40: TCheckBox;
     CheckBox_no56: TCheckBox;
@@ -147,7 +140,16 @@ type
     Memo_create: TMemo;
     Memo_route: TMemo;
     Memo_users: TMemo;
+    Mii_tool_no: TCheckBox;
+    networktest: TCheckBox;
+    nobuffer: TCheckBox;
     PageControl1: TPageControl;
+    Pppd_log: TCheckBox;
+    pppnotdefault: TCheckBox;
+    Reconnect_pptp: TCheckBox;
+    routeDNSauto: TCheckBox;
+    routevpnauto: TCheckBox;
+    route_IP_remote: TCheckBox;
     Sudo_configure: TCheckBox;
     Sudo_ponoff: TCheckBox;
     TabSheet1: TTabSheet;
@@ -181,6 +183,10 @@ type
     procedure Edit_peerChange(Sender: TObject);
     procedure etc_hostsChange(Sender: TObject);
     procedure GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure GroupBox2MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure GroupBox3MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure networktestChange(Sender: TObject);
     procedure pppnotdefaultChange(Sender: TObject);
@@ -255,6 +261,7 @@ var
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
+  General_conf_n=5;//определяет сколько строк (кол-во) в файле general.conf программы максимально уже существует, считая от 1, а не от 0
   MyLibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
   MyTmpDir='/tmp/vpnpptp/'; //директория для временных файлов
   MyDataDir='/usr/share/vpnpptp/'; //директория для основных неизменных файлов программы
@@ -333,7 +340,7 @@ resourcestring
   message48='Осуществляется подготовка сети для проверки приходят ли маршруты через DHCP. Ожидайте...';
   message49='Сеть подготовлена для проверки приходят ли маршруты через DHCP. Вызывается dhclient. Ожидайте...';
   message50='Определяются IP-адреса VPN-сервера через команду host из пакета bind-utils. Ожидайте...';
-  message51='Отменяется получение маршрутов через DHCP. Ожидайте...';
+  message51='Опции в этой секции устанавливаются только для текущего соединения';
   message52='Пинг проверен';
   message53='Минуточку...';
   message54='Не определилось ни одного IP-адреса VPN-сервера.';
@@ -345,7 +352,7 @@ resourcestring
   message60='Автозапуск интернета при старте системы не настроен. Отсутствует ~/.config/autostart/ или используется нестандартный идентификатор пользователя.';
   message61='Автозапуск интернета при старте системы не настроен. Отсутствует файл /usr/share/applications/ponoff.desktop.';
   message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff. Рекомендуется использовать с pppd(xl2tpd)-реконнектом.';
-  message63='Не допустим одновременный выбор графического автозапуска интернета при старте системы и автозапуск демоном pppd(xl2tpd) без графики.';
+  message63='Автозапуск интернета при старте системы демоном pppd(xl2tpd) без графики был отменен для соединения';
   message64='Эта опция полезна если VPN PPTP/L2TP не должно быть главным.';
   message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd(xl2tpd) и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP в фоне.';
   message66='Не удалось автоматически определить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN.';
@@ -465,11 +472,16 @@ resourcestring
   message180='Соединение с именем';
   message181='было успешно удалено.';
   message182='Удалить соединение';
-  message183='Эта кпопка удалит текущее соединение навсегда';
+  message183='Эта кнопка удалит текущее соединение навсегда';
   message184='Будьте осторожны, так как Вы пытаетесь удалить соединение, используемое по-умолчанию!';
   message185='Необходимо будет потом самостоятельно выбрать имя соединения, которое использовать по-умолчанию.';
   message186='которое не может быть использовано, так как оно зарезервировано программой.';
   message187='Новое';
+  message188='Опции в этой секции устанавливаются для текущего соединения, но отменяются у других соединений';
+  message189='Опции в этой секции устанавливаются одновременно сразу для всех соединений';
+  message190='Графический автозапуск интернета при старте системы был отменен для соединения';
+  message191='и был установлен для соединения';
+  message192='Взаимоисключение...';
 
 implementation
 
@@ -831,7 +843,7 @@ end;
 
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
-    i:integer;
+    i,j:integer;
     Str,Str1:string;
     flag:boolean;
     FileSudoers,FileAutostartpppd,FileResolvConf,FileProfiles:textfile;
@@ -1066,18 +1078,11 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Application.ProcessMessages;
                           Form1.Repaint;
                         end;
- If dhcp_route.Checked then
+ If not FileExists(EtcDir+'dhclient-exit-hooks.old') then Shell('cp -f '+EtcDir+'dhclient.conf '+EtcDir+'dhclient.conf.old');
+ if not FileExists(EtcDir+'dhclient-exit-hooks.old') then Shell('cp -f '+EtcDir+'dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks.old');
+ If dhcp_route.Checked then If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
                        begin
-                          If not FileExists(EtcDir+'dhclient-exit-hooks') then Shell('printf "#!/bin/sh\n" >> '+EtcDir+'dhclient-exit-hooks');
-                          If not FileExists(EtcDir+'dhclient.conf') then Shell('printf "#Clear config file\n" >> '+EtcDir+'dhclient.conf');
-                        end;
- If dhcp_route.Checked then If not FileExists(EtcDir+'dhclient-exit-hooks.old') then
-                       begin
-                          if FileExists(EtcDir+'dhclient.conf') then Shell('cp -f '+EtcDir+'dhclient.conf '+EtcDir+'dhclient.conf.old');
-                          Shell('rm -f '+EtcDir+'dhclient.conf');
                           if FileExists(MyScriptsDir+'dhclient.conf') then Shell('cp -f '+MyScriptsDir+'dhclient.conf '+EtcDir+'dhclient.conf');
-                          if FileExists(EtcDir+'dhclient-exit-hooks') then Shell('cp -f '+EtcDir+'dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks.old');
-                          Shell('rm -f '+EtcDir+'dhclient-exit-hooks');
                           if FileExists(MyScriptsDir+'dhclient-exit-hooks') then Shell('cp -f '+MyScriptsDir+'dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks');
                           if fedora then
                                         begin
@@ -1132,28 +1137,6 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                                                                                end;
                          Shell('rm -f '+MyTmpDir+'dhclienttest1');
                          Shell('rm -f '+MyTmpDir+'dhclienttest2');
-                       end;
-If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') then
-                       begin
-                          DhclientStartGood:=false;
-                          if FileExists(EtcDir+'dhclient.conf.old') then Shell('cp -f '+EtcDir+'dhclient.conf.old '+EtcDir+'dhclient.conf');
-                          Shell('rm -f '+EtcDir+'dhclient.conf.old');
-                          if FileExists(EtcDir+'dhclient-exit-hooks.old') then Shell('cp -f '+EtcDir+'dhclient-exit-hooks.old '+EtcDir+'dhclient-exit-hooks');
-                          Shell('rm -f '+EtcDir+'dhclient-exit-hooks.old');
-                          if fedora then
-                                        begin
-                                           Shell('rm -f '+EtcDhcpDir+'dhclient-exit-hooks');
-                                           Shell('rm -f '+EtcDhcpDir+'dhclient.conf');
-                                        end;
-                          Label14.Caption:=message51;
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                          Ifdown(Edit_eth.Text);
-                          Ifup(Edit_eth.Text);
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                          Shell (ServiceCommand+NetServiceStr+' restart');
-                          Sleep(6000);
                        end;
  If CheckBox_shorewall.Checked then If not FileExists(EtcShorewallDir+'interfaces.old') then
                        begin
@@ -1285,10 +1268,10 @@ If not dhcp_route.Checked then If FileExists(EtcDir+'dhclient-exit-hooks.old') t
  Shell('rm -f '+MyLibDir+'resolv.conf.before');
  Shell('rm -f '+MyLibDir+'resolv.conf.after');
  Shell('rm -f '+MyLibDir+'hosts');
- //If not DirectoryExists(EtcPppIpDownLDir) then Shell ('mkdir -p '+EtcPppIpDownLDir);
  //переписываем скрипт ip-up.local
-If fedora then //Shell ('ln -s '+EtcPppIpUpDDir+'ip-up '+EtcPppDir+'ip-up.local');
+If fedora then
  begin
+    If not FileExists(EtcPppDir+'ip-up.local.old') then Shell ('cp -f '+EtcPppDir+'ip-up.local '+EtcPppDir+'ip-up.local.old');
     Shell('rm -f '+EtcPppDir+'ip-up.local');
     Shell('echo "#!/bin/sh" > '+EtcPppDir+'ip-up.local');
     Shell('echo "if [ -d /etc/ppp/ip-up.d/ -a -x /usr/bin/run-parts ]; then" >> '+EtcPppDir+'ip-up.local');
@@ -1409,6 +1392,7 @@ if FileExists(EtcPppIpUpDDir+'exim4') then
 //переписываем скрипт ip-down.local
 If fedora then
 begin
+   If not FileExists(EtcPppDir+'ip-down.local.old') then Shell ('cp -f '+EtcPppDir+'ip-down.local '+EtcPppDir+'ip-down.local.old');
    Shell('rm -f '+EtcPppDir+'ip-down.local');
    Shell('echo "#!/bin/sh" > '+EtcPppDir+'ip-down.local');
    Shell('echo "if [ -d /etc/ppp/ip-down.d/ -a -x /usr/bin/run-parts ]; then" >> '+EtcPppDir+'ip-down.local');
@@ -1418,7 +1402,6 @@ begin
 end;
 //перезаписываем скрипт опускания соединения имя_соединения-ip-down
  If not DirectoryExists(EtcPppIpDownDDir) then Shell ('mkdir -p '+EtcPppIpDownDDir);
- //If fedora then Shell ('ln -s '+EtcPppIpDownDDir+'ip-down '+EtcPppDir+'ip-down.local');
  Shell('rm -f '+EtcPppIpDownDDir+Edit_peer.Text+'-ip-down');
  Shell('rm -f '+EtcPppIpDownLDir+Edit_peer.Text+'-ip-down');
  Memo_ip_down.Clear;
@@ -1466,7 +1449,7 @@ end;
                                 Memo_ip_down.Lines.Add (SBinDir+'route del -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
  Memo_ip_down.Lines.SaveToFile(EtcPppIpDownLDir+Edit_peer.Text+'-ip-down');
  Shell('chmod a+x '+EtcPppIpDownLDir+Edit_peer.Text+'-ip-down');
-//Записываем готовый конфиг, кроме логина и пароля
+ //Записываем готовый config, кроме логина и пароля
  If Edit_MinTime.Text<>'0' then Edit_MinTime.Text:=Edit_MinTime.Text+'000';
  Edit_MaxTime.Text:=Edit_MaxTime.Text+'000';
  If Edit_mtu.Text='' then Edit_mtu.Text:='mtu-none';
@@ -1501,8 +1484,7 @@ end;
                                               Shell('printf "no40-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If CheckBox_no56.Checked then Shell('printf "no56-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "no56-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If CheckBox_shorewall.Checked then Shell('printf "shorewall-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
-                                              Shell('printf "shorewall-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+  Shell('printf "none\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If CheckBox_desktop.Checked then Shell('printf "link-desktop-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "link-desktop-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If CheckBox_no128.Checked then Shell('printf "no128-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
@@ -1515,10 +1497,8 @@ end;
                                               Shell('printf "networktest-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If balloon.Checked then Shell('printf "balloon-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "balloon-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If Sudo_ponoff.Checked then Shell('printf "sudo-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
-                                              Shell('printf "sudo-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If Sudo_configure.Checked then Shell('printf "sudo-configure-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
-                                              Shell('printf "sudo-configure-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+ Shell('printf "none\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+ Shell('printf "none\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If Autostart_ponoff.Checked then Shell('printf "autostart-ponoff-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "autostart-ponoff-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If Autostartpppd.Checked then Shell('printf "autostart-pppd-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
@@ -1543,18 +1523,29 @@ end;
  Shell('printf "'+Edit_mru.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If etc_hosts.Checked then Shell('printf "etc-hosts-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "etc-hosts-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- Shell('printf "'+IntToStr(AFont)+'\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If ComboBoxDistr.Text='Ubuntu '+message150 then Shell('printf "ubuntu\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If ComboBoxDistr.Text='Debian '+message150 then Shell('printf "debian\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If ComboBoxDistr.Text='Fedora '+message150 then Shell('printf "fedora\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If ComboBoxDistr.Text='openSUSE '+message150 then Shell('printf "suse\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If ComboBoxDistr.Text='Mandriva '+message150 then Shell('printf "mandriva\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+ Shell('printf "none\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+ Shell('printf "none\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  Shell('printf "'+PingInternetStr+'\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If nobuffer.Checked then Shell('printf "nobuffer-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "nobuffer-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If route_IP_remote.Checked then Shell('printf "route-IP-remote-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "route-IP-remote-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  Shell ('chmod 600 '+MyLibDir+Edit_peer.Text+'/config');
+ //Записываем готовый general.conf, кроме логина и пароля
+ Shell('rm -f '+MyLibDir+'general.conf');
+ If CheckBox_shorewall.Checked then Shell('printf "shorewall-yes\n" >> '+MyLibDir+'general.conf') else
+                                               Shell('printf "shorewall-no\n" >> '+MyLibDir+'general.conf');
+ If Sudo_ponoff.Checked then Shell('printf "sudo-yes\n" >> '+MyLibDir+'general.conf') else
+                                              Shell('printf "sudo-no\n" >> '+MyLibDir+'general.conf');
+ If Sudo_configure.Checked then Shell('printf "sudo-configure-yes\n" >> '+MyLibDir+'general.conf') else
+                                              Shell('printf "sudo-configure-no\n" >> '+MyLibDir+'general.conf');
+ Shell('printf "'+IntToStr(AFont)+'\n" >> '+MyLibDir+'general.conf');
+ If ComboBoxDistr.Text='Ubuntu '+message150 then Shell('printf "ubuntu\n" >> '+MyLibDir+'general.conf');
+ If ComboBoxDistr.Text='Debian '+message150 then Shell('printf "debian\n" >> '+MyLibDir+'general.conf');
+ If ComboBoxDistr.Text='Fedora '+message150 then Shell('printf "fedora\n" >> '+MyLibDir+'general.conf');
+ If ComboBoxDistr.Text='openSUSE '+message150 then Shell('printf "suse\n" >> '+MyLibDir+'general.conf');
+ If ComboBoxDistr.Text='Mandriva '+message150 then Shell('printf "mandriva\n" >> '+MyLibDir+'general.conf');
+ Shell ('chmod 600 '+MyLibDir+'general.conf');
 //настройка sudoers
 If FileExists(UsrShareApplicationsDir+'ponoff.desktop.old') then //восстанавливаем ярлык запуска ponoff
                                             begin
@@ -1797,13 +1788,12 @@ If FileExists(EtcPppDir+'chap-secrets.old') then
                                                Shell('cp -f '+EtcPppDir+'chap-secrets.old '+EtcPppDir+'chap-secrets');
                                                Shell('rm -f '+EtcPppDir+'chap-secrets.old');
                                             end;
- If ComboBoxVPN.Text='VPN L2TP' then
+//If ComboBoxVPN.Text='VPN PPTP' then
+Shell ('rm -f '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
+If not FileExists(EtcXl2tpdDir+'xl2tpd.conf.old') then Shell('cp -f '+EtcXl2tpdDir+'xl2tpd.conf '+EtcXl2tpdDir+'xl2tpd.conf.old');
+Shell ('rm -f '+EtcXl2tpdDir+'xl2tpd.conf');
+If ComboBoxVPN.Text='VPN L2TP' then
                                   begin
-                                     If not FileExists(EtcXl2tpdDir+'xl2tpd.conf.old') then Shell('cp -f '+EtcXl2tpdDir+'xl2tpd.conf '+EtcXl2tpdDir+'xl2tpd.conf.old');
-                                     Shell ('rm -f '+EtcXl2tpdDir+'xl2tpd.conf');
-                                     Shell ('rm -f '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
-                                     Shell('printf "'+'[global]'+'\n" >> '+EtcXl2tpdDir+'xl2tpd.conf');
-                                     Shell('printf "'+'access control = yes'+'\n" >> '+EtcXl2tpdDir+'xl2tpd.conf');
                                      Shell('printf "\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                      Shell('printf "'+'[lac '+Edit_peer.Text+']'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                      Shell('printf "'+'name = '+Edit_user.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
@@ -1814,19 +1804,22 @@ If FileExists(EtcPppDir+'chap-secrets.old') then
                                      Shell('printf "'+'pppoptfile = '+EtcPppPeersDir+Edit_peer.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                      If Autostartpppd.Checked then Shell('printf "'+'autodial = yes'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                      If Pppd_log.Checked then Shell('printf "'+'ppp debug = yes'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
-                                     If FileExists(MyLibDir+'profiles') then
-                                                                             begin
-                                                                                AssignFile(FileProfiles,MyLibDir+'profiles');
-                                                                                reset (FileProfiles);
-                                                                                str:='';
-                                                                                While not eof (FileProfiles) do
-                                                                                     begin
-                                                                                        readln(FileProfiles, str);
-                                                                                        If FileExists(MyLibDir+str+'/xl2tpd.conf.lac') then Shell ('cat '+MyLibDir+str+'/xl2tpd.conf.lac >> '+EtcXl2tpdDir+'xl2tpd.conf');
-                                                                                     end;
-                                                                                closefile(FileProfiles);
-                                                                             end;
                                   end;
+If FileExists(MyLibDir+'profiles') then
+                                        begin
+                                           AssignFile(FileProfiles,MyLibDir+'profiles');
+                                           reset (FileProfiles);
+                                           str:='';
+                                           Shell('printf "'+'[global]'+'\n" >> '+EtcXl2tpdDir+'xl2tpd.conf');
+                                           Shell('printf "'+'access control = yes'+'\n" >> '+EtcXl2tpdDir+'xl2tpd.conf');
+                                           While not eof (FileProfiles) do
+                                                begin
+                                                   readln(FileProfiles, str);
+                                                   If FileExists(MyLibDir+str+'/xl2tpd.conf.lac') then Shell ('cat '+MyLibDir+str+'/xl2tpd.conf.lac >> '+EtcXl2tpdDir+'xl2tpd.conf');
+                                                end;
+                                           closefile(FileProfiles);
+                                        end;
+If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'xl2tpd.conf.old '+EtcXl2tpdDir+'xl2tpd.conf');
  //настройка /etc/ppp/options
  if not FileExists(EtcPppDir+'options.old') then Shell('cp -f '+EtcPppDir+'options '+EtcPppDir+'options.old');
  Shell('echo "#Clear config file" > '+EtcPppDir+'options');
@@ -1999,6 +1992,15 @@ DoIconDesktopForAll('vpnpptp');
       begin
        FlagAutostartPonoff:=true;
        If Autostart_ponoff.Checked then Shell ('cp -f '+UsrShareApplicationsDir+'ponoff.desktop /home/'+Memo_users.Lines[i]+'/.config/autostart/');
+       if FileExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop') then
+                                                                     begin
+                                                                          Memo_create.Clear;
+                                                                          Memo_create.Lines.LoadFromFile('/home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
+                                                                          for j:=0 to Memo_create.Lines.Count-1 do
+                                                                                      if Length(Memo_create.Lines[j])>=4 then if LeftStr(Memo_create.Lines[j],4)='Exec' then Memo_create.Lines[j]:=Memo_create.Lines[j]+' '+Edit_peer.Text;
+                                                                          Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
+                                                                          Memo_create.Clear;
+                                                                     end;
        If not Autostart_ponoff.Checked then Shell ('rm -f /home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
       end;
       i:=i+1;
@@ -2015,6 +2017,15 @@ DoIconDesktopForAll('vpnpptp');
       begin
        FlagAutostartPonoff:=true;
        If Autostart_ponoff.Checked then Shell ('cp -f '+UsrShareApplicationsDir+'ponoff.desktop /home/'+Memo_users.Lines[i]+'/.config/autostart/');
+       if FileExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop') then
+                                                                     begin
+                                                                          Memo_create.Clear;
+                                                                          Memo_create.Lines.LoadFromFile('/home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
+                                                                          for j:=0 to Memo_create.Lines.Count-1 do
+                                                                                      if Length(Memo_create.Lines[j])>=4 then if LeftStr(Memo_create.Lines[j],4)='Exec' then Memo_create.Lines[j]:=Memo_create.Lines[j]+' '+Edit_peer.Text;
+                                                                          Memo_create.Lines.SaveToFile('/home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
+                                                                          Memo_create.Clear;
+                                                                     end;
        If not Autostart_ponoff.Checked then Shell ('rm -f /home/'+Memo_users.Lines[i]+'/.config/autostart/ponoff.desktop');
       end;
       i:=i+1;
@@ -2038,26 +2049,36 @@ DoIconDesktopForAll('vpnpptp');
                                     Application.ProcessMessages;
                                     Form1.Repaint;
                                end;
- //корректирование конфигов для каждого соединения (общие для всех соединений настройки)
- If FileExists(MyLibDir+'profiles') then
+ //корректирование конфигов для каждого соединения (взаимоисключающие для всех соединений настройки)
+ If FileExists(MyLibDir+'profiles') then if (Autostart_ponoff.Checked) or (Autostartpppd.Checked) then
                                     begin
                                        AssignFile(FileProfiles,MyLibDir+'profiles');
                                        reset(FileProfiles);
                                               while not eof(FileProfiles) do
                                                         begin
                                                           readln(FileProfiles,str);
-                                                          if str<>'' then If FileExists(MyLibDir+str+'/config') then
+                                                          if str<>'' then If str<>Edit_peer.Text then If FileExists(MyLibDir+str+'/config') then
                                                                        begin
                                                                           Memo_config.Clear;
                                                                           Memo_config.Lines.LoadFromFile(MyLibDir+str+'/config');
                                                                           for i:=0 to Memo_config.Lines.Count-1 do
                                                                              begin
-                                                                               if Memo_config.Lines[i]='shorewall-no' then If CheckBox_shorewall.Checked then Memo_config.Lines[i]:='shorewall-yes';
-                                                                               if Memo_config.Lines[i]='shorewall-yes' then If not CheckBox_shorewall.Checked then Memo_config.Lines[i]:='shorewall-no';
-                                                                               if Memo_config.Lines[i]='sudo-no' then If Sudo_ponoff.Checked then Memo_config.Lines[i]:='sudo-yes';
-                                                                               if Memo_config.Lines[i]='sudo-yes' then If not Sudo_ponoff.Checked then Memo_config.Lines[i]:='sudo-no';
-                                                                               if Memo_config.Lines[i]='sudo-configure-no' then If Sudo_configure.Checked then Memo_config.Lines[i]:='sudo-configure-yes';
-                                                                               if Memo_config.Lines[i]='sudo-configure-yes' then If not Sudo_configure.Checked then Memo_config.Lines[i]:='sudo-configure-no';
+                                                                               If Autostart_ponoff.Checked then if Memo_config.Lines[i]='autostart-ponoff-yes' then
+                                                                                                                                                        begin
+                                                                                                                                                               Memo_config.Lines[i]:='autostart-ponoff-no';
+                                                                                                                                                               Label14.Caption:=message192;
+                                                                                                                                                               Application.ProcessMessages;
+                                                                                                                                                               Form1.Repaint;
+                                                                                                                                                               Form3.MyMessageBox(message0,message190+' '+str+' '+message191+' '+Edit_peer.Text+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                                                                                                        end;
+                                                                               If Autostartpppd.Checked then if Memo_config.Lines[i]='autostart-pppd-yes' then
+                                                                                                                                                        begin
+                                                                                                                                                               Memo_config.Lines[i]:='autostart-pppd-no';
+                                                                                                                                                               Label14.Caption:=message192;
+                                                                                                                                                               Application.ProcessMessages;
+                                                                                                                                                               Form1.Repaint;
+                                                                                                                                                               Form3.MyMessageBox(message0,message63+' '+str+' '+message191+' '+Edit_peer.Text+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                                                                                                        end;
                                                                              end;
                                                                           Memo_config.Lines.SaveToFile(MyLibDir+str+'/config');
                                                                           Memo_config.Clear;
@@ -2440,15 +2461,6 @@ begin
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
-   If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message63,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                          StartMessage:=false;
-                          Autostartpppd.Checked:=false;
-                          StartMessage:=true;
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                       end;
 end;
 
 procedure TForm1.balloonChange(Sender: TObject);
@@ -2466,15 +2478,6 @@ end;
 
 procedure TForm1.AutostartpppdChange(Sender: TObject);
 begin
-If StartMessage then If Autostartpppd.Checked then If Autostart_ponoff.Checked then
-                       begin
-                          Form3.MyMessageBox(message0,message63,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                          StartMessage:=false;
-                          Autostart_ponoff.Checked:=false;
-                          StartMessage:=true;
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                       end;
 If StartMessage then If pppnotdefault.Checked then If Autostartpppd.Checked then
                        begin
                           Form3.MyMessageBox(message0,message65,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -2624,6 +2627,7 @@ begin
                                 If FileExists(MyLibDir+'profiles') then if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
                                 If found then If ProfileStrDefault<>'' then Shell('rm -f '+MyLibDir+'default/default');
                                 If not FileExists(MyLibDir+'profiles') then If not FileExists(MyLibDir+'default/default') then Shell ('rm -rf '+MyLibDir+'default');
+                                If not FileExists(MyLibDir+'profiles') then Shell ('rm -f '+MyLibDir+'general.conf');
                                 Form3.MyMessageBox(message0,message180+' '+ProfileForDelete+' '+message181,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                 halt;
                               end;
@@ -2688,6 +2692,46 @@ begin
 end;
 
 procedure TForm1.GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+   If PressCreate then exit;
+   If Button=mbLeft then If Form1.Font.Size<15 then
+                            begin
+                                 Form1.Font.Size:=Form1.Font.Size+1;
+                                 Form2.Font.Size:=Form2.Font.Size+1;
+                            end;
+   If Button=mbRight then If Form1.Font.Size>1 then
+                             begin
+                                 Form1.Font.Size:=Form1.Font.Size-1;
+                                 Form2.Font.Size:=Form2.Font.Size-1;
+                             end;
+   AFont:=Form1.Font.Size;
+   Form1.Repaint;
+   Application.ProcessMessages;
+   Form1.Repaint;
+end;
+
+procedure TForm1.GroupBox2MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+   If PressCreate then exit;
+   If Button=mbLeft then If Form1.Font.Size<15 then
+                            begin
+                                 Form1.Font.Size:=Form1.Font.Size+1;
+                                 Form2.Font.Size:=Form2.Font.Size+1;
+                            end;
+   If Button=mbRight then If Form1.Font.Size>1 then
+                             begin
+                                 Form1.Font.Size:=Form1.Font.Size-1;
+                                 Form2.Font.Size:=Form2.Font.Size-1;
+                             end;
+   AFont:=Form1.Font.Size;
+   Form1.Repaint;
+   Application.ProcessMessages;
+   Form1.Repaint;
+end;
+
+procedure TForm1.GroupBox3MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
    If PressCreate then exit;
@@ -3018,6 +3062,7 @@ If not y then IPS:=true else IPS:=false;
                      dhcp_route.Enabled:=false;
                      StartMessage:=true;
                end;
+  GroupBox3.Caption:=GroupBox3.Caption+' '+Edit_peer.Text;
   Application.ProcessMessages;
   Form1.Repaint;
 end;
@@ -3353,7 +3398,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var i,N, CountGateway:integer;
     len:integer;
-    FileFind,FileProfiles:textfile;
+    FileFind:textfile;
     strIface, strGateway, str:string;
     ethCount:array[0..9] of integer;
     wlanCount:array[0..9] of integer;
@@ -3510,7 +3555,10 @@ pppnotdefault.Hint:=MakeHint(message64,6);
 Memo_create.Hint:=MakeHint(message127,5);
 nobuffer.Hint:=MakeHint(message155+' '+message156+' '+message157,6);
 route_IP_remote.Hint:=MakeHint(message165+' '+message166+' '+message167,7);
-Delete.Hint:=message183;
+Delete.Hint:=MakeHint(message183,5);
+GroupBox3.Hint:=MakeHint(message51,5);
+GroupBox2.Hint:=MakeHint(message188,5);
+GroupBox1.Hint:=MakeHint(message189,5);
 Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
@@ -3740,36 +3788,6 @@ If Screen.Height>1000 then
                                  Form3.MyMessageBox(message0,message170+' '+ProfileName+' '+message171+' '+ProfileName+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                  Edit_peer.Text:=ProfileName;
                             end;
-   //создание общих для всех соединений настроек)
-   If FileExists(MyLibDir+'profiles') then
-                                      begin
-                                         AssignFile(FileProfiles,MyLibDir+'profiles');
-                                         reset(FileProfiles);
-                                                while not eof(FileProfiles) do
-                                                          begin
-                                                            readln(FileProfiles,str);
-                                                            if str<>'' then If FileExists(MyLibDir+str+'/config') then
-                                                                         begin
-                                                                            Memo_config.Clear;
-                                                                            Memo_config.Lines.LoadFromFile(MyLibDir+str+'/config');
-                                                                            for i:=0 to Memo_config.Lines.Count-1 do
-                                                                               begin
-                                                                                 if Memo_config.Lines[i]='shorewall-no' then CheckBox_shorewall.Checked:=false;
-                                                                                 if Memo_config.Lines[i]='shorewall-yes' then  CheckBox_shorewall.Checked:=true;
-                                                                                 if Memo_config.Lines[i]='sudo-no' then Sudo_ponoff.Checked:=false;
-                                                                                 if Memo_config.Lines[i]='sudo-yes' then Sudo_ponoff.Checked:=true;
-                                                                                 if Memo_config.Lines[i]='sudo-configure-no' then Sudo_configure.Checked:=false;
-                                                                                 if Memo_config.Lines[i]='sudo-configure-yes' then Sudo_configure.Checked:=true;
-                                                                               end;
-                                                                            Memo_config.Lines.SaveToFile(MyLibDir+str+'/config');
-                                                                            Memo_config.Clear;
-                                                                         end;
-                                                          end;
-                                         CloseFile(FileProfiles);
-                                      end;
-
-
-
 //обеспечение совместимости старого config с новым
  If FileExists(MyLibDir+ProfileName+'/config') then
      begin
@@ -3780,8 +3798,48 @@ If Screen.Height>1000 then
                                                   Shell('printf "none\n" >> '+MyLibDir+ProfileName+'/config');
                                             end;
      end;
-  //восстановление предыдущих введенных данных в конфигураторе
- If FileExists(MyLibDir+ProfileName+'/config') then //If ProfileName<>'default' then
+ //обеспечение совместимости старого general.conf с новым
+  If FileExists(MyLibDir+'general.conf') then
+      begin
+         Memo_config.Lines.LoadFromFile(MyLibDir+'general.conf');
+         If Memo_config.Lines.Count<General_conf_n then
+                                             begin
+                                                for i:=Memo_config.Lines.Count to General_conf_n do
+                                                   Shell('printf "none\n" >> '+MyLibDir+'general.conf');
+                                             end;
+      end;
+  //восстановление предыдущих введенных данных в конфигураторе (general.conf)
+ If FileExists(MyLibDir+'general.conf') then
+     begin
+        Memo_config.Lines.LoadFromFile(MyLibDir+'general.conf');
+        If Memo_config.Lines[0]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
+        If Memo_config.Lines[1]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
+        If Memo_config.Lines[2]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
+        If Memo_config.Lines[3]<>'none' then AFont:=StrToInt(Memo_config.Lines[3]);
+        If Memo_config.Lines[4]='ubuntu' then ComboBoxDistr.Text:='Ubuntu '+message150;
+        If Memo_config.Lines[4]='debian' then ComboBoxDistr.Text:='Debian '+message150;
+        If Memo_config.Lines[4]='fedora' then ComboBoxDistr.Text:='Fedora '+message150;
+        If Memo_config.Lines[4]='suse' then ComboBoxDistr.Text:='openSUSE '+message150;
+        If Memo_config.Lines[4]='mandriva' then ComboBoxDistr.Text:='Mandriva '+message150;
+        If Memo_config.Lines[4]='none' then
+                                             begin
+                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
+                                                If debian then ComboBoxDistr.Text:='Debian '+message150;
+                                                If fedora then ComboBoxDistr.Text:='Fedora '+message150;
+                                                If suse then ComboBoxDistr.Text:='openSUSE '+message150;
+                                                If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
+                                             end;
+     end;
+ If not FileExists(MyLibDir+'general.conf') then
+                                          begin
+                                               If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
+                                               If debian then ComboBoxDistr.Text:='Debian '+message150;
+                                               If fedora then ComboBoxDistr.Text:='Fedora '+message150;
+                                               If suse then ComboBoxDistr.Text:='openSUSE '+message150;
+                                               If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
+                                          end;
+  //восстановление предыдущих введенных данных в конфигураторе (config)
+ If FileExists(MyLibDir+ProfileName+'/config') then
      begin
         Delete.Enabled:=true;
         Memo_config.Lines.LoadFromFile(MyLibDir+ProfileName+'/config');
@@ -3809,15 +3867,15 @@ If Screen.Height>1000 then
         If Memo_config.Lines[15]='stateless-yes' then CheckBox_stateless.Checked:=true else CheckBox_stateless.Checked:=false;
         If Memo_config.Lines[16]='no40-yes' then CheckBox_no40.Checked:=true else CheckBox_no40.Checked:=false;
         If Memo_config.Lines[17]='no56-yes' then CheckBox_no56.Checked:=true else CheckBox_no56.Checked:=false;
-        If Memo_config.Lines[18]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
+        //If Memo_config.Lines[18]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
         If Memo_config.Lines[19]='link-desktop-yes' then CheckBox_desktop.Checked:=true else CheckBox_desktop.Checked:=false;
         If Memo_config.Lines[20]='no128-yes' then CheckBox_no128.Checked:=true else CheckBox_no128.Checked:=false;
         If Memo_config.Lines[21]='IPS-yes' then IPS:=true else IPS:=false;
         If Memo_config.Lines[22]='routevpnauto-yes' then routevpnauto.Checked:=true else routevpnauto.Checked:=false;
         If Memo_config.Lines[23]='networktest-yes' then networktest.Checked:=true else networktest.Checked:=false;
         If Memo_config.Lines[24]='balloon-yes' then balloon.Checked:=true else balloon.Checked:=false;
-        If Memo_config.Lines[25]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
-        If Memo_config.Lines[26]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
+        //If Memo_config.Lines[25]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
+        //If Memo_config.Lines[26]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
         If Memo_config.Lines[27]='autostart-ponoff-yes' then Autostart_ponoff.Checked:=true else Autostart_ponoff.Checked:=false;
         If Memo_config.Lines[28]='autostart-pppd-yes' then Autostartpppd.Checked:=true else Autostartpppd.Checked:=false;
         If Memo_config.Lines[29]='pppnotdefault-yes' then pppnotdefault.Checked:=true else pppnotdefault.Checked:=false;
@@ -3835,20 +3893,6 @@ If Screen.Height>1000 then
         Edit_mru.Text:=Memo_config.Lines[40];
         If Edit_mru.Text='mru-none' then Edit_mru.Text:='';
         If Memo_config.Lines[41]='etc-hosts-yes' then etc_hosts.Checked:=true else etc_hosts.Checked:=false;
-        If Memo_config.Lines[42]<>'none' then AFont:=StrToInt(Memo_config.Lines[42]);
-        If Memo_config.Lines[43]='ubuntu' then ComboBoxDistr.Text:='Ubuntu '+message150;
-        If Memo_config.Lines[43]='debian' then ComboBoxDistr.Text:='Debian '+message150;
-        If Memo_config.Lines[43]='fedora' then ComboBoxDistr.Text:='Fedora '+message150;
-        If Memo_config.Lines[43]='suse' then ComboBoxDistr.Text:='openSUSE '+message150;
-        If Memo_config.Lines[43]='mandriva' then ComboBoxDistr.Text:='Mandriva '+message150;
-        If Memo_config.Lines[43]='none' then
-                                             begin
-                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
-                                                If debian then ComboBoxDistr.Text:='Debian '+message150;
-                                                If fedora then ComboBoxDistr.Text:='Fedora '+message150;
-                                                If suse then ComboBoxDistr.Text:='openSUSE '+message150;
-                                                If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
-                                             end;
         PingInternetStr:=Memo_config.Lines[44];
         If (PingInternetStr='') or (PingInternetStr='none') then PingInternetStr:='yandex.ru';
         If Memo_config.Lines[45]='nobuffer-no' then nobuffer.Checked:=false else nobuffer.Checked:=true;
@@ -3871,11 +3915,6 @@ If Screen.Height>1000 then
                                            begin
                                                 ComboBoxVPN.Text:='VPN PPTP';
                                                 PingInternetStr:='yandex.ru';
-                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
-                                                If debian then ComboBoxDistr.Text:='Debian '+message150;
-                                                If fedora then ComboBoxDistr.Text:='Fedora '+message150;
-                                                If suse then ComboBoxDistr.Text:='openSUSE '+message150;
-                                                If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
                                            end;
   if ComboBoxDistr.Text<>message151 then ComboBoxDistr.Enabled:=false;
   If FileExists (MyLibDir+Edit_peer.Text+'/route') then Memo_route.Lines.LoadFromFile(MyLibDir+Edit_peer.Text+'/route'); //восстановление маршрутов
