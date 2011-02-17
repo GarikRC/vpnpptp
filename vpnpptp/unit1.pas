@@ -557,7 +557,7 @@ begin
                      begin
                           If not FileExists(MyLangDir+'vpnpptp.en.po') then str:=str+MyLangDir+'vpnpptp.en.po, ';
                           If not FileExists(MyLangDir+'success.en') then str:=str+MyLangDir+'success.en, ';
-                          If not FileExists(MyWikiDir+'Help_en.doc') then str:=str+MyWikiDir+'Help_en.doc, ';
+                          //If not FileExists(MyWikiDir+'Help_en.doc') then str:=str+MyWikiDir+'Help_en.doc, ';
                      end;
     If FallbackLang='uk' then
                      begin
@@ -1402,6 +1402,7 @@ begin
 end;
 //перезаписываем скрипт опускания соединения имя_соединения-ip-down
  If not DirectoryExists(EtcPppIpDownDDir) then Shell ('mkdir -p '+EtcPppIpDownDDir);
+ If not DirectoryExists(EtcPppIpDownLDir) then Shell ('mkdir -p '+EtcPppIpDownLDir);
  Shell('rm -f '+EtcPppIpDownDDir+Edit_peer.Text+'-ip-down');
  Shell('rm -f '+EtcPppIpDownLDir+Edit_peer.Text+'-ip-down');
  Memo_ip_down.Clear;
@@ -1791,6 +1792,21 @@ If FileExists(EtcPppDir+'chap-secrets.old') then
 Shell ('rm -f '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
 If not FileExists(EtcXl2tpdDir+'xl2tpd.conf.old') then Shell('cp -f '+EtcXl2tpdDir+'xl2tpd.conf '+EtcXl2tpdDir+'xl2tpd.conf.old');
 Shell ('rm -f '+EtcXl2tpdDir+'xl2tpd.conf');
+//настройка файла profiles
+   found:=false;
+   If FileExists(MyLibDir+'profiles') then
+                                                begin
+                                                   AssignFile(FileProfiles,MyLibDir+'profiles');
+                                                   reset (FileProfiles);
+                                                   str:='';
+                                                   While not eof (FileProfiles) do
+                                                        begin
+                                                           readln(FileProfiles, str);
+                                                           If str=Edit_peer.Text then found:=true;
+                                                        end;
+                                                   closefile(FileProfiles);
+                                                end;
+   if (not found) or (not FileExists(MyLibDir+'profiles')) then Shell('printf "'+Edit_peer.Text+'\n" >> '+MyLibDir+'profiles');
 //убираем autodial везде
 If FileExists(MyLibDir+'profiles') then
                                         begin
@@ -1834,6 +1850,7 @@ If ComboBoxVPN.Text='VPN L2TP' then
 foundlac:=false;
 If FileExists(MyLibDir+'profiles') then
                                         begin
+                                           Shell ('rm -f '+EtcXl2tpdDir+'xl2tpd.conf');
                                            AssignFile(FileProfiles,MyLibDir+'profiles');
                                            reset (FileProfiles);
                                            str:='';
@@ -1974,21 +1991,6 @@ If not flag then
      Shell('rm -f '+MyTmpDir+'networktest');
 //запоминаем текущий /etc/resolv.conf
 Shell ('cp -f '+EtcDir+'resolv.conf '+MyLibDir+Edit_peer.Text+'/resolv.conf.before');
-//настройка файла profiles
-   found:=false;
-   If FileExists(MyLibDir+'profiles') then
-                                                begin
-                                                   AssignFile(FileProfiles,MyLibDir+'profiles');
-                                                   reset (FileProfiles);
-                                                   str:='';
-                                                   While not eof (FileProfiles) do
-                                                        begin
-                                                           readln(FileProfiles, str);
-                                                           If str=Edit_peer.Text then found:=true;
-                                                        end;
-                                                   closefile(FileProfiles);
-                                                end;
-   if (not found) or (not FileExists(MyLibDir+'profiles')) then Shell('printf "'+Edit_peer.Text+'\n" >> '+MyLibDir+'profiles');
 //удаление вообще всех ярлыков на рабочем столе
 If FileExists(MyLibDir+'profiles') then
                                                  begin
