@@ -1,5 +1,5 @@
 object Form1: TForm1
-  Left = 401
+  Left = 448
   Height = 580
   Top = 64
   Width = 816
@@ -3464,8 +3464,8 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label42
         Left = 5
-        Height = 105
-        Top = 366
+        Height = 97
+        Top = 374
         Width = 805
         Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
@@ -3473,7 +3473,7 @@ object Form1: TForm1
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 10
         Caption = 'Общие для всех соединений настройки'
-        ClientHeight = 90
+        ClientHeight = 82
         ClientWidth = 801
         TabOrder = 20
         OnMouseDown = GroupBox1MouseDown
@@ -3509,6 +3509,8 @@ object Form1: TForm1
           AnchorSideLeft.Control = GroupBox1
           AnchorSideTop.Control = Sudo_ponoff
           AnchorSideTop.Side = asrBottom
+          AnchorSideBottom.Control = GroupBox1
+          AnchorSideBottom.Side = asrBottom
           Left = 1
           Height = 21
           Top = 47
@@ -3527,15 +3529,15 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = GroupBox1
         Left = 5
-        Height = 74
-        Top = 287
+        Height = 75
+        Top = 294
         Width = 805
         Anchors = [akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Top = 5
         BorderSpacing.Right = 4
         Caption = 'Взаимоисключающие для всех соединений настройки'
-        ClientHeight = 59
+        ClientHeight = 60
         ClientWidth = 801
         TabOrder = 19
         OnMouseDown = GroupBox2MouseDown
@@ -3556,6 +3558,8 @@ object Form1: TForm1
           AnchorSideLeft.Control = GroupBox2
           AnchorSideTop.Control = Autostart_ponoff
           AnchorSideTop.Side = asrBottom
+          AnchorSideBottom.Control = GroupBox2
+          AnchorSideBottom.Side = asrBottom
           Left = 1
           Height = 21
           Top = 26
@@ -3573,15 +3577,15 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = GroupBox2
         Left = 5
-        Height = 277
-        Top = 5
+        Height = 279
+        Top = 10
         Width = 805
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
-        BorderSpacing.Top = 5
+        BorderSpacing.Top = 10
         BorderSpacing.Right = 4
         Caption = 'Настройки для соединения'
-        ClientHeight = 262
+        ClientHeight = 264
         ClientWidth = 801
         TabOrder = 21
         OnMouseDown = GroupBox3MouseDown
@@ -3735,6 +3739,8 @@ object Form1: TForm1
           AnchorSideLeft.Control = GroupBox3
           AnchorSideTop.Control = pppnotdefault
           AnchorSideTop.Side = asrBottom
+          AnchorSideBottom.Control = GroupBox3
+          AnchorSideBottom.Side = asrBottom
           Left = 1
           Height = 21
           Top = 236
