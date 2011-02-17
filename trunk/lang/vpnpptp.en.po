@@ -1126,3 +1126,7 @@ msgstr "Mutual exclusion..."
 #: TFORM1.GROUPBOX3.CAPTION
 msgid "Настройки для соединения"
 msgstr "Settings for connection"
+
+#: TFORM1.GROUPBOX2.CAPTION
+msgid "Взаимоисключающие для всех соединений настройки"
+msgstr "Mutually exclusive for all the connections settings"
