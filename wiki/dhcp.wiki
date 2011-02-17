@@ -1,0 +1,132 @@
+#summary Получение маршрутов через DHCP
+
+При поднятом VPN требуется, чтобы одновременно работали и внешние ресурсы, и локальные ресурсы. Однако без явного указания локальных ресурсов в таблице маршрутизации при поднятом VPN локальные ресурсы окажутся недоступны.
+
+Конечно, можно вручную самим вписать эти маршруты в таблицу маршрутизации, но надо знать какие это маршруты, а они могут меняться, вручную забивать роутинг неудобно и нерационально.
+
+Многие провайдеры (но не все) способны передать эти маршруты через DHCP, а нам останется лишь принять их.
+
+Достаточно один раз настроить получение маршрутов через DHCP, и они пойдут автоматом. Во многих дистрибутивах linux получение маршрутов через DHCP уже настроено, но не во всех.
+
+Задача сводится к тому чтобы до поднятия VPN получить маршруты через DHCP и лишь затем поднять VPN.
+
+Рассмотрим получение маршрутов через DHCP на примере '''Mandriva''' и ее аналогов, а также на примере '''Fedora'''. 
+
+Создадим скрипт '''/etc/dhclient-exit-hooks''', сделаем его исполняемым, следующего содержания:
+
+{{{
+
+ #!/bin/bash
+ RUN="yes"
+ if [ "$RUN" = "yes" ]; then
+     echo "EXIT HOOK REACHED"
+         if [ x"$new_rfc3442_classless_static_routes" != x"" ]; then
+             if [ x"$reason" == x"BOUND" -o x"$reason" == x"REBOOT" ]; then
+                         rfc_routes=($new_rfc3442_classless_static_routes)
+                         for(( i=0; i < ${#rfc_routes[@]}; )); do
+                                 net_length=${rfc_routes[$i]}
+                                 ((i++))
+                                 net_address=(0 0 0 0)
+                                 for(( j=0; j < $[$net_length / 8 + \
+                                     ($net_length % 8 ? 1 : 0)]; j++, i++)); do
+                                         net_address[$j]=${rfc_routes[$i]}
+                                 done
+                                 gateway=(0 0 0 0)
+                                 for (( j=0; j < 4; j++, i++ )); do
+                                         gateway[$j]=${rfc_routes[$i]}
+                                 done
+                                 old_IFS="$IFS"
+                                 IFS='.'
+                                 if [ x"$net_length" == x"32" ]; then
+                                         /sbin/route add -host "${net_address[*]}" gw "${gateway[*]}"
+                                 else
+                                         /sbin/route add -net "${net_address[*]}/$net_length" gw "${gateway[*]}"
+                                 fi
+                                 IFS="$old_IFS"
+                         done
+                 fi
+         fi
+ fi
+
+}}}
+
+Создадим файл '''/etc/dhclient.conf''' следующего содержания:
+
+{{{
+
+ # Configuration file for /sbin/dhclient, which is included in Debian's
+ #	dhcp3-client package.
+ #
+ # This is a sample configuration file for dhclient. See dhclient.conf's
+ #	man page for more information about the syntax of this file
+ #	and a more comprehensive list of the parameters understood by
+ #	dhclient.
+ #
+ # Normally, if the DHCP server provides reasonable information and does
+ #	not leave anything out (like the domain name, for example), then
+ #	few changes must be made to this file, if any.
+ #
+ #
+ #send host-name "<hostname>";
+ #send dhcp-client-identifier fe80::208:a1ff:fe7d:40e9/64;
+ #send dhcp-lease-time 3600;
+ #supersede domain-name "fugue.com home.vix.com";
+ #prepend domain-name-servers 127.0.0.1;
+ #request subnet-mask, broadcast-address, time-offset, routers,
+ #	domain-name, domain-name-servers, host-name,
+ #	netbios-name-servers, netbios-scope;
+ #require subnet-mask, domain-name-servers;
+ timeout 30;
+ #retry 60;
+ #reboot 10;
+ #select-timeout 5;
+ #initial-interval 2;
+ #script "/etc/dhclient-exit-hooks";
+ #media "-link0 -link1 -link2", "link0 link1";
+ #reject 192.33.137.209;
+ #
+ #alias {
+ #  interface "eth0";
+ #  fixed-address 192.5.5.213;
+ #  option subnet-mask 255.255.255.255;
+ #}
+ #
+ #lease {
+ #  interface "eth0";
+ #  fixed-address 192.33.137.200;
+ #  medium "link0 link1";
+ #  option host-name "andare.swiftmedia.com";
+ #  option subnet-mask 255.255.255.0;
+ #  option broadcast-address 192.33.137.255;
+ #  option routers 192.33.137.250;
+ #  option domain-name-servers 127.0.0.1;
+ #  renew 2 2000/1/12 00:00:01;
+ #  rebind 2 2000/1/12 00:00:01;
+ #  expire 2 2000/1/12 00:00:01;
+ #}
+ option rfc3442-classless-static-routes code 249 = array of unsigned integer 8;
+ #option ms-classless-static-routes code 249 = array of unsigned integer 8;
+ request subnet-mask, broadcast-address, time-offset, routers, domain-name, domain-name-servers, host-name, netbios-name-servers, netbios-scope, interface-mtu, rfc3442-classless-static-routes;
+ #ms-classless-static-routes;
+ #supersede domain-name-servers 91.210.204.1
+
+}}}
+
+В консоли запустим:
+ dhclient eth0
+
+где eth0 - сетевой интерфейс, для которого требуется получить маршруты через DHCP.
+
+Можно вписать эту команду в файл '''/etc/rc.d/rc.local ''' (а если его не существует, то в файл '''/etc/rc.local'''), тогда при загрузке системы будут получены маршруты через DHCP.
+
+Для '''Fedora''' дополнительно требуется создать ссылки:
+
+ ln -s /etc/dhclient-exit-hooks /etc/dhcp/dhclient-exit-hooks
+ ln -s /etc/dhclient.conf /etc/dhcp/dhclient.conf
+
+Для '''Fedora''' перед запуском dhclient его требуется убивать, а после запуска dhclient желательно немного подождать:
+
+ killall dhclient
+ dhclient eth0
+
+Вот и все. 
