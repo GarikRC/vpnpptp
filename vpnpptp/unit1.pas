@@ -844,14 +844,14 @@ end;
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i,j:integer;
-    Str,Str1:string;
+    Str,str0, Str1:string;
     flag:boolean;
-    FileSudoers,FileAutostartpppd,FileResolvConf,FileProfiles:textfile;
+    FileSudoers,FileAutostartpppd,FileResolvConf,FileProfiles,FileLac:textfile;
     FlagAutostartPonoff:boolean;
     EditDNS1ping, EditDNS2ping:boolean;
     endprint:boolean;
     N:byte;
-    exit0find,found:boolean;
+    exit0find,found,foundlac:boolean;
     Children:boolean;
 begin
 FlagAutostartPonoff:=false;
@@ -1788,10 +1788,36 @@ If FileExists(EtcPppDir+'chap-secrets.old') then
                                                Shell('cp -f '+EtcPppDir+'chap-secrets.old '+EtcPppDir+'chap-secrets');
                                                Shell('rm -f '+EtcPppDir+'chap-secrets.old');
                                             end;
-//If ComboBoxVPN.Text='VPN PPTP' then
 Shell ('rm -f '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
 If not FileExists(EtcXl2tpdDir+'xl2tpd.conf.old') then Shell('cp -f '+EtcXl2tpdDir+'xl2tpd.conf '+EtcXl2tpdDir+'xl2tpd.conf.old');
 Shell ('rm -f '+EtcXl2tpdDir+'xl2tpd.conf');
+//убираем autodial везде
+If FileExists(MyLibDir+'profiles') then
+                                        begin
+                                           AssignFile(FileProfiles,MyLibDir+'profiles');
+                                           reset (FileProfiles);
+                                           str:='';
+                                           While not eof (FileProfiles) do
+                                                begin
+                                                   readln(FileProfiles, str);
+                                                   If FileExists(MyLibDir+str+'/xl2tpd.conf.lac') then
+                                                                                                  begin
+                                                                                                       Shell('rm -f '+MyTmpDir+'xl2tpd.conf.lac');
+                                                                                                       AssignFile(FileLac,MyLibDir+str+'/xl2tpd.conf.lac');
+                                                                                                       reset (FileLac);
+                                                                                                       While not eof (FileLac) do
+                                                                                                                 begin
+                                                                                                                    readln(FileLac,str0);
+                                                                                                                    if LeftStr(str0,8)<>'autodial' then
+                                                                                                                          Shell('printf "'+str0+'\n" >> '+MyTmpDir+'xl2tpd.conf.lac');
+                                                                                                                 end;
+                                                                                                       closefile(FileLac);
+                                                                                                       Shell('cp -f '+MyTmpDir+'xl2tpd.conf.lac '+MyLibDir+str+'/xl2tpd.conf.lac');
+                                                                                                       Shell('rm -f '+MyTmpDir+'xl2tpd.conf.lac');
+                                                                                                   end;
+                                                end;
+                                           closefile(FileProfiles);
+                                        end;
 If ComboBoxVPN.Text='VPN L2TP' then
                                   begin
                                      Shell('printf "\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
@@ -1805,6 +1831,7 @@ If ComboBoxVPN.Text='VPN L2TP' then
                                      If Autostartpppd.Checked then Shell('printf "'+'autodial = yes'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                      If Pppd_log.Checked then Shell('printf "'+'ppp debug = yes'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                   end;
+foundlac:=false;
 If FileExists(MyLibDir+'profiles') then
                                         begin
                                            AssignFile(FileProfiles,MyLibDir+'profiles');
@@ -1815,10 +1842,15 @@ If FileExists(MyLibDir+'profiles') then
                                            While not eof (FileProfiles) do
                                                 begin
                                                    readln(FileProfiles, str);
-                                                   If FileExists(MyLibDir+str+'/xl2tpd.conf.lac') then Shell ('cat '+MyLibDir+str+'/xl2tpd.conf.lac >> '+EtcXl2tpdDir+'xl2tpd.conf');
+                                                   If FileExists(MyLibDir+str+'/xl2tpd.conf.lac') then
+                                                                                                  begin
+                                                                                                       Shell ('cat '+MyLibDir+str+'/xl2tpd.conf.lac >> '+EtcXl2tpdDir+'xl2tpd.conf');
+                                                                                                       foundlac:=true;
+                                                                                                  end;
                                                 end;
                                            closefile(FileProfiles);
                                         end;
+If not foundlac then Shell ('rm -f '+EtcXl2tpdDir+'xl2tpd.conf');
 If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'xl2tpd.conf.old '+EtcXl2tpdDir+'xl2tpd.conf');
  //настройка /etc/ppp/options
  if not FileExists(EtcPppDir+'options.old') then Shell('cp -f '+EtcPppDir+'options '+EtcPppDir+'options.old');
@@ -3671,7 +3703,7 @@ ButtonHelp.Enabled:=false;
                              Form1.Constraints.MaxHeight:=Screen.Height;
                              Form1.Constraints.MinHeight:=Screen.Height;
                          end;
-If Screen.Height>550 then   //разрешение в основном нетбуков
+   If Screen.Height>550 then   //разрешение в основном нетбуков
                         begin
                              Form1.Position:=poScreenCenter;
                              AFont:=8;
@@ -3689,7 +3721,7 @@ If Screen.Height>550 then   //разрешение в основном нетб�
                              Form1.Constraints.MaxWidth:=794;
                              Form1.Constraints.MinWidth:=794;
                         end;
-If Screen.Height>1000 then
+   If Screen.Height>1000 then
                         begin
                              Form1.Position:=poScreenCenter;
                              AFont:=10;
@@ -3738,6 +3770,46 @@ If Screen.Height>1000 then
  If not FileExists(MyTmpDir) then Shell ('mkdir -p '+MyTmpDir);
  CountInterface:=1;
  DoCountInterface;
+ //обеспечение совместимости старого general.conf с новым
+  If FileExists(MyLibDir+'general.conf') then
+      begin
+         Memo_config.Lines.LoadFromFile(MyLibDir+'general.conf');
+         If Memo_config.Lines.Count<General_conf_n then
+                                             begin
+                                                for i:=Memo_config.Lines.Count to General_conf_n do
+                                                   Shell('printf "none\n" >> '+MyLibDir+'general.conf');
+                                             end;
+      end;
+  //восстановление предыдущих введенных данных в конфигураторе (general.conf)
+   If FileExists(MyLibDir+'general.conf') then
+       begin
+          Memo_config.Lines.LoadFromFile(MyLibDir+'general.conf');
+          If Memo_config.Lines[0]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
+          If Memo_config.Lines[1]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
+          If Memo_config.Lines[2]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
+          If Memo_config.Lines[3]<>'none' then AFont:=StrToInt(Memo_config.Lines[3]);
+          If Memo_config.Lines[4]='ubuntu' then ComboBoxDistr.Text:='Ubuntu '+message150;
+          If Memo_config.Lines[4]='debian' then ComboBoxDistr.Text:='Debian '+message150;
+          If Memo_config.Lines[4]='fedora' then ComboBoxDistr.Text:='Fedora '+message150;
+          If Memo_config.Lines[4]='suse' then ComboBoxDistr.Text:='openSUSE '+message150;
+          If Memo_config.Lines[4]='mandriva' then ComboBoxDistr.Text:='Mandriva '+message150;
+          If Memo_config.Lines[4]='none' then
+                                               begin
+                                                  If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
+                                                  If debian then ComboBoxDistr.Text:='Debian '+message150;
+                                                  If fedora then ComboBoxDistr.Text:='Fedora '+message150;
+                                                  If suse then ComboBoxDistr.Text:='openSUSE '+message150;
+                                                  If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
+                                               end;
+       end;
+   If not FileExists(MyLibDir+'general.conf') then
+                                            begin
+                                                 If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
+                                                 If debian then ComboBoxDistr.Text:='Debian '+message150;
+                                                 If fedora then ComboBoxDistr.Text:='Fedora '+message150;
+                                                 If suse then ComboBoxDistr.Text:='openSUSE '+message150;
+                                                 If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
+                                            end;
  //определяем произошел ли запуск при поднятом pppN
    Shell(SBinDir+'ip r|grep ppp > '+MyTmpDir+'gate');
    If FileExists (MyTmpDir+'gate') then if FileSize(MyTmpDir+'gate')<>0 then
@@ -3798,47 +3870,7 @@ If Screen.Height>1000 then
                                                   Shell('printf "none\n" >> '+MyLibDir+ProfileName+'/config');
                                             end;
      end;
- //обеспечение совместимости старого general.conf с новым
-  If FileExists(MyLibDir+'general.conf') then
-      begin
-         Memo_config.Lines.LoadFromFile(MyLibDir+'general.conf');
-         If Memo_config.Lines.Count<General_conf_n then
-                                             begin
-                                                for i:=Memo_config.Lines.Count to General_conf_n do
-                                                   Shell('printf "none\n" >> '+MyLibDir+'general.conf');
-                                             end;
-      end;
-  //восстановление предыдущих введенных данных в конфигураторе (general.conf)
- If FileExists(MyLibDir+'general.conf') then
-     begin
-        Memo_config.Lines.LoadFromFile(MyLibDir+'general.conf');
-        If Memo_config.Lines[0]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
-        If Memo_config.Lines[1]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
-        If Memo_config.Lines[2]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
-        If Memo_config.Lines[3]<>'none' then AFont:=StrToInt(Memo_config.Lines[3]);
-        If Memo_config.Lines[4]='ubuntu' then ComboBoxDistr.Text:='Ubuntu '+message150;
-        If Memo_config.Lines[4]='debian' then ComboBoxDistr.Text:='Debian '+message150;
-        If Memo_config.Lines[4]='fedora' then ComboBoxDistr.Text:='Fedora '+message150;
-        If Memo_config.Lines[4]='suse' then ComboBoxDistr.Text:='openSUSE '+message150;
-        If Memo_config.Lines[4]='mandriva' then ComboBoxDistr.Text:='Mandriva '+message150;
-        If Memo_config.Lines[4]='none' then
-                                             begin
-                                                If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
-                                                If debian then ComboBoxDistr.Text:='Debian '+message150;
-                                                If fedora then ComboBoxDistr.Text:='Fedora '+message150;
-                                                If suse then ComboBoxDistr.Text:='openSUSE '+message150;
-                                                If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
-                                             end;
-     end;
- If not FileExists(MyLibDir+'general.conf') then
-                                          begin
-                                               If ubuntu then ComboBoxDistr.Text:='Ubuntu '+message150;
-                                               If debian then ComboBoxDistr.Text:='Debian '+message150;
-                                               If fedora then ComboBoxDistr.Text:='Fedora '+message150;
-                                               If suse then ComboBoxDistr.Text:='openSUSE '+message150;
-                                               If mandriva then ComboBoxDistr.Text:='Mandriva '+message150;
-                                          end;
-  //восстановление предыдущих введенных данных в конфигураторе (config)
+ //восстановление предыдущих введенных данных в конфигураторе (config)
  If FileExists(MyLibDir+ProfileName+'/config') then
      begin
         Delete.Enabled:=true;
