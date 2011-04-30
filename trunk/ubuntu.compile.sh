@@ -3,12 +3,14 @@
 #Передайте этому скрипту в качестве первого параметра архитектуру Lazarus'а i386, x86_64 и т.д.
 #Передайте этому скрипту в качестве второго параметра параметр lib или lib64 в зависимости от архитектуры Lazarus'а
 #Передайте этому скрипту в качестве третьего параметра номер версии собираемого пакета
+#Передайте этому скрипту в качестве четвертого параметра архитектуру i386, amd64 и т.д.
 #Выполните этот скрипт под root
 
 FPC=/usr/bin/fpc
 LAZARUS_ARCH=$1
 LIBDIRPART=$2
 NUM_VERSION=$3
+ARCH=$4
 LAZARUS_LIB=/usr/$LIBDIRPART/lazarus/*/lcl/units/$LAZARUS_ARCH-linux
 LAZARUS_LIB_PKG=/usr/$LIBDIRPART/lazarus/*/packages/units/$LAZARUS_ARCH-linux
 LAZARUS_LIB_COMP=/usr/$LIBDIRPART/lazarus/*/components/synedit/units/$LAZARUS_ARCH-linux
@@ -19,8 +21,8 @@ if [ -z "$(env | grep USER=root)" ];then
 	exit 0
 fi
 
-if [ $# -ne 3 ];then
-	echo "For this script you must write a 3 parameters"
+if [ $# -ne 4 ];then
+	echo "For this script you must write a 4 parameters"
 	exit 0
 fi
 
@@ -150,11 +152,13 @@ cp -f ./vpnpptp-src-$NUM_VERSION/off.ico ./build/usr/share/vpnpptp/
 mkdir -p ./build/DEBIAN/
 
 cp -f ./vpnpptp-src-$NUM_VERSION/DEBIAN/ubuntu/preinst ./build/DEBIAN/
-chmod 0775 ./build/DEBIAN/preinst
+chmod 0755 ./build/DEBIAN/preinst
 cp -f ./vpnpptp-src-$NUM_VERSION/DEBIAN/ubuntu/control ./build/DEBIAN/
-chmod 0775 ./build/DEBIAN/control
+echo "Architecture: $ARCH" >> ./build/DEBIAN/control
+echo "" >> ./build/DEBIAN/control
+chmod 0755 ./build/DEBIAN/control 
 
-dpkg -b ./build/ vpnpptp-allde-$NUM_VERSION-$LAZARUS_ARCH.deb
+dpkg -b ./build/ vpnpptp-allde-$NUM_VERSION-$ARCH.deb
 
 rm -rf ./build/
 rm -rf ./vpnpptp-src-$NUM_VERSION/

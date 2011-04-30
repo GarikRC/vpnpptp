@@ -1,8 +1,8 @@
-%define rel 4
+%define rel 1
 
 Summary: Tools for setup and control VPN via PPTP/L2TP
 Name: vpnpptp-kde-one
-Version: 0.3.0
+Version: 0.3.1
 Release: %mkrel %{rel}
 License: GPL2
 Group: System/Configuration/Networking
