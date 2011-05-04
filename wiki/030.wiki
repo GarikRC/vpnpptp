@@ -92,7 +92,11 @@ Libreoffice тоже теперь имеет возможность работа
 Уделено огромное внимание, чтобы созданные конфигуратором vpnpptp соединения работали без иксов:
 
 Установить соединение VPN PPTP: pppd call имясоединения
+
 Отключить соединение VPN PPTP или L2TP: killall pppd
+
 Установить соединение VPN L2TP:
+
 1) service xl2tpd restart,
+
 2) echo "c имясоединения" > /var/run/xl2tpd/l2tp-control
