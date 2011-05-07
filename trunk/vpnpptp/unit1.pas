@@ -482,6 +482,9 @@ resourcestring
   message190='Графический автозапуск интернета при старте системы был отменен для соединения';
   message191='и был установлен для соединения';
   message192='Взаимоисключение...';
+  message193='Обнаружено, что использовался скрипт от mr. Peabody, который изменил оригинальный скрипт';
+  message194='Восстановите этот скрипт вручную.';
+  message195='<ОК> - выйти из конфигуратора vpnpptp.';
 
 implementation
 
@@ -3439,6 +3442,7 @@ var i,N, CountGateway:integer;
     brCount:array[0..9] of integer;
     nostart:boolean;
     Apid,Apidroot:tpid;
+    PeabodyIpUp, PeabodyIpDown:boolean;
 begin
 if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
 if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
@@ -3475,6 +3479,9 @@ popen (f,'cat '+EtcDir+'issue|grep PCLinuxOS','R');
 If not eof(f) then mandriva:=true;
 PClose(f);
 popen (f,'cat '+EtcDir+'issue|grep MagOS','R');
+If not eof(f) then mandriva:=true;
+PClose(f);
+popen (f,'cat '+EtcDir+'issue|grep Mageia','R');
 If not eof(f) then mandriva:=true;
 PClose(f);
 popen (f,'cat '+EtcDir+'issue|grep ROSA','R');
@@ -3769,6 +3776,30 @@ ButtonHelp.Enabled:=false;
                     Form1.Repaint;
                     halt;
                 end;
+ //проверка использовался ли скрипт mr. Peabody
+ PeabodyIpUp:=false;
+ PeabodyIpDown:=false;
+ popen (f,'cat '+EtcPppDir+'ip-up|grep '+EtcPppIpUpDDir+chr(39)+'$6 $1 $2 $3 $4 $5 $6'+chr(39),'R');
+ If not eof(f) then PeabodyIpUp:=true;
+ PClose(f);
+ popen (f,'cat '+EtcPppDir+'ip-down|grep '+EtcPppIpDownDDir+chr(39)+'$6 $1 $2 $3 $4 $5 $6'+chr(39),'R');
+ If not eof(f) then PeabodyIpDown:=true;
+ PClose(f);
+ If PeabodyIpUp and PeabodyIpDown then
+                                      begin
+                                          Form3.MyMessageBox(message0,message193+' '+EtcPppDir+'ip-up'+'. '+message194+' '+message193+' '+EtcPppDir+'ip-down'+'. '+message194+' '+message195,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                          halt;
+                                      end;
+ If PeabodyIpUp then
+                  begin
+                     Form3.MyMessageBox(message0,message193+' '+EtcPppDir+'ip-up'+'. '+message194+' '+message195,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                     halt;
+                  end;
+ If PeabodyIpDown then
+                  begin
+                     Form3.MyMessageBox(message0,message193+' '+EtcPppDir+'ip-down'+'. '+message194+' '+message195,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                     halt;
+                  end;
  If not FileExists(MyTmpDir) then Shell ('mkdir -p '+MyTmpDir);
  CountInterface:=1;
  DoCountInterface;
