@@ -39,6 +39,14 @@ msgstr ""
 msgid "               Label2"
 msgstr ""
 
+#: TFORM2.LABEL3.CAPTION
+msgid "                             Label3"
+msgstr ""
+
+#: TFORM2.LABEL4.CAPTION
+msgid "Label4"
+msgstr ""
+
 #: TFORM3.FORM3.CAPTION
 msgctxt "TFORM3.FORM3.CAPTION"
 msgid "Form3"
@@ -267,8 +275,22 @@ msgstr ""
 msgid "не может существовать, так как это имя за#209�езе#209�ви#209�овано п#209�ог#209�аммой."
 msgstr ""
 
+#: unit1.message58
+msgctxt "unit1.message58"
+msgid "Шлюз: "
+msgstr ""
+
+#: unit1.message59
+msgctxt "unit1.message59"
+msgid "IP-ад#209�ес: "
+msgstr ""
+
 #: unit1.message6
 msgid "Соединение"
+msgstr ""
+
+#: unit1.message60
+msgid "Инте#209�фейс: "
 msgstr ""
 
 #: unit1.message7

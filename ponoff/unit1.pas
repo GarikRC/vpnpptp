@@ -194,6 +194,9 @@ resourcestring
   message55='<ОК> - выбрать. <Отмена> - отказаться и выйти.';
   message56='Соединение с именем';
   message57='не может существовать, так как это имя зарезервировано программой.';
+  message58='Шлюз: ';
+  message59='IP-адрес: ';
+  message60='Интерфейс: ';
 
 implementation
 
@@ -357,6 +360,7 @@ var
    i:integer;
 begin
   i:=0;
+  str:='';
   popen (f,'ifconfig |grep '+chr(39)+'eth'+chr(39),'R');
   While not eof(f) do
      begin
@@ -364,6 +368,7 @@ begin
        i:=i+1;
      end;
   PClose(f);
+  str:='';
   popen (f,'ifconfig |grep '+chr(39)+'wlan'+chr(39),'R');
   While not eof(f) do
      begin
@@ -371,6 +376,7 @@ begin
        i:=i+1;
      end;
   PClose(f);
+  str:='';
   popen (f,'ifconfig |grep '+chr(39)+'br'+chr(39),'R');
   While not eof(f) do
      begin
@@ -1346,7 +1352,7 @@ begin
   KillZombieNet_Monitor;
   //определяем скорость, время
   popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $2}'+chr(39),'R');
-  If eof(f) then RXbyte1:='0';
+  RXbyte1:='0';
   While not eof(f) do
      begin
        Readln (f,RXbyte1);
@@ -1354,15 +1360,15 @@ begin
   PClose(f);
   If RXbyte1='' then RXbyte1:='0';
   popen (f,'ifconfig '+PppIface+'|grep TX|grep bytes|awk '+chr(39)+'{print $6}'+chr(39),'R');
-  If eof(f) then TXbyte1:='0';
+  TXbyte1:='0';
   While not eof(f) do
      begin
        Readln (f,TXbyte1);
      end;
   PClose(f);
   If TXbyte1='' then TXbyte1:='0';
-  Delete(RXbyte1,1,6);
-  Delete(TXbyte1,1,6);
+  If RXbyte1<>'0' then Delete(RXbyte1,1,6);
+  If TXbyte1<>'0' then Delete(TXbyte1,1,6);
   If StrToInt64(RXbyte1)>=4242538496 then begin ObnullRX:=true; Shell ('touch '+MyTmpDir+'ObnullRX'); end;//реакция программы за 3сек до факта обнуления значений
   If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch '+MyTmpDir+'ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
   If Count=2 then
@@ -1526,11 +1532,13 @@ end;
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
 // Вывод информации о соединении
 var
-  str:string;
+  str,str0,str1:string;
   SecondsPastRun:int64;
   hour,min,sec:int64;
   Time:string;
   TV : timeval;
+  Str_RemoteIPaddress0,RemoteIPaddress0,Str_IPaddress0,IPaddress0:string;
+  DNS3,DNS4:string;
 begin
   SecondsPastRun:=0;
   fpGettimeofday(@TV,nil);
@@ -1572,18 +1580,80 @@ begin
   RX:=DeleteSym (')',RX);
   If ObnullRX or FileExists(MyTmpDir+'ObnullRX')then RX:='>4GiB';
   If ObnullTX or FileExists(MyTmpDir+'ObnullTX')then TX:='>4GiB';
-  str:='';
+  //определяем Remote_IP_Address0 (шлюз)
+  Str_RemoteIPaddress0:='';
+  RemoteIPaddress0:='-';
+  If Code_up_ppp then
+                     begin
+                          popen (f,'ifconfig|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39),'R');
+                          if not eof(f) then
+                                            begin
+                                                 While not eof(f) do
+                                                       readln(f, Str_RemoteIPaddress0);
+                                                 RemoteIPaddress0:=RightStr(Str_RemoteIPaddress0,Length(Str_RemoteIPaddress0)-6);
+                                            end;
+                          PClose(f);
+                     end;
+  If RemoteIPaddress0='' then RemoteIPaddress0:='-';
+  //определяем IP_Address0
+  Str_IPaddress0:='';
+  IPaddress0:='-';
+  If Code_up_ppp then
+                     begin
+                          popen (f,'ifconfig|grep P-t-P|awk '+chr(39)+'{print $2}'+chr(39),'R');
+                          if not eof(f) then
+                                            begin
+                                                 While not eof(f) do
+                                                       readln(f, Str_IPaddress0);
+                                                 IPaddress0:=RightStr(Str_IPaddress0,Length(Str_IPaddress0)-5);
+                                            end;
+                          PClose(f);
+                     end;
+  If IPaddress0='' then IPaddress0:='-';
+  //определение dns, на которых поднято vpn
+   DNS3:='-';
+   DNS4:='-';
+   If Code_up_ppp then If FileExists(EtcDir+'resolv.conf') then
+                                                           begin
+                                                                AssignFile (FileResolv_conf,EtcDir+'resolv.conf');
+                                                                reset (FileResolv_conf);
+                                                                While not eof (FileResolv_conf) do
+                                                                                                begin
+                                                                                                     readln(FileResolv_conf, str);
+                                                                                                     If leftstr(str,11)='nameserver ' then If DNS3='-' then DNS3:=RightStr(str,Length(str)-11);
+                                                                                                     If leftstr(str,11)='nameserver ' then If DNS4='-' then if DNS3<>'-' then if RightStr(str,Length(str)-11)<>DNS3 then DNS4:=RightStr(str,Length(str)-11);
+                                                                                                end;
+                                                                closefile(FileResolv_conf);
+                                                           end;
+  str0:='';
+  str1:='';
   If Memo_Config.Lines[39]<>'l2tp' then
                                    begin
-  If Code_up_ppp then str:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')'
-                    else str:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                        If Code_up_ppp then
+                                                       begin
+                                                            str0:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                            str1:=message60+'ppp0'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                       end
+                                                            else
+                                                                begin
+                                                                     str0:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                                     str1:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                                end;
                                    end;
   If Memo_Config.Lines[39]='l2tp' then
                                    begin
-  If Code_up_ppp then str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')'
-                    else str:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                        If Code_up_ppp then
+                                                       begin
+                                                           str0:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                           str1:=message60+'ppp0'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                       end
+                                                             else
+                                                                 begin
+                                                                      str0:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                                      str1:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                                 end;
                                    end;
-  Unit2.Form2.ShowMyHint (str, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+  Unit2.Form2.ShowMyHint (str0, str1, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
   Application.ProcessMessages;
 end;
 
