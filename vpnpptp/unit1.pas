@@ -182,6 +182,7 @@ type
       var Handled: Boolean);
     procedure Edit_peerChange(Sender: TObject);
     procedure etc_hostsChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure GroupBox2MouseDown(Sender: TObject; Button: TMouseButton;
@@ -485,6 +486,8 @@ resourcestring
   message193='Обнаружено, что использовался скрипт от mr. Peabody, который изменил оригинальный скрипт';
   message194='Восстановите этот скрипт вручную.';
   message195='<ОК> - выйти из конфигуратора vpnpptp.';
+  message196='Информация о возможности пожертвований на разработку!';
+  message197='Выход';
 
 implementation
 
@@ -2529,6 +2532,8 @@ end;
 procedure TForm1.Button_exitClick(Sender: TObject);
 begin
   Shell('rm -f '+MyTmpDir+'test_vpn');
+  CheckVPN;
+  If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message197,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
   halt;
 end;
 
@@ -2726,6 +2731,12 @@ begin
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+     CheckVPN;
+     If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message197,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
 end;
 
 procedure TForm1.GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;

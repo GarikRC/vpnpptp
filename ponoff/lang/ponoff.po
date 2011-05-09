@@ -26,6 +26,10 @@ msgstr ""
 msgid "Look"
 msgstr ""
 
+#: TFORM1.MENUITEM6.CAPTION
+msgid "Money"
+msgstr ""
+
 #: TFORM2.FORM2.CAPTION
 msgctxt "TFORM2.FORM2.CAPTION"
 msgid "Form2"
@@ -291,6 +295,18 @@ msgstr ""
 
 #: unit1.message60
 msgid "Инте#209�фейс: "
+msgstr ""
+
+#: unit1.message61
+msgid "Поже#209�твования"
+msgstr ""
+
+#: unit1.message62
+msgid "Инфо#209�мация о возможности поже#209�твований на #209�аз#209�аботку!"
+msgstr ""
+
+#: unit1.message63
+msgid "Выход"
 msgstr ""
 
 #: unit1.message7
