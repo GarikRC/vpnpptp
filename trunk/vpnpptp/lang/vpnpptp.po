@@ -39,6 +39,7 @@ msgid "Создать подключение"
 msgstr ""
 
 #: TFORM1.BUTTON_EXIT.CAPTION
+msgctxt "TFORM1.BUTTON_EXIT.CAPTION"
 msgid "Выход"
 msgstr ""
 
@@ -913,6 +914,15 @@ msgstr ""
 
 #: unit1.message195
 msgid "<ОК> - выйти из конфигу#209�ато#209�а vpnpptp."
+msgstr ""
+
+#: unit1.message196
+msgid "Инфо#209�мация о возможности поже#209�твований на #209�аз#209�аботку!"
+msgstr ""
+
+#: unit1.message197
+msgctxt "unit1.message197"
+msgid "Выход"
 msgstr ""
 
 #: unit1.message2

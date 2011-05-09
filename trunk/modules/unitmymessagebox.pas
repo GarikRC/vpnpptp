@@ -20,6 +20,7 @@ type
                 //возвращает 1 - нажата 1-ая кнопка, возвращает 2 - нажата 2-ая кнопка,
                 //возвращает 3 - нажата 3-ая кнопка,
     Image1: TImage;
+    Image2: TImage;
     Label1: TLabel;
     Panel1: TPanel;
     procedure Button1Click(Sender: TObject);
@@ -46,7 +47,7 @@ implementation
 Procedure TForm3.MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string);
 //заголовок, текст сообщения, текст 1-ой кнопки, текст 2-ой кнопки, текст 3-ей кнопки,
 //файл изображения, видимость 1-ой кнопки, видимость 2-ой кнопки, видимость 3-ей кнопки, шрифт, иконка в заголовке
-//видимость ComboBoxProfile
+//видимость ComboBoxProfile, директория библиотек
 var
    FileProfiles:textfile;
    str0:string;
@@ -88,7 +89,17 @@ begin
    Form3.Tag:=0;
    Form3.Caption:=mess0;
    Form3.Label1.Caption:=mess1;
-   If FileExists (filepic) then Image1.Picture.LoadFromFile(filepic);
+   If filepic<>'' then If FileExists (filepic) then
+                                                   begin
+                                                        Image1.Visible:=true;
+                                                        Image1.Picture.LoadFromFile(filepic);
+                                                        Image2.Visible:=false;
+                                                   end;
+   If filepic='' then
+                       begin
+                            Image2.Visible:=true;
+                            Image1.Visible:=false;
+                       end;
    Form3.BorderStyle:=bsSingle;
    Button1.Caption:=mess2;
    Button2.Caption:=mess3;
@@ -116,6 +127,9 @@ begin
    Form3.Constraints.MinHeight:=Form3.Height;
    Form3.Constraints.MaxWidth:=Form3.Width;
    Form3.Constraints.MinWidth:=Form3.Width;
+   Form3.Image2.Align:=alClient;
+   Form3.Image2.BorderSpacing.Right:=0;
+   Form3.Image2.Anchors:=[akLeft,akRight,akBottom];
 end;
 
 procedure TForm3.Button1Click(Sender: TObject);

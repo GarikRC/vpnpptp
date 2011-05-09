@@ -2272,6 +2272,11 @@ object Form1: TForm1
     OnPopup = PopupMenu1Popup
     left = 32
     top = 56
+    object MenuItem6: TMenuItem
+      Caption = 'Money'
+      Enabled = False
+      OnClick = MenuItem6Click
+    end
     object MenuItem5: TMenuItem
       Caption = 'Look'
       OnClick = MenuItem5Click

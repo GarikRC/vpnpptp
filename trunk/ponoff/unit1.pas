@@ -40,6 +40,7 @@ type
     MenuItem5: TMenuItem;
     Memo_Config: TMemo;
     MenuItem4: TMenuItem;
+    MenuItem6: TMenuItem;
     Panel1: TPanel;
     Timer2: TTimer;
     MenuItem1: TMenuItem;
@@ -54,6 +55,7 @@ type
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
+    procedure MenuItem6Click(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
@@ -197,6 +199,9 @@ resourcestring
   message58='Шлюз: ';
   message59='IP-адрес: ';
   message60='Интерфейс: ';
+  message61='Пожертвования';
+  message62='Информация о возможности пожертвований на разработку!';
+  message63='Выход';
 
 implementation
 
@@ -478,6 +483,8 @@ begin
    FlagLengthSyslog:=true;
 //Проверяем поднялось ли соединение
 CheckVPN;
+If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
+If Form3.Visible then MenuItem6.Enabled:=false;
 //проверяем поднялось ли соединение на pppN и если нет, то поднимаем на pppN; переводим pppN в фон
 If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=true;
 If Code_up_ppp then
@@ -893,6 +900,7 @@ begin
   MenuItem3.Caption:=message10;
   MenuItem4.Caption:=message11;
   MenuItem5.Caption:=message39;
+  MenuItem6.Caption:=message61;
   TrayIcon1.BalloonTitle:=message0;
   If Screen.Height<440 then AFont:=6;
   If Screen.Height<=480 then AFont:=6;
@@ -1082,6 +1090,8 @@ If i>1 then
 CheckFiles;//проверка наличия необходимых программе файлов
 //Проверяем поднялось ли соединение
 CheckVPN;
+If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
+If Form3.Visible then MenuItem6.Enabled:=false;
 If Code_up_ppp then If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
 If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
 Application.ProcessMessages;
@@ -1322,6 +1332,12 @@ begin
              end;
 end;
 
+procedure TForm1.MenuItem6Click(Sender: TObject);
+begin
+  If Form3.Visible then exit;
+  Form3.MyMessageBox(message0+' '+message62,'','','',message63,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+end;
+
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
 begin
   Application.ProcessMessages;
@@ -1349,6 +1365,8 @@ begin
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
+  If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
+  If Form3.Visible then MenuItem6.Enabled:=false;
   KillZombieNet_Monitor;
   //определяем скорость, время
   popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $2}'+chr(39),'R');
@@ -1512,6 +1530,8 @@ begin
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
+  If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
+  If Form3.Visible then MenuItem6.Enabled:=false;
   find_net_monitor:=false;
   If Code_up_ppp then If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then
                     begin
@@ -1560,6 +1580,8 @@ begin
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
+  If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
+  If Form3.Visible then MenuItem6.Enabled:=false;
   popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $3$4}'+chr(39),'R');
   If eof(f) then RX:='0';
   While not eof(f) do
@@ -1631,12 +1653,12 @@ begin
                                    begin
                                         If Code_up_ppp then
                                                        begin
-                                                            str0:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                            str1:=message60+'ppp0'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                            str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                            str1:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                        end
                                                             else
                                                                 begin
-                                                                     str0:=message6+': '+Memo_Config.Lines[0]+' (VPN PPTP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                                     str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                                                      str1:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                                 end;
                                    end;
@@ -1644,12 +1666,12 @@ begin
                                    begin
                                         If Code_up_ppp then
                                                        begin
-                                                           str0:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                           str1:=message60+'ppp0'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                           str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                           str1:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                        end
                                                              else
                                                                  begin
-                                                                      str0:=message6+': '+Memo_Config.Lines[0]+' (VPN L2TP)'+chr(13)+message22+' '+message8+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                                      str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                                                       str1:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                                  end;
                                    end;
