@@ -82,13 +82,12 @@ var
   DhclientStart:boolean; //стартанул ли dhclient
   RemoteIPaddress:string;
   f,f1: text;//текстовый поток
-  RX,TX:string;//объем загруженного/отданного
-  RXbyte,TXbyte:string;//объем загруженного/отданного в байтах
+  RX,TX:string;//объем загруженного/отданного для вывода
+  RXbyte0,TXbyte0:string;//объем загруженного/отданного в байтах на предыдущем шаге
+  RXbyte1,TXbyte1:string;//объем загруженного/отданного в байтах на текущем шаге
   DateStart,DateStop:int64;//время запуска/время текущее
   RXSpeed,TXSpeed:string;//скорость загрузки/отдачи
-  Count:byte;//счетчик времени
-  DoCount:boolean;//выводить ли скорость
-  ObnullRX,ObnullTX:boolean; //отслеживает обнуление счетчика RX/TX
+  ObnullRX,ObnullTX:integer; //отслеживает кол-во обнулений счетчика RX/TX
   AFont:integer; //шрифт приложения
   AProcess,AProcessDhclient,AProcessNet_Monitor: TProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
@@ -107,6 +106,8 @@ var
   Net_MonitorRun:boolean; //запущен ли net_monitor
   ProfileName:string; //определяет какое имя соединения использовать
   ProfileStrDefault:string; //имя соединения, используемое по-умолчанию
+  TrafficRX, TrafficTX:int64; //общий трафик RX/TX
+  DoSpeedCount:boolean; //выводить ли скорость загрузки/отдачи
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -201,7 +202,6 @@ resourcestring
   message60='Интерфейс: ';
   message61='Пожертвования';
   message62='Информация о возможности пожертвований на разработку!';
-  message63='Выход';
 
 implementation
 
@@ -821,8 +821,17 @@ If not Code_up_ppp then If link=1 then
                                                       If FileExists(MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before') then If FileExists(EtcDir+'resolv.conf') then
                                                            If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before', EtcDir+'resolv.conf') then
                                                                Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
-                                                      If not FileExists(MyTmpDir+'ObnullRX') then ObnullRX:=false else ObnullRX:=true;
-                                                      If not FileExists(MyTmpDir+'ObnullTX') then ObnullTX:=false else ObnullTX:=true;
+                                                      TrafficRX:=0;
+                                                      TrafficTX:=0;
+                                                      RXbyte0:='0';
+                                                      TXbyte0:='0';
+                                                      RXbyte1:='0';
+                                                      TXbyte1:='0';
+                                                      ObnullRX:=0;
+                                                      ObnullTX:=0;
+                                                      DoSpeedCount:=false;
+                                                      Shell ('rm -f '+MyTmpDir+'ObnullRX');
+                                                      Shell ('rm -f '+MyTmpDir+'ObnullTX');
                                                       If not FileExists(MyTmpDir+'DateStart') then DateStart:=0;
                                                       If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo',false);
                                                       For h:=1 to CountInterface do
@@ -859,8 +868,9 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   link:byte; //1-link ok, 2-no link, 3-none
   i,j,h:integer;
-  str,stri:string;
+  str,stri,StrObnull:string;
   Apid:tpid;
+  FileObnull:textfile;
 begin
   if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
   if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
@@ -880,12 +890,35 @@ begin
   Form1.Height:=152;
   Form1.Width:=670;
   Form1.Font.Size:=AFont;
-  RXbyte:='0';
-  TXbyte:='0';
+  RXbyte0:='0';
+  TXbyte0:='0';
+  RXbyte1:='0';
+  TXbyte1:='0';
+  TrafficRX:=0;
+  TrafficTX:=0;
+  StrObnull:='';
+  DoSpeedCount:=false;
+  If FileExists(MyTmpDir+'ObnullRX') then
+                                     begin
+                                          AssignFile (FileObnull,MyTmpDir+'ObnullRX');
+                                          reset (FileObnull);
+                                          While not eof(FileObnull) do
+                                                     readln(FileObnull, StrObnull);
+                                          closefile (FileObnull);
+                                     end;
+  If StrObnull<>'' then ObnullRX:=StrToInt(StrObnull) else ObnullRX:=0;
+  StrObnull:='';
+  If FileExists(MyTmpDir+'ObnullTX') then
+                                     begin
+                                          AssignFile (FileObnull,MyTmpDir+'ObnullTX');
+                                          reset (FileObnull);
+                                          While not eof(FileObnull) do
+                                                     readln(FileObnull, StrObnull);
+                                          closefile (FileObnull);
+                                     end;
+  If StrObnull<>'' then ObnullTX:=StrToInt(StrObnull) else ObnullTX:=0;
   RXSpeed:='0b/s';
   TXSpeed:='0b/s';
-  Count:=0;
-  DoCount:=false;
   Net_MonitorRun:=false;
   CountInterface:=1;
   FlagMtu:=false;
@@ -1335,7 +1368,7 @@ end;
 procedure TForm1.MenuItem6Click(Sender: TObject);
 begin
   If Form3.Visible then exit;
-  Form3.MyMessageBox(message0+' '+message62,'','','',message63,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+  Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
 end;
 
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
@@ -1353,13 +1386,10 @@ procedure TForm1.Timer2Timer(Sender: TObject);
 //индикация иконки в трее, балуны и тест интернета
 var
   Str:string;
-  RXbyte1,TXbyte1:string;
   TV : timeval;
   DNS3,DNS4:string;
 begin
   If not FileExists (VarRunVpnpptp+ProfileName) then Shell ('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
-  Count:=Count+1;
-  If Count=3 then Count:=1;
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
@@ -1387,35 +1417,58 @@ begin
   If TXbyte1='' then TXbyte1:='0';
   If RXbyte1<>'0' then Delete(RXbyte1,1,6);
   If TXbyte1<>'0' then Delete(TXbyte1,1,6);
-  If StrToInt64(RXbyte1)>=4242538496 then begin ObnullRX:=true; Shell ('touch '+MyTmpDir+'ObnullRX'); end;//реакция программы за 3сек до факта обнуления значений
-  If StrToInt64(TXbyte1)>=4242538496 then begin ObnullTX:=true; Shell ('touch '+MyTmpDir+'ObnullTX'); end;//2^32-4сек*100MБит/сек=4294967296-4сек*13107200Б/сек
-  If Count=2 then
-  begin
-     If not DoCount then RXSpeed:='?' else RXSpeed:=IntToStr((abs(StrToInt64(RXbyte1)-StrToInt64(RXbyte)) div (Timer2.Interval div 1000)) div Count);
-     If RXSpeed='' then RXSpeed:='0';
-     If not DoCount then TXSpeed:='?' else TXSpeed:=IntToStr((abs(StrToInt64(TXbyte1)-StrToInt64(TXbyte)) div (Timer2.Interval div 1000)) div Count);
-     If TXSpeed='' then TXSpeed:='0';
-     RXbyte:=RXbyte1;
-     TXbyte:=TXbyte1;
-     If RXSpeed<>'?' then
+  If Code_up_ppp then
+        begin
+          TrafficRX:=StrToInt64(RXbyte1);
+          If StrToInt64(RXbyte1)-StrToInt64(RXbyte0)<0 then
+                                                       begin
+                                                            ObnullRX:=ObnullRX+1;
+                                                            Shell ('printf "'+IntToStr(ObnullRX)+'\n" > '+MyTmpDir+'ObnullRX');
+                                                       end;
+          TrafficTX:=StrToInt64(TXbyte1);
+          If StrToInt64(TXbyte1)-StrToInt64(TXbyte0)<0 then
+                                                       begin
+                                                            ObnullTX:=ObnullTX+1;
+                                                            Shell ('printf "'+IntToStr(ObnullTX)+'\n" > '+MyTmpDir+'ObnullTX');
+                                                       end;
+        end else
+                begin
+                    TrafficRX:=0;
+                    TrafficTX:=0;
+                    RXbyte0:='0';
+                    TXbyte0:='0';
+                    RXbyte1:='0';
+                    TXbyte1:='0';
+                    ObnullRX:=0;
+                    ObnullTX:=0;
+                    DoSpeedCount:=false;
+                    Shell ('rm -f '+MyTmpDir+'ObnullRX');
+                    Shell ('rm -f '+MyTmpDir+'ObnullTX');
+                end;
+  If (StrToInt64(RXbyte1)-StrToInt64(RXbyte0))>=0 then RXSpeed:=IntToStr(StrToInt64(RXbyte1)-StrToInt64(RXbyte0)) else RXSpeed:='-';
+  If RXSpeed='' then RXSpeed:='0';
+  If (StrToInt64(TXbyte1)-StrToInt64(TXbyte0))>=0 then TXSpeed:=IntToStr(StrToInt64(TXbyte1)-StrToInt64(TXbyte0)) else TXSpeed:='-';
+  If TXSpeed='' then TXSpeed:='0';
+  RXbyte0:=RXbyte1;
+  TXbyte0:=TXbyte1;
+  If not DoSpeedCount then
+                      begin
+                         RXSpeed:='-';
+                         TXSpeed:='-';
+                      end;
+  DoSpeedCount:=true;
+  If RXSpeed<>'-' then
      begin
-     If StrToInt64(RXSpeed)>1048576 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1048576)+'MiB/s'
-           else If StrToInt64(RXSpeed)>1024 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1024)+'KiB/s'
-                                                                             else RXSpeed:=RXSpeed+'b/s';
+        If StrToInt64(RXSpeed)>1048576 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1048576)+' MiB/s'
+              else If StrToInt64(RXSpeed)>1024 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1024)+' KiB/s'
+                                                                             else RXSpeed:=RXSpeed+' b/s';
      end;
-     If TXSpeed<>'?' then
+  If TXSpeed<>'-' then
      begin
-     If StrToInt64(TXSpeed)>1048576 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1048576)+'MiB/s'
-           else If StrToInt64(TXSpeed)>1024 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1024)+'KiB/s'
-                                                                             else TXSpeed:=TXSpeed+'b/s';
+        If StrToInt64(TXSpeed)>1048576 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1048576)+' MiB/s'
+              else If StrToInt64(TXSpeed)>1024 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1024)+' KiB/s'
+                                                                             else TXSpeed:=TXSpeed+' b/s';
      end;
-     DoCount:=true;
-  end;
-  If Count<2 then If not DoCount then
-  begin
-      RXSpeed:='?';
-      TXSpeed:='?';
-  end;
   If Code_up_ppp then If DateStart=0 then
                       begin
                            fpGettimeofday(@TV,nil);
@@ -1497,14 +1550,34 @@ begin
                      end;
   If not Code_up_ppp then
                            begin
+                             TrafficRX:=0;
+                             TrafficTX:=0;
+                             RXbyte0:='0';
+                             RXbyte1:='0';
+                             TXbyte0:='0';
+                             TXbyte1:='0';
+                             ObnullRX:=0;
+                             ObnullTX:=0;
+                             DoSpeedCount:=false;
+                             Shell ('rm -f '+MyTmpDir+'ObnullRX');
+                             Shell ('rm -f '+MyTmpDir+'ObnullTX');
                              Application.ProcessMessages;
                              If not StartMessage then
                                     begin
                                          BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
                                          NoInternet:=true;
                                          Shell('rm -f '+MyTmpDir+'DateStart');
-                                         Shell('rm -f '+MyTmpDir+'ObnullRX');
-                                         Shell('rm -f '+MyTmpDir+'ObnullTX');
+                                         TrafficRX:=0;
+                                         TrafficTX:=0;
+                                         RXbyte0:='0';
+                                         RXbyte1:='0';
+                                         TXbyte0:='0';
+                                         TXbyte1:='0';
+                                         ObnullRX:=0;
+                                         ObnullTX:=0;
+                                         DoSpeedCount:=false;
+                                         Shell ('rm -f '+MyTmpDir+'ObnullRX');
+                                         Shell ('rm -f '+MyTmpDir+'ObnullTX');
                                     end;
                              If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
                              StartMessage:=true;
@@ -1552,13 +1625,14 @@ end;
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
 // Вывод информации о соединении
 var
-  str,str0,str1:string;
+  str,str0,str1,StrObnull:string;
   SecondsPastRun:int64;
   hour,min,sec:int64;
   Time:string;
   TV : timeval;
   Str_RemoteIPaddress0,RemoteIPaddress0,Str_IPaddress0,IPaddress0:string;
   DNS3,DNS4:string;
+  FileObnull:textfile;
 begin
   SecondsPastRun:=0;
   fpGettimeofday(@TV,nil);
@@ -1575,33 +1649,43 @@ begin
                   min:=0;
                   sec:=0;
              end;
-  Time:=IntToStr(hour)+message30+IntToStr(min)+message31+IntToStr(sec)+message32;
+  Time:=IntToStr(hour)+' '+message30+' '+IntToStr(min)+' '+message31+' '+IntToStr(sec)+' '+message32;
   PppIface:='';
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
   If Form3.Visible then MenuItem6.Enabled:=false;
-  popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $3$4}'+chr(39),'R');
-  If eof(f) then RX:='0';
-  While not eof(f) do
-     begin
-       Readln (f,RX);
-     end;
-  PClose(f);
-  popen (f,'ifconfig '+PppIface+'|grep TX|grep bytes|awk '+chr(39)+'{print $7$8}'+chr(39),'R');
-  If eof(f) then TX:='0';
-  While not eof(f) do
-     begin
-       Readln (f,TX);
-     end;
-  PClose(f);
-  TX:=DeleteSym ('(',TX);
-  TX:=DeleteSym (')',TX);
-  RX:=DeleteSym ('(',RX);
-  RX:=DeleteSym (')',RX);
-  If ObnullRX or FileExists(MyTmpDir+'ObnullRX')then RX:='>4GiB';
-  If ObnullTX or FileExists(MyTmpDir+'ObnullTX')then TX:='>4GiB';
+  StrObnull:='';
+  If FileExists(MyTmpDir+'ObnullRX') then
+                                     begin
+                                          AssignFile (FileObnull,MyTmpDir+'ObnullRX');
+                                          reset (FileObnull);
+                                          While not eof(FileObnull) do
+                                                     readln(FileObnull, StrObnull);
+                                          closefile (FileObnull);
+                                     end;
+  If StrObnull<>'' then ObnullRX:=StrToInt(StrObnull) else ObnullRX:=0;
+  StrObnull:='';
+  If FileExists(MyTmpDir+'ObnullTX') then
+                                     begin
+                                          AssignFile (FileObnull,MyTmpDir+'ObnullTX');
+                                          reset (FileObnull);
+                                          While not eof(FileObnull) do
+                                                     readln(FileObnull, StrObnull);
+                                          closefile (FileObnull);
+                                     end;
+  If StrObnull<>'' then ObnullTX:=StrToInt(StrObnull) else ObnullTX:=0;
+  TrafficRX:=StrToInt(RXbyte1)+4294967296*ObnullRX;
+  TrafficTX:=StrToInt(TXbyte1)+4294967296*ObnullTX;
+  If TrafficRX>=1073741824 then RX:=FloatToStr(Round(TrafficRX/1073741824*1000)/1000)+' GiB'
+                          else If TrafficRX>=1048576 then RX:=FloatToStr(Round(TrafficRX/1048576*1000)/1000)+' MiB'
+                                                    else If TrafficRX>=1024 then RX:=FloatToStr(Round(TrafficRX/1024*1000)/1000)+' KiB'
+                                                                           else RX:=IntToStr(TrafficRX)+' b';
+  If TrafficTX>=1073741824 then TX:=FloatToStr(Round(TrafficTX/1073741824*1000)/1000)+' GiB'
+                          else If TrafficTX>=1048576 then TX:=FloatToStr(Round(TrafficTX/1048576*1000)/1000)+' MiB'
+                                                    else If TrafficTX>=1024 then TX:=FloatToStr(Round(TrafficTX/1024*1000)/1000)+' KiB'
+                                                                           else TX:=IntToStr(TrafficTX)+' b';
   //определяем Remote_IP_Address0 (шлюз)
   Str_RemoteIPaddress0:='';
   RemoteIPaddress0:='-';
@@ -1653,26 +1737,26 @@ begin
                                    begin
                                         If Code_up_ppp then
                                                        begin
-                                                            str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                            str1:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                            str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                            str0:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                        end
                                                             else
                                                                 begin
-                                                                     str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                                     str1:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                                     str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                                     str0:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                                 end;
                                    end;
   If Memo_Config.Lines[39]='l2tp' then
                                    begin
                                         If Code_up_ppp then
                                                        begin
-                                                           str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                           str1:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                           str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                           str0:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                        end
                                                              else
                                                                  begin
-                                                                      str0:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                                      str1:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                                      str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                                      str0:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                                  end;
                                    end;
   Unit2.Form2.ShowMyHint (str0, str1, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);

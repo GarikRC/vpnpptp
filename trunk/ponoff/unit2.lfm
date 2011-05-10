@@ -89,11 +89,12 @@ object Form2: TForm2
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
-      Left = 168
+      Left = 178
       Height = 142
       Top = 4
-      Width = 264
+      Width = 254
       Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Left = 10
       BorderSpacing.Around = 3
       Caption = 'Label4'
       ParentColor = False
