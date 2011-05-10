@@ -258,7 +258,7 @@ var
   ProfileForDelete:string; //имя соединения для удаления
   gksu:boolean; //используется ли gksu
   link_on_desktop:boolean; //создался ли ярлык на рабочем столе
-  beesu:boolean; //используется ли besu
+  beesu:boolean; //используется ли beesu
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -487,7 +487,6 @@ resourcestring
   message194='Восстановите этот скрипт вручную.';
   message195='<ОК> - выйти из конфигуратора vpnpptp.';
   message196='Информация о возможности пожертвований на разработку!';
-  message197='Выход';
 
 implementation
 
@@ -2533,7 +2532,7 @@ procedure TForm1.Button_exitClick(Sender: TObject);
 begin
   Shell('rm -f '+MyTmpDir+'test_vpn');
   CheckVPN;
-  If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message197,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+  If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message122,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
   halt;
 end;
 
@@ -2736,7 +2735,7 @@ end;
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
      CheckVPN;
-     If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message197,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+     If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message122,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
 end;
 
 procedure TForm1.GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
