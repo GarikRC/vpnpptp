@@ -1676,8 +1676,8 @@ begin
                                           closefile (FileObnull);
                                      end;
   If StrObnull<>'' then ObnullTX:=StrToInt(StrObnull) else ObnullTX:=0;
-  TrafficRX:=StrToInt(RXbyte1)+4294967296*ObnullRX;
-  TrafficTX:=StrToInt(TXbyte1)+4294967296*ObnullTX;
+  TrafficRX:=StrToInt64(RXbyte1)+4294967296*ObnullRX;
+  TrafficTX:=StrToInt64(TXbyte1)+4294967296*ObnullTX;
   If TrafficRX>=1073741824 then RX:=FloatToStr(Round(TrafficRX/1073741824*1000)/1000)+' GiB'
                           else If TrafficRX>=1048576 then RX:=FloatToStr(Round(TrafficRX/1048576*1000)/1000)+' MiB'
                                                     else If TrafficRX>=1024 then RX:=FloatToStr(Round(TrafficRX/1024*1000)/1000)+' KiB'
