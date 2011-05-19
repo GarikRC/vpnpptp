@@ -359,7 +359,7 @@ resourcestring
   message66='Не удалось автоматически определить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN.';
   message67='Поле "DNS1 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message68='Поле "DNS2 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
-  message69='Необходимо ввести хотя бы одно DNS1 до поднятия VPN или DNS2 до поднятия VPN.';
+  message69='Возникла ситуация когда не были заданы DNS1 при поднятом VPN, DNS2 при поднятом VPN, и при этом не была выбрана опция usepeerdns.';
   message70='При использовании опции refuse-eap демон pppd не согласится аутентифицировать себя по протоколу EAP.';
   message71='Эта опция часто позволяет достичь ускорения интернета, но не у всех провайдеров и невсегда.';
   message72='При использовании опции refuse-mschap демон pppd не согласится аутентифицировать себя по протоколу MS-CHAP.';
@@ -373,7 +373,7 @@ resourcestring
   message80='Выбрана опция usepeerdns: если VPN-сервер предоставит свои DNS, то будут использоваться они, невзирая на другие настройки DNS.';
   message81='Поле "DNS1 при поднятом VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message82='Поле "DNS2 при поднятом VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
-  message83='Необходимо ввести хотя бы одно DNS1 при поднятом VPN или DNS2 при поднятом VPN.';
+  message83='Желательно ввести хотя бы одно DNS1 при поднятом VPN или DNS2 при поднятом VPN.';
   message84='DNS2-сервер до поднятия VPN не пингуется или теряются пакеты, но пингуется DNS1-сервер до поднятия VPN, поэтому это некритично.';
   message85='DNS1-сервер до поднятия VPN не пингуется или теряются пакеты, но пингуется DNS2-сервер до поднятия VPN, поэтому будут тормоза.';
   message86='Показать пароль';
@@ -487,6 +487,16 @@ resourcestring
   message194='Восстановите этот скрипт вручную.';
   message195='<ОК> - выйти из конфигуратора vpnpptp.';
   message196='Информация о возможности пожертвований на разработку!';
+  message197='Это некритично, так как адрес VPN-сервера задан по IP.';
+  message198='Это критично, так как адрес VPN-сервера задан по имени.';
+  message199='Задайте адрес VPN-сервера по IP или добейтесь автоматического определения DNS1 до поднятия VPN, DNS2 до поднятия VPN.';
+  message200='Программа завершает свою работу.';
+  message201='Также можно будет далее указать опцию usepeerdns и надеяться, что провайдер пришлет DNS1 при поднятом VPN, DNS2 при поднятом VPN.';
+  message202='Выбрана опция usepeerdns (она выбрана по-умолчанию), не введены DNS1 при поднятом VPN, DNS2 при поднятом VPN.';
+  message203='<ОК> - продолжить и надеяться, что провайдер пришлет DNS1 при поднятом VPN, DNS2 при поднятом VPN, <Отмена> - исправить вручную сейчас.';
+  message204='<ОК> - продолжить, <Отмена> - исправить вручную сейчас.';
+  message205='<ОК> - включить опцию usepeerdns автоматически и продолжить (рекомендуется), <Отмена> - оставить всё как есть и продолжить (не рекомендуется).';
+  message206='Опция usepeerdns не выбрана.';
 
 implementation
 
@@ -892,7 +902,7 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
                                         Application.ProcessMessages;
                                         Form1.Repaint;
                                       end;
-If Unit2.Form2.CheckBoxusepeerdns.Checked then
+If Unit2.Form2.CheckBoxusepeerdns.Checked then If not ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if not ((EditDNS4.Text='none') or (EditDNS4.Text='')) then
                                          begin
                                             Form3.MyMessageBox(message0,message80+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
                                             if (Form3.Tag=3) or (Form3.Tag=0) then
@@ -936,6 +946,13 @@ For i:=1 to CountInterface do
                            Shell(SBinDir+'route del default');
 Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
 //проверка текущего состояния дополнительных сторонних пакетов и других зависимостей
+   If ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if ((EditDNS4.Text='none') or (EditDNS4.Text='')) then If not Unit2.Form2.CheckBoxusepeerdns.Checked then
+                                     begin
+                                          Form3.MyMessageBox(message0,message69+' '+message205,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
+                                          if (Form3.Tag=2) then Unit2.Form2.CheckBoxusepeerdns.Checked:=true;
+                                          Application.ProcessMessages;
+                                          Form1.Repaint;
+                                     end;
    If FileExists (UsrBinDir+'sudo') then Sudo:=true else Sudo:=false;
    If IPS then If etc_hosts.Checked then
                      begin
@@ -1032,7 +1049,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
-If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
+   If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
                     begin
                        popen (f,'man pppd|grep mppe','R');
                        If eof(f) then
@@ -2940,6 +2957,22 @@ if ComboBoxDistr.Text=message151 then
                                 Form1.Repaint;
                                 exit;
                             end;
+If ComboBoxVPN.Text='VPN L2TP' then Reconnect_pptp.Caption:=message96;
+If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
+If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
+If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_required.Enabled:=false; CheckBox_required.Checked:=false; StartMessage:=true; end;
+If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_stateless.Enabled:=false; CheckBox_stateless.Checked:=false; StartMessage:=true; end;
+If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no40.Enabled:=false; CheckBox_no40.Checked:=false; StartMessage:=true; end;
+If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no56.Enabled:=false; CheckBox_no56.Checked:=false; StartMessage:=true; end;
+If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
+If ComboBoxVPN.Text='VPN L2TP' then
+                         begin
+                              CheckBox_required.Hint:=MakeHint(message138,5);
+                              CheckBox_stateless.Hint:=MakeHint(message138,5);
+                              CheckBox_no40.Hint:=MakeHint(message138,5);
+                              CheckBox_no56.Hint:=MakeHint(message138,5);
+                              CheckBox_no128.Hint:=MakeHint(message138,5);
+                         end;
 if not y then
               begin
                 TabSheet1.TabVisible:= False;
@@ -3055,7 +3088,8 @@ If not y then IPS:=true else IPS:=false;
   If DNSA='none' then if DNSB='none' then
                            begin
                              DNS_auto:=false;
-                             Form3.MyMessageBox(message0,message66,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                             If IPS then Form3.MyMessageBox(message0,message66+' '+message197,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                             If not IPS then begin Form3.MyMessageBox(message0,message66+' '+message198+' '+message199+' '+message200,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir); halt;end;
                              Application.ProcessMessages;
                              Form1.Repaint;
                            end;
@@ -3067,22 +3101,6 @@ If not y then IPS:=true else IPS:=false;
   EditDNS3.Text:=DNSA;
   EditDNS4.Text:=DNSB;
   If not FileExists (MyLibDir+Edit_peer.Text+'/route') then Memo_route.Clear;
-  If ComboBoxVPN.Text='VPN L2TP' then Reconnect_pptp.Caption:=message96;
-  If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
-  If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
-  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_required.Enabled:=false; CheckBox_required.Checked:=false; StartMessage:=true; end;
-  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_stateless.Enabled:=false; CheckBox_stateless.Checked:=false; StartMessage:=true; end;
-  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no40.Enabled:=false; CheckBox_no40.Checked:=false; StartMessage:=true; end;
-  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no56.Enabled:=false; CheckBox_no56.Checked:=false; StartMessage:=true; end;
-  If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
-  If ComboBoxVPN.Text='VPN L2TP' then
-                           begin
-                                CheckBox_required.Hint:=MakeHint(message138,5);
-                                CheckBox_stateless.Hint:=MakeHint(message138,5);
-                                CheckBox_no40.Hint:=MakeHint(message138,5);
-                                CheckBox_no56.Hint:=MakeHint(message138,5);
-                                CheckBox_no128.Hint:=MakeHint(message138,5);
-                           end;
   if not FileExists(EtcInitDDir+'shorewall') then
                                              begin
                                                 StartMessage:=false;
@@ -3362,13 +3380,22 @@ If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
            Form1.Repaint;
            exit;
          end;
+Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont, MyLibDir, EtcPppPeersDir);
 if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then EditDNS4.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
 If ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if ((EditDNS4.Text='none') or (EditDNS4.Text='')) then
                            begin
-                             Form3.MyMessageBox(message0,message83,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                             If not Unit2.Form2.CheckBoxusepeerdns.Checked then
+                                                                           begin
+                                                                                Form3.MyMessageBox(message0,message206+' '+message83+ ' '+message201+ ' '+message204,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                                if (Form3.Tag=3) or (Form3.Tag=0) then exit;
+                                                                           end;
+                             If Unit2.Form2.CheckBoxusepeerdns.Checked then
+                                                                           begin
+                                                                                Form3.MyMessageBox(message0,message202+' '+message203,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                                if (Form3.Tag=3) or (Form3.Tag=0) then exit;
+                                                                           end;
                              Application.ProcessMessages;
                              Form1.Repaint;
-                             exit;
                            end;
 If EditDNS3.Text='' then EditDNS3.Text:='none';
 If EditDNS4.Text='' then EditDNS4.Text:='none';

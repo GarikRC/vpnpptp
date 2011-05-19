@@ -53,6 +53,7 @@ var
    str0:string;
    i:integer;
 begin
+   If Form3.Visible then Form3.Hide;
    ComboBoxProfile.Visible:=ComboBoxProfileVisible;
    ComboBoxProfile.Text:='';
    ComboBoxProfile.Items.Clear;

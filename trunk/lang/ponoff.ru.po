@@ -26,6 +26,10 @@ msgstr ""
 msgid "Look"
 msgstr ""
 
+#: TFORM1.MENUITEM6.CAPTION
+msgid "Money"
+msgstr ""
+
 #: TFORM2.FORM2.CAPTION
 msgctxt "TFORM2.FORM2.CAPTION"
 msgid "Form2"
@@ -37,6 +41,14 @@ msgstr ""
 
 #: TFORM2.LABEL2.CAPTION
 msgid "               Label2"
+msgstr ""
+
+#: TFORM2.LABEL3.CAPTION
+msgid "                             Label3"
+msgstr ""
+
+#: TFORM2.LABEL4.CAPTION
+msgid "Label4"
 msgstr ""
 
 #: TFORM3.FORM3.CAPTION
@@ -267,8 +279,38 @@ msgstr ""
 msgid "не может существовать, так как это имя за#209�езе#209�ви#209�овано п#209�ог#209�аммой."
 msgstr ""
 
+#: unit1.message58
+msgctxt "unit1.message58"
+msgid "Шлюз: "
+msgstr ""
+
+#: unit1.message59
+msgctxt "unit1.message59"
+msgid "IP-ад#209�ес: "
+msgstr ""
+
 #: unit1.message6
 msgid "Соединение"
+msgstr ""
+
+#: unit1.message60
+msgid "Инте#209�фейс: "
+msgstr ""
+
+#: unit1.message61
+msgid "Поже#209�твования"
+msgstr ""
+
+#: unit1.message62
+msgid "Инфо#209�мация о возможности поже#209�твований на #209�аз#209�аботку!"
+msgstr ""
+
+#: unit1.message63
+msgid "Ско#209�ость отдачи т#209�и #209�аза под#209�яд в течение т#209�ех секунд п#209�евысила п#209�опускную способность сети. Сеть не#209�аботоспособна."
+msgstr ""
+
+#: unit1.message64
+msgid "Ско#209�ость заг#209�узки т#209�и #209�аза под#209�яд в течение т#209�ех секунд п#209�евысила п#209�опускную способность сети."
 msgstr ""
 
 #: unit1.message7
