@@ -108,6 +108,8 @@ var
   ProfileStrDefault:string; //имя соединения, используемое по-умолчанию
   TrafficRX, TrafficTX:int64; //общий трафик RX/TX
   DoSpeedCount:boolean; //выводить ли скорость загрузки/отдачи
+  MaxSpeed:int64; //максимальная пропускная способность сети
+  LimitRX,LimitTX:byte; //счетчик сколько раз превышалась пропускная способность сети
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -202,6 +204,8 @@ resourcestring
   message60='Интерфейс: ';
   message61='Пожертвования';
   message62='Информация о возможности пожертвований на разработку!';
+  message63='Скорость отдачи три раза подряд в течение трех секунд превысила пропускную способность сети. Сеть неработоспособна.';
+  message64='Скорость загрузки три раза подряд в течение трех секунд превысила пропускную способность сети.';
 
 implementation
 
@@ -484,7 +488,6 @@ begin
 //Проверяем поднялось ли соединение
 CheckVPN;
 If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-If Form3.Visible then MenuItem6.Enabled:=false;
 //проверяем поднялось ли соединение на pppN и если нет, то поднимаем на pppN; переводим pppN в фон
 If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=true;
 If Code_up_ppp then
@@ -867,7 +870,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   link:byte; //1-link ok, 2-no link, 3-none
-  i,j,h:integer;
+  i,j,h,zero:integer;
   str,stri,StrObnull:string;
   Apid:tpid;
   FileObnull:textfile;
@@ -897,6 +900,8 @@ begin
   TrafficRX:=0;
   TrafficTX:=0;
   StrObnull:='';
+  LimitRX:=0;
+  LimitTX:=0;
   DoSpeedCount:=false;
   If FileExists(MyTmpDir+'ObnullRX') then
                                      begin
@@ -1124,7 +1129,6 @@ CheckFiles;//проверка наличия необходимых програ
 //Проверяем поднялось ли соединение
 CheckVPN;
 If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-If Form3.Visible then MenuItem6.Enabled:=false;
 If Code_up_ppp then If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
 If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
 Application.ProcessMessages;
@@ -1168,6 +1172,19 @@ If suse then
    If str<>'' then If RightStr(str,7)='no link' then link:=2;
    If str='' then link:=3;
    PClose(f);
+   //определение пропускной способности сети
+   zero:=0;
+   popen (f,SBinDir+'mii-tool '+Memo_Config.Lines[3]+'|awk '+chr(39)+'{print $3}'+chr(39),'R');
+   str:='';
+   while not eof(f) do
+        readln(f,str);
+   for i:=0 to length(str) do
+       if str[i]='0' then zero:=zero+1;
+   PClose(f);
+   if zero=0 then MaxSpeed:=0; // пропускная способность сети не определилась
+   if zero=1 then MaxSpeed:=(10*1024*1024) div 8; //10 Мбит/с
+   if zero=2 then MaxSpeed:=(100*1024*1024) div 8; //100 Мбит/с
+   if zero=3 then MaxSpeed:=(1000*1024*1024) div 8; //1000 Мбит/с
    If Memo_Config.Lines[6]='mii-tool-no' then link:=1; //отказ от контроля link
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
@@ -1396,7 +1413,6 @@ begin
   //Проверяем поднялось ли соединение
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-  If Form3.Visible then MenuItem6.Enabled:=false;
   KillZombieNet_Monitor;
   //определяем скорость, время
   popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $2}'+chr(39),'R');
@@ -1417,6 +1433,27 @@ begin
   If TXbyte1='' then TXbyte1:='0';
   If RXbyte1<>'0' then Delete(RXbyte1,1,6);
   If TXbyte1<>'0' then Delete(TXbyte1,1,6);
+  If MaxSpeed<>0 then If Code_up_ppp then
+          begin
+                if StrToInt64(RXbyte1)-StrToInt64(RXbyte0)>MaxSpeed then
+                                               begin
+                                                    LimitRX:=LimitRX+1;
+                                                    if LimitRX=3 then
+                                                                     begin
+                                                                          BalloonMessage(10000,message64);
+                                                                          LimitRX:=0;
+                                                                     end;
+                                               end else LimitRX:=0;
+                 if StrToInt64(TXbyte1)-StrToInt64(TXbyte0)>MaxSpeed then
+                                               begin
+                                                    LimitTX:=LimitTX+1;
+                                                    if LimitTX=3 then
+                                                                     begin
+                                                                          BalloonMessage(10000,message63);
+                                                                          LimitTX:=0;
+                                                                     end;
+                                               end else LimitTX:=0;
+          end;
   If Code_up_ppp then
         begin
           TrafficRX:=StrToInt64(RXbyte1);
@@ -1604,7 +1641,6 @@ begin
   //Проверяем поднялось ли соединение
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-  If Form3.Visible then MenuItem6.Enabled:=false;
   find_net_monitor:=false;
   If Code_up_ppp then If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then
                     begin
@@ -1655,7 +1691,6 @@ begin
   //Проверяем поднялось ли соединение
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-  If Form3.Visible then MenuItem6.Enabled:=false;
   StrObnull:='';
   If FileExists(MyTmpDir+'ObnullRX') then
                                      begin

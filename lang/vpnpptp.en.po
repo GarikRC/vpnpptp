@@ -556,10 +556,6 @@ msgstr "The field \"DNS1 before raise VPN\" filled in incorrectly. Correct: xxx.
 msgid "Поле \"DNS2 до поднятия VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
 msgstr "The field \"DNS2 before raise VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
 
-#: unit1.message69
-msgid "Необходимо ввести хотя бы одно DNS1 до поднятия VPN или DNS2 до поднятия VPN."
-msgstr "You must enter at least one DNS1 before raise VPN or DNS2 before raise VPN."
-
 #: unit1.message81
 msgid "Поле \"DNS1 п#209�и поднятом VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
 msgstr "The field \"DNS1 at elevated VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
@@ -567,10 +563,6 @@ msgstr "The field \"DNS1 at elevated VPN\" filled in incorrectly. Correct: xxx.x
 #: unit1.message82
 msgid "Поле \"DNS2 п#209�и поднятом VPN\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
 msgstr "The field \"DNS2 at elevated VPN\" filled in incorrectly. Correct: xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
-
-#: unit1.message83
-msgid "Необходимо ввести хотя бы одно DNS1 п#209�и поднятом VPN или DNS2 п#209�и поднятом VPN."
-msgstr "You must enter DNS1 at elevated VPN or DNS2 at elevated VPN."
 
 #: unit1.message84
 msgid "DNS2-се#209�ве#209� до поднятия VPN не пингуется или те#209�яются пакеты, но пингуется DNS1-се#209�ве#209� до поднятия VPN, поэтому это нек#209�итично."
@@ -1130,3 +1122,68 @@ msgstr "Settings for connection"
 #: TFORM1.GROUPBOX2.CAPTION
 msgid "Взаимоисключающие для всех соединений настройки"
 msgstr "Mutually exclusive for all the connections settings"
+
+#: unit1.message83
+msgid "Желательно ввести хотя бы одно DNS1 п#209�и поднятом VPN или DNS2 п#209�и поднятом VPN."
+msgstr "It is desirable to enter DNS1 at elevated VPN or DNS2 at elevated VPN."
+
+#: unit1.message69
+msgid "Возникла ситуация когда не были заданы DNS1 п#209�и поднятом VPN, DNS2 п#209�и поднятом VPN, и п#209�и этом не была выб#209�ана опция usepeerdns."
+msgstr "There is a situation when you did not enter DNS1 at elevated VPN, DNS2 at elevated VPN, and option usepeerdns was not selected."
+
+#: unit1.message193
+msgid "Обна#209�ужено, что использовался ск#209�ипт от mr. Peabody, кото#209�ый изменил о#209�игинальный ск#209�ипт"
+msgstr "Found that used a script from mr. Peabody, which changed the original script"
+
+#: unit1.message194
+msgid "Восстановите этот ск#209�ипт в#209�учную."
+msgstr "Restore this script by hand."
+
+#: unit1.message195
+msgid "<ОК> - выйти из конфигу#209�ато#209�а vpnpptp."
+msgstr "<OK> - exit the configurator vpnpptp."
+
+#: unit1.message196
+msgid "Инфо#209�мация о возможности поже#209�твований на #209�аз#209�аботку!"
+msgstr "Information about the donations to development!"
+
+#: unit1.message197
+msgid "Это нек#209�итично, так как ад#209�ес VPN-се#209�ве#209�а задан по IP."
+msgstr "This is not critical, as the address of the VPN-server is set by IP."
+
+#: unit1.message198
+msgid "Это к#209�итично, так как ад#209�ес VPN-се#209�ве#209�а задан по имени."
+msgstr "This is critical, as the address of the VPN-server is set by name."
+
+#: unit1.message199
+msgid "Задайте ад#209�ес VPN-се#209�ве#209�а по IP или добейтесь автоматического оп#209�еделения DNS1 до поднятия VPN, DNS2 до поднятия VPN."
+msgstr "Set the address of VPN-server by IP or get automatically determine DNS1 before raise VPN, DNS2 before raise VPN."
+
+#: unit1.message200
+msgid "П#209�ог#209�амма заве#209�шает свою #209�аботу."
+msgstr "The program quits."
+
+#: unit1.message201
+msgid "Также можно будет далее указать опцию usepeerdns и надеяться, что п#209�овайде#209� п#209�ишлет DNS1 п#209�и поднятом VPN, DNS2 п#209�и поднятом VPN."
+msgstr "Also, you can specify a later option usepeerdns and hope that the provider will send DNS1 at elevated VPN, DNS2 at elevated VPN."
+
+#: unit1.message202
+msgid "Выб#209�ана опция usepeerdns (она выб#209�ана по-умолчанию), не введены DNS1 п#209�и поднятом VPN, DNS2 п#209�и поднятом VPN."
+msgstr "Option usepeerdns is selected (it is selected by default), do not entered DNS1 at elevated VPN, DNS2 at elevated VPN."
+
+#: unit1.message203
+msgid "<ОК> - п#209�одолжить и надеяться, что п#209�овайде#209� п#209�ишлет DNS1 п#209�и поднятом VPN, DNS2 п#209�и поднятом VPN, <Отмена> - исп#209�авить в#209�учную сейчас."
+msgstr "<OK> - to continue and hope that the provider will send DNS1 at elevated VPN, DNS2 at elevated VPN, <Cancel> - to correct manually now."
+
+#: unit1.message204
+msgid "<ОК> - п#209�одолжить, <Отмена> - исп#209�авить в#209�учную сейчас."
+msgstr "<OK> - to continue, <Cancel> - to correct manually now."
+
+#: unit1.message205
+msgid "<ОК> - включить опцию usepeerdns автоматически и п#209�одолжить (#209�екомендуется), <Отмена> - оставить всё как есть и п#209�одолжить (не #209�екомендуется)."
+msgstr "<OK> - to enable the option usepeerdns automatically and continue (recommended), <Cancel> - to leave all as is now and continue (not recommended)."
+
+#: unit1.message206
+msgctxt "unit1.message206"
+msgid "Опция usepeerdns не выб#209�ана."
+msgstr "Option usepeerdns is not selected."

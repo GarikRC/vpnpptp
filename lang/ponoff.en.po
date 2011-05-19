@@ -251,3 +251,33 @@ msgstr "Connection with the name"
 #: unit1.message57
 msgid "не может существовать, так как это имя за#209�езе#209�ви#209�овано п#209�ог#209�аммой."
 msgstr "does not exist, as this name is reserved by the program."
+
+#: unit1.message58
+msgctxt "unit1.message58"
+msgid "Шлюз: "
+msgstr "Gateway: "
+
+#: unit1.message59
+msgctxt "unit1.message59"
+msgid "IP-ад#209�ес: "
+msgstr "IP-address: "
+
+#: unit1.message60
+msgid "Инте#209�фейс: "
+msgstr "Interface: "
+
+#: unit1.message61
+msgid "Поже#209�твования"
+msgstr "Donations"
+
+#: unit1.message62
+msgid "Инфо#209�мация о возможности поже#209�твований на #209�аз#209�аботку!"
+msgstr "Information about the donations to development!"
+
+#: unit1.message63
+msgid "Ско#209�ость отдачи т#209�и #209�аза под#209�яд в течение т#209�ех секунд п#209�евысила п#209�опускную способность сети. Сеть не#209�аботоспособна."
+msgstr "Upload speed three times during three seconds exceeded bandwidth. Network inoperable."
+
+#: unit1.message64
+msgid "Ско#209�ость заг#209�узки т#209�и #209�аза под#209�яд в течение т#209�ех секунд п#209�евысила п#209�опускную способность сети."
+msgstr "Download speed three times during three seconds exceeded bandwidth."
