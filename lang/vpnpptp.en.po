@@ -851,12 +851,12 @@ msgid "П#209�и низких #209�аз#209�ешениях эк#209�ан
 msgstr "At low screen resolutions simultaneously pressing the Alt key and left mouse button will move the window."
 
 #: unit1.message110
-msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd) в /var/log/syslog."
-msgstr "The log is incomplete or is not being, because you have not chosen the option logging pppd on /var/log/syslog."
+msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd) в /var/log/vpnlog."
+msgstr "The log is incomplete or is not being, because you have not chosen the option logging pppd on /var/log/vpnlog."
 
 #: TFORM1.PPPD_LOG.CAPTION
-msgid "Вести подробный лог pppd(xl2tpd) в /var/log/syslog"
-msgstr "pppd(xl2tpd) detailed log on /var/log/syslog"
+msgid "Вести подробный лог pppd(xl2tpd) в /var/log/vpnlog"
+msgstr "pppd(xl2tpd) detailed log on /var/log/vpnlog"
 
 #: unit1.message20
 msgid "Невозможно наст#209�оить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
