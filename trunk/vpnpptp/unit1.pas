@@ -400,7 +400,7 @@ resourcestring
   message107='Запустить конфигуратор VPN PPTP/L2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
   message108='Установить тестовое соединение VPN PPTP/L2TP в графике/без графики сейчас?';
   message109='Тестовый запуск';
-  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd) в /var/log/syslog.';
+  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd) в /var/log/vpnlog.';
   message111='Команда запуска:';
   message112='Выбор этой опции позволяет установить соединение со случайным адресом VPN-сервера, заданного по имени, устанавливая соединение мгновенно.';
   message113='При отмене этой опции соединение не всегда сможет установиться мгновенно с еще неизвестным адресом VPN-сервера, особенно если их много.';
@@ -1248,7 +1248,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                       Memo_peer.Lines.Add('lcp-echo-failure 4');
                                     end;
  If Pppd_log.Checked then Memo_peer.Lines.Add('debug');
- If Pppd_log.Checked then Memo_peer.Lines.Add('logfile '+VarLogDir+'syslog');
+ If Pppd_log.Checked then Memo_peer.Lines.Add('logfile '+VarLogDir+'vpnlog');
  If Edit_mtu.Text <> '' then Memo_peer.Lines.Add('mtu '+Edit_mtu.Text);
  If Edit_mru.Text <> '' then Memo_peer.Lines.Add('mru '+Edit_mru.Text);
 //Разбираемся с аутентификацией
@@ -2394,15 +2394,15 @@ begin
                                     end;
  If ComboBoxVPN.Text='VPN L2TP' then
                                     begin
-                                       If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'syslog');
-                                       If Pppd_log.Checked then Shell('printf "'+message109+' VPN L2TP ('+VarLogDir+'syslog)\n" >> '+VarLogDir+'syslog');
-                                       If not Pppd_log.Checked then Memo_create.Lines.Add(message109+' VPN L2TP ('+VarLogDir+'syslog)');
-                                       If Pppd_log.Checked then If Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'syslog');
+                                       If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'vpnlog');
+                                       If Pppd_log.Checked then Shell('printf "'+message109+' VPN L2TP ('+VarLogDir+'vpnlog)\n" >> '+VarLogDir+'vpnlog');
+                                       If not Pppd_log.Checked then Memo_create.Lines.Add(message109+' VPN L2TP ('+VarLogDir+'vpnlog)');
+                                       If Pppd_log.Checked then If Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
                                        If not Pppd_log.Checked then if Form3.Tag=1 then Memo_create.Lines.Add (message111+' '+UsrBinDir+'ponoff');
                                        If Pppd_log.Checked then if Form3.Tag=2 then
                                                                  begin
-                                                                      Shell('printf "'+message111+ServiceCommand+'xl2tpd stop'+'\n" >> '+VarLogDir+'syslog');
-                                                                      Shell('printf "'+message111+ServiceCommand+'xl2tpd start'+'\n" >> '+VarLogDir+'syslog');
+                                                                      Shell('printf "'+message111+ServiceCommand+'xl2tpd stop'+'\n" >> '+VarLogDir+'vpnlog');
+                                                                      Shell('printf "'+message111+ServiceCommand+'xl2tpd start'+'\n" >> '+VarLogDir+'vpnlog');
                                                                  end;
                                        If not Pppd_log.Checked then if Form3.Tag=2 then Memo_create.Lines.Add (message111+ServiceCommand+'xl2tpd restart');
                                        if Form3.Tag=2 then
@@ -2424,12 +2424,12 @@ begin
                                     end;
  If ComboBoxVPN.Text='VPN PPTP' then
                                     begin
-                                        If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'syslog');
-                                        If Pppd_log.Checked then Shell('printf "'+message109+' VPN PPTP ('+VarLogDir+'syslog)\n" >> '+VarLogDir+'syslog');
-                                        If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN PPTP ('+VarLogDir+'syslog)');
-                                        If Pppd_log.Checked then if Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'syslog');
+                                        If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'vpnlog');
+                                        If Pppd_log.Checked then Shell('printf "'+message109+' VPN PPTP ('+VarLogDir+'vpnlog)\n" >> '+VarLogDir+'vpnlog');
+                                        If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN PPTP ('+VarLogDir+'vpnlog)');
+                                        If Pppd_log.Checked then if Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
                                         If not Pppd_log.Checked then if Form3.Tag=1 then Memo_create.Lines.Add (message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text);
-                                        If Pppd_log.Checked then if Form3.Tag=2 then Shell('printf "'+message111+' pppd call '+Edit_peer.Text+'\n" >> '+VarLogDir+'syslog');
+                                        If Pppd_log.Checked then if Form3.Tag=2 then Shell('printf "'+message111+' pppd call '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
                                         If not Pppd_log.Checked then If Form3.Tag=2 then Memo_create.Lines.Add (message111+' pppd call '+Edit_peer.Text);
                                         if Form3.Tag=2 then Shell ('pppd call '+Edit_peer.Text);
                                     end;
@@ -2437,7 +2437,7 @@ If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
 Memo_create.Hint:=message109;
 Application.ProcessMessages;
 Form1.Repaint;
-str_log:=VarLogDir+'syslog';
+str_log:=VarLogDir+'vpnlog';
 FlagMtu:=false;
 If Pppd_log.Checked then
 begin
@@ -2484,7 +2484,7 @@ begin
                       PClose(f);
                       If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
                       If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
-                              Shell('printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> '+VarLogDir+'syslog');
+                              Shell('printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> '+VarLogDir+'vpnlog');
                       FlagMtu:=true;
                     end;
            end;

@@ -281,3 +281,7 @@ msgstr "Upload speed three times during three seconds exceeded bandwidth. Networ
 #: unit1.message64
 msgid "Ско#209�ость заг#209�узки т#209�и #209�аза под#209�яд в течение т#209�ех секунд п#209�евысила п#209�опускную способность сети."
 msgstr "Download speed three times during three seconds exceeded bandwidth."
+
+#: unit1.message65
+msgid "Разме#209� файла-лога /var/log/vpnlog больше 1 GiB."
+msgstr "The size of the log /var/log/vpnlog is more than 1 GiB."
