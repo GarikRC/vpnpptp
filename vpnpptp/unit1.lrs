@@ -2867,8 +2867,8 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'t.Control'#7#5'Owner'#23'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideR'
   +'ight.Side'#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Owner'#21'Anchor'
   +'SideBottom.Side'#7#9'asrBottom'#4'Left'#2#0#6'Height'#3#24#2#3'Top'#2#0#5'W'
-  +'idth'#3'0'#3#10'ActivePage'#7#9'TabSheet1'#7'Anchors'#11#5'akTop'#6'akLeft'
-  +#7'akRight'#0#20'BorderSpacing.Bottom'#2'!'#8'TabIndex'#2#0#8'TabOrder'#2#0#0
+  +'idth'#3'0'#3#10'ActivePage'#7#9'TabSheet3'#7'Anchors'#11#5'akTop'#6'akLeft'
+  +#7'akRight'#0#20'BorderSpacing.Bottom'#2'!'#8'TabIndex'#2#2#8'TabOrder'#2#0#0
   +#9'TTabSheet'#9'TabSheet1'#18'AnchorSideTop.Side'#7#9'asrCenter'#24'AnchorSi'
   +'deBottom.Control'#7#12'PageControl1'#21'AnchorSideBottom.Side'#7#9'asrBotto'
   +'m'#7'Caption'#6#10#208#173#209#130#208#176#208#191' 1'#12'ClientHeight'#3
@@ -3520,10 +3520,10 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#208#178#209#139#209#133' '#208#186#208#176#209#128#209#130')'#8'TabOrder'#2
   +#1#0#0#9'TCheckBox'#8'Pppd_log'#22'AnchorSideLeft.Control'#7#9'GroupBox3'#21
   +'AnchorSideTop.Control'#7#14'Reconnect_pptp'#18'AnchorSideTop.Side'#7#9'asrB'
-  +'ottom'#4'Left'#2#4#6'Height'#2#21#3'Top'#2'/'#5'Width'#3'0'#1#18'BorderSpac'
+  +'ottom'#4'Left'#2#4#6'Height'#2#21#3'Top'#2'/'#5'Width'#3'4'#1#18'BorderSpac'
   ,'ing.Left'#2#4#7'Caption'#6'D'#208#146#208#181#209#129#209#130#208#184' '#208
   +#191#208#190#208#180#209#128#208#190#208#177#208#189#209#139#208#185' '#208
-  +#187#208#190#208#179' pppd(xl2tpd) '#208#178' /var/log/syslog'#7'Checked'#9#5
+  +#187#208#190#208#179' pppd(xl2tpd) '#208#178' /var/log/vpnlog'#7'Checked'#9#5
   +'State'#7#9'cbChecked'#8'TabOrder'#2#2#0#0#9'TCheckBox'#10'dhcp_route'#22'An'
   +'chorSideLeft.Control'#7#9'GroupBox3'#21'AnchorSideTop.Control'#7#8'Pppd_log'
   +#18'AnchorSideTop.Side'#7#9'asrBottom'#4'Left'#2#4#6'Height'#2#21#3'Top'#2'D'

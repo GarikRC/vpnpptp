@@ -101,6 +101,7 @@ var
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
   FlagMtu:boolean; //необходимость проверки mtu
   FlagLengthSyslog:boolean; //проверен ли размер файла-лога /var/log/syslog
+  FlagLengthVpnlog:boolean; //проверен ли размер файла-лога /var/log/vpnlog
   Code_up_ppp:boolean; //существует ли интерфейс pppN
   PppIface:string; //точный интерфейс pppN
   Net_MonitorRun:boolean; //запущен ли net_monitor
@@ -206,6 +207,7 @@ resourcestring
   message62='Информация о возможности пожертвований на разработку!';
   message63='Скорость отдачи три раза подряд в течение трех секунд превысила пропускную способность сети. Сеть неработоспособна.';
   message64='Скорость загрузки три раза подряд в течение трех секунд превысила пропускную способность сети.';
+  message65='Размер файла-лога /var/log/vpnlog больше 1 GiB.';
 
 implementation
 
@@ -485,6 +487,14 @@ begin
                Application.ProcessMessages;
            end;
    FlagLengthSyslog:=true;
+   //Проверяем размер файла-лога /var/log/vpnlog
+   If not FlagLengthVpnlog then If FileExists(VarLogDir+'vpnlog') then If FileSize(VarLogDir+'vpnlog')>1073741824 then // >1 Гб
+            begin
+                BalloonMessage (8000,message65+' '+message46);
+                MySleep(3000);
+                Application.ProcessMessages;
+            end;
+    FlagLengthVpnlog:=true;
 //Проверяем поднялось ли соединение
 CheckVPN;
 If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
@@ -928,6 +938,7 @@ begin
   CountInterface:=1;
   FlagMtu:=false;
   FlagLengthSyslog:=false;
+  FlagLengthVpnlog:=false;
   Form1.Visible:=false;
   Form1.WindowState:=wsMinimized;
   Form1.Hide;
