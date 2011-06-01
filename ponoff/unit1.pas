@@ -1189,8 +1189,11 @@ If suse then
    str:='';
    while not eof(f) do
         readln(f,str);
-   for i:=0 to length(str) do
-       if str[i]='0' then zero:=zero+1;
+   if str<>'' then
+                begin
+                     for i:=1 to length(str) do
+                         if str[i]='0' then zero:=zero+1;
+                end;
    PClose(f);
    if zero=0 then MaxSpeed:=0; // пропускная способность сети не определилась
    if zero=1 then MaxSpeed:=(10*1024*1024) div 8; //10 Мбит/с
