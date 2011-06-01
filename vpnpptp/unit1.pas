@@ -3113,6 +3113,13 @@ If not y then IPS:=true else IPS:=false;
                      dhcp_route.Checked:=false;
                      StartMessage:=true;
                 end;
+  If fedora then if ComboBoxVPN.Text='VPN L2TP' then
+                begin
+                     StartMessage:=false;
+                     Pppd_log.Checked:=false;
+                     Pppd_log.Enabled:=false;
+                     StartMessage:=true;
+                end;
   If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then
                 begin
                      StartMessage:=false;
