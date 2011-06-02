@@ -48,7 +48,7 @@ msgid "                             Label3"
 msgstr ""
 
 #: TFORM2.LABEL4.CAPTION
-msgid "Label4"
+msgid "                                          Label4"
 msgstr ""
 
 #: TFORM3.FORM3.CAPTION
