@@ -120,8 +120,6 @@ end;
 
 procedure TForm2.Timer1Timer(Sender: TObject);
 begin
-   If Mouse.CursorPos.X>=Xg then If Mouse.CursorPos.X<=Xg+22 then
-                            If Mouse.CursorPos.Y>=Yg then If Mouse.CursorPos.Y<=Yg+22 then exit;
    Form2.Hide;
    Timer1.Enabled:=false;
    Form2.Tag:=0;
@@ -129,8 +127,8 @@ end;
 
 procedure TForm2.Timer2Timer(Sender: TObject);
 begin
-   If Mouse.CursorPos.X>=Xg then If Mouse.CursorPos.X<=Xg+22 then
-                            If Mouse.CursorPos.Y>=Yg then If Mouse.CursorPos.Y<=Yg+22 then exit;
+  //If Mouse.CursorPos.X>=Xg then If Mouse.CursorPos.X<=Xg+22 then
+  //                          If Mouse.CursorPos.Y>=Yg then If Mouse.CursorPos.Y<=Yg+22 then exit;
    Form2.Hide;
    Timer2.Enabled:=false;
    Form2.Tag:=0;
