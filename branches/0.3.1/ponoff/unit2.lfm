@@ -73,32 +73,28 @@ object Form2: TForm2
       Left = 4
       Height = 142
       Top = 4
-      Width = 161
-      Anchors = [akTop, akLeft, akBottom]
+      Width = 428
+      Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Around = 3
       Caption = '                             Label3'
       ParentColor = False
-      WordWrap = True
       OnClick = FormClick
     end
     object Label4: TLabel
-      AnchorSideLeft.Control = Label3
-      AnchorSideLeft.Side = asrBottom
+      AnchorSideLeft.Control = Panel1
       AnchorSideTop.Control = Panel1
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
-      Left = 178
+      Left = 4
       Height = 142
       Top = 4
-      Width = 254
+      Width = 428
       Anchors = [akTop, akLeft, akRight, akBottom]
-      BorderSpacing.Left = 10
       BorderSpacing.Around = 3
-      Caption = 'Label4'
+      Caption = '                                          Label4'
       ParentColor = False
-      WordWrap = True
       OnClick = FormClick
     end
   end

@@ -1675,7 +1675,7 @@ end;
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
 // Вывод информации о соединении
 var
-  str,str0,str1,StrObnull:string;
+  str,str0,str1,StrObnull,strVPN:string;
   SecondsPastRun:int64;
   hour,min,sec:int64;
   Time:string;
@@ -1782,33 +1782,19 @@ begin
                                                            end;
   str0:='';
   str1:='';
-  If Memo_Config.Lines[39]<>'l2tp' then
-                                   begin
+  If Memo_Config.Lines[39]<>'l2tp' then strVPN:='VPN PPTP' else strVPN:='VPN L2TP';
                                         If Code_up_ppp then
                                                        begin
-                                                            str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                            str1:=message6+': '+Memo_Config.Lines[0]+' ('+strVPN+')'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                                             str0:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                        end
                                                             else
                                                                 begin
-                                                                     str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN PPTP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                                     str0:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                                     str1:=message6+': '+Memo_Config.Lines[0]+' ('+strVPN+')'+chr(13)+message22+' '+message8+chr(13)+message29+' '+'-'+chr(13)+message27+' '+'-'+chr(13)+message28+' '+'-';
+                                                                     str0:=message60+'-'+chr(13)+message59+'-'+chr(13)+message58+'-'+chr(13)+'DNS1: '+'-'+chr(13)+'DNS2: '+'-';
                                                                 end;
-                                   end;
-  If Memo_Config.Lines[39]='l2tp' then
-                                   begin
-                                        If Code_up_ppp then
-                                                       begin
-                                                           str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                           str0:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
-                                                       end
-                                                             else
-                                                                 begin
-                                                                      str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' VPN L2TP'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                                      str0:=message60+'-'+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
-                                                                 end;
-                                   end;
-  Unit2.Form2.ShowMyHint (str0, str1, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+  //Unit2.Form2.ShowMyHint (str0, str1, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
+  TrayIcon1.Hint:=str1+chr(13)+str0;
   Application.ProcessMessages;
 end;
 
