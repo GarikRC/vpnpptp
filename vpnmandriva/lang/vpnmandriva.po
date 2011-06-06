@@ -1,0 +1,650 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: TFORM1.BUTTON_CREATE.CAPTION
+msgctxt "TFORM1.BUTTON_CREATE.CAPTION"
+msgid "M"
+msgstr ""
+
+#: TFORM1.BUTTON_EXIT.CAPTION
+msgctxt "TFORM1.BUTTON_EXIT.CAPTION"
+msgid "L"
+msgstr ""
+
+#: TFORM1.CHECKBOX_AUTOSTART.CAPTION
+msgctxt "TFORM1.CHECKBOX_AUTOSTART.CAPTION"
+msgid "G"
+msgstr ""
+
+#: TFORM1.CHECKBOX_NO128.CAPTION
+msgid "no128"
+msgstr ""
+
+#: TFORM1.CHECKBOX_NO40.CAPTION
+msgid "no40"
+msgstr ""
+
+#: TFORM1.CHECKBOX_NO56.CAPTION
+msgid "no56"
+msgstr ""
+
+#: TFORM1.CHECKBOX_NOBUFFER.CAPTION
+msgctxt "TFORM1.CHECKBOX_NOBUFFER.CAPTION"
+msgid "I"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RCHAP.CAPTION
+msgid "refuse-chap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_REAP.CAPTION
+msgid "refuse-eap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_REQUIRED.CAPTION
+msgid "required"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RIGHT.CAPTION
+msgctxt "TFORM1.CHECKBOX_RIGHT.CAPTION"
+msgid "F"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RMSCHAP.CAPTION
+msgid "refuse-mschap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RMSCHAPV2.CAPTION
+msgid "refuse-mschap-v2"
+msgstr ""
+
+#: TFORM1.CHECKBOX_RPAP.CAPTION
+msgid "refuse-pap"
+msgstr ""
+
+#: TFORM1.CHECKBOX_STATELESS.CAPTION
+msgid "stateless"
+msgstr ""
+
+#: TFORM1.CHECKBOX_TRAFFIC.CAPTION
+msgctxt "TFORM1.CHECKBOX_TRAFFIC.CAPTION"
+msgid "H"
+msgstr ""
+
+#: TFORM1.EDIT_METRIC.TEXT
+msgid "1"
+msgstr ""
+
+#: TFORM1.FORM1.CAPTION
+msgid "Настройка VPN PPTP"
+msgstr ""
+
+#: TFORM1.LABEL13.CAPTION
+msgid "K                                 "
+msgstr ""
+
+#: TFORM1.LABEL9.CAPTION
+msgctxt "TFORM1.LABEL9.CAPTION"
+msgid "J"
+msgstr ""
+
+#: TFORM1.LABEL_IPS.CAPTION
+msgid "B"
+msgstr ""
+
+#: TFORM1.LABEL_METRIC.CAPTION
+msgid "E"
+msgstr ""
+
+#: TFORM1.LABEL_PEER.CAPTION
+msgid "A"
+msgstr ""
+
+#: TFORM1.LABEL_PSWD.CAPTION
+msgid "D"
+msgstr ""
+
+#: TFORM1.LABEL_USER.CAPTION
+msgctxt "TFORM1.LABEL_USER.CAPTION"
+msgid "C"
+msgstr ""
+
+#: TFORM3.FORM3.CAPTION
+msgid "Form3"
+msgstr ""
+
+#: unit1.message0en
+msgctxt "unit1.message0en"
+msgid "Attention!"
+msgstr ""
+
+#: unit1.message0ru
+msgctxt "unit1.message0ru"
+msgid "Внимание!"
+msgstr ""
+
+#: unit1.message0uk
+msgid "Увага!"
+msgstr ""
+
+#: unit1.message10en
+msgid "This option can not be selected, because was not found"
+msgstr ""
+
+#: unit1.message10ru
+msgctxt "unit1.message10ru"
+msgid "Эту опцию выб#209�ать нельзя, так как не найден"
+msgstr ""
+
+#: unit1.message11en
+msgid "The connection was successfully created."
+msgstr ""
+
+#: unit1.message11ru
+msgctxt "unit1.message11ru"
+msgid "Соединение было успешно создано."
+msgstr ""
+
+#: unit1.message12en
+msgid "You can manage the connection with help net_applet (package drakx-net)"
+msgstr ""
+
+#: unit1.message12ru
+msgctxt "unit1.message12ru"
+msgid "Уп#209�авлять соединением можно че#209�ез net_applet (пакет drakx-net)"
+msgstr ""
+
+#: unit1.message13en
+msgid "or in the root's console by commands: ifup pppN, ifdown pppN."
+msgstr ""
+
+#: unit1.message13ru
+msgctxt "unit1.message13ru"
+msgid "или в консоли под админист#209�ато#209�ом командами ifup, ifdown, пе#209�едавая им инте#209�фейс."
+msgstr ""
+
+#: unit1.message14en
+msgid "Connection will be established at boot without entering a root's password."
+msgstr ""
+
+#: unit1.message14ru
+msgctxt "unit1.message14ru"
+msgid "Соединение установится п#209�и заг#209�узке системы без ввода па#209�оля админист#209�ато#209�а."
+msgstr ""
+
+#: unit1.message15en
+msgid "When you select nobuffer, then will not be buffering; it is desirable for fast connections, but not desirable for a unstable."
+msgstr ""
+
+#: unit1.message15ru
+msgctxt "unit1.message15ru"
+msgid "П#209�и выбо#209�е опции nobuffer не будет буфе#209�изации, что желательно для быст#209�ого соединения, но нежелательно для медленного, нестабильного."
+msgstr ""
+
+#: unit1.message16en
+msgid "Program failed to install."
+msgstr ""
+
+#: unit1.message16ru
+msgctxt "unit1.message16ru"
+msgid "П#209�ог#209�амма не смогла установиться."
+msgstr ""
+
+#: unit1.message17en
+msgid "The program was successfully installed (updated)."
+msgstr ""
+
+#: unit1.message17ru
+msgctxt "unit1.message17ru"
+msgid "П#209�ог#209�амма была успешно установлена (обновлена)."
+msgstr ""
+
+#: unit1.message17uk
+msgid "П#209�ог#209�ама була успішно встановлена (оновлена)"
+msgstr ""
+
+#: unit1.message18en
+msgid "Authentication of mschap v2 is used frequently - this is a simultaneous choice of refuse-eap, refuse-chap, refuse-mschap, refuse-pap."
+msgstr ""
+
+#: unit1.message18ru
+msgctxt "unit1.message18ru"
+msgid "Часто используется аутентификация mschap v2 - это однов#209�еменный выбо#209� refuse-eap, refuse-chap, refuse-mschap, refuse-pap."
+msgstr ""
+
+#: unit1.message18uk
+msgid "Часто вико#209�истовується аутентифікація mschap v2 - це одночасний вибі#209� refuse-eap, refuse-chap, refuse-mschap, refuse-pap."
+msgstr ""
+
+#: unit1.message19en
+msgid "With option refuse-chap, pppd will not agree to authenticate itself to the peer using CHAP."
+msgstr ""
+
+#: unit1.message19ru
+msgctxt "unit1.message19ru"
+msgid "П#209�и использовании опции refuse-chap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу CHAP."
+msgstr ""
+
+#: unit1.message19uk
+msgid "П#209�и вико#209�истанні опції refuse-chap демон pppd не погодиться аутентіфіци#209�овать себе по п#209�отоколу CHAP."
+msgstr ""
+
+#: unit1.message1en
+msgctxt "unit1.message1en"
+msgid "Fields \"ISP (IP or Name)\", \"User name (login)\", \"Password\" is required."
+msgstr ""
+
+#: unit1.message1ru
+msgctxt "unit1.message1ru"
+msgid "Поля \"П#209�овайде#209� (IP или имя)\", \"Пользователь (логин)\", \"Па#209�оль\" обязательны к заполнению."
+msgstr ""
+
+#: unit1.message1uk
+msgid "Поля \"П#209�овайде#209� (IP або ім#226�#153я)\", \"Ко#209�истувач (логін)\", \"Па#209�оль\" обов#226�#153язкові до заповнення."
+msgstr ""
+
+#: unit1.message20en
+msgid "With option refuse-eap, pppd will not agree to authenticate itself to the peer using EAP."
+msgstr ""
+
+#: unit1.message20ru
+msgctxt "unit1.message20ru"
+msgid "П#209�и использовании опции refuse-eap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу EAP."
+msgstr ""
+
+#: unit1.message20uk
+msgid "П#209�и вико#209�истанні опції refuse-eap демон pppd не погодиться аутентіфіци#209�овать себе по п#209�отоколу EAP."
+msgstr ""
+
+#: unit1.message21en
+msgid "With option refuse-mschap, pppd will not agree to authenticate itself to the peer using MS-CHAP."
+msgstr ""
+
+#: unit1.message21ru
+msgctxt "unit1.message21ru"
+msgid "П#209�и использовании опции refuse-mschap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу MS-CHAP."
+msgstr ""
+
+#: unit1.message21uk
+msgid "П#209�и вико#209�истанні опції refuse-mschap демон pppd не погодиться аутентіфіци#209�овать себе по п#209�отоколу MS-CHAP."
+msgstr ""
+
+#: unit1.message22en
+msgid "With option refuse-pap, pppd will not agree to authenticate itself to the peer using PAP."
+msgstr ""
+
+#: unit1.message22ru
+msgctxt "unit1.message22ru"
+msgid "П#209�и использовании опции refuse-pap демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу PAP."
+msgstr ""
+
+#: unit1.message22uk
+msgid "П#209�и вико#209�истанні опції refuse-pap демон pppd не погодиться аутентіфіци#209�овать себе по п#209�отоколу PAP."
+msgstr ""
+
+#: unit1.message23en
+msgid "With option refuse-mschap-v2, pppd will not agree to authenticate itself to the peer using MS-CHAPv2."
+msgstr ""
+
+#: unit1.message23ru
+msgctxt "unit1.message23ru"
+msgid "П#209�и использовании опции refuse-mschap-v2 демон pppd не согласится аутентифици#209�овать себя по п#209�отоколу MS-CHAPv2."
+msgstr ""
+
+#: unit1.message23uk
+msgid "П#209�и вико#209�истанні опції refuse-mschap-v2 демон pppd не погодиться аутентіфіци#209�овать себе по п#209�отоколу MS-CHAPv2."
+msgstr ""
+
+#: unit1.message24en
+msgid "required - require mppe; disconnect if peer doesn't support it."
+msgstr ""
+
+#: unit1.message24ru
+msgctxt "unit1.message24ru"
+msgid "Опция required делает шиф#209�ование mppe обязательным и т#209�ебует его использовать - не соединяться если п#209�овайде#209� не подде#209�живает шиф#209�ование mppe."
+msgstr ""
+
+#: unit1.message24uk
+msgid "Опція required #209�обить шиф#209�ування mppe обов'язковим і вимагає його вико#209�истовувати - не з'єднуватися якщо п#209�овайде#209� не підт#209�имує шиф#209�ування mppe."
+msgstr ""
+
+#: unit1.message25en
+msgid "Encryption mppe often used with 128-bit encryption - is the simultaneous selection of required, stateless, no40, no56."
+msgstr ""
+
+#: unit1.message25ru
+msgctxt "unit1.message25ru"
+msgid "Часто используется шиф#209�ование т#209�афика mppe с 128-битным шиф#209�ованием - это однов#209�еменный выбо#209� required, stateless, no40, no56."
+msgstr ""
+
+#: unit1.message25uk
+msgid "Часто вико#209�истовується шиф#209�ування т#209�афіку mppe з 128-бітовим шиф#209�уванням - це одночасний вибі#209� required, stateless, no40, no56."
+msgstr ""
+
+#: unit1.message26en
+msgid "stateless - try to negotiate stateless mode."
+msgstr ""
+
+#: unit1.message26ru
+msgctxt "unit1.message26ru"
+msgid "Опция stateless пытается #209�еализовать шиф#209�ование mppe в #209�ежиме без подде#209�жки состояний."
+msgstr ""
+
+#: unit1.message26uk
+msgid "Опція stateless намагається #209�еалізувати шиф#209�ування mppe в #209�ежимі без підт#209�имки станів."
+msgstr ""
+
+#: unit1.message27en
+msgid "no40 - disable 40 bit keys."
+msgstr ""
+
+#: unit1.message27ru
+msgctxt "unit1.message27ru"
+msgid "Опция no40 отключает 40-битное шиф#209�ование mppe."
+msgstr ""
+
+#: unit1.message27uk
+msgid "Опція no40 відключає 40-бітове шиф#209�ування mppe."
+msgstr ""
+
+#: unit1.message28en
+msgid "no56 - disable 56 bit keys."
+msgstr ""
+
+#: unit1.message28ru
+msgctxt "unit1.message28ru"
+msgid "Опция no56 отключает 56-битное шиф#209�ование mppe."
+msgstr ""
+
+#: unit1.message28uk
+msgid "Опція no56 відключає 56-бітове шиф#209�ування mppe."
+msgstr ""
+
+#: unit1.message29en
+msgid "no128 - disable 128 bit keys."
+msgstr ""
+
+#: unit1.message29ru
+msgctxt "unit1.message29ru"
+msgid "Опция no128 отключает 128-битное шиф#209�ование mppe."
+msgstr ""
+
+#: unit1.message29uk
+msgid "Опція no128 відключає 128-бітове шиф#209�ування mppe."
+msgstr ""
+
+#: unit1.message2en
+msgid "It is desirable to set a metric less than for network interface, which will be to use for VPN PPTP."
+msgstr ""
+
+#: unit1.message2ru
+msgctxt "unit1.message2ru"
+msgid "Желательно установить мет#209�ику меньшую, чем у сетевого инте#209�фейса, на кото#209�ом будет поднято VPN PPTP."
+msgstr ""
+
+#: unit1.message30en
+msgid "Run this program as root or from the Control Center->Network and  Internet->Setting VPN-connections->VPN PPTP."
+msgstr ""
+
+#: unit1.message30ru
+msgctxt "unit1.message30ru"
+msgid "Запустите эту п#209�ог#209�амму под root или из Цент#209�а Уп#209�авления->Сеть и Инте#209�нет->Наст#209�ойка VPN-соединений->VPN PPTP."
+msgstr ""
+
+#: unit1.message31en
+msgid "Quit"
+msgstr ""
+
+#: unit1.message31ru
+msgctxt "unit1.message31ru"
+msgid "Выйти из п#209�ог#209�аммы"
+msgstr ""
+
+#: unit1.message31uk
+msgid "Вийти із п#209�ог#209�ами"
+msgstr ""
+
+#: unit1.message32en
+msgid "This button creates the connection"
+msgstr ""
+
+#: unit1.message32ru
+msgctxt "unit1.message32ru"
+msgid "Эта кнопка создает соединение"
+msgstr ""
+
+#: unit1.message33en
+msgid "At low screen resolutions simultaneously pressing the Alt key and left mouse button will move the window."
+msgstr ""
+
+#: unit1.message33ru
+msgctxt "unit1.message33ru"
+msgid "П#209�и низких #209�аз#209�ешениях эк#209�ана однов#209�еменное нажатие клавиши Alt и левой кнопки мыши поможет пе#209�еместить окно."
+msgstr ""
+
+#: unit1.message33uk
+msgid "П#209�и низьких дозволах ек#209�ана одночасне натискання клавіші Alt і лівої кнопки миші допоможе пе#209�емістити вікно."
+msgstr ""
+
+#: unit1.message34en
+msgid "Pressing the left/right click on the window changes the font."
+msgstr ""
+
+#: unit1.message34ru
+msgctxt "unit1.message34ru"
+msgid "Нажатие левой/п#209�авой кнопкой мыши на пустом месте окна изменяет ш#209�ифт."
+msgstr ""
+
+#: unit1.message34uk
+msgid "Натискання лівої/п#209�авою кнопкою миші на по#209�ожньому місці вікна змінює ш#209�ифт."
+msgstr ""
+
+#: unit1.message35en
+msgid "     Network:"
+msgstr ""
+
+#: unit1.message35ru
+msgid "Сетевой инте#209�фейс:"
+msgstr ""
+
+#: unit1.message35uk
+msgid "Ме#209�ежевий інте#209�фейс:"
+msgstr ""
+
+#: unit1.message36en
+msgid "ISP (IP or name)*:"
+msgstr ""
+
+#: unit1.message36ru
+msgid "П#209�овайде#209� (IP или имя)*:"
+msgstr ""
+
+#: unit1.message36uk
+msgid "П#209�овайде#209� (IP або ім#226�#153я)*:"
+msgstr ""
+
+#: unit1.message37en
+msgid "User (login)*:"
+msgstr ""
+
+#: unit1.message37ru
+msgctxt "unit1.message37ru"
+msgid "Пользователь (логин)*:"
+msgstr ""
+
+#: unit1.message37uk
+msgid "Ко#209�истувач (логін)*"
+msgstr ""
+
+#: unit1.message38en
+msgid "Password*:"
+msgstr ""
+
+#: unit1.message38ru
+msgctxt "unit1.message38ru"
+msgid "Па#209�оль*:"
+msgstr ""
+
+#: unit1.message38uk
+msgctxt "unit1.message38uk"
+msgid "Па#209�оль*:"
+msgstr ""
+
+#: unit1.message39en
+msgid "Metric:"
+msgstr ""
+
+#: unit1.message39ru
+msgid "Мет#209�ика:"
+msgstr ""
+
+#: unit1.message3en
+msgid "Unable to configure VPN PPTP because of absence of package pptp-linux."
+msgstr ""
+
+#: unit1.message3ru
+msgctxt "unit1.message3ru"
+msgid "Невозможно наст#209�оить VPN PPTP в связи с отсутствием пакета pptp-linux."
+msgstr ""
+
+#: unit1.message40en
+msgid "Let users operate the connection"
+msgstr ""
+
+#: unit1.message40ru
+msgid "Раз#209�ешить пользователям уп#209�авлять подключением"
+msgstr ""
+
+#: unit1.message40uk
+msgid "Дозволити ко#209�истувачам ке#209�увати підключенням"
+msgstr ""
+
+#: unit1.message41en
+msgid "Connect the connection at boot"
+msgstr ""
+
+#: unit1.message41ru
+msgid "Устанавливать соединение п#209�и заг#209�узке"
+msgstr ""
+
+#: unit1.message42en
+msgid "Enable to calculate traffic"
+msgstr ""
+
+#: unit1.message42ru
+msgid "Включить подсчет т#209�афика"
+msgstr ""
+
+#: unit1.message43en
+msgid "Not buffered packets (nobuffer)"
+msgstr ""
+
+#: unit1.message43ru
+msgid "Не буфе#209�изи#209�овать пакеты (nobuffer)"
+msgstr ""
+
+#: unit1.message44en
+msgid "Authentication:"
+msgstr ""
+
+#: unit1.message44ru
+msgctxt "unit1.message44ru"
+msgid "Аутентификация:"
+msgstr ""
+
+#: unit1.message44uk
+msgid "Аутентифікація:"
+msgstr ""
+
+#: unit1.message45en
+msgid "Encription mppe:"
+msgstr ""
+
+#: unit1.message45ru
+msgid "Шиф#209�ование mppe:"
+msgstr ""
+
+#: unit1.message45uk
+msgid "Шиф#209�ування mppe:"
+msgstr ""
+
+#: unit1.message46en
+msgid "Exit   "
+msgstr ""
+
+#: unit1.message46ru
+msgctxt "unit1.message46ru"
+msgid "Выход  "
+msgstr ""
+
+#: unit1.message46uk
+msgid "Вихід  "
+msgstr ""
+
+#: unit1.message47en
+msgid "Create"
+msgstr ""
+
+#: unit1.message47ru
+msgctxt "unit1.message47ru"
+msgid "Создать"
+msgstr ""
+
+#: unit1.message47uk
+msgid "Ство#209�ити"
+msgstr ""
+
+#: unit1.message4en
+msgid "Choice of this option allows users to manage connections with help net_applet without entering the root's password."
+msgstr ""
+
+#: unit1.message4ru
+msgctxt "unit1.message4ru"
+msgid "Выбо#209� этой опции позволяет пользователям уп#209�авлять подключением че#209�ез net_applet без ввода па#209�оля админист#209�ато#209�а."
+msgstr ""
+
+#: unit1.message5en
+msgid "If you choose this option, then the connection will be established when the system boots."
+msgstr ""
+
+#: unit1.message5ru
+msgctxt "unit1.message5ru"
+msgid "Если выб#209�ать эту опцию, то соединение установится п#209�и заг#209�узке системы."
+msgstr ""
+
+#: unit1.message6en
+msgid "If you choose this option, then traffic will be to calculate for the connection, which you can watch with help net_monitor."
+msgstr ""
+
+#: unit1.message6ru
+msgctxt "unit1.message6ru"
+msgid "Если выб#209�ать эту опцию, то для соединения будет вестись подсчет т#209�афика, кото#209�ый можно наблюдать че#209�ез net_monitor."
+msgstr ""
+
+#: unit1.message7en
+msgid "In this box you must enter address of vpn-server."
+msgstr ""
+
+#: unit1.message7ru
+msgctxt "unit1.message7ru"
+msgid "В этом поле указывается ад#209�ес vpn-се#209�ве#209�а."
+msgstr ""
+
+#: unit1.message8en
+msgid "Did not match any of the free interface pppN, where N is in the range [0..100]. Remove unused connections in the Control Center."
+msgstr ""
+
+#: unit1.message8ru
+msgctxt "unit1.message8ru"
+msgid "Не найдено ни одного свободного инте#209�фейса pppN, где N в диапазоне [0..100]. Удалите неиспользуемые соединения в Цент#209�е Уп#209�авления."
+msgstr ""
+
+#: unit1.message9en
+msgid "The program complete its work."
+msgstr ""
+
+#: unit1.message9ru
+msgctxt "unit1.message9ru"
+msgid "П#209�ог#209�амма заве#209�шает свою #209�аботу."
+msgstr ""
+
