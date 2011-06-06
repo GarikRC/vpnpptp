@@ -301,7 +301,7 @@ msgstr "Programm adding VPN-server route"
 
 #: unit1.message25
 msgid "Не установлен и не запущен dhclient (то есть пакет dhcp-client). Возможны п#209�облемы в #209�аботе сети."
-msgstr "Dhclient (packet dhcp-client) not installed and not started. May be trouble for network work."
+msgstr "Dhclient (package dhcp-client) not installed and not started. May be trouble for network work."
 
 #: unit1.message26
 msgid "Не удалось оп#209�еделить IP-ад#209�ес VPN-се#209�ве#209�а. VPN-се#209�ве#209� не пингуется. Или он введен неп#209�авильно, или п#209�облема с DNS."
@@ -309,7 +309,7 @@ msgstr "Unable to determine the IP-address of the VPN-server. VPN-server is not 
 
 #: unit1.message27
 msgid "Ма#209�ш#209�уты не могут п#209�иходить че#209�ез DHCP, так как не установлен и не запущен dhclient (то есть пакет dhcp-client)."
-msgstr "You can not get the routes via DHCP, because dhclient (packet dhcp-client) is not installed and not started."
+msgstr "You can not get the routes via DHCP, because dhclient (package dhcp-client) is not installed and not started."
 
 #: unit1.message28
 msgid "Нельзя оп#209�еделить IP-ад#209�ес VPN-се#209�ве#209�а, так как ст#209�ока для ввода не заполнена."
@@ -398,7 +398,7 @@ msgstr "The network is ready for testing of route-comings via DHCP. dhclient is 
 #: unit1.message50
 msgctxt "unit1.message50"
 msgid "Оп#209�еделяются IP-ад#209�еса VPN-се#209�ве#209�а че#209�ез команду host из пакета bind-utils. Ожидайте..."
-msgstr "IP-addresses of VPN-server are being defined with help command host from packet bind-utils. Please, wait..."
+msgstr "IP-addresses of VPN-server are being defined with help command host from package bind-utils. Please, wait..."
 
 #: unit1.message52
 msgctxt "unit1.message52"
@@ -424,7 +424,7 @@ msgstr "This option creates link ponoff on Desktop for access to the Internet fo
 
 #: unit1.message57
 msgid "Для того, чтобы #209�аз#209�ешить пользователям уп#209�авлять подключением сначала установите пакет sudo."
-msgstr "In order to let users operate the connection, at first install packet sudo."
+msgstr "In order to let users operate the connection, at first install package sudo."
 
 #: TFORM1.NETWORKTEST.CAPTION
 msgid "Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет"
@@ -452,7 +452,7 @@ msgstr "- not add routes not garanted simultaneously works the Internet and loca
 
 #: unit1.message6
 msgid "Для того, чтобы #209�аз#209�ешить пользователям конфигу#209�и#209�овать соединение сначала установите пакет sudo."
-msgstr "In order to allow users to configure the connection, first install the packet sudo."
+msgstr "In order to allow users to configure the connection, first install the package sudo."
 
 #: unit1.message9
 msgid "Эта опция позволяет пользователям запускать конфигу#209�ато#209� VPN PPTP/L2TP без па#209�оля админист#209�ато#209�а и конфигу#209�и#209�овать соединение."
@@ -754,7 +754,7 @@ msgstr "<OK> - ignore this warning and continue. <Cancel> - Correct."
 
 #: unit1.message121
 msgid "Не установлен пакет bind-utils."
-msgstr "Not installed bind-utils packet."
+msgstr "Not installed bind-utils package."
 
 #: unit1.message122
 msgid "ОК"
@@ -860,7 +860,7 @@ msgstr "pppd(xl2tpd) detailed log on /var/log/vpnlog"
 
 #: unit1.message20
 msgid "Невозможно наст#209�оить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
-msgstr "Unable find pptp-linux packet or pptp packet. VPN PPTP/L2TP can not be configured."
+msgstr "Unable find pptp-linux package or pptp package. VPN PPTP/L2TP can not be configured."
 
 #: unit1.message97
 msgid "Дист#209�ибутив оп#209�еделяется автоматически, но если этого не п#209�оизошло, то выбе#209�ите наиболее подходящий из списка."
