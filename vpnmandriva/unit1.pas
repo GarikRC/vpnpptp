@@ -35,38 +35,41 @@ type
   TForm1 = class(TForm)
     Button_create: TBitBtn;
     Button_exit: TBitBtn;
-    CheckBox_nobuffer: TCheckBox;
-    CheckBox_right: TCheckBox;
     CheckBox_autostart: TCheckBox;
-    CheckBox_traffic: TCheckBox;
     CheckBox_no128: TCheckBox;
     CheckBox_no40: TCheckBox;
     CheckBox_no56: TCheckBox;
+    CheckBox_nobuffer: TCheckBox;
+    CheckBox_pppd_log: TCheckBox;
     CheckBox_rchap: TCheckBox;
     CheckBox_reap: TCheckBox;
     CheckBox_required: TCheckBox;
+    CheckBox_right: TCheckBox;
     CheckBox_rmschap: TCheckBox;
     CheckBox_rmschapv2: TCheckBox;
     CheckBox_rpap: TCheckBox;
     CheckBox_stateless: TCheckBox;
-    Edit_metric: TEdit;
+    CheckBox_traffic: TCheckBox;
     Edit_IPS: TEdit;
+    Edit_metric: TEdit;
     Edit_passwd: TEdit;
     Edit_peer: TEdit;
     Edit_user: TEdit;
     Image1: TImage;
-    Label_metric: TLabel;
     Label13: TLabel;
     Label9: TLabel;
     Label_IPS: TLabel;
+    Label_metric: TLabel;
     Label_peer: TLabel;
     Label_pswd: TLabel;
     Label_user: TLabel;
     Memo1: TMemo;
+    Panel1: TPanel;
     procedure Button_createClick(Sender: TObject);
     procedure Button_exitClick(Sender: TObject);
     procedure CheckBox_trafficChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure Label9Click(Sender: TObject);
     procedure TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   private
@@ -94,11 +97,16 @@ var
 const
   MyTmpDir='/tmp/'; //директория для временных файлов
   MyLangDir='/usr/share/vpnmandriva/lang/'; //директория для файлов переводов программы
+  MyLogDir='/var/log/ppp/'; //директория для логов pppd
   EtcPppIpUpDDir='/etc/ppp/ip-up.d/';
+  EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
+  SBinDir='/sbin/';
   UsrSBinDir='/usr/sbin/';
   EtcPppPeersDir='/etc/ppp/peers/';
   IfcfgDir='/etc/sysconfig/network-scripts/';
+  EtcInitDDir='/etc/init.d/';
+  MyVpnDir='/usr/lib/libDrakX/network/vpn/';
 
 resourcestring
   message0ru='Внимание!';
@@ -149,6 +157,11 @@ resourcestring
   message45ru='Шифрование mppe:';
   message46ru='Выход  ';//общая длина 7 символов
   message47ru='Создать';
+  message48ru='Настройка VPN PPTP';
+  message49ru='Вести подробный лог pppd в';
+  message50ru='Ведите лог pppd для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
+  message51ru='Для удаления программы удалите:';
+  message52ru='Не забудьте настроить файервол.';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
@@ -198,6 +211,11 @@ resourcestring
   message45uk='Шифрування mppe:';
   message46uk='Вихід  ';//общая длина 7 символов
   message47uk='Створити';
+  message48uk='Налаштування VPN PPTP';
+  message49uk='Вести докладна лог pppd в';
+  message50uk='Ведіть лог pppd для того, щоб з''ясувати помилки налаштування з''єднання, помилки при з''єднанні і т.п.';
+  message51uk='Для видалення програми видаліть:';
+  message52uk='Не забудьте налаштувати файервол.';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -247,6 +265,11 @@ resourcestring
   message45en='Encription mppe:';
   message46en='Exit   ';//общая длина 7 символов
   message47en='Create';
+  message48en='VPN PPTP Setup';
+  message49en='pppd detailed log on';
+  message50en='Use a log of pppd in order to identify the connection setup errors, errors when connecting, etc.';
+  message51en='For uninstall, remove:';
+  message52en='Do not forget to configure the firewall.';
 
 
 implementation
@@ -310,7 +333,7 @@ Shell('printf "TYPE=ADSL\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)
 if not CheckBox_right.Checked then Shell('printf "USERCTL=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "USERCTL=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 if not CheckBox_traffic.Checked then Shell('printf "ACCOUNTING=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "ACCOUNTING=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 Shell ('chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-//запись файла /etc/ppp/ip-up.d/ip-up
+{//запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
 If not DirectoryExists (EtcPppIpUpDDir) then Shell ('mkdir '+EtcPppIpUpDDir);
 Memo1.Lines.Clear;
 Memo1.Lines.Add('#!/bin/sh');
@@ -321,19 +344,32 @@ Memo1.Lines.Add('fi');
 Memo1.Lines.Add('/sbin/route del default');
 Memo1.Lines.Add('/sbin/route del default');
 Memo1.Lines.Add('/sbin/route add default dev $IFNAME');
-Memo1.Lines.SaveToFile(EtcPppIpUpDDir+'ip-up');
-Shell('chmod a+x '+EtcPppIpUpDDir+'ip-up');
+Memo1.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmandriva-ip-up');
+Shell('chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');}
+//запись файла /etc/ppp/ip-down.d/vpnmandriva-ip-down
+If not DirectoryExists (EtcPppIpDownDDir) then Shell ('mkdir '+EtcPppIpDownDDir);
+Memo1.Lines.Clear;
+Memo1.Lines.Add('#!/bin/sh');
+Memo1.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
+Memo1.Lines.Add('then');
+Memo1.Lines.Add('exit 0');
+Memo1.Lines.Add('fi');
+If FileExists (SBinDir+'service') then Memo1.Lines.Add('service network restart') else Memo1.Lines.Add(EtcInitDDir+' network restart');
+Memo1.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmandriva-ip-down');
+Shell('chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
 //запись файла /etc/ppp/peers/pppN
 Memo1.Lines.Clear;
 Memo1.Lines.Add('unit '+IntToStr(Number_PPP_Iface));
 Memo1.Lines.Add('noipdefault');
+Memo1.Lines.Add('defaultroute');
 Memo1.Lines.Add('noauth');
 Memo1.Lines.Add('linkname vpnmandriva');
 Memo1.Lines.Add('usepeerdns');
 Memo1.Lines.Add('lock');
 Memo1.Lines.Add('persist');
 Memo1.Lines.Add('nopcomp');
-Memo1.Lines.Add('noccp');
+If (not CheckBox_required.Checked) then if (not CheckBox_stateless.Checked) then if (not CheckBox_no40.Checked) then if (not CheckBox_no56.Checked) then if (not CheckBox_no128.Checked) then
+                                                                          Memo1.Lines.Add('noccp');
 Memo1.Lines.Add('novj');
 Memo1.Lines.Add('kdebug 1');
 Memo1.Lines.Add('holdoff 4');
@@ -357,6 +393,12 @@ if CheckBox_no56.Checked then mppe_string:=mppe_string+CheckBox_no56.Caption;
    if CheckBox_no56.Checked then if CheckBox_no128.Checked then mppe_string:=mppe_string+',';
 if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
    If mppe_string<>'mppe ' then Memo1.Lines.Add(mppe_string);
+If CheckBox_pppd_log.Checked then
+                             begin
+                                If not DirectoryExists(MyLogDir) then Shell ('mkdir -p '+MyLogDir);
+                                Memo1.Lines.Add('debug');
+                                Memo1.Lines.Add('logfile '+MyLogDir+'vpnmandriva.log');
+                             end;
 Memo1.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 Shell ('chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 //применение изменений перезапуском Net_Applet
@@ -370,9 +412,9 @@ AProcess := TProcess.Create(nil);
 If ((str='') or (str='root')) then AProcess.CommandLine :='net_applet' else AProcess.CommandLine :='su - '+str+' -c "net_applet"';
 AProcess.Execute;
 AProcess.Free;
-If FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru),PChar(message0ru),0) else
-                     If FallbackLang='uk' then Application.MessageBox(PChar(message11uk+' '+message12uk+' '+message13uk),PChar(message0uk),0) else
-                                                              Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en),PChar(message0en),0);
+If FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
+                     If FallbackLang='uk' then Application.MessageBox(PChar(message11uk+' '+message12uk+' '+message13uk+' '+message52uk),PChar(message0uk),0) else
+                                                              Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en+' '+message52en),PChar(message0en),0);
 end;
 
 
@@ -442,6 +484,7 @@ case q of
     1:
         begin
              Form1.Hint:=MakeHint(message33ru+' '+message34ru,5);
+             Panel1.Hint:=MakeHint(message33ru+' '+message34ru,5);
              Edit_metric.Hint:=MakeHint(message2ru,5);
              CheckBox_right.Hint:=MakeHint(message4ru,5);
              CheckBox_autostart.Hint:=MakeHint(message5ru+' '+message14ru,7);
@@ -470,10 +513,12 @@ case q of
              CheckBox_no128.Hint:=MakeHint(message29ru+' '+message25ru,6);
              Label_metric.Hint:=MakeHint(message33ru+' '+message34ru,5);
              Image1.Hint:=MakeHint(message33ru+' '+message34ru,5);
+             CheckBox_pppd_log.Hint:=MakeHint(message50ru,6);
         end;
     2:
     begin
          Form1.Hint:=MakeHint(message33uk+' '+message34uk,5);
+         Panel1.Hint:=MakeHint(message33uk+' '+message34uk,5);
          Edit_metric.Hint:=MakeHint(message2uk,5);
          CheckBox_right.Hint:=MakeHint(message4uk,5);
          CheckBox_autostart.Hint:=MakeHint(message5uk+' '+message14uk,7);
@@ -502,10 +547,12 @@ case q of
          CheckBox_no128.Hint:=MakeHint(message29uk+' '+message25uk,6);
          Label_metric.Hint:=MakeHint(message33uk+' '+message34uk,5);
          Image1.Hint:=MakeHint(message33uk+' '+message34uk,5);
+         CheckBox_pppd_log.Hint:=MakeHint(message50uk,6);
     end;
 else
     begin
          Form1.Hint:=MakeHint(message33en+' '+message34en,5);
+         Panel1.Hint:=MakeHint(message33en+' '+message34en,5);
          Edit_metric.Hint:=MakeHint(message2en,5);
          CheckBox_right.Hint:=MakeHint(message4en,5);
          CheckBox_autostart.Hint:=MakeHint(message5en+' '+message14en,7);
@@ -534,12 +581,14 @@ else
          CheckBox_no128.Hint:=MakeHint(message29en+' '+message25en,6);
          Label_metric.Hint:=MakeHint(message33en+' '+message34en,5);
          Image1.Hint:=MakeHint(message33en+' '+message34en,5);
+         CheckBox_pppd_log.Hint:=MakeHint(message50en,6);
     end;
 end;
 //заполнение приложения текстом в соответствии с языком
 case q of
     1:
         begin
+             Form1.Caption:=message48ru;
              Label_peer.Caption:=message35ru;
              Label_IPS.Caption:=message36ru;
              Label_user.Caption:=message37ru;
@@ -553,9 +602,11 @@ case q of
              Label13.Caption:=message45ru;
              Button_exit.Caption:=message46ru;
              Button_create.Caption:=message47ru;
+             CheckBox_pppd_log.Caption:=message49ru+' '+MyLogDir+'vpnmandriva.log';
         end;
     2:
         begin
+             Form1.Caption:=message48uk;
              Label_peer.Caption:=message35uk;
              Label_IPS.Caption:=message36uk;
              Label_user.Caption:=message37uk;
@@ -569,9 +620,11 @@ case q of
              Label13.Caption:=message45uk;
              Button_exit.Caption:=message46uk;
              Button_create.Caption:=message47uk;
+             CheckBox_pppd_log.Caption:=message49uk+' '+MyLogDir+'vpnmandriva.log';
         end;
 else
     begin
+        Form1.Caption:=message48en;
         Label_peer.Caption:=message35en;
         Label_IPS.Caption:=message36en;
         Label_user.Caption:=message37en;
@@ -585,6 +638,7 @@ else
         Label13.Caption:=message45en;
         Button_exit.Caption:=message46en;
         Button_create.Caption:=message47en;
+        CheckBox_pppd_log.Caption:=message49en+' '+MyLogDir+'vpnmandriva.log';
     end;
 end;
 //масштабирование формы в зависимости от разрешения экрана
@@ -678,12 +732,11 @@ If not FileExists(UsrSBinDir+'pptp') then
                 end;
 //программа устанавливает саму же себя
 If DirectoryExists(UsrBinDir) then
-   //If not FileExists(UsrBinDir+'vpnmandriva') then
      If ParamStr(0)<>UsrBinDir+'vpnmandriva' then
-        If DirectoryExists('/usr/lib/libDrakX/network/vpn/') then
-            //If not FileExists('/usr/lib/libDrakX/network/vpn/vpnmandriva.pm') then
+        If DirectoryExists(MyVpnDir) then
+            If ParamStr(0)<>'/vpnpptp/trunk/vpnmandriva/vpnmandriva' then
                                                                   begin
-                                                                      Shell ('cp -f '+ParamStr(0)+' '+UsrBinDir);
+                                                                      Shell ('cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
                                                                       Memo1.Lines.Clear;
                                                                       Memo1.Lines.Add('package network::vpn::vpnmandriva;');
                                                                       Memo1.Lines.Add('');
@@ -695,11 +748,11 @@ If DirectoryExists(UsrBinDir) then
                                                                       Memo1.Lines.Add('');
                                                                       Memo1.Lines.Add('sub get_type { '+chr(39)+'vpnmandriva'+chr(39)+' }');
                                                                       Memo1.Lines.Add('sub get_description { N("VPN PPTP") }');
-                                                                      Memo1.Lines.Add('sub get_packages { '+chr(39)+'vpnpptp-kde-one'+chr(39)+' }');
+                                                                      Memo1.Lines.Add('sub get_packages { '+chr(39)+'drakx-net'+chr(39)+' }');
                                                                       Memo1.Lines.Add('');
                                                                       Memo1.Lines.Add('sub read_config {');
                                                                       Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('run_program::rooted($::prefix,'+chr(39)+'/usr/bin/vpnmandriva'+chr(39)+');');
+                                                                      Memo1.Lines.Add('run_program::rooted($::prefix,'+chr(39)+UsrBinDir+'vpnmandriva'+chr(39)+');');
                                                                       Memo1.Lines.Add('end => 1;');
                                                                       Memo1.Lines.Add('}');
                                                                       Memo1.Lines.Add('');
@@ -708,17 +761,22 @@ If DirectoryExists(UsrBinDir) then
                                                                       Memo1.Lines.Add('}');
                                                                       Memo1.Lines.Add('');
                                                                       Memo1.Lines.Add('1;');
-                                                                      Memo1.Lines.SaveToFile('/usr/lib/libDrakX/network/vpn/vpnmandriva.pm');
-                                                                      If FallbackLang='ru' then Application.MessageBox(PChar(message17ru),PChar(message0ru),0) else
-                                                                                           If FallbackLang='uk' then Application.MessageBox(PChar(message17uk),PChar(message0uk),0) else
-                                                                                                                                    Application.MessageBox(PChar(message17en),PChar(message0en),0);
+                                                                      Memo1.Lines.SaveToFile(MyVpnDir+'vpnmandriva.pm');
+                                                                      If FallbackLang='ru' then Application.MessageBox(PChar(message17ru+' '+message51ru+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0ru),0) else
+                                                                                           If FallbackLang='uk' then Application.MessageBox(PChar(message17uk+' '+message51uk+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0uk),0) else
+                                                                                                                                    Application.MessageBox(PChar(message17en+' '+message51en+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0en),0);
                                                                   end;
-If (not DirectoryExists('/usr/lib/libDrakX/network/vpn/')) or  (not DirectoryExists(UsrBinDir)) then
+If (not DirectoryExists(MyVpnDir)) or  (not DirectoryExists(UsrBinDir)) then
                                                            begin
                                                                 If FallbackLang='ru' then Application.MessageBox(PChar(message16ru),PChar(message0ru),0) else
                                                                                      If FallbackLang='uk' then Application.MessageBox(PChar(message16uk),PChar(message0uk),0) else
                                                                                                                               Application.MessageBox(PChar(message16en),PChar(message0en),0);
                                                            end;
+end;
+
+procedure TForm1.Label9Click(Sender: TObject);
+begin
+
 end;
 
 procedure TForm1.TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -743,7 +801,7 @@ initialization
   {$I unit1.lrs}
 
   Gettext.GetLanguageIDs(Lang,FallbackLang);
-  //FallbackLang:='uk'; //просто для проверки при отладке
+  //FallbackLang:='en'; //просто для проверки при отладке
 end.
 
 end.

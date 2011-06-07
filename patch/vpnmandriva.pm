@@ -8,7 +8,7 @@ use run_program;
 
 sub get_type { 'vpnmandriva' }
 sub get_description { N("VPN PPTP") }
-sub get_packages { 'vpnpptp-kde-one' }
+sub get_packages { 'drakx-net' }
 
 sub read_config {
 
