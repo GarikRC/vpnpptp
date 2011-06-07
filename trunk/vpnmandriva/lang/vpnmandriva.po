@@ -3,12 +3,12 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 
 #: TFORM1.BUTTON_CREATE.CAPTION
 msgctxt "TFORM1.BUTTON_CREATE.CAPTION"
-msgid "M"
+msgid "N"
 msgstr ""
 
 #: TFORM1.BUTTON_EXIT.CAPTION
 msgctxt "TFORM1.BUTTON_EXIT.CAPTION"
-msgid "L"
+msgid "M"
 msgstr ""
 
 #: TFORM1.CHECKBOX_AUTOSTART.CAPTION
@@ -31,6 +31,11 @@ msgstr ""
 #: TFORM1.CHECKBOX_NOBUFFER.CAPTION
 msgctxt "TFORM1.CHECKBOX_NOBUFFER.CAPTION"
 msgid "I"
+msgstr ""
+
+#: TFORM1.CHECKBOX_PPPD_LOG.CAPTION
+msgctxt "TFORM1.CHECKBOX_PPPD_LOG.CAPTION"
+msgid "J"
 msgstr ""
 
 #: TFORM1.CHECKBOX_RCHAP.CAPTION
@@ -80,12 +85,12 @@ msgid "Настройка VPN PPTP"
 msgstr ""
 
 #: TFORM1.LABEL13.CAPTION
-msgid "K                                 "
+msgid "L                           "
 msgstr ""
 
 #: TFORM1.LABEL9.CAPTION
 msgctxt "TFORM1.LABEL9.CAPTION"
-msgid "J"
+msgid "K"
 msgstr ""
 
 #: TFORM1.LABEL_IPS.CAPTION
@@ -594,6 +599,30 @@ msgstr ""
 msgid "Ство#209�ити"
 msgstr ""
 
+#: unit1.message48en
+msgid "VPN PPTP Setup"
+msgstr ""
+
+#: unit1.message48ru
+msgid "Наст#209�ойка VPN PPTP"
+msgstr ""
+
+#: unit1.message48uk
+msgid "Налаштування VPN PPTP"
+msgstr ""
+
+#: unit1.message49en
+msgid "pppd detailed log on"
+msgstr ""
+
+#: unit1.message49ru
+msgid "Вести под#209�обный лог pppd в"
+msgstr ""
+
+#: unit1.message49uk
+msgid "Вести докладна лог pppd в"
+msgstr ""
+
 #: unit1.message4en
 msgid "Choice of this option allows users to manage connections with help net_applet without entering the root's password."
 msgstr ""
@@ -601,6 +630,42 @@ msgstr ""
 #: unit1.message4ru
 msgctxt "unit1.message4ru"
 msgid "Выбо#209� этой опции позволяет пользователям уп#209�авлять подключением че#209�ез net_applet без ввода па#209�оля админист#209�ато#209�а."
+msgstr ""
+
+#: unit1.message50en
+msgid "Use a log of pppd in order to identify the connection setup errors, errors when connecting, etc."
+msgstr ""
+
+#: unit1.message50ru
+msgid "Ведите лог pppd для того, чтобы выяснить ошибки наст#209�ойки соединения, ошибки п#209�и соединении и т.д."
+msgstr ""
+
+#: unit1.message50uk
+msgid "Ведіть лог pppd для того, щоб з'ясувати помилки налаштування з'єднання, помилки п#209�и з'єднанні і т.п."
+msgstr ""
+
+#: unit1.message51en
+msgid "For uninstall, remove:"
+msgstr ""
+
+#: unit1.message51ru
+msgid "Для удаления п#209�ог#209�аммы удалите:"
+msgstr ""
+
+#: unit1.message51uk
+msgid "Для видалення п#209�ог#209�ами видаліть:"
+msgstr ""
+
+#: unit1.message52en
+msgid "Do not forget to configure the firewall."
+msgstr ""
+
+#: unit1.message52ru
+msgid "Не забудьте наст#209�оить файе#209�вол."
+msgstr ""
+
+#: unit1.message52uk
+msgid "Не забудьте налаштувати файе#209�вол."
 msgstr ""
 
 #: unit1.message5en
