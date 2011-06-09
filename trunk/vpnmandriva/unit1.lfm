@@ -2299,7 +2299,6 @@ object Form1: TForm1
       BorderSpacing.Top = 30
       Caption = 'K'
       ParentColor = False
-      OnClick = Label9Click
       OnMouseDown = TabSheet1MouseDown
     end
     object Label13: TLabel
