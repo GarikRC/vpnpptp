@@ -141,6 +141,10 @@ msgctxt "unit1.message10ru"
 msgid "Эту опцию выб#209�ать нельзя, так как не найден"
 msgstr ""
 
+#: unit1.message10uk
+msgid "Цю опцію виб#209�ати не можна, тому що не знайдено"
+msgstr ""
+
 #: unit1.message11en
 msgid "The connection was successfully created."
 msgstr ""
@@ -148,6 +152,10 @@ msgstr ""
 #: unit1.message11ru
 msgctxt "unit1.message11ru"
 msgid "Соединение было успешно создано."
+msgstr ""
+
+#: unit1.message11uk
+msgid "З'єднання було успішно ство#209�ено."
 msgstr ""
 
 #: unit1.message12en
@@ -159,6 +167,10 @@ msgctxt "unit1.message12ru"
 msgid "Уп#209�авлять соединением можно че#209�ез net_applet (пакет drakx-net)"
 msgstr ""
 
+#: unit1.message12uk
+msgid "Ке#209�увати з'єднанням можна че#209�ез net_applet (пакет drakx-net)"
+msgstr ""
+
 #: unit1.message13en
 msgid "or in the root's console by commands: ifup pppN, ifdown pppN."
 msgstr ""
@@ -166,6 +178,10 @@ msgstr ""
 #: unit1.message13ru
 msgctxt "unit1.message13ru"
 msgid "или в консоли под админист#209�ато#209�ом командами ifup, ifdown, пе#209�едавая им инте#209�фейс."
+msgstr ""
+
+#: unit1.message13uk
+msgid "або в консолі під адмініст#209�ато#209�ом командами ifup, ifdown, пе#209�едаючи їм інте#209�фейс."
 msgstr ""
 
 #: unit1.message14en
@@ -177,6 +193,10 @@ msgctxt "unit1.message14ru"
 msgid "Соединение установится п#209�и заг#209�узке системы без ввода па#209�оля админист#209�ато#209�а."
 msgstr ""
 
+#: unit1.message14uk
+msgid "З'єднання встановиться п#209�и завантаженні системи без введення па#209�оля адмініст#209�ато#209�а."
+msgstr ""
+
 #: unit1.message15en
 msgid "When you select nobuffer, then will not be buffering; it is desirable for fast connections, but not desirable for a unstable."
 msgstr ""
@@ -184,6 +204,10 @@ msgstr ""
 #: unit1.message15ru
 msgctxt "unit1.message15ru"
 msgid "П#209�и выбо#209�е опции nobuffer не будет буфе#209�изации, что желательно для быст#209�ого соединения, но нежелательно для медленного, нестабильного."
+msgstr ""
+
+#: unit1.message15uk
+msgid "П#209�и вибо#209�і опції nobuffer не буде буфе#209�изації, що бажано для швидкого з'єднання, але небажано для повільного, нестабільного."
 msgstr ""
 
 #: unit1.message16en
@@ -195,17 +219,21 @@ msgctxt "unit1.message16ru"
 msgid "П#209�ог#209�амма не смогла установиться."
 msgstr ""
 
+#: unit1.message16uk
+msgid "П#209�ог#209�ама не змогла встановитися."
+msgstr ""
+
 #: unit1.message17en
-msgid "The program was successfully installed (updated)."
+msgid "The program was successfully installed."
 msgstr ""
 
 #: unit1.message17ru
 msgctxt "unit1.message17ru"
-msgid "П#209�ог#209�амма была успешно установлена (обновлена)."
+msgid "П#209�ог#209�амма была успешно установлена."
 msgstr ""
 
 #: unit1.message17uk
-msgid "П#209�ог#209�ама була успішно встановлена (оновлена)"
+msgid "П#209�ог#209�ама була успішно встановлена."
 msgstr ""
 
 #: unit1.message18en
@@ -387,13 +415,21 @@ msgctxt "unit1.message2ru"
 msgid "Желательно установить мет#209�ику меньшую, чем у сетевого инте#209�фейса, на кото#209�ом будет поднято VPN PPTP."
 msgstr ""
 
+#: unit1.message2uk
+msgid "Бажано встановити мет#209�ику меншу, ніж у ме#209�ежевого інте#209�фейсу, на якому буде піднято VPN PPTP."
+msgstr ""
+
 #: unit1.message30en
-msgid "Run this program as root or from the Control Center->Network and  Internet->Setting VPN-connections->VPN PPTP."
+msgid "Run this program as root"
 msgstr ""
 
 #: unit1.message30ru
 msgctxt "unit1.message30ru"
-msgid "Запустите эту п#209�ог#209�амму под root или из Цент#209�а Уп#209�авления->Сеть и Инте#209�нет->Наст#209�ойка VPN-соединений->VPN PPTP."
+msgid "Запустите эту п#209�ог#209�амму под root"
+msgstr ""
+
+#: unit1.message30uk
+msgid "Запустіть цю п#209�ог#209�аму під root"
 msgstr ""
 
 #: unit1.message31en
@@ -416,6 +452,10 @@ msgstr ""
 #: unit1.message32ru
 msgctxt "unit1.message32ru"
 msgid "Эта кнопка создает соединение"
+msgstr ""
+
+#: unit1.message32uk
+msgid "Ця кнопка ство#209�ює з'єднання"
 msgstr ""
 
 #: unit1.message33en
@@ -500,6 +540,12 @@ msgid "Metric:"
 msgstr ""
 
 #: unit1.message39ru
+msgctxt "unit1.message39ru"
+msgid "Мет#209�ика:"
+msgstr ""
+
+#: unit1.message39uk
+msgctxt "unit1.message39uk"
 msgid "Мет#209�ика:"
 msgstr ""
 
@@ -510,6 +556,10 @@ msgstr ""
 #: unit1.message3ru
 msgctxt "unit1.message3ru"
 msgid "Невозможно наст#209�оить VPN PPTP в связи с отсутствием пакета pptp-linux."
+msgstr ""
+
+#: unit1.message3uk
+msgid "Неможливо налаштувати VPN PPTP у зв'язку з відсутністю пакету pptp-linux."
 msgstr ""
 
 #: unit1.message40en
@@ -532,6 +582,10 @@ msgstr ""
 msgid "Устанавливать соединение п#209�и заг#209�узке"
 msgstr ""
 
+#: unit1.message41uk
+msgid "Встановлювати з'єднання п#209�и завантаженні"
+msgstr ""
+
 #: unit1.message42en
 msgid "Enable to calculate traffic"
 msgstr ""
@@ -540,12 +594,20 @@ msgstr ""
 msgid "Включить подсчет т#209�афика"
 msgstr ""
 
+#: unit1.message42uk
+msgid "Дозволити під#209�ахунок т#209�афіку"
+msgstr ""
+
 #: unit1.message43en
 msgid "Not buffered packets (nobuffer)"
 msgstr ""
 
 #: unit1.message43ru
 msgid "Не буфе#209�изи#209�овать пакеты (nobuffer)"
+msgstr ""
+
+#: unit1.message43uk
+msgid "Не буфе#209�ізувати пакети (nobuffer)"
 msgstr ""
 
 #: unit1.message44en
@@ -632,6 +694,10 @@ msgctxt "unit1.message4ru"
 msgid "Выбо#209� этой опции позволяет пользователям уп#209�авлять подключением че#209�ез net_applet без ввода па#209�оля админист#209�ато#209�а."
 msgstr ""
 
+#: unit1.message4uk
+msgid "Вибі#209� цієї опції дозволяє ко#209�истувачам ке#209�увати підключенням че#209�ез net_applet без введення па#209�оля адмініст#209�ато#209�а."
+msgstr ""
+
 #: unit1.message50en
 msgid "Use a log of pppd in order to identify the connection setup errors, errors when connecting, etc."
 msgstr ""
@@ -668,6 +734,78 @@ msgstr ""
 msgid "Не забудьте налаштувати файе#209�вол."
 msgstr ""
 
+#: unit1.message53en
+msgid "or from the Control Center->Network and  Internet->Setting VPN-connections->VPN PPTP."
+msgstr ""
+
+#: unit1.message53ru
+msgid "или из Цент#209�а Уп#209�авления->Сеть и Инте#209�нет->Наст#209�ойка VPN-соединений->VPN PPTP."
+msgstr ""
+
+#: unit1.message53uk
+msgid "або з Цент#209�у Уп#209�авління-> Ме#209�ежа та Інте#209�нет-> Налаштування VPN-з'єднань-> VPN PPTP."
+msgstr ""
+
+#: unit1.message54en
+msgid "The program was successfully updeted."
+msgstr ""
+
+#: unit1.message54ru
+msgid "П#209�ог#209�амма была успешно обновлена."
+msgstr ""
+
+#: unit1.message54uk
+msgid "П#209�ог#209�ама була успішно оновлена."
+msgstr ""
+
+#: unit1.message55en
+msgid "You must enter a numeric value in field \"metric\"."
+msgstr ""
+
+#: unit1.message55ru
+msgid "В поле \"Мет#209�ика\" должно быть введено числовое значение."
+msgstr ""
+
+#: unit1.message55uk
+msgid "У полі \"Мет#209�ика\" повинно бути введено числове значення."
+msgstr ""
+
+#: unit1.message56en
+msgid "Failed to start net_applet."
+msgstr ""
+
+#: unit1.message56ru
+msgid "Не удалось запустить net_applet."
+msgstr ""
+
+#: unit1.message56uk
+msgid "Не вдалося запустити net_applet."
+msgstr ""
+
+#: unit1.message57en
+msgid "Missing:"
+msgstr ""
+
+#: unit1.message57ru
+msgid "Отсутствует:"
+msgstr ""
+
+#: unit1.message57uk
+msgid "Відсутній:"
+msgstr ""
+
+#: unit1.message58en
+msgid "Find:"
+msgstr ""
+
+#: unit1.message58ru
+msgid "Найден:"
+msgstr ""
+
+#: unit1.message58uk
+msgid "Знайден:"
+msgstr ""
+
 #: unit1.message5en
 msgid "If you choose this option, then the connection will be established when the system boots."
 msgstr ""
@@ -675,6 +813,10 @@ msgstr ""
 #: unit1.message5ru
 msgctxt "unit1.message5ru"
 msgid "Если выб#209�ать эту опцию, то соединение установится п#209�и заг#209�узке системы."
+msgstr ""
+
+#: unit1.message5uk
+msgid "Якщо виб#209�ати цю опцію, то з'єднання встановиться п#209�и завантаженні системи."
 msgstr ""
 
 #: unit1.message6en
@@ -686,6 +828,10 @@ msgctxt "unit1.message6ru"
 msgid "Если выб#209�ать эту опцию, то для соединения будет вестись подсчет т#209�афика, кото#209�ый можно наблюдать че#209�ез net_monitor."
 msgstr ""
 
+#: unit1.message6uk
+msgid "Якщо виб#209�ати цю опцію, то для з'єднання буде вестися під#209�ахунок т#209�афіку, який можна спосте#209�ігати че#209�ез net_monitor."
+msgstr ""
+
 #: unit1.message7en
 msgid "In this box you must enter address of vpn-server."
 msgstr ""
@@ -693,6 +839,10 @@ msgstr ""
 #: unit1.message7ru
 msgctxt "unit1.message7ru"
 msgid "В этом поле указывается ад#209�ес vpn-се#209�ве#209�а."
+msgstr ""
+
+#: unit1.message7uk
+msgid "У цьому полі вказується ад#209�еса vpn-се#209�ве#209�а."
 msgstr ""
 
 #: unit1.message8en
@@ -704,6 +854,10 @@ msgctxt "unit1.message8ru"
 msgid "Не найдено ни одного свободного инте#209�фейса pppN, где N в диапазоне [0..100]. Удалите неиспользуемые соединения в Цент#209�е Уп#209�авления."
 msgstr ""
 
+#: unit1.message8uk
+msgid "Не знайдено жодного вільного інте#209�фейсу pppN, де N в діапазоні [0 .. 100]. Видаліть невико#209�истовувані з'єднання в Цент#209�і ке#209�ування."
+msgstr ""
+
 #: unit1.message9en
 msgid "The program complete its work."
 msgstr ""
@@ -711,5 +865,9 @@ msgstr ""
 #: unit1.message9ru
 msgctxt "unit1.message9ru"
 msgid "П#209�ог#209�амма заве#209�шает свою #209�аботу."
+msgstr ""
+
+#: unit1.message9uk
+msgid "П#209�ог#209�ама заве#209�шує свою #209�оботу."
 msgstr ""
 

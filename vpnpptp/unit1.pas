@@ -4283,6 +4283,7 @@ initialization
   If Paramcount>0 then ProfileName:=Paramstr(1);
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
+  If FallbackLang='be' then FallbackLang:='ru';
   //FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin

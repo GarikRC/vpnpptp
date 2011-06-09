@@ -69,7 +69,6 @@ type
     procedure Button_exitClick(Sender: TObject);
     procedure CheckBox_trafficChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Label9Click(Sender: TObject);
     procedure TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   private
@@ -126,7 +125,7 @@ resourcestring
   message14ru='Соединение установится при загрузке системы без ввода пароля администратора.';
   message15ru='При выборе опции nobuffer не будет буферизации, что желательно для быстрого соединения, но нежелательно для медленного, нестабильного.';
   message16ru='Программа не смогла установиться.';
-  message17ru='Программа была успешно установлена (обновлена).';
+  message17ru='Программа была успешно установлена.';
   message18ru='Часто используется аутентификация mschap v2 - это одновременный выбор refuse-eap, refuse-chap, refuse-mschap, refuse-pap.';
   message19ru='При использовании опции refuse-chap демон pppd не согласится аутентифицировать себя по протоколу CHAP.';
   message20ru='При использовании опции refuse-eap демон pppd не согласится аутентифицировать себя по протоколу EAP.';
@@ -139,7 +138,7 @@ resourcestring
   message27ru='Опция no40 отключает 40-битное шифрование mppe.';
   message28ru='Опция no56 отключает 56-битное шифрование mppe.';
   message29ru='Опция no128 отключает 128-битное шифрование mppe.';
-  message30ru='Запустите эту программу под root или из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP.';
+  message30ru='Запустите эту программу под root';
   message31ru='Выйти из программы';
   message32ru='Эта кнопка создает соединение';
   message33ru='При низких разрешениях экрана одновременное нажатие клавиши Alt и левой кнопки мыши поможет переместить окно.';
@@ -162,25 +161,31 @@ resourcestring
   message50ru='Ведите лог pppd для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
   message51ru='Для удаления программы удалите:';
   message52ru='Не забудьте настроить файервол.';
+  message53ru='или из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP.';
+  message54ru='Программа была успешно обновлена.';
+  message55ru='В поле "Метрика" должно быть введено числовое значение.';
+  message56ru='Не удалось запустить net_applet.';
+  message57ru='Отсутствует:';
+  message58ru='Найден:';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
-  message2uk='';
-  message3uk='';
-  message4uk='';
-  message5uk='';
-  message6uk='';
-  message7uk='';
-  message8uk='';
-  message9uk='';
-  message10uk='';
-  message11uk='';
-  message12uk='';
-  message13uk='';
-  message14uk='';
-  message15uk='';
-  message16uk='';
-  message17uk='Програма була успішно встановлена (оновлена)';
+  message2uk='Бажано встановити метрику меншу, ніж у мережевого інтерфейсу, на якому буде піднято VPN PPTP.';
+  message3uk='Неможливо налаштувати VPN PPTP у зв''язку з відсутністю пакету pptp-linux.';
+  message4uk='Вибір цієї опції дозволяє користувачам керувати підключенням через net_applet без введення пароля адміністратора.';
+  message5uk='Якщо вибрати цю опцію, то з''єднання встановиться при завантаженні системи.';
+  message6uk='Якщо вибрати цю опцію, то для з''єднання буде вестися підрахунок трафіку, який можна спостерігати через net_monitor.';
+  message7uk='У цьому полі вказується адреса vpn-сервера.';
+  message8uk='Не знайдено жодного вільного інтерфейсу pppN, де N в діапазоні [0 .. 100]. Видаліть невикористовувані з''єднання в Центрі керування.';
+  message9uk='Програма завершує свою роботу.';
+  message10uk='Цю опцію вибрати не можна, тому що не знайдено';
+  message11uk='З''єднання було успішно створено.';
+  message12uk='Керувати з''єднанням можна через net_applet (пакет drakx-net)';
+  message13uk='або в консолі під адміністратором командами ifup, ifdown, передаючи їм інтерфейс.';
+  message14uk='З''єднання встановиться при завантаженні системи без введення пароля адміністратора.';
+  message15uk='При виборі опції nobuffer не буде буферизації, що бажано для швидкого з''єднання, але небажано для повільного, нестабільного.';
+  message16uk='Програма не змогла встановитися.';
+  message17uk='Програма була успішно встановлена.';
   message18uk='Часто використовується аутентифікація mschap v2 - це одночасний вибір refuse-eap, refuse-chap, refuse-mschap, refuse-pap.';
   message19uk='При використанні опції refuse-chap демон pppd не погодиться аутентіфіцировать себе по протоколу CHAP.';
   message20uk='При використанні опції refuse-eap демон pppd не погодиться аутентіфіцировать себе по протоколу EAP.';
@@ -193,20 +198,20 @@ resourcestring
   message27uk='Опція no40 відключає 40-бітове шифрування mppe.';
   message28uk='Опція no56 відключає 56-бітове шифрування mppe.';
   message29uk='Опція no128 відключає 128-бітове шифрування mppe.';
-  message30uk='';
+  message30uk='Запустіть цю програму під root';
   message31uk='Вийти із програми';
-  message32uk='';
+  message32uk='Ця кнопка створює з''єднання';
   message33uk='При низьких дозволах екрана одночасне натискання клавіші Alt і лівої кнопки миші допоможе перемістити вікно.';
   message34uk='Натискання лівої/правою кнопкою миші на порожньому місці вікна змінює шрифт.';
   message35uk='Мережевий інтерфейс:';
   message36uk='Провайдер (IP або ім’я)*:';
   message37uk='Користувач (логін)*';
   message38uk='Пароль*:';
-  message39uk='';
+  message39uk='Метрика:';
   message40uk='Дозволити користувачам керувати підключенням';
-  message41uk='';
-  message42uk='';
-  message43uk='';
+  message41uk='Встановлювати з''єднання при завантаженні';
+  message42uk='Дозволити підрахунок трафіку';
+  message43uk='Не буферізувати пакети (nobuffer)';
   message44uk='Аутентифікація:';
   message45uk='Шифрування mppe:';
   message46uk='Вихід  ';//общая длина 7 символов
@@ -216,6 +221,12 @@ resourcestring
   message50uk='Ведіть лог pppd для того, щоб з''ясувати помилки налаштування з''єднання, помилки при з''єднанні і т.п.';
   message51uk='Для видалення програми видаліть:';
   message52uk='Не забудьте налаштувати файервол.';
+  message53uk='або з Центру Управління-> Мережа та Інтернет-> Налаштування VPN-з''єднань-> VPN PPTP.';
+  message54uk='Програма була успішно оновлена.';
+  message55uk='У полі "Метрика" повинно бути введено числове значення.';
+  message56uk='Не вдалося запустити net_applet.';
+  message57uk='Відсутній:';
+  message58uk='Знайден:';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -234,7 +245,7 @@ resourcestring
   message14en='Connection will be established at boot without entering a root''s password.';
   message15en='When you select nobuffer, then will not be buffering; it is desirable for fast connections, but not desirable for a unstable.';
   message16en='Program failed to install.';
-  message17en='The program was successfully installed (updated).';
+  message17en='The program was successfully installed.';
   message18en='Authentication of mschap v2 is used frequently - this is a simultaneous choice of refuse-eap, refuse-chap, refuse-mschap, refuse-pap.';
   message19en='With option refuse-chap, pppd will not agree to authenticate itself to the peer using CHAP.';
   message20en='With option refuse-eap, pppd will not agree to authenticate itself to the peer using EAP.';
@@ -247,7 +258,7 @@ resourcestring
   message27en='no40 - disable 40 bit keys.';
   message28en='no56 - disable 56 bit keys.';
   message29en='no128 - disable 128 bit keys.';
-  message30en='Run this program as root or from the Control Center->Network and  Internet->Setting VPN-connections->VPN PPTP.';
+  message30en='Run this program as root';
   message31en='Quit';
   message32en='This button creates the connection';
   message33en='At low screen resolutions simultaneously pressing the Alt key and left mouse button will move the window.';
@@ -270,6 +281,12 @@ resourcestring
   message50en='Use a log of pppd in order to identify the connection setup errors, errors when connecting, etc.';
   message51en='For uninstall, remove:';
   message52en='Do not forget to configure the firewall.';
+  message53en='or from the Control Center->Network and  Internet->Setting VPN-connections->VPN PPTP.';
+  message54en='The program was successfully updeted.';
+  message55en='You must enter a numeric value in field "metric".';
+  message56en='Failed to start net_applet.';
+  message57en='Missing:';
+  message58en='Find:';
 
 
 implementation
@@ -316,8 +333,28 @@ end;
 procedure TForm1.Button_createClick(Sender: TObject);
 var
   str,mppe_string:string;
+  y,net_applet_root:boolean;
 begin
 //выход из создания подключения
+y:=false;
+Try
+    StrToInt(Edit_metric.Text);
+  except
+    On EConvertError do
+      y:=true;
+  end;
+If y then
+        begin
+           If FallbackLang='ru' then Application.MessageBox(PChar(message55ru),PChar(message0ru),0) else
+                               If FallbackLang='uk' then Application.MessageBox(PChar(message55uk),PChar(message0uk),0) else
+                                                                           Application.MessageBox(PChar(message55en),PChar(message0en),0);
+           Edit_metric.SetFocus;
+           exit;
+        end;
+
+
+
+
 If (Edit_IPS.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                     begin
                        If FallbackLang='ru' then Application.MessageBox(PChar(message1ru),PChar(message0ru),0) else
@@ -401,20 +438,52 @@ If CheckBox_pppd_log.Checked then
                              end;
 Memo1.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 Shell ('chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
-//применение изменений перезапуском Net_Applet
-str:='';
-popen (f,'ps -e -f|grep perl|grep net_apple|awk '+ chr(39)+'{print $1}'+chr(39),'R');
-While not eof(f) do
-      readln(f,str);
+//применение изменений перезапуском net_applet
+popen(f,'ps -u root|grep net_applet','R');
+if eof(f) then net_applet_root:=false else net_applet_root:=true;
 PClose(f);
-Shell ('killall net_applet');
-AProcess := TProcess.Create(nil);
-If ((str='') or (str='root')) then AProcess.CommandLine :='net_applet' else AProcess.CommandLine :='su - '+str+' -c "net_applet"';
-AProcess.Execute;
-AProcess.Free;
+str:='';
+if not net_applet_root then
+                             begin
+                                  popen (f,'who |awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
+                                  Shell ('killall net_applet');
+                                  While not eof(f) do
+                                        begin
+                                             readln(f,str);
+                                             if str<>'' then
+                                                        begin
+                                                             AProcess := TProcess.Create(nil);
+                                                             AProcess.CommandLine :='su - '+str+' -c "net_applet"';
+                                                             AProcess.Execute;
+                                                             AProcess.Free;
+                                                        end;
+                                        end;
+                                  PClose(f);
+                             end;
+if net_applet_root then
+                      begin
+                          Shell ('killall net_applet');
+                          AProcess := TProcess.Create(nil);
+                          AProcess.CommandLine :='net_applet';
+                          AProcess.Execute;
+                          AProcess.Free;
+                      end;
 If FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
                      If FallbackLang='uk' then Application.MessageBox(PChar(message11uk+' '+message12uk+' '+message13uk+' '+message52uk),PChar(message0uk),0) else
                                                               Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en+' '+message52en),PChar(message0en),0);
+//обработка результата перезапуска net_applet
+popen (f,'ps -e|grep net_applet','R');
+str:='';
+If eof(f) then
+               begin
+                   If FallbackLang='ru' then str:=message56ru else If FallbackLang='uk' then str:=message56uk else str:=message56en;
+                   If not FileExists(UsrBinDir+'net_applet') then If FallbackLang='ru' then str:=str+' '+message57ru+' '+UsrBinDir+'net_applet.' else
+                                        if FallbackLang='uk' then str:=str+' '+message57uk+' '+UsrBinDir+'net_applet.' else str:=str+' '+message57en+' '+UsrBinDir+'net_applet.';
+                   If not FileExists(UsrBinDir+'net_applet') then If FileExists(UsrBinDir+'net_applet.old') then If FallbackLang='ru' then str:=str+' '+message58ru+' '+UsrBinDir+'net_applet.old.' else
+                                        if FallbackLang='uk' then str:=str+' '+message58uk+' '+UsrBinDir+'net_applet.old.' else str:=str+' '+message58en+' '+UsrBinDir+'net_applet.old.';
+                   Application.MessageBox(PChar(str),PChar(message0ru),0);
+               end;
+PClose(f);
 end;
 
 
@@ -451,6 +520,7 @@ var
     Apid,Apidroot:tpid;
     i:integer;
     q:byte;
+    ProgramInstalled:boolean;
 begin
 Edit_peer.Enabled:=false;
 Number_PPP_Iface:=101;
@@ -723,9 +793,20 @@ If not FileExists(UsrSBinDir+'pptp') then
   PClose(f);
   If nostart then
                 begin
-                    If FallbackLang='ru' then Application.MessageBox(PChar(message30ru),PChar(message0ru),0) else
-                                           If FallbackLang='uk' then Application.MessageBox(PChar(message30uk),PChar(message0uk),0) else
-                                                                                   Application.MessageBox(PChar(message30en),PChar(message0en),0);
+                    If FileExists(MyVpnDir+'vpnmandriva.pm') then
+                                  begin
+                                       If FallbackLang='ru' then Application.MessageBox(PChar(message30ru+' '+message53ru),PChar(message0ru),0) else
+                                                            If FallbackLang='uk' then Application.MessageBox(PChar(message30uk+' '+message53uk),PChar(message0uk),0) else
+                                                                                                                                 Application.MessageBox(PChar(message30en+' '+message53en),PChar(message0en),0);
+
+                                  end
+                                     else
+                                     begin
+                                          If FallbackLang='ru' then Application.MessageBox(PChar(message30ru+'.'),PChar(message0ru),0) else
+                                                               If FallbackLang='uk' then Application.MessageBox(PChar(message30uk+'.'),PChar(message0uk),0) else
+                                                                                                                                    Application.MessageBox(PChar(message30en+'.'),PChar(message0en),0);
+
+                                     end;
                     Application.ProcessMessages;
                     Form1.Repaint;
                     halt;
@@ -736,6 +817,7 @@ If DirectoryExists(UsrBinDir) then
         If DirectoryExists(MyVpnDir) then
             If ParamStr(0)<>'/vpnpptp/trunk/vpnmandriva/vpnmandriva' then
                                                                   begin
+                                                                      If FileExists(UsrBinDir+'vpnmandriva') and FileExists (MyVpnDir+'vpnmandriva.pm') then ProgramInstalled:=true else ProgramInstalled:=false;
                                                                       Shell ('cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
                                                                       Memo1.Lines.Clear;
                                                                       Memo1.Lines.Add('package network::vpn::vpnmandriva;');
@@ -762,9 +844,19 @@ If DirectoryExists(UsrBinDir) then
                                                                       Memo1.Lines.Add('');
                                                                       Memo1.Lines.Add('1;');
                                                                       Memo1.Lines.SaveToFile(MyVpnDir+'vpnmandriva.pm');
-                                                                      If FallbackLang='ru' then Application.MessageBox(PChar(message17ru+' '+message51ru+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0ru),0) else
-                                                                                           If FallbackLang='uk' then Application.MessageBox(PChar(message17uk+' '+message51uk+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0uk),0) else
-                                                                                                                                    Application.MessageBox(PChar(message17en+' '+message51en+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0en),0);
+                                                                      If not ProgramInstalled then
+                                                                                              begin
+                                                                                                   If FallbackLang='ru' then Application.MessageBox(PChar(message17ru+' '+message51ru+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0ru),0) else
+                                                                                                                        If FallbackLang='uk' then Application.MessageBox(PChar(message17uk+' '+message51uk+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0uk),0) else
+                                                                                                                                             Application.MessageBox(PChar(message17en+' '+message51en+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0en),0);
+
+                                                                                              end
+                                                                                                 else
+                                                                                                     begin
+                                                                                                          If FallbackLang='ru' then Application.MessageBox(PChar(message54ru+' '+message51ru+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0ru),0) else
+                                                                                                                               If FallbackLang='uk' then Application.MessageBox(PChar(message54uk+' '+message51uk+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0uk),0) else
+                                                                                                                                                    Application.MessageBox(PChar(message54en+' '+message51en+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0en),0);
+                                                                                                      end;
                                                                   end;
 If (not DirectoryExists(MyVpnDir)) or  (not DirectoryExists(UsrBinDir)) then
                                                            begin
@@ -772,11 +864,6 @@ If (not DirectoryExists(MyVpnDir)) or  (not DirectoryExists(UsrBinDir)) then
                                                                                      If FallbackLang='uk' then Application.MessageBox(PChar(message16uk),PChar(message0uk),0) else
                                                                                                                               Application.MessageBox(PChar(message16en),PChar(message0en),0);
                                                            end;
-end;
-
-procedure TForm1.Label9Click(Sender: TObject);
-begin
-
 end;
 
 procedure TForm1.TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -801,7 +888,8 @@ initialization
   {$I unit1.lrs}
 
   Gettext.GetLanguageIDs(Lang,FallbackLang);
-  //FallbackLang:='en'; //просто для проверки при отладке
+  If FallbackLang='be' then FallbackLang:='ru';
+  //FallbackLang:='uk'; //просто для проверки при отладке
 end.
 
 end.

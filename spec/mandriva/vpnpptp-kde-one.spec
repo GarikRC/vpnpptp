@@ -10,6 +10,7 @@ Url: http://code.google.com/p/vpnpptp
 
 Source0: vpnpptp-src-%{version}.tar.gz
 Source1: vpnpptp_kde_one.pm
+Source2: vpnmandriva.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: fpc-src >= 2.2.4, fpc >= 2.2.4, lazarus
@@ -52,6 +53,7 @@ mkdir -p %{buildroot}%/lib/libDrakX/network/connection
 
 cp -f ./vpnpptp/vpnpptp %{buildroot}%{_bindir}
 cp -f ./ponoff/ponoff %{buildroot}%{_bindir}
+cp -f ./vpnmandriva/vpnmandriva %{buildroot}%{_bindir}
 cp -f ./ponoff.png %{buildroot}%{_datadir}/pixmaps/
 cp -f ./vpnpptp.png %{buildroot}%{_datadir}/pixmaps/
 chmod 0644 %{buildroot}%{_datadir}/pixmaps/ponoff.png
@@ -115,6 +117,7 @@ install -m 0644 vpnpptp.desktop \
 %{buildroot}%{_datadir}/applications/vpnpptp.desktop
 
 install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp_kde_one.pm
+install -pm0644 -D %SOURCE2 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnmandriva.pm
 
 %clean
 rm -rf %{buildroot}
@@ -124,6 +127,7 @@ rm -rf %{buildroot}
 
 %{_bindir}/vpnpptp
 %{_bindir}/ponoff
+%{_bindir}/vpnmandriva
 %{_datadir}/vpnpptp/lang
 %{_datadir}/pixmaps/ponoff.png
 %{_datadir}/pixmaps/vpnpptp.png
@@ -133,5 +137,6 @@ rm -rf %{buildroot}
 %{_datadir}/applications/ponoff.desktop
 %{_datadir}/applications/vpnpptp.desktop
 /usr/lib/libDrakX/network/vpn/vpnpptp_kde_one.pm
+/usr/lib/libDrakX/network/vpn/vpnmandriva.pm
 
 %changelog
