@@ -305,7 +305,7 @@ resourcestring
   message12='Сетевой интерфейс не определился.';
   message13='Сетевой кабель для автоматического определения шлюза локальной сети не подключен.';
   message14='Не удалось автоматически определить шлюз локальной сети.';
-  message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9, или от em0 до em9.';
+  message15='Поле "Сетевой интерфейс" заполнено неверно. Оно не может быть пустым и не может быть none.';
   message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message18='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
@@ -497,6 +497,9 @@ resourcestring
   message204='<ОК> - продолжить, <Отмена> - исправить вручную сейчас.';
   message205='<ОК> - включить опцию usepeerdns автоматически и продолжить (рекомендуется), <Отмена> - оставить всё как есть и продолжить (не рекомендуется).';
   message206='Опция usepeerdns не выбрана.';
+  message207='Сетевой интерфейс программе не известен. Либо он введен не верно, либо верно, но тогда он не поддерживается программой на 100%.';
+  message208='<ОК> - оставить как есть и продолжить. <Отмена> - исправить.';
+  message209='Программе известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9].';
 
 implementation
 
@@ -1896,6 +1899,12 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
  //настройка /etc/ppp/options
  if not FileExists(EtcPppDir+'options.old') then Shell('cp -f '+EtcPppDir+'options '+EtcPppDir+'options.old');
  Shell('echo "#Clear config file" > '+EtcPppDir+'options');
+ //учитывание особенностей SELinux в Fedora
+  If fedora then if ComboBoxVPN.Text='VPN L2TP' then If Pppd_log.Checked then
+                 begin
+                      If not FileExists(VarLogDir+'vpnlog') then Shell ('touch '+VarLogDir+'vpnlog');
+                      Shell('restorecon -R -v '+VarLogDir);
+                 end;
  //проверка технической возможности поднятия соединения
  EditDNS1ping:=true;
  EditDNS2ping:=true;
@@ -3119,13 +3128,6 @@ If not y then IPS:=true else IPS:=false;
                      dhcp_route.Checked:=false;
                      StartMessage:=true;
                 end;
-{  If fedora then if ComboBoxVPN.Text='VPN L2TP' then
-                begin
-                     StartMessage:=false;
-                     Pppd_log.Checked:=false;
-                     Pppd_log.Enabled:=false;
-                     StartMessage:=true;
-                end;}
   If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then
                 begin
                      StartMessage:=false;
@@ -3152,53 +3154,31 @@ var
    y:boolean;
    a,b,c,d:string; //a.b.c.d-это шлюз
 begin
-y:=false;
+y:=true;
 //проверка корректности ввода сетевого интерфейса
-If (Edit_eth.Text='none') or (Edit_eth.Text='') then
+If (Edit_eth.Text='') or (Edit_eth.Text='none') then
                     begin
                          Form3.MyMessageBox(message0,message15,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                         Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
-                         If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
-                         If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
-                         If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
-                         If Edit_eth.Text='link' then
-                                                 begin
-                                                      Edit_eth.Text:='none';
-                                                      Edit_gate.Text:='none';
-                                                 end;
                          TabSheet2.TabVisible:= True;
                          Application.ProcessMessages;
                          Form1.Repaint;
                          exit;
                     end;
-if not Length(Edit_eth.Text) in [3,4,5] then
-                    begin
-                         Form3.MyMessageBox(message0,message15,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                         Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
-                         If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
-                         If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
-                         If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
-                         TabSheet2.TabVisible:= True;
-                         Application.ProcessMessages;
-                         Form1.Repaint;
-                         exit;
-                    end;
-if not ((Edit_eth.Text[1]='e') and  (Edit_eth.Text[2]='t') and  (Edit_eth.Text[3]='h')) then y:=true;
-if not (Edit_eth.Text[4] in ['0'..'9']) then y:=true;
-if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[3]='a') then if (Edit_eth.Text[4]='n') then if (Edit_eth.Text[5] in ['0'..'9']) then y:=false;
-if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
-if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='m') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
+if length(Edit_eth.Text)=4 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='t') then if (Edit_eth.Text[3]='h') then if (Edit_eth.Text[4] in ['0'..'9']) then y:=false;
+if length(Edit_eth.Text)=5 then if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[3]='a') then if (Edit_eth.Text[4]='n') then if (Edit_eth.Text[5] in ['0'..'9']) then y:=false;
+if length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
+if length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='m') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
 if y then
                     begin
-                          Form3.MyMessageBox(message0,message15,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
-                          If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
-                          If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
-                          If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
+                          Form3.MyMessageBox(message0,message207+' '+message209+' '+message208,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
                           TabSheet2.TabVisible:= True;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          exit;
+                          if (Form3.Tag=3) or (Form3.Tag=0) then
+                                                                begin
+                                                                     If Edit_eth.Visible then if Edit_eth.Enabled then Edit_eth.SetFocus;
+                                                                     exit;
+                                                                end;
                     end;
 //проверка поддержки mii-tool
 If not FileExists(MyLibDir+Edit_peer.Text+'/config') then

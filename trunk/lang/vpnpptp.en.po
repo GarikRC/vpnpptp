@@ -246,10 +246,6 @@ msgstr "Network cable to automatically detect the network gateway is not connect
 msgid "Не удалось автоматически оп#209�еделить шлюз локальной сети."
 msgstr "Could not automatically determine the network gateway."
 
-#: unit1.message15
-msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9, или от em0 до em9."
-msgstr "Field \"Network interface\" is wrong. Must be eth0 to eth9 or wlan0 to wlan9, or br0 to br9, or em0 to em9."
-
 #: unit1.message16
 msgid "Поле \"Шлюз локальной сети\" заполнено неве#209�но. П#209�авильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
 msgstr "Field \"Local network gate\" is wrong. Must be xxx.xxx.xxx.xxx, where xxx - a number from 0 to 255."
@@ -1187,3 +1183,19 @@ msgstr "<OK> - to enable the option usepeerdns automatically and continue (recom
 msgctxt "unit1.message206"
 msgid "Опция usepeerdns не выб#209�ана."
 msgstr "Option usepeerdns is not selected."
+
+#: unit1.message15
+msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. Оно не может быть пустым и не может быть none."
+msgstr "Field \"Network interface\" is wrong. It can not be empty and it can not be none."
+
+#: unit1.message207
+msgid "Сетевой инте#209�фейс п#209�ог#209�амме не известен. Либо он введен не ве#209�но, либо ве#209�но, но тогда он не подде#209�живается п#209�ог#209�аммой на 100%."
+msgstr "Program does not know this network interface. Either it entered not true either it entered true, but then it is not supported by 100%."
+
+#: unit1.message208
+msgid "<ОК> - оставить как есть и п#209�одолжить. <Отмена> - исп#209�авить."
+msgstr "<OK> - leave it and continue. <Cancel> - correct."
+
+#: unit1.message209
+msgid "П#209�ог#209�амме известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9]."
+msgstr "The program knows: ethN, wlanN, brN, emN, where N is in the range of [0 .. 9]."

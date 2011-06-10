@@ -395,6 +395,14 @@ begin
        i:=i+1;
      end;
   PClose(f);
+  str:='';
+  popen (f,'ifconfig |grep '+chr(39)+'em'+chr(39),'R');
+  While not eof(f) do
+     begin
+       Readln (f,str);
+       i:=i+1;
+     end;
+  PClose(f);
   if i=0 then i:=1;
   CountInterface:=i;
 end;
@@ -1362,6 +1370,7 @@ begin
         Ifdown('eth'+IntToStr(i),true);
         Ifdown('wlan'+IntToStr(i),true);
         Ifdown('br'+IntToStr(i),true);
+        Ifdown('em'+IntToStr(i),true);
       end;
   Shell (ServiceCommand+NetServiceStr+' restart'); // организация конкурса интерфейсов
   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep(3000);
@@ -1376,6 +1385,7 @@ begin
               Ifdown('eth'+IntToStr(i),true);
               Ifdown('wlan'+IntToStr(i),true);
               Ifdown('br'+IntToStr(i),true);
+              Ifdown('em'+IntToStr(i),true);
              end;
             Shell (ServiceCommand+NetServiceStr+' restart');
             For i:=0 to 9 do
@@ -1383,6 +1393,7 @@ begin
                     Ifup('eth'+IntToStr(i),true);
                     Ifup('wlan'+IntToStr(i),true);
                     Ifup('br'+IntToStr(i),true);
+                    Ifup('em'+IntToStr(i),true);
                  end;
            Ifup('lo',true);
      end;
