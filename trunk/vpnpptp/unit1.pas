@@ -275,7 +275,7 @@ const
   UsrBinDir='/usr/bin/';
   SBinDir='/sbin/';
   EtcDir='/etc/';
-  VarLogDir='/var/log/';
+  VarLogDir='/var/log/ppp/';
   UsrSBinDir='/usr/sbin/';
   VarRunXl2tpdDir='/var/run/xl2tpd/';
   EtcInitDDir='/etc/init.d/';
@@ -305,7 +305,7 @@ resourcestring
   message12='Сетевой интерфейс не определился.';
   message13='Сетевой кабель для автоматического определения шлюза локальной сети не подключен.';
   message14='Не удалось автоматически определить шлюз локальной сети.';
-  message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9.';
+  message15='Поле "Сетевой интерфейс" заполнено неверно. Правильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9, или от em0 до em9.';
   message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message18='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
@@ -400,7 +400,7 @@ resourcestring
   message107='Запустить конфигуратор VPN PPTP/L2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
   message108='Установить тестовое соединение VPN PPTP/L2TP в графике/без графики сейчас?';
   message109='Тестовый запуск';
-  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd) в /var/log/vpnlog.';
+  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd) в /var/log/ppp/vpnlog.';
   message111='Команда запуска:';
   message112='Выбор этой опции позволяет установить соединение со случайным адресом VPN-сервера, заданного по имени, устанавливая соединение мгновенно.';
   message113='При отмене этой опции соединение не всегда сможет установиться мгновенно с еще неизвестным адресом VPN-сервера, особенно если их много.';
@@ -421,7 +421,7 @@ resourcestring
   message128='Здесь также можно указать команды, которые выполнятся сразу, как только соединение VPN PPTP/L2TP будет установлено.';
   message129='Значения MTU/MRU можно не вводить, тогда если не указана опция default-mru, то провайдер пришлет их сам (но не всегда).';
   message130='Шаблон: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
-  message131='Шаблон: от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9.';
+  message131='Шаблон: от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9, или от em0 до em9.';
   message132='Эта кнопка вызывает справку, но при условиях, что она есть, и что установлено офисное приложение';
   message133='Перейти к следующей странице настройки';
   message134='Выйти из программы';
@@ -642,7 +642,7 @@ var
 begin
    i:=0;
    Shell ('rm -f '+MyTmpDir+'CountInterface');
-   Shell ('ifconfig |grep eth >>'+MyTmpDir+'CountInterface & ifconfig |grep wlan >>'+MyTmpDir+'CountInterface & ifconfig |grep br >>'+MyTmpDir+'CountInterface');
+   Shell ('ifconfig |grep eth >>'+MyTmpDir+'CountInterface & ifconfig |grep wlan >>'+MyTmpDir+'CountInterface & ifconfig |grep br >>'+MyTmpDir+'CountInterface & ifconfig |grep em >>'+MyTmpDir+'CountInterface');
    AssignFile (FileInterface,MyTmpDir+'CountInterface');
    reset (FileInterface);
    While not eof (FileInterface) do
@@ -1274,6 +1274,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                               If FileExists(MyScriptsDir+'peermodify.sh') then //коррекция шифрования в соответствии с man pppd
                                                                 Shell ('sh '+MyScriptsDir+'peermodify.sh '+Edit_peer.Text);
  Shell ('chmod 600 '+EtcPppPeersDir+Edit_peer.Text);
+ If not DirectoryExists(VarLogDir) then Shell ('mkdir -p '+VarLogDir);
 //удаляем временные, старые файлы и ссылки
  Shell('rm -f '+EtcDir+'resolv.conf.lock');
  Shell('rm -f '+MyLibDir+'ip-down');
@@ -1302,7 +1303,7 @@ If fedora then
     shell('chmod a+x '+EtcPppDir+'ip-up.local')
  end;
  //перезаписываем скрипт поднятия соединения имя_соединения-ip-up
- If not DirectoryExists(EtcPppIpUpDDir) then Shell ('mkdir -p '+EtcPppIpUpDDir);
+If not DirectoryExists(EtcPppIpUpDDir) then Shell ('mkdir -p '+EtcPppIpUpDDir);
  Shell('rm -f '+EtcPppIpUpDDir+Edit_peer.Text+'-ip-up');
  Memo_ip_up.Clear;
  Memo_ip_up.Lines.Add('#!/bin/sh');
@@ -1374,7 +1375,8 @@ If fedora then
                                                            Memo_ip_up.Lines.Add(SBinDir+'route add -host $DNS2 gw $IPREMOTE dev $IFNAME');
                                                        end;
  For i:=1 to CountInterface do
-     If not pppnotdefault.Checked then Memo_ip_up.Lines.Add(SBinDir+'route del default');
+          If not pppnotdefault.Checked then Memo_ip_up.Lines.Add(SBinDir+'route del default');
+ If not pppnotdefault.Checked then Memo_ip_up.Lines.Add(SBinDir+'route del default');
  If not pppnotdefault.Checked then Memo_ip_up.Lines.Add(SBinDir+'route add default dev $IFNAME');
  If Unit2.Form2.CheckBoxusepeerdns.Checked then
         begin
@@ -2334,6 +2336,7 @@ If suse then
           Ifdown('eth'+IntToStr(i));
           Ifdown('wlan'+IntToStr(i));
           Ifdown('br'+IntToStr(i));
+          Ifdown('em'+IntToStr(i));
         end;
     Shell (ServiceCommand+NetServiceStr+' restart');
     For i:=0 to 9 do
@@ -2341,6 +2344,7 @@ If suse then
           Ifup('eth'+IntToStr(i));
           Ifup('wlan'+IntToStr(i));
           Ifup('br'+IntToStr(i));
+          Ifup('em'+IntToStr(i));
         end;
     Ifup('lo');
 ButtonRestart.Caption:=message93;
@@ -2892,14 +2896,15 @@ var
    j:byte; //точка в написании шлюза
    a,b,c,d:string; //a.b.c.d-это шлюз
    FileResolv_conf:textfile;
-   str:string;
+   str,str1:string;
 begin
  y:=false;
 //проверка корректности имени соединения
   str:=Edit_peer.Text;
   for i:=1 to Length(str) do
        str[i]:=UpCase(str[i]);
-  if (str='DEFAULT') then
+  if length(str)>=3 then str1:=LeftStr(str,3);
+  if (str='DEFAULT') or (str='VPNMANDRIVA') or (str1='PPP') then
                          begin
                              Form3.MyMessageBox(message0,message169+' '+Edit_peer.Text+', '+message186,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                              Edit_peer.Text:='';
@@ -3031,7 +3036,7 @@ If not y then IPS:=true else IPS:=false;
   Memo_gate.Clear;
   If FileExists(MyTmpDir+'gate') then Memo_gate.Lines.LoadFromFile(MyTmpDir+'gate');
   Edit_gate.Text:=Memo_gate.Lines[0];
-  If (LeftStr(Edit_gate.Text,3)='eth') or (LeftStr(Edit_gate.Text,4)='wlan') or (LeftStr(Edit_gate.Text,2)='br') then Edit_gate.Text:='none';
+  If (LeftStr(Edit_gate.Text,3)='eth') or (LeftStr(Edit_gate.Text,4)='wlan') or (LeftStr(Edit_gate.Text,2)='br') or (LeftStr(Edit_gate.Text,2)='em') then Edit_gate.Text:='none';
   Shell('rm -f '+MyTmpDir+'gate');
 //определяем сетевой интерфейс по умолчанию
   Shell(SBinDir+'ip r|grep default| awk '+chr(39)+'{print $5}'+chr(39)+' > '+MyTmpDir+'eth');
@@ -3043,6 +3048,7 @@ If not y then IPS:=true else IPS:=false;
   If Edit_eth.Text='link' then Edit_eth.Text:='none';
   If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
   If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
+  If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
   If Edit_eth.Text='none' then
                            begin
                              Edit_gate.Text:='none';
@@ -3113,13 +3119,13 @@ If not y then IPS:=true else IPS:=false;
                      dhcp_route.Checked:=false;
                      StartMessage:=true;
                 end;
-  If fedora then if ComboBoxVPN.Text='VPN L2TP' then
+{  If fedora then if ComboBoxVPN.Text='VPN L2TP' then
                 begin
                      StartMessage:=false;
                      Pppd_log.Checked:=false;
                      Pppd_log.Enabled:=false;
                      StartMessage:=true;
-                end;
+                end;}
   If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then
                 begin
                      StartMessage:=false;
@@ -3154,6 +3160,7 @@ If (Edit_eth.Text='none') or (Edit_eth.Text='') then
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                          If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
                          If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
+                         If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
                          If Edit_eth.Text='link' then
                                                  begin
                                                       Edit_eth.Text:='none';
@@ -3170,6 +3177,7 @@ if not Length(Edit_eth.Text) in [3,4,5] then
                          Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                          If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
                          If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
+                         If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
                          TabSheet2.TabVisible:= True;
                          Application.ProcessMessages;
                          Form1.Repaint;
@@ -3179,12 +3187,14 @@ if not ((Edit_eth.Text[1]='e') and  (Edit_eth.Text[2]='t') and  (Edit_eth.Text[3
 if not (Edit_eth.Text[4] in ['0'..'9']) then y:=true;
 if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[3]='a') then if (Edit_eth.Text[4]='n') then if (Edit_eth.Text[5] in ['0'..'9']) then y:=false;
 if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
+if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='m') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
 if y then
                     begin
                           Form3.MyMessageBox(message0,message15,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                           Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
                           If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
                           If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
+                          If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
                           TabSheet2.TabVisible:= True;
                           Application.ProcessMessages;
                           Form1.Repaint;
@@ -3480,10 +3490,11 @@ procedure TForm1.FormCreate(Sender: TObject);
 var i,N, CountGateway:integer;
     len:integer;
     FileFind:textfile;
-    strIface, strGateway, str:string;
+    strIface, strGateway, str, str1:string;
     ethCount:array[0..9] of integer;
     wlanCount:array[0..9] of integer;
     brCount:array[0..9] of integer;
+    emCount:array[0..9] of integer;
     nostart:boolean;
     Apid,Apidroot:tpid;
     PeabodyIpUp, PeabodyIpDown:boolean;
@@ -3925,7 +3936,8 @@ ButtonHelp.Enabled:=false;
   str:=ProfileName;
   for i:=1 to Length(str) do
        str[i]:=UpCase(str[i]);
-  If str='DEFAULT' then
+ if length(str)>=3 then str1:=LeftStr(str,3);
+ if (str='DEFAULT') or (str='VPNMANDRIVA') or (str1='PPP') then
                        begin
                           Form3.MyMessageBox(message0,message169+' '+ProfileName+', '+message186,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                           Application.ProcessMessages;
@@ -4146,6 +4158,7 @@ StartMessage:=true;
                                                     ethCount[i]:=0;
                                                     wlanCount[i]:=0;
                                                     brCount[i]:=0;
+                                                    emCount[i]:=0;
                                                  end;
                                         Shell('route -n |awk '+ chr(39)+'{print $8}'+chr(39)+' > '+MyTmpDir+'gate');
                                         If FileExists (MyTmpDir+'gate') then
@@ -4160,6 +4173,7 @@ StartMessage:=true;
                                                       If str<>'' then If str<>'Iface' then if leftstr(str,4)='eth'+IntToStr(i) then ethCount[i]:=ethCount[i]+1;
                                                       If str<>'' then If str<>'Iface' then if leftstr(str,5)='wlan'+IntToStr(i) then wlanCount[i]:=wlanCount[i]+1;
                                                       If str<>'' then If str<>'Iface' then if leftstr(str,3)='br'+IntToStr(i) then brCount[i]:=brCount[i]+1;
+                                                      If str<>'' then If str<>'Iface' then if leftstr(str,3)='em'+IntToStr(i) then emCount[i]:=emCount[i]+1;
                                                   end;
                                              end;
                                              closefile(FileFind);
@@ -4170,10 +4184,11 @@ StartMessage:=true;
                                                       If ethCount[i]>=1 then begin ethCount[i]:=1;strIface:='eth'+IntToStr(i);end;
                                                       If wlanCount[i]>=1 then begin wlanCount[i]:=1;strIface:='wlan'+IntToStr(i);end;
                                                       If brCount[i]>=1 then begin brCount[i]:=1;strIface:='br'+IntToStr(i);end;
+                                                      If emCount[i]>=1 then begin emCount[i]:=1;strIface:='em'+IntToStr(i);end;
                                                  end;
                                         N:=0;
                                         for i:=0 to 9 do
-                                               N:=N+ethCount[i]+wlanCount[i]+brCount[i];
+                                               N:=N+ethCount[i]+wlanCount[i]+brCount[i]+emCount[i];
                                         If N=1 then If strIface<>'' then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
                                                                         begin
                                                                              Shell('route -n |grep '+strIface+'|awk '+ chr(39)+'{print $2}'+chr(39)+' > '+MyTmpDir+'gate');
@@ -4263,11 +4278,13 @@ begin
                             begin
                                  Form1.Font.Size:=Form1.Font.Size+1;
                                  Form2.Font.Size:=Form2.Font.Size+1;
+                                 Form2.Label1.Font.Size:=Form1.Font.Size+1;
                             end;
-   If Button=mbRight then If Form1.Font.Size>1 then
+   If Button=mbRight then If Form1.Font.Size>2 then
                              begin
                                  Form1.Font.Size:=Form1.Font.Size-1;
                                  Form2.Font.Size:=Form2.Font.Size-1;
+                                 Form2.Label1.Font.Size:=Form1.Font.Size-1;
                              end;
    AFont:=Form1.Font.Size;
    Form1.Repaint;

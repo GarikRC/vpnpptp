@@ -38,7 +38,6 @@ type
     CheckBoxusepeerdns: TCheckBox;
     CheckBoxlock: TCheckBox;
     Label1: TLabel;
-    Label2: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Label1Click(Sender: TObject);
@@ -129,7 +128,6 @@ begin
                              Form2.Width:=(Screen.Width div 3)*2;
                              Form2.Constraints.MaxHeight:=(Screen.Height div 3)*2;
                              Form2.Constraints.MinHeight:=(Screen.Height div 3)*2;
-                             Label2.Caption:=Label2.Caption+'_____';
                             end;
    If Screen.Height<=480 then
                         begin
@@ -137,7 +135,6 @@ begin
                              Form2.Width:=(Screen.Width div 3)*2;
                              Form2.Constraints.MaxHeight:=(Screen.Height div 3)*2;
                              Form2.Constraints.MinHeight:=(Screen.Height div 3)*2;
-                             Label2.Caption:=Label2.Caption+'_____';
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
@@ -152,7 +149,6 @@ begin
                              Form2.Constraints.MinHeight:=275;
                              Form2.Constraints.MaxWidth:=397;
                              Form2.Constraints.MinWidth:=397;
-                             Label2.Caption:=Label2.Caption+'_______';
                         end;
    If Screen.Height>1000 then
                         begin

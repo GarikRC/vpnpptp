@@ -1072,9 +1072,24 @@ If str='DEFAULT' then
   NetServiceStr:='none';
   If FileExists (EtcInitDDir+'network') then NetServiceStr:='network';
   If FileExists (EtcInitDDir+'networking') then NetServiceStr:='networking';
-  If FileExists (EtcInitDDir+'network-manager') then NetServiceStr:='network-manager';
-  If FileExists (EtcInitDDir+'NetworkManager') then NetServiceStr:='NetworkManager';
-  If FileExists (EtcInitDDir+'networkmanager') then NetServiceStr:='networkmanager';
+  If FileExists (EtcInitDDir+'network-manager') then
+                                                    begin
+                                                       popen (f,'ps -e |grep NetworkManager','R');
+                                                       if not eof(f) then NetServiceStr:='NetworkManager';
+                                                       PClose(f);
+                                                    end;
+  If FileExists (EtcInitDDir+'NetworkManager') then
+                                                    begin
+                                                       popen (f,'ps -e |grep NetworkManager','R');
+                                                       if not eof(f) then NetServiceStr:='NetworkManager';
+                                                       PClose(f);
+                                                    end;
+  If FileExists (EtcInitDDir+'networkmanager') then
+                                                    begin
+                                                       popen (f,'ps -e |grep networkmanager','R');
+                                                       if not eof(f) then NetServiceStr:='networkmanager';
+                                                       PClose(f);
+                                                    end;
   If NetServiceStr='none' then
                             begin
                                Form1.Timer1.Enabled:=False;

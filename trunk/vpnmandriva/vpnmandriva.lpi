@@ -15,7 +15,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="2222"/>
+      <BuildNr Value="2223"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.1302"/>
     </VersionInfo>
@@ -65,7 +65,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="843"/>
+        <TopLine Value="842"/>
         <CursorPos X="5" Y="892"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
