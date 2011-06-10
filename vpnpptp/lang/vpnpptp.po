@@ -176,7 +176,7 @@ msgid "III) Введите Ваш логин..."
 msgstr ""
 
 #: TFORM1.LABEL35.CAPTION
-msgid "Время дозвона (сек.):"
+msgid "Время дозвона (сек.)*:"
 msgstr ""
 
 #: TFORM1.LABEL36.CAPTION
@@ -200,7 +200,7 @@ msgid "IV) Введите Ваш пароль..."
 msgstr ""
 
 #: TFORM1.LABEL40.CAPTION
-msgid "Время реконнекта (сек.):"
+msgid "Время реконнекта (сек.)*:"
 msgstr ""
 
 #: TFORM1.LABEL41.CAPTION
@@ -271,7 +271,7 @@ msgid "Шлюз локал. сети по умолчанию (определяе
 msgstr ""
 
 #: TFORM1.LABEL_IPS.CAPTION
-msgid "Провайдер (IP или имя):"
+msgid "Провайдер (IP или имя)*:"
 msgstr ""
 
 #: TFORM1.LABEL_MRU.CAPTION
@@ -283,11 +283,11 @@ msgid "MTU (если задано):"
 msgstr ""
 
 #: TFORM1.LABEL_PEER.CAPTION
-msgid "Имя соединения:"
+msgid "Имя соединения*:"
 msgstr ""
 
 #: TFORM1.LABEL_PSWD.CAPTION
-msgid "Пароль:"
+msgid "Пароль*:"
 msgstr ""
 
 #: TFORM1.LABEL_ROUTE.CAPTION
@@ -295,7 +295,7 @@ msgid "Дополнительные маршруты (необязательно
 msgstr ""
 
 #: TFORM1.LABEL_USER.CAPTION
-msgid "Пользователь:"
+msgid "Пользователь*:"
 msgstr ""
 
 #: TFORM1.METKA.CAPTION
@@ -316,7 +316,7 @@ msgid "Средне- или высокоскоростная линия (nobuffe
 msgstr ""
 
 #: TFORM1.PPPD_LOG.CAPTION
-msgid "Вести подробный лог pppd(xl2tpd) в /var/log/vpnlog"
+msgid "Вести подробный лог pppd(xl2tpd) в /var/log/ppp/vpnlog"
 msgstr ""
 
 #: TFORM1.PPPNOTDEFAULT.CAPTION
@@ -470,10 +470,6 @@ msgstr ""
 msgid "www.opennet.ru/man.shtml?topic=pppd&&category=8"
 msgstr ""
 
-#: TFORM2.LABEL2.CAPTION
-msgid "___________________________________________________"
-msgstr ""
-
 #: TFORM3.FORM3.CAPTION
 msgctxt "TFORM3.FORM3.CAPTION"
 msgid "Form3"
@@ -539,7 +535,7 @@ msgid "<Да> - установить в г#209�афике, <Нет> - устан
 msgstr ""
 
 #: unit1.message110
-msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd) в /var/log/vpnlog."
+msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd) в /var/log/ppp/vpnlog."
 msgstr ""
 
 #: unit1.message111
@@ -632,7 +628,7 @@ msgid "Шаблон: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255."
 msgstr ""
 
 #: unit1.message131
-msgid "Шаблон: от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9."
+msgid "Шаблон: от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9, или от em0 до em9."
 msgstr ""
 
 #: unit1.message132
@@ -713,7 +709,7 @@ msgid "Нажатие левой/п#209�авой кнопкой мыши на п
 msgstr ""
 
 #: unit1.message15
-msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9."
+msgid "Поле \"Сетевой инте#209�фейс\" заполнено неве#209�но. П#209�авильно от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9, или от em0 до em9."
 msgstr ""
 
 #: unit1.message150

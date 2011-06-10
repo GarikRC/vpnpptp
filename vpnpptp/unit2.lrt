@@ -1,6 +1,5 @@
 TFORM2.FORM2.CAPTION=Опции демона pppd (для
 TFORM2.LABEL1.CAPTION=www.opennet.ru/man.shtml?topic=pppd&&category=8
-TFORM2.LABEL2.CAPTION=___________________________________________________
 TFORM2.BUTTON1.CAPTION=OK
 TFORM2.CHECKBOXLOCK.CAPTION=lock
 TFORM2.CHECKBOXUSEPEERDNS.CAPTION=usepeerdns

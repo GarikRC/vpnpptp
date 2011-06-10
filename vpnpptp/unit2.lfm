@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 433
+  Left = 400
   Height = 307
-  Top = 334
+  Top = 261
   Width = 457
   ActiveControl = CheckBoxlock
   BorderIcons = [biSystemMenu, biMaximize]
@@ -2137,34 +2137,18 @@ object Form2: TForm2
     AnchorSideRight.Side = asrCenter
     AnchorSideBottom.Control = Button1
     Cursor = crHandPoint
-    Left = 44
+    Left = 49
     Height = 18
     Top = 255
-    Width = 368
-    Anchors = [akLeft, akRight, akBottom]
+    Width = 358
+    Anchors = [akLeft, akBottom]
     BorderSpacing.Bottom = 3
     Caption = 'www.opennet.ru/man.shtml?topic=pppd&&category=8'
     Color = clForm
+    Font.Style = [fsUnderline]
     ParentColor = False
+    ParentFont = False
     Transparent = False
-    OnClick = Label1Click
-  end
-  object Label2: TLabel
-    AnchorSideLeft.Control = Owner
-    AnchorSideLeft.Side = asrCenter
-    AnchorSideTop.Control = Label1
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrCenter
-    AnchorSideBottom.Control = Button1
-    Cursor = crHandPoint
-    Left = 44
-    Height = 18
-    Top = 257
-    Width = 368
-    Anchors = [akTop, akLeft, akRight]
-    BorderSpacing.Top = 2
-    Caption = '___________________________________________________'
-    ParentColor = False
     OnClick = Label1Click
   end
   object Button1: TButton

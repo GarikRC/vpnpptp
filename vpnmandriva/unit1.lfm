@@ -2446,16 +2446,15 @@ object Form1: TForm1
     end
     object CheckBox_right: TCheckBox
       AnchorSideLeft.Control = Panel1
-      AnchorSideTop.Control = Edit_metric
+      AnchorSideTop.Control = CheckBox_pppd_log
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 255
-      Width = 29
+      Top = 276
+      Width = 26
       BorderSpacing.Left = 10
-      BorderSpacing.Top = 30
-      Caption = 'F'
-      TabOrder = 5
+      Caption = 'J'
+      TabOrder = 6
     end
     object CheckBox_autostart: TCheckBox
       AnchorSideLeft.Control = Panel1
@@ -2463,24 +2462,24 @@ object Form1: TForm1
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 276
-      Width = 31
-      BorderSpacing.Left = 10
-      Caption = 'G'
-      TabOrder = 6
-    end
-    object CheckBox_traffic: TCheckBox
-      AnchorSideLeft.Control = Panel1
-      AnchorSideTop.Control = CheckBox_autostart
-      AnchorSideTop.Side = asrBottom
-      Left = 11
-      Height = 21
       Top = 297
       Width = 31
       BorderSpacing.Left = 10
       Caption = 'H'
-      OnChange = CheckBox_trafficChange
       TabOrder = 7
+    end
+    object CheckBox_traffic: TCheckBox
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = CheckBox_nobuffer
+      AnchorSideTop.Side = asrBottom
+      Left = 11
+      Height = 21
+      Top = 339
+      Width = 26
+      BorderSpacing.Left = 10
+      Caption = 'J'
+      OnChange = CheckBox_trafficChange
+      TabOrder = 9
     end
     object Label_metric: TLabel
       AnchorSideLeft.Control = Label_pswd
@@ -2527,7 +2526,7 @@ object Form1: TForm1
     end
     object CheckBox_nobuffer: TCheckBox
       AnchorSideLeft.Control = Panel1
-      AnchorSideTop.Control = CheckBox_traffic
+      AnchorSideTop.Control = CheckBox_autostart
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
@@ -9193,17 +9192,18 @@ object Form1: TForm1
     end
     object CheckBox_pppd_log: TCheckBox
       AnchorSideLeft.Control = Panel1
-      AnchorSideTop.Control = CheckBox_nobuffer
+      AnchorSideTop.Control = Edit_metric
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 339
-      Width = 26
+      Top = 255
+      Width = 29
       BorderSpacing.Left = 10
-      Caption = 'J'
+      BorderSpacing.Top = 30
+      Caption = 'F'
       Checked = True
       State = cbChecked
-      TabOrder = 9
+      TabOrder = 5
     end
   end
 end
