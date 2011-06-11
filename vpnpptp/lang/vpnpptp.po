@@ -176,7 +176,7 @@ msgid "III) Введите Ваш логин..."
 msgstr ""
 
 #: TFORM1.LABEL35.CAPTION
-msgid "Время дозвона (сек.)*:"
+msgid "Время дозвона (сек.):"
 msgstr ""
 
 #: TFORM1.LABEL36.CAPTION
@@ -200,7 +200,7 @@ msgid "IV) Введите Ваш пароль..."
 msgstr ""
 
 #: TFORM1.LABEL40.CAPTION
-msgid "Время реконнекта (сек.)*:"
+msgid "Время реконнекта (сек.):"
 msgstr ""
 
 #: TFORM1.LABEL41.CAPTION
@@ -271,7 +271,7 @@ msgid "Шлюз локал. сети по умолчанию (определяе
 msgstr ""
 
 #: TFORM1.LABEL_IPS.CAPTION
-msgid "Провайдер (IP или имя)*:"
+msgid "Провайдер (IP или имя):"
 msgstr ""
 
 #: TFORM1.LABEL_MRU.CAPTION
@@ -283,11 +283,11 @@ msgid "MTU (если задано):"
 msgstr ""
 
 #: TFORM1.LABEL_PEER.CAPTION
-msgid "Имя соединения*:"
+msgid "Имя соединения:"
 msgstr ""
 
 #: TFORM1.LABEL_PSWD.CAPTION
-msgid "Пароль*:"
+msgid "Пароль:"
 msgstr ""
 
 #: TFORM1.LABEL_ROUTE.CAPTION
@@ -295,7 +295,7 @@ msgid "Дополнительные маршруты (необязательно
 msgstr ""
 
 #: TFORM1.LABEL_USER.CAPTION
-msgid "Пользователь*:"
+msgid "Пользователь:"
 msgstr ""
 
 #: TFORM1.METKA.CAPTION

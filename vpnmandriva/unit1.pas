@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Menus, Buttons, Process,
+  StdCtrls, ExtCtrls, ComCtrls, unix, Menus, Buttons, AsyncProcess, Process,
   Typinfo, Gettext, BaseUnix, types;
 
 type
@@ -89,7 +89,7 @@ var
   Form1: TForm1;
   Lang,FallbackLang:string; //язык системы
   Number_PPP_Iface:integer; //номер ближайшего доступного для настройки интерфейса pppN
-  AProcess: TProcess; //для запуска внешних приложений
+  AAsyncProcess:TAsyncProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
   f: text;//текстовый поток
 
@@ -334,6 +334,7 @@ procedure TForm1.Button_createClick(Sender: TObject);
 var
   str,mppe_string:string;
   y,net_applet_root:boolean;
+  StrUsers:string;
 begin
 //выход из создания подключения
 y:=false;
@@ -443,30 +444,33 @@ popen(f,'ps -u root|grep net_applet','R');
 if eof(f) then net_applet_root:=false else net_applet_root:=true;
 PClose(f);
 str:='';
+StrUsers:='';
+Shell ('killall net_applet');
 if not net_applet_root then
                              begin
-                                  popen (f,'who |awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
-                                  Shell ('killall net_applet');
+                                  popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
                                   While not eof(f) do
                                         begin
                                              readln(f,str);
-                                             if str<>'' then
+                                             if str<>'' then if pos(str,StrUsers)=0 then
                                                         begin
-                                                             AProcess := TProcess.Create(nil);
-                                                             AProcess.CommandLine :='su - '+str+' -c "net_applet"';
-                                                             AProcess.Execute;
-                                                             AProcess.Free;
+                                                             AAsyncProcess := TAsyncProcess.Create(nil);
+                                                             AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
+                                                             AAsyncProcess.Execute;
+                                                             sleep(3000);
+                                                             AAsyncProcess.Free;
                                                         end;
+                                             StrUsers:=StrUsers+str;
                                         end;
                                   PClose(f);
                              end;
 if net_applet_root then
                       begin
-                          Shell ('killall net_applet');
-                          AProcess := TProcess.Create(nil);
-                          AProcess.CommandLine :='net_applet';
-                          AProcess.Execute;
-                          AProcess.Free;
+                          AAsyncProcess := TAsyncProcess.Create(nil);
+                          AAsyncProcess.CommandLine :=UsrBinDir+'net_applet';
+                          AAsyncProcess.Execute;
+                          sleep(3000);
+                          AAsyncProcess.Free;
                       end;
 If FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
                      If FallbackLang='uk' then Application.MessageBox(PChar(message11uk+' '+message12uk+' '+message13uk+' '+message52uk),PChar(message0uk),0) else
