@@ -153,7 +153,7 @@
  noauth
  nopcomp
  noaccomp
- logfile /var/log/syslog
+ logfile /var/log/ppp/vpnlog
 Параметры user и password в комментариях не нуждаются, значение остальных можно посмотреть в файле справки '''man pppd''' (http://www.opennet.ru/man.shtml?topic=pppd&category=8). Обратим внимание на то, что пароль забран в кавычки.
 При анализе проблем поможет указание параметра debug и чтение логов.
 
@@ -355,7 +355,7 @@
  noauth
  nopcomp
  noaccomp
- logfile /var/log/syslog
+ logfile /var/log/ppp/vpnlog
 Мы заменили IP VPN-сервера на его имя.
 Запускать и прерывать соединение можно командами:
  pppd call beeline
@@ -470,7 +470,7 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
  autodial = yes
 Также в файле '''/etc/xl2tpd/xl2tpd.conf''' можно добавить:
  ppp debug = yes
-для вывода отладочной информации в лог /var/log/syslog.
+для вывода отладочной информации в лог /var/log/ppp/vpnlog.
 
 Также в файле '''/etc/xl2tpd/xl2tpd.conf''' можно добавить:
  redial = yes
@@ -531,6 +531,10 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
  fi
 Делаем их исполняемыми.
 
+Для VPN L2TP SELinux может блокировать ведение лога, что не позволит соединиться, исправляем под root:
+ touch /var/log/ppp/vpnlog
+ restorecon -R -v /var/log/ppp/
+
 '''openSUSE:'''
 
 Для автозапуска интернета при старте системы не используется ни файл '''/etc/rc.d/rc.local''', ни файл '''/etc/rc.local''', а используется файл '''/etc/init.d/after.local'''.
@@ -547,3 +551,5 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
 Также настроить VPN можно через Network Manager.
 
 Также в различных дистрибутивах могут быть свои утилиты для настройки VPN.
+
+В пакет vpnpptp входит утилита vpnmandriva, которая функциональна и без пакета одним лишь исполняемым файлом, которая позволяет настроить VPN PPTP через mcc (пакет drakconf) и управлять через net_applet (пакет drakx-net). Подробнее: http://code.google.com/p/vpnpptp/, тут же Вы найдете различные инструкции, в том числе по использованию утилиты vpnmandriva и по возможности настройки VPN PPTP через mcc без утилиты vpnmandriva.
