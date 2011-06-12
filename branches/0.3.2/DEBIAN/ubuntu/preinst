@@ -1,0 +1,10 @@
+#! /bin/sh
+
+#удалить ссылки если есть
+rm -f /usr/bin/vpnpptp 
+rm -f /usr/bin/ponoff
+rm -f /usr/share/pixmaps/ponoff.png
+rm -f /usr/share/pixmaps/vpnpptp.png
+#обеспечить переход с allde на kde-one или наоборот
+rm -f /usr/share/applications/ponoff.desktop.old
+rm -f /usr/share/applications/vpnpptp.desktop.old
