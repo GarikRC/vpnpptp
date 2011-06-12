@@ -167,6 +167,8 @@ resourcestring
   message56ru='Не удалось запустить net_applet.';
   message57ru='Отсутствует:';
   message58ru='Найден:';
+  message59ru='Не найдена директория:';
+  message60ru='Следовательно, эта программа не предназначена для Вашего дистрибутива.';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
@@ -227,6 +229,8 @@ resourcestring
   message56uk='Не вдалося запустити net_applet.';
   message57uk='Відсутній:';
   message58uk='Знайден:';
+  message59uk='Не знайдена директорія:';
+  message60uk='Це означає що ця програма не призначена для Вашого дистрибутиву.';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -287,6 +291,8 @@ resourcestring
   message56en='Failed to start net_applet.';
   message57en='Missing:';
   message58en='Find:';
+  message59en='Not found directory:';
+  message60en='So, this program is not for your distribution.';
 
 
 implementation
@@ -540,12 +546,19 @@ for i:=0 to 100 do
 //Number_PPP_Iface:=101; //просто для проверки при отладке
 If Number_PPP_Iface<>101 then Edit_peer.Text:='ppp'+IntToStr(Number_PPP_Iface);
 If Edit_peer.Text='' then
-                    begin
-                       If FallbackLang='ru' then Application.MessageBox(PChar(message8ru+' '+message9ru),PChar(message0ru),0) else
-                                            If FallbackLang='uk' then Application.MessageBox(PChar(message8uk+' '+message9uk),PChar(message0uk),0) else
-                                                                                     Application.MessageBox(PChar(message8en+' '+message9en),PChar(message0en),0);
-                       halt;
-                    end;
+                                                    begin
+                                                       If FallbackLang='ru' then Application.MessageBox(PChar(message8ru+' '+message9ru),PChar(message0ru),0) else
+                                                                            If FallbackLang='uk' then Application.MessageBox(PChar(message8uk+' '+message9uk),PChar(message0uk),0) else
+                                                                                                                     Application.MessageBox(PChar(message8en+' '+message9en),PChar(message0en),0);
+                                                       halt;
+                                                    end;
+If not DirectoryExists(IfcfgDir) then
+                                     begin
+                                         If FallbackLang='ru' then Application.MessageBox(PChar(message59ru+' '+IfcfgDir+'. '+message60ru+ ' '+message9ru),PChar(message0ru),0) else
+                                                          If FallbackLang='uk' then Application.MessageBox(PChar(message59uk+' '+IfcfgDir+'. '+message60uk+ ' '+message9uk),PChar(message0uk),0) else
+                                                                                                    Application.MessageBox(PChar(message59en+' '+IfcfgDir+'. '+message60en+ ' '+message9en),PChar(message0en),0);
+                                         halt;
+                                     end;
 //присваивание хинтов элементам формы и их настройка
 HintWindowClass := TMyHintWindow;
 Application.HintColor:=$0092FFF8;
