@@ -331,8 +331,8 @@ resourcestring
   message38='При выборе этой опции проверяется пинг VPN-, DNS-сервера, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные проблемы, выводя сообщения.';
   message39='Отменить эту опцию стоит только если у Вас стабильные локальная сеть и интернет, и они никогда не падают.';
   message40='Эта опция блокирует все всплывающие сообщения из трея, а также отключает проверку DNS-, VPN-сервера, шлюза локальной сети и есть ли интернет.';
-  message41='Проверка показала, что маршруты через DHCP не приходят. Одновременная работа интернета и лок. сети не настроена.';
-  message42='Получение маршрутов через DHCP будет отменено, так как маршруты через DHCP не приходят.';
+  message41='Проверка показала, что маршруты через DHCP не приходят, или настройка не требуется.';
+  message42='Получение маршрутов через DHCP будет отменено, так как маршруты через DHCP не приходят, или настройка не требуется.';
   message43='VPN-сервер не пингуется. Устраните проблему и заново запустите конфигуратор.';
   message44='Шлюз локальной сети не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
   message45='Пингуется VPN-сервер. Ожидайте...';
@@ -500,6 +500,8 @@ resourcestring
   message207='Сетевой интерфейс программе не известен. Либо он введен не верно, либо верно, но тогда он не поддерживается программой на 100%.';
   message208='<ОК> - оставить как есть и продолжить. <Отмена> - исправить.';
   message209='Программе известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9].';
+  message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
+  message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
 
 implementation
 
@@ -1149,10 +1151,10 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           Memo_gate.Lines.Clear;
                           If FileSize(MyTmpDir+'dhclienttest2')<=FileSize(MyTmpDir+'dhclienttest1') then
                                                                                                begin
-                                                                                                 Label14.Caption:=message41+' '+message42;
+                                                                                                 Label14.Caption:=message41+' '+message210+' '+message42;
                                                                                                  Application.ProcessMessages;
                                                                                                  Form1.Repaint;
-                                                                                                 Form3.MyMessageBox(message0,message41+' '+message42,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                                                 Form3.MyMessageBox(message0,message41+' '+message210+' '+message42,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                                                                  StartMessage:=false;
                                                                                                  dhcp_route.Checked:=false;
                                                                                                  DhclientStartGood:=false;
@@ -3595,10 +3597,10 @@ ButtonHelp.Hint:=MakeHint(message132,6);
 ButtonTest.Hint:=MakeHint(message137,4);
 Edit_eth.Hint:=MakeHint(message131,5);
 Edit_gate.Hint:=MakeHint(message130,5);
-EditDNS1.Hint:=MakeHint(message130,5);
-EditDNS2.Hint:=MakeHint(message130,5);
-EditDNS3.Hint:=MakeHint(message130,5);
-EditDNS4.Hint:=MakeHint(message130,5);
+EditDNS1.Hint:=MakeHint(message130,7);
+EditDNS2.Hint:=MakeHint(message130,7);
+EditDNS3.Hint:=MakeHint(message130+' '+message211,7);
+EditDNS4.Hint:=MakeHint(message130+' '+message211,7);
 Edit_mtu.Hint:=MakeHint(message129,5);
 Edit_mru.Hint:=MakeHint(message129,5);
 Memo_route.Hint:=MakeHint((LeftStr(Label_route.Caption,Length(Label_route.Caption)-1)+'. '+message128),5);

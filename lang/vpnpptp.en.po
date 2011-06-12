@@ -355,14 +355,6 @@ msgstr "You may cancel this option only if you have stable local network and the
 msgid "Эта опция блоки#209�ует все всплывающие сообщения из т#209�ея, а также отключает п#209�ове#209�ку DNS-, VPN-се#209�ве#209�а, шлюза локальной сети и есть ли инте#209�нет."
 msgstr "This option blocks all pop-up messages from tray, besides switches off checking DNS-, VPN-server, local network gateway and the Internet availability."
 
-#: unit1.message41
-msgid "П#209�ове#209�ка показала, что ма#209�ш#209�уты че#209�ез DHCP не п#209�иходят. Однов#209�еменная #209�абота инте#209�нета и лок. сети не наст#209�оена."
-msgstr "The test showed that routes don't come via DHCP. Simultaneous work of the Internet and local network is not configured."
-
-#: unit1.message42
-msgid "Получение ма#209�ш#209�утов че#209�ез DHCP будет отменено, так как ма#209�ш#209�уты че#209�ез DHCP не п#209�иходят."
-msgstr "The receiving of routes via DHCP will be cancelled since the routes via DHCP don't come."
-
 #: unit1.message43
 msgid "VPN-се#209�ве#209� не пингуется. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
 msgstr "VPN-server is not pinged. Correct the problem and start configurator again."
@@ -1199,3 +1191,19 @@ msgstr "<OK> - leave it and continue. <Cancel> - correct."
 #: unit1.message209
 msgid "П#209�ог#209�амме известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9]."
 msgstr "The program knows: ethN, wlanN, brN, emN, where N is in the range of [0 .. 9]."
+
+#: unit1.message41
+msgid "П#209�ове#209�ка показала, что ма#209�ш#209�уты че#209�ез DHCP не п#209�иходят, или наст#209�ойка не т#209�ебуется."
+msgstr "Test showed that the routes via DHCP is not coming, or configuration is not needed."
+
+#: unit1.message42
+msgid "Получение ма#209�ш#209�утов че#209�ез DHCP будет отменено, так как ма#209�ш#209�уты че#209�ез DHCP не п#209�иходят, или наст#209�ойка не т#209�ебуется."
+msgstr "The receiving routes via DHCP will be canceled because routes via DHCP is not coming, or configuration is not needed."
+
+#: unit1.message210
+msgid "Однов#209�еменная #209�абота инте#209�нета и лок. сети не наст#209�оена или не т#209�ебует наст#209�ойки."
+msgstr "Simultaneous work of Internet and local network is not configured or does not require any configuration."
+
+#: unit1.message211
+msgid "Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220."
+msgstr "Google Public DNS: 8.8.8.8 and 8.8.4.4. OpenDNS: 208.67.222.222 and 208.67.220.220."

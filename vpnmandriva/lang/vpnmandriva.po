@@ -806,6 +806,18 @@ msgstr ""
 msgid "Знайден:"
 msgstr ""
 
+#: unit1.message59en
+msgid "Not found directory:"
+msgstr ""
+
+#: unit1.message59ru
+msgid "Не найдена ди#209�екто#209�ия:"
+msgstr ""
+
+#: unit1.message59uk
+msgid "Не знайдена ди#209�екто#209�ія:"
+msgstr ""
+
 #: unit1.message5en
 msgid "If you choose this option, then the connection will be established when the system boots."
 msgstr ""
@@ -817,6 +829,18 @@ msgstr ""
 
 #: unit1.message5uk
 msgid "Якщо виб#209�ати цю опцію, то з'єднання встановиться п#209�и завантаженні системи."
+msgstr ""
+
+#: unit1.message60en
+msgid "So, this program is not for your distribution."
+msgstr ""
+
+#: unit1.message60ru
+msgid "Следовательно, эта п#209�ог#209�амма не п#209�едназначена для Вашего дист#209�ибутива."
+msgstr ""
+
+#: unit1.message60uk
+msgid "Це означає що ця п#209�ог#209�ама не п#209�изначена для Вашого дист#209�ибутиву."
 msgstr ""
 
 #: unit1.message6en
