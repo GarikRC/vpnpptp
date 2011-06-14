@@ -1611,7 +1611,8 @@ begin
                                          PClose(f);
                                     end;
                                  //тест интернета
-                                 Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+Memo_Config.Lines[44]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39);
+                                 Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+chr(39)+'1 received'+chr(39);
+                                 //Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+Memo_Config.Lines[44]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39);
                                  Application.ProcessMessages;
                                  popen(f,str,'R');
                                  Application.ProcessMessages;

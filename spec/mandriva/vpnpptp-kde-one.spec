@@ -2,14 +2,14 @@
 
 Summary: Tools for setup and control VPN via PPTP/L2TP
 Name: vpnpptp-kde-one
-Version: 0.3.2
+Version: 0.3.3
 Release: %mkrel %{rel}
 License: GPL2
 Group: System/Configuration/Networking
 Url: http://code.google.com/p/vpnpptp
 
 Source0: vpnpptp-src-%{version}.tar.gz
-Source1: vpnpptp_kde_one.pm
+Source1: vpnpptp.pm
 Source2: vpnmandriva.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -116,7 +116,7 @@ EOF
 install -m 0644 vpnpptp.desktop \
 %{buildroot}%{_datadir}/applications/vpnpptp.desktop
 
-install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp_kde_one.pm
+install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp.pm
 install -pm0644 -D %SOURCE2 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnmandriva.pm
 
 %clean
@@ -136,7 +136,7 @@ rm -rf %{buildroot}
 %{_datadir}/vpnpptp/wiki
 %{_datadir}/applications/ponoff.desktop
 %{_datadir}/applications/vpnpptp.desktop
-/usr/lib/libDrakX/network/vpn/vpnpptp_kde_one.pm
+/usr/lib/libDrakX/network/vpn/vpnpptp.pm
 /usr/lib/libDrakX/network/vpn/vpnmandriva.pm
 
 %changelog

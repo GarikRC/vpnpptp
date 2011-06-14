@@ -84,6 +84,10 @@ msgstr ""
 msgid "Настройка VPN PPTP"
 msgstr ""
 
+#: TFORM1.LABEL1.CAPTION
+msgid "Label1"
+msgstr ""
+
 #: TFORM1.LABEL13.CAPTION
 msgid "L                           "
 msgstr ""
@@ -771,15 +775,15 @@ msgid "У полі \"Мет#209�ика\" повинно бути введено 
 msgstr ""
 
 #: unit1.message56en
-msgid "Failed to start net_applet."
+msgid "Connect VPN PPTP now?"
 msgstr ""
 
 #: unit1.message56ru
-msgid "Не удалось запустить net_applet."
+msgid "Установить соединение VPN PPTP сейчас?"
 msgstr ""
 
 #: unit1.message56uk
-msgid "Не вдалося запустити net_applet."
+msgid "Встановити з'єднання VPN PPTP за#209�аз?"
 msgstr ""
 
 #: unit1.message57en
@@ -841,6 +845,102 @@ msgstr ""
 
 #: unit1.message60uk
 msgid "Це означає що ця п#209�ог#209�ама не п#209�изначена для Вашого дист#209�ибутиву."
+msgstr ""
+
+#: unit1.message61en
+msgid "Checked: Internet does not work."
+msgstr ""
+
+#: unit1.message61ru
+msgid "П#209�ове#209�ено: Инте#209�нет не #209�аботает."
+msgstr ""
+
+#: unit1.message61uk
+msgid "Пе#209�еві#209�ено: Інте#209�нет не п#209�ацює."
+msgstr ""
+
+#: unit1.message62en
+msgid "Checked: Internet works."
+msgstr ""
+
+#: unit1.message62ru
+msgid "П#209�ове#209�ено: Инте#209�нет #209�аботает."
+msgstr ""
+
+#: unit1.message62uk
+msgid "Пе#209�еві#209�ено: Інте#209�нет п#209�ацює."
+msgstr ""
+
+#: unit1.message63en
+msgid "Check the Internet? Check the Internet may take several seconds."
+msgstr ""
+
+#: unit1.message63ru
+msgid "П#209�ове#209�ить Инте#209�нет? П#209�ове#209�ка Инте#209�нета может занять несколько секунд."
+msgstr ""
+
+#: unit1.message63uk
+msgid "Пе#209�еві#209�ити Інте#209�нет? Пе#209�еві#209�ка Інте#209�нету може зайняти кілька секунд."
+msgstr ""
+
+#: unit1.message64en
+msgid "VPN PPTP Connection established, but the Internet does not work. Maybe you need to configure a firewall or routing."
+msgstr ""
+
+#: unit1.message64ru
+msgid "Соединение VPN PPTP поднято, но Инте#209�нет не #209�аботает. Возможно необходимо наст#209�оить файе#209�вол или ма#209�ш#209�утизацию."
+msgstr ""
+
+#: unit1.message64uk
+msgid "З'єднання VPN PPTP піднято, але Інте#209�нет не п#209�ацює. Можливо необхідно налаштувати файе#209�вол або ма#209�ш#209�утизацію."
+msgstr ""
+
+#: unit1.message65en
+msgid "VPN PPTP Connection not established, but the Internet works."
+msgstr ""
+
+#: unit1.message65ru
+msgid "Соединение VPN PPTP не поднято, но Инте#209�нет #209�аботает."
+msgstr ""
+
+#: unit1.message65uk
+msgid "З'єднання VPN PPTP не піднято, але Інте#209�нет п#209�ацює."
+msgstr ""
+
+#: unit1.message66en
+msgid "Failed to start net_applet."
+msgstr ""
+
+#: unit1.message66ru
+msgid "Не удалось запустить net_applet."
+msgstr ""
+
+#: unit1.message66uk
+msgid "Не вдалося запустити net_applet."
+msgstr ""
+
+#: unit1.message67en
+msgid "Often it makes sense to wait a little, giving the opportunity to establish the connection."
+msgstr ""
+
+#: unit1.message67ru
+msgid "Часто имеет смысл немного подождать, дав возможность установиться соединению."
+msgstr ""
+
+#: unit1.message67uk
+msgid "Часто має сенс т#209�охи почекати, давши можливість встановитися з'єднанню."
+msgstr ""
+
+#: unit1.message68en
+msgid "Wait a minute... Expect..."
+msgstr ""
+
+#: unit1.message68ru
+msgid "Минуточку... Ожидайте..."
+msgstr ""
+
+#: unit1.message68uk
+msgid "Хвилиночку... Чекайте..."
 msgstr ""
 
 #: unit1.message6en

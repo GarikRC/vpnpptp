@@ -1,12 +1,13 @@
 object Form1: TForm1
-  Left = 438
+  Left = 349
   Height = 580
-  Top = 5
+  Top = 11
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
   VertScrollBar.Page = 540
   VertScrollBar.Visible = False
+  ActiveControl = Panel1
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Настройка VPN PPTP'
   ClientHeight = 580
@@ -9204,6 +9205,26 @@ object Form1: TForm1
       Checked = True
       State = cbChecked
       TabOrder = 5
+    end
+    object Label1: TLabel
+      AnchorSideLeft.Control = Panel1
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 388
+      Height = 14
+      Top = 557
+      Width = 41
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Around = 8
+      Caption = 'Label1'
+      Font.Height = -10
+      Font.Name = 'Sans'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      ParentShowHint = False
+      Visible = False
     end
   end
 end
