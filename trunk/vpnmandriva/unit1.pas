@@ -56,6 +56,7 @@ type
     Edit_peer: TEdit;
     Edit_user: TEdit;
     Image1: TImage;
+    Label1: TLabel;
     Label13: TLabel;
     Label9: TLabel;
     Label_IPS: TLabel;
@@ -92,6 +93,7 @@ var
   AAsyncProcess:TAsyncProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
   f: text;//текстовый поток
+  Code_up_ppp:boolean;//поднято ли VPN
 
 const
   MyTmpDir='/tmp/'; //директория для временных файлов
@@ -106,6 +108,7 @@ const
   IfcfgDir='/etc/sysconfig/network-scripts/';
   EtcInitDDir='/etc/init.d/';
   MyVpnDir='/usr/lib/libDrakX/network/vpn/';
+  EtcDir='/etc/';
 
 resourcestring
   message0ru='Внимание!';
@@ -164,11 +167,19 @@ resourcestring
   message53ru='или из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP.';
   message54ru='Программа была успешно обновлена.';
   message55ru='В поле "Метрика" должно быть введено числовое значение.';
-  message56ru='Не удалось запустить net_applet.';
+  message56ru='Установить соединение VPN PPTP сейчас?';
   message57ru='Отсутствует:';
   message58ru='Найден:';
   message59ru='Не найдена директория:';
   message60ru='Следовательно, эта программа не предназначена для Вашего дистрибутива.';
+  message61ru='Проверено: Интернет не работает.';
+  message62ru='Проверено: Интернет работает.';
+  message63ru='Проверить Интернет? Проверка Интернета может занять несколько секунд.';
+  message64ru='Соединение VPN PPTP поднято, но Интернет не работает. Возможно необходимо настроить файервол или маршрутизацию.';
+  message65ru='Соединение VPN PPTP не поднято, но Интернет работает.';
+  message66ru='Не удалось запустить net_applet.';
+  message67ru='Часто имеет смысл немного подождать, дав возможность установиться соединению.';
+  message68ru='Минуточку... Ожидайте...';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
@@ -226,11 +237,19 @@ resourcestring
   message53uk='або з Центру Управління-> Мережа та Інтернет-> Налаштування VPN-з''єднань-> VPN PPTP.';
   message54uk='Програма була успішно оновлена.';
   message55uk='У полі "Метрика" повинно бути введено числове значення.';
-  message56uk='Не вдалося запустити net_applet.';
+  message56uk='Встановити з''єднання VPN PPTP зараз?';
   message57uk='Відсутній:';
   message58uk='Знайден:';
   message59uk='Не знайдена директорія:';
   message60uk='Це означає що ця програма не призначена для Вашого дистрибутиву.';
+  message61uk='Перевірено: Інтернет не працює.';
+  message62uk='Перевірено: Інтернет працює.';
+  message63uk='Перевірити Інтернет? Перевірка Інтернету може зайняти кілька секунд.';
+  message64uk='З''єднання VPN PPTP піднято, але Інтернет не працює. Можливо необхідно налаштувати файервол або маршрутизацію.';
+  message65uk='З''єднання VPN PPTP не піднято, але Інтернет працює.';
+  message66uk='Не вдалося запустити net_applet.';
+  message67uk='Часто має сенс трохи почекати, давши можливість встановитися з''єднанню.';
+  message68uk='Хвилиночку... Чекайте...';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -288,11 +307,19 @@ resourcestring
   message53en='or from the Control Center->Network and  Internet->Setting VPN-connections->VPN PPTP.';
   message54en='The program was successfully updeted.';
   message55en='You must enter a numeric value in field "metric".';
-  message56en='Failed to start net_applet.';
+  message56en='Connect VPN PPTP now?';
   message57en='Missing:';
   message58en='Find:';
   message59en='Not found directory:';
   message60en='So, this program is not for your distribution.';
+  message61en='Checked: Internet does not work.';
+  message62en='Checked: Internet works.';
+  message63en='Check the Internet? Check the Internet may take several seconds.';
+  message64en='VPN PPTP Connection established, but the Internet does not work. Maybe you need to configure a firewall or routing.';
+  message65en='VPN PPTP Connection not established, but the Internet works.';
+  message66en='Failed to start net_applet.';
+  message67en='Often it makes sense to wait a little, giving the opportunity to establish the connection.';
+  message68en='Wait a minute... Expect...';
 
 
 implementation
@@ -334,14 +361,37 @@ var
    MakeHint:=str0;
 end;
 
+procedure CheckVPN;
+//проверяет поднялось ли соединение
+var
+  str:string;
+begin
+  str:='';
+  popen (f,'ifconfig | grep Link','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then if LeftStr(str,3)='ppp' then
+                               begin
+                                    Code_up_ppp:=true;
+                               end;
+     end;
+  PClose(f);
+end;
+
 { TForm1 }
 
 procedure TForm1.Button_createClick(Sender: TObject);
 var
-  str,mppe_string:string;
+  str:string;
+  mppe_string:string;
   y,net_applet_root:boolean;
   StrUsers:string;
+  i:integer;
+  NoInternet:boolean;
 begin
+Label1.Font.Size:=Form1.Font.Size;
 //выход из создания подключения
 y:=false;
 Try
@@ -369,6 +419,19 @@ If (Edit_IPS.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                                                                                      Application.MessageBox(PChar(message1en),PChar(message0en),0);
                        exit;
                     end;
+Application.ShowHint:=false;
+Form1.Enabled:=false;
+Label_peer.Enabled:=false;
+Label_IPS.Enabled:=false;
+Label_user.Enabled:=false;
+Label_pswd.Enabled:=false;
+Label_metric.Enabled:=false;
+Label9.Enabled:=false;
+Label13.Enabled:=false;
+Image1.Visible:=false;
+Label1.Visible:=true;
+Application.Hint:='';
+Application.ProcessMessages;
 //запись файла /etc/sysconfig/network-scripts/ifcfg-pppN
 Shell('printf "DEVICE=ppp'+IntToStr(Number_PPP_Iface)+'\n" > '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 if not CheckBox_autostart.Checked then Shell('printf "ONBOOT=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "ONBOOT=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
@@ -377,21 +440,29 @@ Shell('printf "TYPE=ADSL\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)
 if not CheckBox_right.Checked then Shell('printf "USERCTL=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "USERCTL=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 if not CheckBox_traffic.Checked then Shell('printf "ACCOUNTING=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "ACCOUNTING=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 Shell ('chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-{//запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
-If not DirectoryExists (EtcPppIpUpDDir) then Shell ('mkdir '+EtcPppIpUpDDir);
+//запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
+If not DirectoryExists (EtcPppIpUpDDir) then Shell ('mkdir -p '+EtcPppIpUpDDir);
 Memo1.Lines.Clear;
 Memo1.Lines.Add('#!/bin/sh');
 Memo1.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
 Memo1.Lines.Add('then');
 Memo1.Lines.Add('exit 0');
 Memo1.Lines.Add('fi');
-Memo1.Lines.Add('/sbin/route del default');
-Memo1.Lines.Add('/sbin/route del default');
-Memo1.Lines.Add('/sbin/route add default dev $IFNAME');
+Memo1.Lines.Add('if [ $USEPEERDNS = "1" ]');
+Memo1.Lines.Add('then');
+Memo1.Lines.Add('     [ -n "$DNS1" ] && rm -f '+EtcDir+'resolv.conf');
+Memo1.Lines.Add('     [ -n "$DNS2" ] && rm -f '+EtcDir+'resolv.conf');
+Memo1.Lines.Add('            if [ ! -f '+EtcDir+'resolv.conf ]');
+Memo1.Lines.Add('            then');
+Memo1.Lines.Add('                  cat /etc/resolvconf/resolv.conf.d/head|grep nameserver >> '+EtcDir+'resolv.conf');
+Memo1.Lines.Add('            fi');
+Memo1.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> '+EtcDir+'resolv.conf');
+Memo1.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> '+EtcDir+'resolv.conf');
+Memo1.Lines.Add('fi');
 Memo1.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmandriva-ip-up');
-Shell('chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');}
+Shell('chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
 //запись файла /etc/ppp/ip-down.d/vpnmandriva-ip-down
-If not DirectoryExists (EtcPppIpDownDDir) then Shell ('mkdir '+EtcPppIpDownDDir);
+If not DirectoryExists (EtcPppIpDownDDir) then Shell ('mkdir -p '+EtcPppIpDownDDir);
 Memo1.Lines.Clear;
 Memo1.Lines.Add('#!/bin/sh');
 Memo1.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
@@ -402,6 +473,7 @@ If FileExists (SBinDir+'service') then Memo1.Lines.Add('service network restart'
 Memo1.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmandriva-ip-down');
 Shell('chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
 //запись файла /etc/ppp/peers/pppN
+If not DirectoryExists (EtcPppPeersDir) then Shell ('mkdir -p '+EtcPppPeersDir);
 Memo1.Lines.Clear;
 Memo1.Lines.Add('unit '+IntToStr(Number_PPP_Iface));
 Memo1.Lines.Add('noipdefault');
@@ -452,6 +524,7 @@ PClose(f);
 str:='';
 StrUsers:='';
 Shell ('killall net_applet');
+Shell ('killall perl');
 if not net_applet_root then
                              begin
                                   popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
@@ -461,7 +534,8 @@ if not net_applet_root then
                                              if str<>'' then if pos(str,StrUsers)=0 then
                                                         begin
                                                              AAsyncProcess := TAsyncProcess.Create(nil);
-                                                             AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
+                                                             //AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
+                                                             AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'perl '+UsrBinDir+'net_applet --force"';
                                                              AAsyncProcess.Execute;
                                                              sleep(3000);
                                                              AAsyncProcess.Free;
@@ -473,33 +547,109 @@ if not net_applet_root then
 if net_applet_root then
                       begin
                           AAsyncProcess := TAsyncProcess.Create(nil);
-                          AAsyncProcess.CommandLine :=UsrBinDir+'net_applet';
+                          //AAsyncProcess.CommandLine :=UsrBinDir+'net_applet';
+                          AAsyncProcess.CommandLine :=UsrBinDir+'perl '+UsrBinDir+'net_applet --force';
                           AAsyncProcess.Execute;
                           sleep(3000);
                           AAsyncProcess.Free;
                       end;
-If FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
+Form1.Enabled:=true;
+Label_peer.Enabled:=true;
+Label_IPS.Enabled:=true;
+Label_user.Enabled:=true;
+Label_pswd.Enabled:=true;
+Label_metric.Enabled:=true;
+Label9.Enabled:=true;
+Label13.Enabled:=true;
+Image1.Visible:=true;
+Label1.Visible:=false;
+Application.ProcessMessages;
+if FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
                      If FallbackLang='uk' then Application.MessageBox(PChar(message11uk+' '+message12uk+' '+message13uk+' '+message52uk),PChar(message0uk),0) else
                                                               Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en+' '+message52en),PChar(message0en),0);
 //обработка результата перезапуска net_applet
-popen (f,'ps -e|grep net_applet','R');
+//popen (f,'ps -e|grep net_applet','R');
+popen (f,'ps -ef|grep '+UsrBinDir+'net_applet','R');
 str:='';
 If eof(f) then
                begin
-                   If FallbackLang='ru' then str:=message56ru else If FallbackLang='uk' then str:=message56uk else str:=message56en;
+                   If FallbackLang='ru' then str:=message66ru else If FallbackLang='uk' then str:=message66uk else str:=message66en;
                    If not FileExists(UsrBinDir+'net_applet') then If FallbackLang='ru' then str:=str+' '+message57ru+' '+UsrBinDir+'net_applet.' else
                                         if FallbackLang='uk' then str:=str+' '+message57uk+' '+UsrBinDir+'net_applet.' else str:=str+' '+message57en+' '+UsrBinDir+'net_applet.';
                    If not FileExists(UsrBinDir+'net_applet') then If FileExists(UsrBinDir+'net_applet.old') then If FallbackLang='ru' then str:=str+' '+message58ru+' '+UsrBinDir+'net_applet.old.' else
                                         if FallbackLang='uk' then str:=str+' '+message58uk+' '+UsrBinDir+'net_applet.old.' else str:=str+' '+message58en+' '+UsrBinDir+'net_applet.old.';
-                   Application.MessageBox(PChar(str),PChar(message0ru),0);
+                   If str<>'' then Application.MessageBox(PChar(str),PChar(message0ru),0);
                end;
 PClose(f);
+If FallbackLang='ru' then i:=Application.MessageBox(PChar(message56ru),PChar(message0ru),1) else if FallbackLang='uk' then i:=Application.MessageBox(PChar(message56uk),PChar(message0ru),1)
+                                                                                            else i:=Application.MessageBox(PChar(message56en),PChar(message0ru),1);
+if i=1 then
+           begin
+               Shell('killall ponoff');
+               Shell('killall pppd');
+               AAsyncProcess := TAsyncProcess.Create(nil);
+               AAsyncProcess.CommandLine :='ifup ppp'+IntToStr(Number_PPP_Iface);
+               AAsyncProcess.Execute;
+               AAsyncProcess.Free;
+               If FallbackLang='ru' then i:=Application.MessageBox(PChar(message63ru+' '+message67ru),PChar(message0ru),1) else
+                                                           if FallbackLang='uk' then i:=Application.MessageBox(PChar(message63uk+' '+message67uk),PChar(message0ru),1)
+                                                                                            else i:=Application.MessageBox(PChar(message63en+' '+message67en),PChar(message0ru),1);
+               if i=1 then
+                          begin
+                               //тест интернета
+                               Form1.Enabled:=false;
+                               Label_peer.Enabled:=false;
+                               Label_IPS.Enabled:=false;
+                               Label_user.Enabled:=false;
+                               Label_pswd.Enabled:=false;
+                               Label_metric.Enabled:=false;
+                               Label9.Enabled:=false;
+                               Label13.Enabled:=false;
+                               Image1.Visible:=false;
+                               Label1.Visible:=true;
+                               Application.ProcessMessages;
+                               CheckVPN;
+                               Str:='ping -c1 yandex.ru|grep '+chr(39)+'1 received'+chr(39);
+                               popen(f,Str,'R');
+                               If eof(f) then NoInternet:=true else NoInternet:=false;
+                               PClose(f);
+                               Form1.Enabled:=true;
+                               Label_peer.Enabled:=true;
+                               Label_IPS.Enabled:=true;
+                               Label_user.Enabled:=true;
+                               Label_pswd.Enabled:=true;
+                               Label_metric.Enabled:=true;
+                               Label9.Enabled:=true;
+                               Label13.Enabled:=true;
+                               Image1.Visible:=true;
+                               Label1.Visible:=false;
+                               Application.ProcessMessages;
+                               If (NoInternet) and (not Code_up_ppp) then
+                                   If FallbackLang='ru' then Application.MessageBox(PChar(message61ru),PChar(message0ru),0) else
+                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message61uk),PChar(message0ru),0)
+                                                                                                                        else Application.MessageBox(PChar(message61en),PChar(message0ru),0);
+                               If (not NoInternet) and (Code_up_ppp) then
+                                   If FallbackLang='ru' then Application.MessageBox(PChar(message62ru),PChar(message0ru),0) else
+                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message62uk),PChar(message0ru),0)
+                                                                                                                        else Application.MessageBox(PChar(message62en),PChar(message0ru),0);
+                               If (NoInternet) and (Code_up_ppp) then
+                                   If FallbackLang='ru' then Application.MessageBox(PChar(message64ru),PChar(message0ru),0) else
+                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message64uk),PChar(message0ru),0)
+                                                                                                                        else Application.MessageBox(PChar(message64en),PChar(message0ru),0);
+                               If (not NoInternet) and (not Code_up_ppp) then
+                                   If FallbackLang='ru' then Application.MessageBox(PChar(message65ru),PChar(message0ru),0) else
+                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message65uk),PChar(message0ru),0)
+                                                                                                                        else Application.MessageBox(PChar(message65en),PChar(message0ru),0);
+                          end;
+           end;
+Application.ShowHint:=true;
+Application.ProcessMessages;
 end;
 
 
 procedure TForm1.Button_exitClick(Sender: TObject);
 begin
-  halt;
+     halt;
 end;
 
 
@@ -690,6 +840,7 @@ case q of
              Button_exit.Caption:=message46ru;
              Button_create.Caption:=message47ru;
              CheckBox_pppd_log.Caption:=message49ru+' '+MyLogDir+'vpnmandriva.log';
+             Label1.Caption:=message68ru;
         end;
     2:
         begin
@@ -708,6 +859,7 @@ case q of
              Button_exit.Caption:=message46uk;
              Button_create.Caption:=message47uk;
              CheckBox_pppd_log.Caption:=message49uk+' '+MyLogDir+'vpnmandriva.log';
+             Label1.Caption:=message68uk;
         end;
 else
     begin
@@ -726,6 +878,7 @@ else
         Button_exit.Caption:=message46en;
         Button_create.Caption:=message47en;
         CheckBox_pppd_log.Caption:=message49en+' '+MyLogDir+'vpnmandriva.log';
+        Label1.Caption:=message68en;
     end;
 end;
 //масштабирование формы в зависимости от разрешения экрана

@@ -1385,10 +1385,14 @@ If not DirectoryExists(EtcPppIpUpDDir) then Shell ('mkdir -p '+EtcPppIpUpDDir);
  If not pppnotdefault.Checked then Memo_ip_up.Lines.Add(SBinDir+'route add default dev $IFNAME');
  If Unit2.Form2.CheckBoxusepeerdns.Checked then
         begin
-             Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
-             Memo_ip_up.Lines.Add('then');
+           Memo_ip_up.Lines.Add('if [ $USEPEERDNS = "1" ]');
+           Memo_ip_up.Lines.Add('then');
              Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && rm -f '+MyLibDir+'$LINKNAME/resolv.conf.after');
              Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && rm -f '+MyLibDir+'$LINKNAME/resolv.conf.after');
+             Memo_ip_up.Lines.Add('            if [ ! -f '+MyLibDir+'$LINKNAME/resolv.conf.after ]');
+             Memo_ip_up.Lines.Add('            then');
+             Memo_ip_up.Lines.Add('                  cat /etc/resolvconf/resolv.conf.d/head|grep nameserver >> '+MyLibDir+'$LINKNAME/resolv.conf.after');
+             Memo_ip_up.Lines.Add('            fi');
              Memo_ip_up.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> '+MyLibDir+'$LINKNAME/resolv.conf.after');
              Memo_ip_up.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> '+MyLibDir+'$LINKNAME/resolv.conf.after');
              Memo_ip_up.Lines.Add('fi');
