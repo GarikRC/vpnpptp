@@ -17,14 +17,17 @@ msgid "H"
 msgstr ""
 
 #: TFORM1.CHECKBOX_NO128.CAPTION
+msgctxt "TFORM1.CHECKBOX_NO128.CAPTION"
 msgid "no128"
 msgstr ""
 
 #: TFORM1.CHECKBOX_NO40.CAPTION
+msgctxt "TFORM1.CHECKBOX_NO40.CAPTION"
 msgid "no40"
 msgstr ""
 
 #: TFORM1.CHECKBOX_NO56.CAPTION
+msgctxt "TFORM1.CHECKBOX_NO56.CAPTION"
 msgid "no56"
 msgstr ""
 
@@ -39,14 +42,17 @@ msgid "F"
 msgstr ""
 
 #: TFORM1.CHECKBOX_RCHAP.CAPTION
+msgctxt "TFORM1.CHECKBOX_RCHAP.CAPTION"
 msgid "refuse-chap"
 msgstr ""
 
 #: TFORM1.CHECKBOX_REAP.CAPTION
+msgctxt "TFORM1.CHECKBOX_REAP.CAPTION"
 msgid "refuse-eap"
 msgstr ""
 
 #: TFORM1.CHECKBOX_REQUIRED.CAPTION
+msgctxt "TFORM1.CHECKBOX_REQUIRED.CAPTION"
 msgid "required"
 msgstr ""
 
@@ -56,18 +62,22 @@ msgid "J"
 msgstr ""
 
 #: TFORM1.CHECKBOX_RMSCHAP.CAPTION
+msgctxt "TFORM1.CHECKBOX_RMSCHAP.CAPTION"
 msgid "refuse-mschap"
 msgstr ""
 
 #: TFORM1.CHECKBOX_RMSCHAPV2.CAPTION
+msgctxt "TFORM1.CHECKBOX_RMSCHAPV2.CAPTION"
 msgid "refuse-mschap-v2"
 msgstr ""
 
 #: TFORM1.CHECKBOX_RPAP.CAPTION
+msgctxt "TFORM1.CHECKBOX_RPAP.CAPTION"
 msgid "refuse-pap"
 msgstr ""
 
 #: TFORM1.CHECKBOX_STATELESS.CAPTION
+msgctxt "TFORM1.CHECKBOX_STATELESS.CAPTION"
 msgid "stateless"
 msgstr ""
 
@@ -77,40 +87,48 @@ msgid "J"
 msgstr ""
 
 #: TFORM1.EDIT_METRIC.TEXT
+msgctxt "TFORM1.EDIT_METRIC.TEXT"
 msgid "1"
 msgstr ""
 
 #: TFORM1.FORM1.CAPTION
+msgctxt "TFORM1.FORM1.CAPTION"
 msgid "Настройка VPN PPTP"
 msgstr ""
 
-#: TFORM1.LABEL1.CAPTION
-msgid "Label1"
-msgstr ""
-
-#: TFORM1.LABEL13.CAPTION
-msgid "L                           "
-msgstr ""
-
-#: TFORM1.LABEL9.CAPTION
-msgctxt "TFORM1.LABEL9.CAPTION"
+#: TFORM1.LABEL_AUTH.CAPTION
+msgctxt "TFORM1.LABEL_AUTH.CAPTION"
 msgid "K"
 msgstr ""
 
 #: TFORM1.LABEL_IPS.CAPTION
+msgctxt "TFORM1.LABEL_IPS.CAPTION"
 msgid "B"
 msgstr ""
 
 #: TFORM1.LABEL_METRIC.CAPTION
+msgctxt "TFORM1.LABEL_METRIC.CAPTION"
 msgid "E"
 msgstr ""
 
+#: TFORM1.LABEL_MPPE.CAPTION
+msgctxt "TFORM1.LABEL_MPPE.CAPTION"
+msgid "L                           "
+msgstr ""
+
 #: TFORM1.LABEL_PEER.CAPTION
+msgctxt "TFORM1.LABEL_PEER.CAPTION"
 msgid "A"
 msgstr ""
 
 #: TFORM1.LABEL_PSWD.CAPTION
+msgctxt "TFORM1.LABEL_PSWD.CAPTION"
 msgid "D"
+msgstr ""
+
+#: TFORM1.LABEL_TIMER.CAPTION
+msgctxt "TFORM1.LABEL_TIMER.CAPTION"
+msgid "Label_timer"
 msgstr ""
 
 #: TFORM1.LABEL_USER.CAPTION
@@ -118,8 +136,163 @@ msgctxt "TFORM1.LABEL_USER.CAPTION"
 msgid "C"
 msgstr ""
 
+#: TFORM1.LABEL_WAIT.CAPTION
+msgctxt "TFORM1.LABEL_WAIT.CAPTION"
+msgid "Label_wait"
+msgstr ""
+
+#: TFORM1.LABEL_WWW.CAPTION
+msgctxt "TFORM1.LABEL_WWW.CAPTION"
+msgid "http://code.google.com/p/vpnpptp/"
+msgstr ""
+
 #: TFORM3.FORM3.CAPTION
 msgid "Form3"
+msgstr ""
+
+#: TMYFORM.BUTTON_CREATE.CAPTION
+msgctxt "TMYFORM.BUTTON_CREATE.CAPTION"
+msgid "N"
+msgstr ""
+
+#: TMYFORM.BUTTON_EXIT.CAPTION
+msgctxt "TMYFORM.BUTTON_EXIT.CAPTION"
+msgid "M"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_AUTOSTART.CAPTION
+msgctxt "TMYFORM.CHECKBOX_AUTOSTART.CAPTION"
+msgid "H"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_NO128.CAPTION
+msgctxt "TMYFORM.CHECKBOX_NO128.CAPTION"
+msgid "no128"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_NO40.CAPTION
+msgctxt "TMYFORM.CHECKBOX_NO40.CAPTION"
+msgid "no40"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_NO56.CAPTION
+msgctxt "TMYFORM.CHECKBOX_NO56.CAPTION"
+msgid "no56"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_NOBUFFER.CAPTION
+msgctxt "TMYFORM.CHECKBOX_NOBUFFER.CAPTION"
+msgid "I"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_PPPD_LOG.CAPTION
+msgctxt "TMYFORM.CHECKBOX_PPPD_LOG.CAPTION"
+msgid "F"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_RCHAP.CAPTION
+msgctxt "TMYFORM.CHECKBOX_RCHAP.CAPTION"
+msgid "refuse-chap"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_REAP.CAPTION
+msgctxt "TMYFORM.CHECKBOX_REAP.CAPTION"
+msgid "refuse-eap"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_REQUIRED.CAPTION
+msgctxt "TMYFORM.CHECKBOX_REQUIRED.CAPTION"
+msgid "required"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_RIGHT.CAPTION
+msgctxt "TMYFORM.CHECKBOX_RIGHT.CAPTION"
+msgid "J"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_RMSCHAP.CAPTION
+msgctxt "TMYFORM.CHECKBOX_RMSCHAP.CAPTION"
+msgid "refuse-mschap"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_RMSCHAPV2.CAPTION
+msgctxt "TMYFORM.CHECKBOX_RMSCHAPV2.CAPTION"
+msgid "refuse-mschap-v2"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_RPAP.CAPTION
+msgctxt "TMYFORM.CHECKBOX_RPAP.CAPTION"
+msgid "refuse-pap"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_STATELESS.CAPTION
+msgctxt "TMYFORM.CHECKBOX_STATELESS.CAPTION"
+msgid "stateless"
+msgstr ""
+
+#: TMYFORM.CHECKBOX_TRAFFIC.CAPTION
+msgctxt "TMYFORM.CHECKBOX_TRAFFIC.CAPTION"
+msgid "J"
+msgstr ""
+
+#: TMYFORM.EDIT_METRIC.TEXT
+msgctxt "TMYFORM.EDIT_METRIC.TEXT"
+msgid "1"
+msgstr ""
+
+#: TMYFORM.LABEL_AUTH.CAPTION
+msgctxt "TMYFORM.LABEL_AUTH.CAPTION"
+msgid "K"
+msgstr ""
+
+#: TMYFORM.LABEL_IPS.CAPTION
+msgctxt "TMYFORM.LABEL_IPS.CAPTION"
+msgid "B"
+msgstr ""
+
+#: TMYFORM.LABEL_METRIC.CAPTION
+msgctxt "TMYFORM.LABEL_METRIC.CAPTION"
+msgid "E"
+msgstr ""
+
+#: TMYFORM.LABEL_MPPE.CAPTION
+msgctxt "TMYFORM.LABEL_MPPE.CAPTION"
+msgid "L                           "
+msgstr ""
+
+#: TMYFORM.LABEL_PEER.CAPTION
+msgctxt "TMYFORM.LABEL_PEER.CAPTION"
+msgid "A"
+msgstr ""
+
+#: TMYFORM.LABEL_PSWD.CAPTION
+msgctxt "TMYFORM.LABEL_PSWD.CAPTION"
+msgid "D"
+msgstr ""
+
+#: TMYFORM.LABEL_TIMER.CAPTION
+msgctxt "TMYFORM.LABEL_TIMER.CAPTION"
+msgid "Label_timer"
+msgstr ""
+
+#: TMYFORM.LABEL_USER.CAPTION
+msgctxt "TMYFORM.LABEL_USER.CAPTION"
+msgid "C"
+msgstr ""
+
+#: TMYFORM.LABEL_WAIT.CAPTION
+msgctxt "TMYFORM.LABEL_WAIT.CAPTION"
+msgid "Label_wait"
+msgstr ""
+
+#: TMYFORM.LABEL_WWW.CAPTION
+msgctxt "TMYFORM.LABEL_WWW.CAPTION"
+msgid "http://code.google.com/p/vpnpptp/"
+msgstr ""
+
+#: TMYFORM.MYFORM.CAPTION
+msgctxt "TMYFORM.MYFORM.CAPTION"
+msgid "Настройка VPN PPTP"
 msgstr ""
 
 #: unit1.message0en
@@ -943,6 +1116,11 @@ msgstr ""
 msgid "Хвилиночку... Чекайте..."
 msgstr ""
 
+#: unit1.message69ru
+msgctxt "unit1.message69ru"
+msgid "Повто#209�ить п#209�ове#209�ку Инте#209�нета?"
+msgstr ""
+
 #: unit1.message6en
 msgid "If you choose this option, then traffic will be to calculate for the connection, which you can watch with help net_monitor."
 msgstr ""
@@ -954,6 +1132,38 @@ msgstr ""
 
 #: unit1.message6uk
 msgid "Якщо виб#209�ати цю опцію, то для з'єднання буде вестися під#209�ахунок т#209�афіку, який можна спосте#209�ігати че#209�ез net_monitor."
+msgstr ""
+
+#: unit1.message70en
+msgid "VPN PPTP Connection established."
+msgstr ""
+
+#: unit1.message70ru
+msgid "Соединение VPN PPTP поднято."
+msgstr ""
+
+#: unit1.message70uk
+msgid "З'єднання VPN PPTP піднято."
+msgstr ""
+
+#: unit1.message71en
+msgid "VPN PPTP Connection not established."
+msgstr ""
+
+#: unit1.message71ru
+msgid "Соединение VPN PPTP не поднято."
+msgstr ""
+
+#: unit1.message71uk
+msgid "З'єднання VPN PPTP не піднято."
+msgstr ""
+
+#: unit1.message72ru
+msgid "Обна#209�ужено несколько дефолтных ма#209�ш#209�утов с одинаковой мет#209�икой. Неве#209�ная ма#209�ш#209�утизация."
+msgstr ""
+
+#: unit1.message73ru
+msgid "П#209�и этом будет убит демон pppd и будет убито п#209�иложение ponoff, что п#209�иведет к об#209�ыву соединений, установленных демоном pppd."
 msgstr ""
 
 #: unit1.message7en

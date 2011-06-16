@@ -24,15 +24,15 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, LResources,
   StdCtrls, ExtCtrls, ComCtrls, unix, Menus, Buttons, AsyncProcess, Process,
   Typinfo, Gettext, BaseUnix, types;
 
 type
 
-  { TForm1 }
+  { TMyForm }
 
-  TForm1 = class(TForm)
+  TMyForm = class(TForm)
     Button_create: TBitBtn;
     Button_exit: TBitBtn;
     CheckBox_autostart: TCheckBox;
@@ -55,23 +55,32 @@ type
     Edit_passwd: TEdit;
     Edit_peer: TEdit;
     Edit_user: TEdit;
-    Image1: TImage;
-    Label1: TLabel;
-    Label13: TLabel;
-    Label9: TLabel;
+    MyImage: TImage;
+    Label_wait: TLabel;
+    Label_mppe: TLabel;
+    Label_www: TLabel;
+    Label_timer: TLabel;
+    Label_auth: TLabel;
     Label_IPS: TLabel;
     Label_metric: TLabel;
     Label_peer: TLabel;
     Label_pswd: TLabel;
     Label_user: TLabel;
-    Memo1: TMemo;
-    Panel1: TPanel;
+    MyMemo: TMemo;
+    MyPanel: TPanel;
+    MyTimer: TTimer;
     procedure Button_createClick(Sender: TObject);
     procedure Button_exitClick(Sender: TObject);
     procedure CheckBox_trafficChange(Sender: TObject);
+    procedure Edit_passwdChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure MyImageMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure MyTimerStartTimer(Sender: TObject);
+    procedure MyTimerStopTimer(Sender: TObject);
+    procedure MyTimerTimer(Sender: TObject);
   private
     { private declarations }
   public
@@ -87,18 +96,21 @@ type
   end;
 
 var
-  Form1: TForm1;
+  MyForm: TMyForm;
   Lang,FallbackLang:string; //язык системы
   Number_PPP_Iface:integer; //номер ближайшего доступного для настройки интерфейса pppN
   AAsyncProcess:TAsyncProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
   f: text;//текстовый поток
-  Code_up_ppp:boolean;//поднято ли VPN
+  Code_up_ppp:boolean;//поднято ли VPN на настраиваемом интерфейсе
+  PppIface:string;//интерфейс, на котором поднято VPN
+  ButtonMiddle:boolean;//отслеживает нажатие средней кнопки мыши на пингвине
+  DateStart:int64;//время запуска таймера
+  TV:timeval;//время
 
 const
-  MyTmpDir='/tmp/'; //директория для временных файлов
-  MyLangDir='/usr/share/vpnmandriva/lang/'; //директория для файлов переводов программы
-  MyLogDir='/var/log/ppp/'; //директория для логов pppd
+
+  MyLogDir='/var/log/ppp/';
   EtcPppIpUpDDir='/etc/ppp/ip-up.d/';
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
@@ -109,8 +121,8 @@ const
   EtcInitDDir='/etc/init.d/';
   MyVpnDir='/usr/lib/libDrakX/network/vpn/';
   EtcDir='/etc/';
+  VarRunDir='/var/run/';
 
-resourcestring
   message0ru='Внимание!';
   message1ru='Поля "Провайдер (IP или имя)", "Пользователь (логин)", "Пароль" обязательны к заполнению.';
   message2ru='Желательно установить метрику меньшую, чем у сетевого интерфейса, на котором будет поднято VPN PPTP.';
@@ -180,6 +192,13 @@ resourcestring
   message66ru='Не удалось запустить net_applet.';
   message67ru='Часто имеет смысл немного подождать, дав возможность установиться соединению.';
   message68ru='Минуточку... Ожидайте...';
+  message69ru='Повторить проверку Интернета?';
+  message70ru='Соединение VPN PPTP поднято.';
+  message71ru='Соединение VPN PPTP не поднято.';
+  message72ru='Обнаружено несколько дефолтных маршрутов с одинаковой метрикой. Неверная маршрутизация.';
+  message73ru='Нажатие на пингвине средней кнопкой мыши даст тестовые параметры соединения, работоспособные если Интернет уже настроен.';
+  message74ru='В процессах обнаружен pppd. Убить все pppd?';
+  message75ru='Обнаружено, что VPN PPTP уже поднято на настраиваемом интерфейсе. Оно будет сначала отключено.';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
@@ -250,6 +269,13 @@ resourcestring
   message66uk='Не вдалося запустити net_applet.';
   message67uk='Часто має сенс трохи почекати, давши можливість встановитися з''єднанню.';
   message68uk='Хвилиночку... Чекайте...';
+  message69uk='Повторити перевірку Інтернету?';
+  message70uk='З''єднання VPN PPTP піднято.';
+  message71uk='З''єднання VPN PPTP не піднято.';
+  message72uk='Виявлено кілька дефолтних маршрутів з однаковою метрикою. Невірна маршрутизація.';
+  message73uk='Натискання на пінгвінів середньою кнопкою миші дасть тестові параметри з''єднання, працездатні якщо Інтернет вже налаштований.';
+  message74uk='У процесах виявлен pppd. Вбити всі pppd?';
+  message75uk='Виявлено, що VPN PPTP вже піднято на розширеному інтерфейсі. Воно буде спочатку відключено.';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -320,7 +346,13 @@ resourcestring
   message66en='Failed to start net_applet.';
   message67en='Often it makes sense to wait a little, giving the opportunity to establish the connection.';
   message68en='Wait a minute... Expect...';
-
+  message69en='Repeat test of Internet?';
+  message70en='VPN PPTP Connection established.';
+  message71en='VPN PPTP Connection not established.';
+  message72en='Found several default routes with the same metric. Incorrect routing.';
+  message73en='Clicking on the penguin middle mouse button will give test the connection settings and workable if the Internet is already configured.';
+  message74en='In the process found pppd. Kill all pppd?';
+  message75en='Found that VPN PPTP been raised to a customizable interface. It will first be disabled.';
 
 implementation
 
@@ -344,6 +376,21 @@ begin
   inherited;
 end;
 
+procedure MySleep (sec:integer);
+//пауза
+var
+  i,j:integer;
+begin
+   i:=0;
+   j:=0;
+   repeat
+         Sleep(100);
+         j:=j+1;
+         i:=i+100;
+         Application.ProcessMessages;
+   until i+100>sec;
+end;
+
 Function MakeHint(str:string;n:byte):string;
 //создает многострочный хинт
 var
@@ -362,36 +409,42 @@ var
 end;
 
 procedure CheckVPN;
-//проверяет поднялось ли соединение
+//проверяет поднялось ли соединение на настраиваемом сетевом интерфейсе pppN
 var
   str:string;
 begin
   str:='';
-  popen (f,'ifconfig | grep Link','R');
+  PppIface:='';
+  popen (f,'cat '+VarRunDir+'ppp-vpnmandriva.pid|grep ppp','R');
   Code_up_ppp:=false;
   While not eof(f) do
      begin
          Readln (f,str);
-         If str<>'' then if LeftStr(str,3)='ppp' then
-                               begin
-                                    Code_up_ppp:=true;
-                               end;
+         If str<>'' then PppIface:=str;
      end;
+  PClose(f);
+  popen (f,'ifconfig |grep '+PppIface,'R');
+  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
   PClose(f);
 end;
 
-{ TForm1 }
+{ TMyForm }
 
-procedure TForm1.Button_createClick(Sender: TObject);
+procedure TMyForm.Button_createClick(Sender: TObject);
 var
-  str:string;
+  str,str1:string;
   mppe_string:string;
-  y,net_applet_root:boolean;
+  y,net_applet_root,found_net_applet:boolean;
   StrUsers:string;
-  i:integer;
-  NoInternet:boolean;
+  i,a:integer;
+  NoInternet,FoundPpppd:boolean;
+  AStringList: TStringList;
 begin
-Label1.Font.Size:=Form1.Font.Size;
+Label_wait.Font.Size:=MyForm.Font.Size;
+Label_www.Font.Size:=MyForm.Font.Size;
+Label_timer.Font.Size:=MyForm.Font.Size*10;
+Label_timer.Font.Color:=clRed;
+Label_timer.Caption:='0';
 //выход из создания подключения
 y:=false;
 Try
@@ -408,10 +461,6 @@ If y then
            Edit_metric.SetFocus;
            exit;
         end;
-
-
-
-
 If (Edit_IPS.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                     begin
                        If FallbackLang='ru' then Application.MessageBox(PChar(message1ru),PChar(message0ru),0) else
@@ -420,18 +469,6 @@ If (Edit_IPS.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                        exit;
                     end;
 Application.ShowHint:=false;
-Form1.Enabled:=false;
-Label_peer.Enabled:=false;
-Label_IPS.Enabled:=false;
-Label_user.Enabled:=false;
-Label_pswd.Enabled:=false;
-Label_metric.Enabled:=false;
-Label9.Enabled:=false;
-Label13.Enabled:=false;
-Image1.Visible:=false;
-Label1.Visible:=true;
-Application.Hint:='';
-Application.ProcessMessages;
 //запись файла /etc/sysconfig/network-scripts/ifcfg-pppN
 Shell('printf "DEVICE=ppp'+IntToStr(Number_PPP_Iface)+'\n" > '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 if not CheckBox_autostart.Checked then Shell('printf "ONBOOT=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "ONBOOT=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
@@ -442,62 +479,62 @@ if not CheckBox_traffic.Checked then Shell('printf "ACCOUNTING=no\n" >> '+IfcfgD
 Shell ('chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 //запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
 If not DirectoryExists (EtcPppIpUpDDir) then Shell ('mkdir -p '+EtcPppIpUpDDir);
-Memo1.Lines.Clear;
-Memo1.Lines.Add('#!/bin/sh');
-Memo1.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
-Memo1.Lines.Add('then');
-Memo1.Lines.Add('exit 0');
-Memo1.Lines.Add('fi');
-Memo1.Lines.Add('if [ $USEPEERDNS = "1" ]');
-Memo1.Lines.Add('then');
-Memo1.Lines.Add('     [ -n "$DNS1" ] && rm -f '+EtcDir+'resolv.conf');
-Memo1.Lines.Add('     [ -n "$DNS2" ] && rm -f '+EtcDir+'resolv.conf');
-Memo1.Lines.Add('            if [ ! -f '+EtcDir+'resolv.conf ]');
-Memo1.Lines.Add('            then');
-Memo1.Lines.Add('                  cat /etc/resolvconf/resolv.conf.d/head|grep nameserver >> '+EtcDir+'resolv.conf');
-Memo1.Lines.Add('            fi');
-Memo1.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> '+EtcDir+'resolv.conf');
-Memo1.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> '+EtcDir+'resolv.conf');
-Memo1.Lines.Add('fi');
-Memo1.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmandriva-ip-up');
+MyMemo.Lines.Clear;
+MyMemo.Lines.Add('#!/bin/sh');
+MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
+MyMemo.Lines.Add('then');
+MyMemo.Lines.Add('exit 0');
+MyMemo.Lines.Add('fi');
+MyMemo.Lines.Add('if [ $USEPEERDNS = "1" ]');
+MyMemo.Lines.Add('then');
+MyMemo.Lines.Add('     [ -n "$DNS1" ] && rm -f '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('     [ -n "$DNS2" ] && rm -f '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('            if [ ! -f '+EtcDir+'resolv.conf ]');
+MyMemo.Lines.Add('            then');
+MyMemo.Lines.Add('                  cat /etc/resolvconf/resolv.conf.d/head|grep nameserver >> '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('            fi');
+MyMemo.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('fi');
+MyMemo.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmandriva-ip-up');
 Shell('chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
 //запись файла /etc/ppp/ip-down.d/vpnmandriva-ip-down
 If not DirectoryExists (EtcPppIpDownDDir) then Shell ('mkdir -p '+EtcPppIpDownDDir);
-Memo1.Lines.Clear;
-Memo1.Lines.Add('#!/bin/sh');
-Memo1.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
-Memo1.Lines.Add('then');
-Memo1.Lines.Add('exit 0');
-Memo1.Lines.Add('fi');
-If FileExists (SBinDir+'service') then Memo1.Lines.Add('service network restart') else Memo1.Lines.Add(EtcInitDDir+' network restart');
-Memo1.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmandriva-ip-down');
+MyMemo.Lines.Clear;
+MyMemo.Lines.Add('#!/bin/sh');
+MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
+MyMemo.Lines.Add('then');
+MyMemo.Lines.Add('exit 0');
+MyMemo.Lines.Add('fi');
+If FileExists (SBinDir+'service') then MyMemo.Lines.Add('service network restart') else MyMemo.Lines.Add(EtcInitDDir+' network restart');
+MyMemo.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmandriva-ip-down');
 Shell('chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
 //запись файла /etc/ppp/peers/pppN
 If not DirectoryExists (EtcPppPeersDir) then Shell ('mkdir -p '+EtcPppPeersDir);
-Memo1.Lines.Clear;
-Memo1.Lines.Add('unit '+IntToStr(Number_PPP_Iface));
-Memo1.Lines.Add('noipdefault');
-Memo1.Lines.Add('defaultroute');
-Memo1.Lines.Add('noauth');
-Memo1.Lines.Add('linkname vpnmandriva');
-Memo1.Lines.Add('usepeerdns');
-Memo1.Lines.Add('lock');
-Memo1.Lines.Add('persist');
-Memo1.Lines.Add('nopcomp');
+MyMemo.Lines.Clear;
+MyMemo.Lines.Add('unit '+IntToStr(Number_PPP_Iface));
+MyMemo.Lines.Add('noipdefault');
+MyMemo.Lines.Add('defaultroute');
+MyMemo.Lines.Add('noauth');
+MyMemo.Lines.Add('linkname vpnmandriva');
+MyMemo.Lines.Add('usepeerdns');
+MyMemo.Lines.Add('lock');
+MyMemo.Lines.Add('persist');
+MyMemo.Lines.Add('nopcomp');
 If (not CheckBox_required.Checked) then if (not CheckBox_stateless.Checked) then if (not CheckBox_no40.Checked) then if (not CheckBox_no56.Checked) then if (not CheckBox_no128.Checked) then
-                                                                          Memo1.Lines.Add('noccp');
-Memo1.Lines.Add('novj');
-Memo1.Lines.Add('kdebug 1');
-Memo1.Lines.Add('holdoff 4');
-Memo1.Lines.Add('maxfail 5');
-If CheckBox_nobuffer.Checked then Memo1.Lines.Add('pty "/usr/sbin/pptp '+Edit_IPS.Text+' --nolaunchpppd --nobuffer"') else Memo1.Lines.Add('pty "/usr/sbin/pptp '+Edit_IPS.Text+' --nolaunchpppd"');
-Memo1.Lines.Add('user "'+Edit_user.Text+'"');
-Memo1.Lines.Add('password "'+Edit_passwd.Text+'"');
-If CheckBox_rmschap.Checked then Memo1.Lines.Add(CheckBox_rmschap.Caption);
-If CheckBox_reap.Checked then Memo1.Lines.Add(CheckBox_reap.Caption);
-If CheckBox_rchap.Checked then Memo1.Lines.Add(CheckBox_rchap.Caption);
-If CheckBox_rpap.Checked then Memo1.Lines.Add(CheckBox_rpap.Caption);
-If CheckBox_rmschapv2.Checked then Memo1.Lines.Add(CheckBox_rmschapv2.Caption);
+                                                                          MyMemo.Lines.Add('noccp');
+MyMemo.Lines.Add('novj');
+MyMemo.Lines.Add('kdebug 1');
+MyMemo.Lines.Add('holdoff 4');
+MyMemo.Lines.Add('maxfail 5');
+If CheckBox_nobuffer.Checked then MyMemo.Lines.Add('pty "/usr/sbin/pptp '+Edit_IPS.Text+' --nolaunchpppd --nobuffer"') else MyMemo.Lines.Add('pty "/usr/sbin/pptp '+Edit_IPS.Text+' --nolaunchpppd"');
+MyMemo.Lines.Add('user "'+Edit_user.Text+'"');
+MyMemo.Lines.Add('password "'+Edit_passwd.Text+'"');
+If CheckBox_rmschap.Checked then MyMemo.Lines.Add(CheckBox_rmschap.Caption);
+If CheckBox_reap.Checked then MyMemo.Lines.Add(CheckBox_reap.Caption);
+If CheckBox_rchap.Checked then MyMemo.Lines.Add(CheckBox_rchap.Caption);
+If CheckBox_rpap.Checked then MyMemo.Lines.Add(CheckBox_rpap.Caption);
+If CheckBox_rmschapv2.Checked then MyMemo.Lines.Add(CheckBox_rmschapv2.Caption);
 mppe_string:='mppe ';
 if CheckBox_required.Checked then mppe_string:=mppe_string+CheckBox_required.Caption;
    if CheckBox_required.Checked then if CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
@@ -508,14 +545,14 @@ if CheckBox_no40.Checked then mppe_string:=mppe_string+CheckBox_no40.Caption;
 if CheckBox_no56.Checked then mppe_string:=mppe_string+CheckBox_no56.Caption;
    if CheckBox_no56.Checked then if CheckBox_no128.Checked then mppe_string:=mppe_string+',';
 if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
-   If mppe_string<>'mppe ' then Memo1.Lines.Add(mppe_string);
+   If mppe_string<>'mppe ' then MyMemo.Lines.Add(mppe_string);
 If CheckBox_pppd_log.Checked then
                              begin
                                 If not DirectoryExists(MyLogDir) then Shell ('mkdir -p '+MyLogDir);
-                                Memo1.Lines.Add('debug');
-                                Memo1.Lines.Add('logfile '+MyLogDir+'vpnmandriva.log');
+                                MyMemo.Lines.Add('debug');
+                                MyMemo.Lines.Add('logfile '+MyLogDir+'vpnmandriva.log');
                              end;
-Memo1.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
+MyMemo.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 Shell ('chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 //применение изменений перезапуском net_applet
 popen(f,'ps -u root|grep net_applet','R');
@@ -524,7 +561,7 @@ PClose(f);
 str:='';
 StrUsers:='';
 Shell ('killall net_applet');
-Shell ('killall perl');
+//Shell ('killall perl');
 if not net_applet_root then
                              begin
                                   popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
@@ -534,10 +571,11 @@ if not net_applet_root then
                                              if str<>'' then if pos(str,StrUsers)=0 then
                                                         begin
                                                              AAsyncProcess := TAsyncProcess.Create(nil);
-                                                             //AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
-                                                             AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'perl '+UsrBinDir+'net_applet --force"';
+                                                             //AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'perl '+UsrBinDir+'net_applet"';
+                                                             AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
                                                              AAsyncProcess.Execute;
-                                                             sleep(3000);
+                                                             while not AAsyncProcess.Running do
+                                                                                      MySleep(30);
                                                              AAsyncProcess.Free;
                                                         end;
                                              StrUsers:=StrUsers+str;
@@ -547,31 +585,24 @@ if not net_applet_root then
 if net_applet_root then
                       begin
                           AAsyncProcess := TAsyncProcess.Create(nil);
-                          //AAsyncProcess.CommandLine :=UsrBinDir+'net_applet';
-                          AAsyncProcess.CommandLine :=UsrBinDir+'perl '+UsrBinDir+'net_applet --force';
+                          //AAsyncProcess.CommandLine :=UsrBinDir+'perl '+UsrBinDir+'net_applet';
+                          AAsyncProcess.CommandLine :=UsrBinDir+'net_applet';
                           AAsyncProcess.Execute;
-                          sleep(3000);
+                          while not AAsyncProcess.Running do
+                                                   MySleep(30);
                           AAsyncProcess.Free;
                       end;
-Form1.Enabled:=true;
-Label_peer.Enabled:=true;
-Label_IPS.Enabled:=true;
-Label_user.Enabled:=true;
-Label_pswd.Enabled:=true;
-Label_metric.Enabled:=true;
-Label9.Enabled:=true;
-Label13.Enabled:=true;
-Image1.Visible:=true;
-Label1.Visible:=false;
-Application.ProcessMessages;
 if FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
                      If FallbackLang='uk' then Application.MessageBox(PChar(message11uk+' '+message12uk+' '+message13uk+' '+message52uk),PChar(message0uk),0) else
                                                               Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en+' '+message52en),PChar(message0en),0);
 //обработка результата перезапуска net_applet
-//popen (f,'ps -e|grep net_applet','R');
-popen (f,'ps -ef|grep '+UsrBinDir+'net_applet','R');
+found_net_applet:=false;
+//popen (f,'ps -e |grep perl','R');
+popen (f,'ps -e |grep net_applet','R');
+If not eof(f) then found_net_applet:=true;
+PClose(f);
 str:='';
-If eof(f) then
+if not found_net_applet then
                begin
                    If FallbackLang='ru' then str:=message66ru else If FallbackLang='uk' then str:=message66uk else str:=message66en;
                    If not FileExists(UsrBinDir+'net_applet') then If FallbackLang='ru' then str:=str+' '+message57ru+' '+UsrBinDir+'net_applet.' else
@@ -580,13 +611,80 @@ If eof(f) then
                                         if FallbackLang='uk' then str:=str+' '+message58uk+' '+UsrBinDir+'net_applet.old.' else str:=str+' '+message58en+' '+UsrBinDir+'net_applet.old.';
                    If str<>'' then Application.MessageBox(PChar(str),PChar(message0ru),0);
                end;
-PClose(f);
 If FallbackLang='ru' then i:=Application.MessageBox(PChar(message56ru),PChar(message0ru),1) else if FallbackLang='uk' then i:=Application.MessageBox(PChar(message56uk),PChar(message0ru),1)
                                                                                             else i:=Application.MessageBox(PChar(message56en),PChar(message0ru),1);
 if i=1 then
            begin
-               Shell('killall ponoff');
-               Shell('killall pppd');
+               CheckVPN;
+               If Code_up_ppp then If PppIface='ppp'+IntToStr(Number_PPP_Iface) then
+                                                                 begin
+                                                                     if FallbackLang='ru' then Application.MessageBox(PChar(message75ru),PChar(message0ru),0) else
+                                                                                          If FallbackLang='uk' then Application.MessageBox(PChar(message75uk),PChar(message0uk),0) else
+                                                                                                                                   Application.MessageBox(PChar(message75en),PChar(message0en),0);
+                                                                     MyTimer.Enabled:=true;
+                                                                     MyForm.Enabled:=false;
+                                                                     Label_peer.Enabled:=false;
+                                                                     Label_IPS.Enabled:=false;
+                                                                     Label_user.Enabled:=false;
+                                                                     Label_pswd.Enabled:=false;
+                                                                     Label_metric.Enabled:=false;
+                                                                     Label_auth.Enabled:=false;
+                                                                     Label_mppe.Enabled:=false;
+                                                                     MyImage.Visible:=false;
+                                                                     Label_wait.Visible:=true;
+                                                                     Label_www.Visible:=true;
+                                                                     Label_timer.Visible:=true;
+                                                                     Application.ProcessMessages;
+                                                                     AAsyncProcess := TAsyncProcess.Create(nil);
+                                                                     AAsyncProcess.CommandLine :='ifdown '+PppIface;
+                                                                     AAsyncProcess.Execute;
+                                                                     while AAsyncProcess.Running do
+                                                                                                 begin
+                                                                                                      mysleep(30);
+                                                                                                 end;
+                                                                     AAsyncProcess.Free;
+                                                                     MyForm.Enabled:=true;
+                                                                     Label_peer.Enabled:=true;
+                                                                     Label_IPS.Enabled:=true;
+                                                                     Label_user.Enabled:=true;
+                                                                     Label_pswd.Enabled:=true;
+                                                                     Label_metric.Enabled:=true;
+                                                                     Label_auth.Enabled:=true;
+                                                                     Label_mppe.Enabled:=true;
+                                                                     MyImage.Visible:=true;
+                                                                     Label_wait.Visible:=false;
+                                                                     Label_www.Visible:=false;
+                                                                     Label_timer.Visible:=false;
+                                                                     MyTimer.Enabled:=false;
+                                                                     Application.ProcessMessages;
+                                                                 end;
+               //проверка pppd в процессах, игнорируя зомби
+               FoundPpppd:=false;
+               popen(f,'ps -e | grep pppd','R');
+               While not eof(f) do
+                                begin
+                                    Readln(f,str);
+                                    if RightStr(str,9)<>'<defunct>' then FoundPpppd:=true;
+                                end;
+               PClose(f);
+               If FoundPpppd then
+                               begin
+                                   If FallbackLang='ru' then i:=Application.MessageBox(PChar(message74ru),PChar(message0ru),1) else
+                                                                               if FallbackLang='uk' then i:=Application.MessageBox(PChar(message74uk),PChar(message0ru),1)
+                                                                                                                else i:=Application.MessageBox(PChar(message74en),PChar(message0ru),1);
+                                   if i=1 then
+                                              begin
+                                                  AAsyncProcess := TAsyncProcess.Create(nil);
+                                                  AAsyncProcess.CommandLine :='killall pppd';
+                                                  AAsyncProcess.Execute;
+                                                  while AAsyncProcess.Running do
+                                                                              begin
+                                                                                   mysleep(30);
+                                                                              end;
+                                                  MySleep(1000);
+                                                  AAsyncProcess.Free;
+                                              end;
+                               end;
                AAsyncProcess := TAsyncProcess.Create(nil);
                AAsyncProcess.CommandLine :='ifup ppp'+IntToStr(Number_PPP_Iface);
                AAsyncProcess.Execute;
@@ -596,50 +694,95 @@ if i=1 then
                                                                                             else i:=Application.MessageBox(PChar(message63en+' '+message67en),PChar(message0ru),1);
                if i=1 then
                           begin
-                               //тест интернета
-                               Form1.Enabled:=false;
-                               Label_peer.Enabled:=false;
-                               Label_IPS.Enabled:=false;
-                               Label_user.Enabled:=false;
-                               Label_pswd.Enabled:=false;
-                               Label_metric.Enabled:=false;
-                               Label9.Enabled:=false;
-                               Label13.Enabled:=false;
-                               Image1.Visible:=false;
-                               Label1.Visible:=true;
-                               Application.ProcessMessages;
-                               CheckVPN;
-                               Str:='ping -c1 yandex.ru|grep '+chr(39)+'1 received'+chr(39);
-                               popen(f,Str,'R');
-                               If eof(f) then NoInternet:=true else NoInternet:=false;
-                               PClose(f);
-                               Form1.Enabled:=true;
-                               Label_peer.Enabled:=true;
-                               Label_IPS.Enabled:=true;
-                               Label_user.Enabled:=true;
-                               Label_pswd.Enabled:=true;
-                               Label_metric.Enabled:=true;
-                               Label9.Enabled:=true;
-                               Label13.Enabled:=true;
-                               Image1.Visible:=true;
-                               Label1.Visible:=false;
-                               Application.ProcessMessages;
-                               If (NoInternet) and (not Code_up_ppp) then
-                                   If FallbackLang='ru' then Application.MessageBox(PChar(message61ru),PChar(message0ru),0) else
-                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message61uk),PChar(message0ru),0)
-                                                                                                                        else Application.MessageBox(PChar(message61en),PChar(message0ru),0);
-                               If (not NoInternet) and (Code_up_ppp) then
-                                   If FallbackLang='ru' then Application.MessageBox(PChar(message62ru),PChar(message0ru),0) else
-                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message62uk),PChar(message0ru),0)
-                                                                                                                        else Application.MessageBox(PChar(message62en),PChar(message0ru),0);
-                               If (NoInternet) and (Code_up_ppp) then
-                                   If FallbackLang='ru' then Application.MessageBox(PChar(message64ru),PChar(message0ru),0) else
-                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message64uk),PChar(message0ru),0)
-                                                                                                                        else Application.MessageBox(PChar(message64en),PChar(message0ru),0);
-                               If (not NoInternet) and (not Code_up_ppp) then
-                                   If FallbackLang='ru' then Application.MessageBox(PChar(message65ru),PChar(message0ru),0) else
-                                                                                  if FallbackLang='uk' then Application.MessageBox(PChar(message65uk),PChar(message0ru),0)
-                                                                                                                        else Application.MessageBox(PChar(message65en),PChar(message0ru),0);
+                               repeat
+                                     //тест интернета
+                                     CheckVPN;
+                                     MyTimer.Enabled:=true;
+                                     MyForm.Enabled:=false;
+                                     Label_peer.Enabled:=false;
+                                     Label_IPS.Enabled:=false;
+                                     Label_user.Enabled:=false;
+                                     Label_pswd.Enabled:=false;
+                                     Label_metric.Enabled:=false;
+                                     Label_auth.Enabled:=false;
+                                     Label_mppe.Enabled:=false;
+                                     MyImage.Visible:=false;
+                                     Label_wait.Visible:=true;
+                                     Label_www.Visible:=true;
+                                     Label_timer.Visible:=true;
+                                     Application.ProcessMessages;
+                                     AStringList := TStringList.Create;
+                                     AAsyncProcess := TAsyncProcess.Create(nil);
+                                     If Edit_IPS.Text='connect.swissvpn.net' then if Edit_user.Text='swissvpntest' then if Edit_passwd.Text='swissvpntest' then
+                                                                                                                          AAsyncProcess.CommandLine :='ping -c1 swissvpn.net' else
+                                                                                                                                        AAsyncProcess.CommandLine :='ping -c1 yandex.ru';
+                                     AAsyncProcess.Options := AAsyncProcess.Options + [poUsePipes];
+                                     AAsyncProcess.Execute;
+                                     while AAsyncProcess.Running do
+                                                             begin
+                                                                 mysleep(30);
+                                                             end;
+                                     AStringList.LoadFromStream(AAsyncProcess.Output);
+                                     NoInternet:=true;
+                                     for i:=0 to AStringList.Count-1 do
+                                                  if pos('1 received',AStringList[i])<>0 then NoInternet:=false;
+                                     AAsyncProcess.Free;
+                                     AStringList.Free;
+                                     MyForm.Enabled:=true;
+                                     Label_peer.Enabled:=true;
+                                     Label_IPS.Enabled:=true;
+                                     Label_user.Enabled:=true;
+                                     Label_pswd.Enabled:=true;
+                                     Label_metric.Enabled:=true;
+                                     Label_auth.Enabled:=true;
+                                     Label_mppe.Enabled:=true;
+                                     MyImage.Visible:=true;
+                                     Label_wait.Visible:=false;
+                                     Label_www.Visible:=false;
+                                     Label_timer.Visible:=false;
+                                     MyTimer.Enabled:=false;
+                                     Application.ProcessMessages;
+                                     If (NoInternet) and (not Code_up_ppp) then
+                                                 If FallbackLang='ru' then Application.MessageBox(PChar(message71ru+' '+message61ru),PChar(message0ru),0) else
+                                                                                        if FallbackLang='uk' then Application.MessageBox(PChar(message71uk+' '+message61uk),PChar(message0ru),0)
+                                                                                                                              else Application.MessageBox(PChar(message71en+' '+message61en),PChar(message0ru),0);
+                                     If (not NoInternet) and (Code_up_ppp) then
+                                                 If FallbackLang='ru' then Application.MessageBox(PChar(message70ru+' '+message62ru),PChar(message0ru),0) else
+                                                                                        if FallbackLang='uk' then Application.MessageBox(PChar(message70uk+' '+message62uk),PChar(message0ru),0)
+                                                                                                                              else Application.MessageBox(PChar(message70en+' '+message62en),PChar(message0ru),0);
+                                     If (NoInternet) and (Code_up_ppp) then
+                                                 If FallbackLang='ru' then Application.MessageBox(PChar(message64ru),PChar(message0ru),0) else
+                                                                                        if FallbackLang='uk' then Application.MessageBox(PChar(message64uk),PChar(message0ru),0)
+                                                                                                                              else Application.MessageBox(PChar(message64en),PChar(message0ru),0);
+                                     If (not NoInternet) and (not Code_up_ppp) then
+                                                 If FallbackLang='ru' then Application.MessageBox(PChar(message65ru),PChar(message0ru),0) else
+                                                                                        if FallbackLang='uk' then Application.MessageBox(PChar(message65uk),PChar(message0ru),0)
+                                                                                                                              else Application.MessageBox(PChar(message65en),PChar(message0ru),0);
+                                     If (NoInternet) and (Code_up_ppp)  then  //проверка кол-ва дефолтных маршрутов с одинаковой метрикой
+                                                                       begin
+                                                                           Str:='route -n|awk '+chr(39)+'{print $1" "$5}'+chr(39)+'|grep 0.0.0.0';
+                                                                           popen(f,Str,'R');
+                                                                           i:=0;
+                                                                           str:='';
+                                                                           str1:='';
+                                                                           while not eof(f) do
+                                                                                            begin
+                                                                                               Readln(f,str);
+                                                                                               if str=str1 then i:=i+1;
+                                                                                               str1:=str;
+                                                                                            end;
+                                                                           PClose(f);
+                                                                           if i>0 then
+                                                                                      begin
+                                                                                            if FallbackLang='ru' then Application.MessageBox(PChar(message72ru),PChar(message0ru),0) else
+                                                                                                                If FallbackLang='uk' then Application.MessageBox(PChar(message72uk),PChar(message0uk),0) else
+                                                                                                                                                      Application.MessageBox(PChar(message72en),PChar(message0en),0);
+                                                                                      end;
+                                                                       end;
+                                     If FallbackLang='ru' then a:=Application.MessageBox(PChar(message69ru),PChar(message0ru),1) else
+                                                                                        if FallbackLang='uk' then a:=Application.MessageBox(PChar(message69uk),PChar(message0ru),1)
+                                                                                                                             else i:=Application.MessageBox(PChar(message69en),PChar(message0ru),1);
+                               until (a<>1);
                           end;
            end;
 Application.ShowHint:=true;
@@ -647,13 +790,13 @@ Application.ProcessMessages;
 end;
 
 
-procedure TForm1.Button_exitClick(Sender: TObject);
+procedure TMyForm.Button_exitClick(Sender: TObject);
 begin
      halt;
 end;
 
 
-procedure TForm1.CheckBox_trafficChange(Sender: TObject);
+procedure TMyForm.CheckBox_trafficChange(Sender: TObject);
 var
    str:string;
 begin
@@ -673,8 +816,13 @@ begin
                  end;
 end;
 
+procedure TMyForm.Edit_passwdChange(Sender: TObject);
+begin
+  if not (Edit_passwd.Text='swissvpntest') then Edit_passwd.EchoMode:=emPassword else Edit_passwd.EchoMode:=emNormal;
+end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+
+procedure TMyForm.FormCreate(Sender: TObject);
 var
     nostart:boolean;
     Apid,Apidroot:tpid;
@@ -720,8 +868,8 @@ If FallbackLang='uk' then q:=2;
 case q of
     1:
         begin
-             Form1.Hint:=MakeHint(message33ru+' '+message34ru,5);
-             Panel1.Hint:=MakeHint(message33ru+' '+message34ru,5);
+             MyForm.Hint:=MakeHint(message33ru+' '+message34ru,5);
+             MyPanel.Hint:=MakeHint(message33ru+' '+message34ru,5);
              Edit_metric.Hint:=MakeHint(message2ru,5);
              CheckBox_right.Hint:=MakeHint(message4ru,5);
              CheckBox_autostart.Hint:=MakeHint(message5ru+' '+message14ru,7);
@@ -731,11 +879,11 @@ case q of
              Label_peer.Hint:=MakeHint(message33ru+' '+message34ru,5);
              Label_user.Hint:=MakeHint(message33ru+' '+message34ru,5);
              Label_pswd.Hint:=MakeHint(message33ru+' '+message34ru,5);
-             Label9.Hint:=MakeHint(message33ru+' '+message34ru,5);
-             Label13.Hint:=MakeHint(message33ru+' '+message34ru,5);
-             Edit_IPS.Hint:=MakeHint(message1ru+' '+message7ru,7);
-             Edit_user.Hint:=MakeHint(message1ru,7);
-             Edit_passwd.Hint:=MakeHint(message1ru,7);
+             Label_auth.Hint:=MakeHint(message33ru+' '+message34ru,5);
+             Label_mppe.Hint:=MakeHint(message33ru+' '+message34ru,5);
+             Edit_IPS.Hint:=MakeHint(message1ru+' '+message7ru+' '+message73ru,6);
+             Edit_user.Hint:=MakeHint(message1ru+' '+message73ru,7);
+             Edit_passwd.Hint:=MakeHint(message1ru+' '+message73ru,7);
              Button_exit.Hint:=MakeHint(message31ru,6);
              Button_create.Hint:=MakeHint(message32ru,3);
              CheckBox_rchap.Hint:=MakeHint(message19ru+' '+message18ru,6);
@@ -749,13 +897,13 @@ case q of
              CheckBox_no56.Hint:=MakeHint(message28ru+' '+message25ru,6);
              CheckBox_no128.Hint:=MakeHint(message29ru+' '+message25ru,6);
              Label_metric.Hint:=MakeHint(message33ru+' '+message34ru,5);
-             Image1.Hint:=MakeHint(message33ru+' '+message34ru,5);
+             MyImage.Hint:=MakeHint(message33ru+' '+message34ru+' '+message73ru,5);
              CheckBox_pppd_log.Hint:=MakeHint(message50ru,6);
         end;
     2:
     begin
-         Form1.Hint:=MakeHint(message33uk+' '+message34uk,5);
-         Panel1.Hint:=MakeHint(message33uk+' '+message34uk,5);
+         MyForm.Hint:=MakeHint(message33uk+' '+message34uk,5);
+         MyPanel.Hint:=MakeHint(message33uk+' '+message34uk,5);
          Edit_metric.Hint:=MakeHint(message2uk,5);
          CheckBox_right.Hint:=MakeHint(message4uk,5);
          CheckBox_autostart.Hint:=MakeHint(message5uk+' '+message14uk,7);
@@ -765,11 +913,11 @@ case q of
          Label_peer.Hint:=MakeHint(message33uk+' '+message34uk,5);
          Label_user.Hint:=MakeHint(message33uk+' '+message34uk,5);
          Label_pswd.Hint:=MakeHint(message33uk+' '+message34uk,5);
-         Label9.Hint:=MakeHint(message33uk+' '+message34uk,5);
-         Label13.Hint:=MakeHint(message33uk+' '+message34uk,5);
-         Edit_IPS.Hint:=MakeHint(message1uk+' '+message7uk,7);
-         Edit_user.Hint:=MakeHint(message1uk,7);
-         Edit_passwd.Hint:=MakeHint(message1uk,7);
+         Label_auth.Hint:=MakeHint(message33uk+' '+message34uk,5);
+         Label_mppe.Hint:=MakeHint(message33uk+' '+message34uk,5);
+         Edit_IPS.Hint:=MakeHint(message1uk+' '+message7uk+' '+message73uk,6);
+         Edit_user.Hint:=MakeHint(message1uk+' '+message73uk,7);
+         Edit_passwd.Hint:=MakeHint(message1uk+' '+message73uk,7);
          Button_exit.Hint:=MakeHint(message31uk,6);
          Button_create.Hint:=MakeHint(message32uk,3);
          CheckBox_rchap.Hint:=MakeHint(message19uk+' '+message18uk,6);
@@ -783,13 +931,13 @@ case q of
          CheckBox_no56.Hint:=MakeHint(message28uk+' '+message25uk,6);
          CheckBox_no128.Hint:=MakeHint(message29uk+' '+message25uk,6);
          Label_metric.Hint:=MakeHint(message33uk+' '+message34uk,5);
-         Image1.Hint:=MakeHint(message33uk+' '+message34uk,5);
+         MyImage.Hint:=MakeHint(message33uk+' '+message34uk+' '+message73uk,5);
          CheckBox_pppd_log.Hint:=MakeHint(message50uk,6);
     end;
 else
     begin
-         Form1.Hint:=MakeHint(message33en+' '+message34en,5);
-         Panel1.Hint:=MakeHint(message33en+' '+message34en,5);
+         MyForm.Hint:=MakeHint(message33en+' '+message34en,5);
+         MyPanel.Hint:=MakeHint(message33en+' '+message34en,5);
          Edit_metric.Hint:=MakeHint(message2en,5);
          CheckBox_right.Hint:=MakeHint(message4en,5);
          CheckBox_autostart.Hint:=MakeHint(message5en+' '+message14en,7);
@@ -799,11 +947,11 @@ else
          Label_peer.Hint:=MakeHint(message33en+' '+message34en,5);
          Label_user.Hint:=MakeHint(message33en+' '+message34en,5);
          Label_pswd.Hint:=MakeHint(message33en+' '+message34en,5);
-         Label9.Hint:=MakeHint(message33en+' '+message34en,5);
-         Label13.Hint:=MakeHint(message33en+' '+message34en,5);
-         Edit_IPS.Hint:=MakeHint(message1en+' '+message7en,7);
-         Edit_user.Hint:=MakeHint(message1en,7);
-         Edit_passwd.Hint:=MakeHint(message1en,7);
+         Label_auth.Hint:=MakeHint(message33en+' '+message34en,5);
+         Label_mppe.Hint:=MakeHint(message33en+' '+message34en,5);
+         Edit_IPS.Hint:=MakeHint(message1en+' '+message7en+' '+message73en,6);
+         Edit_user.Hint:=MakeHint(message1en+' '+message73en,7);
+         Edit_passwd.Hint:=MakeHint(message1en+' '+message73en,7);
          Button_exit.Hint:=MakeHint(message31en,6);
          Button_create.Hint:=MakeHint(message32en,3);
          CheckBox_rchap.Hint:=MakeHint(message19en+' '+message18en,6);
@@ -817,7 +965,7 @@ else
          CheckBox_no56.Hint:=MakeHint(message28en+' '+message25en,6);
          CheckBox_no128.Hint:=MakeHint(message29en+' '+message25en,6);
          Label_metric.Hint:=MakeHint(message33en+' '+message34en,5);
-         Image1.Hint:=MakeHint(message33en+' '+message34en,5);
+         MyImage.Hint:=MakeHint(message33en+' '+message34en+' '+message73en,5);
          CheckBox_pppd_log.Hint:=MakeHint(message50en,6);
     end;
 end;
@@ -825,7 +973,7 @@ end;
 case q of
     1:
         begin
-             Form1.Caption:=message48ru;
+             MyForm.Caption:=message48ru;
              Label_peer.Caption:=message35ru;
              Label_IPS.Caption:=message36ru;
              Label_user.Caption:=message37ru;
@@ -835,16 +983,16 @@ case q of
              CheckBox_autostart.Caption:=message41ru;
              CheckBox_traffic.Caption:=message42ru;
              CheckBox_nobuffer.Caption:=message43ru;
-             Label9.Caption:=message44ru;
-             Label13.Caption:=message45ru;
+             Label_auth.Caption:=message44ru;
+             Label_mppe.Caption:=message45ru;
              Button_exit.Caption:=message46ru;
              Button_create.Caption:=message47ru;
              CheckBox_pppd_log.Caption:=message49ru+' '+MyLogDir+'vpnmandriva.log';
-             Label1.Caption:=message68ru;
+             Label_wait.Caption:=message68ru;
         end;
     2:
         begin
-             Form1.Caption:=message48uk;
+             MyForm.Caption:=message48uk;
              Label_peer.Caption:=message35uk;
              Label_IPS.Caption:=message36uk;
              Label_user.Caption:=message37uk;
@@ -854,16 +1002,16 @@ case q of
              CheckBox_autostart.Caption:=message41uk;
              CheckBox_traffic.Caption:=message42uk;
              CheckBox_nobuffer.Caption:=message43uk;
-             Label9.Caption:=message44uk;
-             Label13.Caption:=message45uk;
+             Label_auth.Caption:=message44uk;
+             Label_mppe.Caption:=message45uk;
              Button_exit.Caption:=message46uk;
              Button_create.Caption:=message47uk;
              CheckBox_pppd_log.Caption:=message49uk+' '+MyLogDir+'vpnmandriva.log';
-             Label1.Caption:=message68uk;
+             Label_wait.Caption:=message68uk;
         end;
 else
     begin
-        Form1.Caption:=message48en;
+        MyForm.Caption:=message48en;
         Label_peer.Caption:=message35en;
         Label_IPS.Caption:=message36en;
         Label_user.Caption:=message37en;
@@ -873,70 +1021,70 @@ else
         CheckBox_autostart.Caption:=message41en;
         CheckBox_traffic.Caption:=message42en;
         CheckBox_nobuffer.Caption:=message43en;
-        Label9.Caption:=message44en;
-        Label13.Caption:=message45en;
+        Label_auth.Caption:=message44en;
+        Label_mppe.Caption:=message45en;
         Button_exit.Caption:=message46en;
         Button_create.Caption:=message47en;
         CheckBox_pppd_log.Caption:=message49en+' '+MyLogDir+'vpnmandriva.log';
-        Label1.Caption:=message68en;
+        Label_wait.Caption:=message68en;
     end;
 end;
 //масштабирование формы в зависимости от разрешения экрана
-   Form1.Height:=600;
-   Form1.Width:=794;
-   Form1.Position:=poDefault;
-   Form1.Top:=0;
-   Form1.Left:=0;
+   MyForm.Height:=600;
+   MyForm.Width:=794;
+   MyForm.Position:=poDefault;
+   MyForm.Top:=0;
+   MyForm.Left:=0;
    If Screen.Height<440 then
                             begin
-                             Form1.Position:=poScreenCenter;
+                             MyForm.Position:=poScreenCenter;
                              AFont:=6;
-                             Form1.Height:=Screen.Height-50;
-                             Form1.Width:=Screen.Width;
-                             Form1.Constraints.MaxHeight:=Screen.Height-50;
-                             Form1.Constraints.MinHeight:=Screen.Height-50;
+                             MyForm.Height:=Screen.Height-50;
+                             MyForm.Width:=Screen.Width;
+                             MyForm.Constraints.MaxHeight:=Screen.Height-50;
+                             MyForm.Constraints.MinHeight:=Screen.Height-50;
                              Button_create.BorderSpacing.Left:=Screen.Width-182;
                             end;
    If Screen.Height<=480 then
                         begin
-                             Form1.Position:=poScreenCenter;
+                             MyForm.Position:=poScreenCenter;
                              AFont:=6;
-                             Form1.Font.Size:=AFont;
-                             Form1.Height:=Screen.Height-45;
-                             Form1.Width:=Screen.Width;
-                             Form1.Constraints.MaxHeight:=Screen.Height-45;
-                             Form1.Constraints.MinHeight:=Screen.Height-45;
+                             MyForm.Font.Size:=AFont;
+                             MyForm.Height:=Screen.Height-45;
+                             MyForm.Width:=Screen.Width;
+                             MyForm.Constraints.MaxHeight:=Screen.Height-45;
+                             MyForm.Constraints.MinHeight:=Screen.Height-45;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
-                             Form1.Position:=poScreenCenter;
+                             MyForm.Position:=poScreenCenter;
                              AFont:=6;
-                             Form1.Constraints.MaxHeight:=Screen.Height;
-                             Form1.Constraints.MinHeight:=Screen.Height;
+                             MyForm.Constraints.MaxHeight:=Screen.Height;
+                             MyForm.Constraints.MinHeight:=Screen.Height;
                          end;
    If Screen.Height>550 then   //разрешение в основном нетбуков
                         begin
-                             Form1.Position:=poScreenCenter;
+                             MyForm.Position:=poScreenCenter;
                              AFont:=8;
-                             Form1.Font.Size:=AFont;
-                             Form1.Height:=550;
-                             Form1.Width:=794;
-                             Form1.Constraints.MaxHeight:=550;
-                             Form1.Constraints.MinHeight:=550;
-                             Form1.Constraints.MaxWidth:=794;
-                             Form1.Constraints.MinWidth:=794;
+                             MyForm.Font.Size:=AFont;
+                             MyForm.Height:=550;
+                             MyForm.Width:=794;
+                             MyForm.Constraints.MaxHeight:=550;
+                             MyForm.Constraints.MinHeight:=550;
+                             MyForm.Constraints.MaxWidth:=794;
+                             MyForm.Constraints.MinWidth:=794;
                         end;
    If Screen.Height>1000 then
                         begin
-                             Form1.Position:=poScreenCenter;
+                             MyForm.Position:=poScreenCenter;
                              AFont:=10;
-                             Form1.Font.Size:=AFont;
-                             Form1.Height:=650;
-                             Form1.Width:=884;
-                             Form1.Constraints.MaxHeight:=650;
-                             Form1.Constraints.MinHeight:=650;
-                             Form1.Constraints.MaxWidth:=884;
-                             Form1.Constraints.MinWidth:=884;
+                             MyForm.Font.Size:=AFont;
+                             MyForm.Height:=650;
+                             MyForm.Width:=884;
+                             MyForm.Constraints.MaxHeight:=650;
+                             MyForm.Constraints.MinHeight:=650;
+                             MyForm.Constraints.MaxWidth:=884;
+                             MyForm.Constraints.MinWidth:=884;
                          end;
 If not FileExists(UsrSBinDir+'pptp') then
                                         begin
@@ -944,7 +1092,7 @@ If not FileExists(UsrSBinDir+'pptp') then
                                                                  If FallbackLang='uk' then Application.MessageBox(PChar(message3uk),PChar(message0uk),0) else
                                                                                                           Application.MessageBox(PChar(message3en),PChar(message0en),0);
                                             Application.ProcessMessages;
-                                            Form1.Repaint;
+                                            MyForm.Repaint;
                                             halt;
                                         end;
 //проверка vpnmandriva в процессах root, исключение запуска под иными пользователями
@@ -978,7 +1126,7 @@ If not FileExists(UsrSBinDir+'pptp') then
 
                                      end;
                     Application.ProcessMessages;
-                    Form1.Repaint;
+                    MyForm.Repaint;
                     halt;
                 end;
 //программа устанавливает саму же себя
@@ -989,31 +1137,31 @@ If DirectoryExists(UsrBinDir) then
                                                                   begin
                                                                       If FileExists(UsrBinDir+'vpnmandriva') and FileExists (MyVpnDir+'vpnmandriva.pm') then ProgramInstalled:=true else ProgramInstalled:=false;
                                                                       Shell ('cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
-                                                                      Memo1.Lines.Clear;
-                                                                      Memo1.Lines.Add('package network::vpn::vpnmandriva;');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('use base qw(network::vpn);');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('use common;');
-                                                                      Memo1.Lines.Add('use run_program;');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('sub get_type { '+chr(39)+'vpnmandriva'+chr(39)+' }');
-                                                                      Memo1.Lines.Add('sub get_description { N("VPN PPTP") }');
-                                                                      Memo1.Lines.Add('sub get_packages { '+chr(39)+'drakx-net'+chr(39)+' }');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('sub read_config {');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('run_program::rooted($::prefix,'+chr(39)+UsrBinDir+'vpnmandriva'+chr(39)+');');
-                                                                      Memo1.Lines.Add('end => 1;');
-                                                                      Memo1.Lines.Add('}');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('sub get_settings {');
-                                                                      Memo1.Lines.Add('exit;');
-                                                                      Memo1.Lines.Add('}');
-                                                                      Memo1.Lines.Add('');
-                                                                      Memo1.Lines.Add('1;');
-                                                                      Memo1.Lines.SaveToFile(MyVpnDir+'vpnmandriva.pm');
+                                                                      MyMemo.Lines.Clear;
+                                                                      MyMemo.Lines.Add('package network::vpn::vpnmandriva;');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('use base qw(network::vpn);');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('use common;');
+                                                                      MyMemo.Lines.Add('use run_program;');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('sub get_type { '+chr(39)+'vpnmandriva'+chr(39)+' }');
+                                                                      MyMemo.Lines.Add('sub get_description { N("VPN PPTP") }');
+                                                                      MyMemo.Lines.Add('sub get_packages { '+chr(39)+'drakx-net'+chr(39)+' }');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('sub read_config {');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('run_program::rooted($::prefix,'+chr(39)+UsrBinDir+'vpnmandriva'+chr(39)+');');
+                                                                      MyMemo.Lines.Add('end => 1;');
+                                                                      MyMemo.Lines.Add('}');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('sub get_settings {');
+                                                                      MyMemo.Lines.Add('exit;');
+                                                                      MyMemo.Lines.Add('}');
+                                                                      MyMemo.Lines.Add('');
+                                                                      MyMemo.Lines.Add('1;');
+                                                                      MyMemo.Lines.SaveToFile(MyVpnDir+'vpnmandriva.pm');
                                                                       If not ProgramInstalled then
                                                                                               begin
                                                                                                    If FallbackLang='ru' then Application.MessageBox(PChar(message17ru+' '+message51ru+' '+UsrBinDir+'vpnmandriva, '+MyVpnDir+'vpnmandriva.pm.'),PChar(message0ru),0) else
@@ -1036,21 +1184,59 @@ If (not DirectoryExists(MyVpnDir)) or  (not DirectoryExists(UsrBinDir)) then
                                                            end;
 end;
 
-procedure TForm1.TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
+procedure TMyForm.MyImageMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-   If Button=mbLeft then If Form1.Font.Size<15 then
+If Button=mbmiddle then if ButtonMiddle then
+                        begin
+                            Edit_IPS.Text:='';
+                            Edit_user.Text:='';
+                            Edit_passwd.Text:='';
+                            ButtonMiddle:=false;
+                            exit;
+                        end;
+ If Button=mbmiddle then if not ButtonMiddle then
+                         begin
+                             Edit_IPS.Text:='connect.swissvpn.net';
+                             Edit_user.Text:='swissvpntest';
+                             Edit_passwd.Text:='swissvpntest';
+                             ButtonMiddle:=true;
+                         end;
+ MyForm.TabSheet1MouseDown(Sender,Button,Shift,X,Y);
+end;
+
+procedure TMyForm.TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+   If Button=mbLeft then If MyForm.Font.Size<15 then
                             begin
-                                 Form1.Font.Size:=Form1.Font.Size+1;
+                                 MyForm.Font.Size:=MyForm.Font.Size+1;
                             end;
-   If Button=mbRight then If Form1.Font.Size>1 then
+   If Button=mbRight then If MyForm.Font.Size>1 then
                              begin
-                                 Form1.Font.Size:=Form1.Font.Size-1;
+                                 MyForm.Font.Size:=MyForm.Font.Size-1;
                              end;
-   AFont:=Form1.Font.Size;
-   Form1.Repaint;
+   AFont:=MyForm.Font.Size;
+   MyForm.Repaint;
    Application.ProcessMessages;
-   Form1.Repaint;
+   MyForm.Repaint;
+end;
+
+procedure TMyForm.MyTimerStartTimer(Sender: TObject);
+begin
+  fpGettimeofday(@TV,nil);
+  DateStart:=TV.tv_sec;
+end;
+
+procedure TMyForm.MyTimerStopTimer(Sender: TObject);
+begin
+  Label_timer.Caption:='0';
+end;
+
+procedure TMyForm.MyTimerTimer(Sender: TObject);
+begin
+  fpGettimeofday(@TV,nil);
+  Label_timer.Caption:=IntToStr(TV.tv_sec-DateStart);
 end;
 
 initialization
@@ -1059,7 +1245,7 @@ initialization
 
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   If FallbackLang='be' then FallbackLang:='ru';
-  //FallbackLang:='uk'; //просто для проверки при отладке
+  //FallbackLang:='en'; //просто для проверки при отладке
 end.
 
 end.
