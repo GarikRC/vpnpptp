@@ -140,6 +140,7 @@ const
   EtcXl2tpdDir='/etc/xl2tpd/';
   EtcPppIpDownLDir='/etc/ppp/ip-down.l/';
   VarRunVpnpptp='/var/run/vpnpptp/';
+  VarRunDir='/var/run/';
 
 resourcestring
   message0='Внимание!';
@@ -298,7 +299,7 @@ begin
   end
 end;
 
-procedure CheckVPN;
+{procedure CheckVPN;
 //проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
 var
   str:string;
@@ -316,6 +317,47 @@ begin
                                     PppIface:=LeftStr(str,4);
                                end;
      end;
+  PClose(f);
+end;}
+
+{procedure CheckVPN;
+//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
+var
+  str:string;
+begin
+  str:='';
+  PppIface:='';
+  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then
+                          begin
+                               Code_up_ppp:=true;
+                               PppIface:=str;
+                          end;
+     end;
+  PClose(f);
+end; }
+
+procedure CheckVPN;
+//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
+var
+  str:string;
+begin
+  str:='';
+  PppIface:='';
+  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then PppIface:=str;
+     end;
+  PClose(f);
+  popen (f,'ifconfig |grep '+PppIface,'R');
+  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
   PClose(f);
 end;
 
@@ -574,7 +616,7 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                If FileExists(MyLibDir+Memo_Config.Lines[0]+'/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                             if Memo_config.Lines[21]='IPS-no' then
                                       begin
-                                         popen (f,'ifconfig|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39),'R');
+                                         popen (f,'ifconfig '+PppIface+'|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39),'R');
                                          if not eof(f) then
                                                                                  begin
                                                                                     While not eof(f) do
@@ -1767,7 +1809,7 @@ begin
   RemoteIPaddress0:='-';
   If Code_up_ppp then
                      begin
-                          popen (f,'ifconfig|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39),'R');
+                          popen (f,'ifconfig '+PppIface+'|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39),'R');
                           if not eof(f) then
                                             begin
                                                  While not eof(f) do
@@ -1782,7 +1824,7 @@ begin
   IPaddress0:='-';
   If Code_up_ppp then
                      begin
-                          popen (f,'ifconfig|grep P-t-P|awk '+chr(39)+'{print $2}'+chr(39),'R');
+                          popen (f,'ifconfig '+PppIface+'|grep P-t-P|awk '+chr(39)+'{print $2}'+chr(39),'R');
                           if not eof(f) then
                                             begin
                                                  While not eof(f) do

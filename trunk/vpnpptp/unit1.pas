@@ -288,6 +288,7 @@ const
   EtcXl2tpdDir='/etc/xl2tpd/';
   EtcPppIpDownLDir='/etc/ppp/ip-down.l/';
   VarRunVpnpptp='/var/run/vpnpptp/';
+  VarRunDir='/var/run/';
 
 resourcestring
   message0='Внимание!';
@@ -593,7 +594,7 @@ begin
 
 end;
 
-procedure CheckVPN;
+{procedure CheckVPN;
 //проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
 var
   str:string;
@@ -611,6 +612,47 @@ begin
                                     PppIface:=LeftStr(str,4);
                                end;
      end;
+  PClose(f);
+end;}
+
+{procedure CheckVPN;
+//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
+var
+  str:string;
+begin
+  str:='';
+  PppIface:='';
+  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Edit_peer.Text+'.pid|grep ppp','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then
+                          begin
+                               Code_up_ppp:=true;
+                               PppIface:=str;
+                          end;
+     end;
+  PClose(f);
+end;  }
+
+procedure CheckVPN;
+//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
+var
+  str:string;
+begin
+  str:='';
+  PppIface:='';
+  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Edit_peer.Text+'.pid|grep ppp','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then PppIface:=str;
+     end;
+  PClose(f);
+  popen (f,'ifconfig |grep '+PppIface,'R');
+  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
   PClose(f);
 end;
 

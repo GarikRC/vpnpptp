@@ -1,13 +1,13 @@
-object Form1: TForm1
-  Left = 349
+object MyForm: TMyForm
+  Left = 435
   Height = 580
-  Top = 11
+  Top = 96
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
   VertScrollBar.Page = 540
   VertScrollBar.Visible = False
-  ActiveControl = Panel1
+  ActiveControl = MyPanel
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Настройка VPN PPTP'
   ClientHeight = 580
@@ -2136,7 +2136,7 @@ object Form1: TForm1
   Position = poDesktopCenter
   ShowHint = True
   LCLVersion = '0.9.29'
-  object Panel1: TPanel
+  object MyPanel: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
     AnchorSideRight.Control = Owner
@@ -2206,8 +2206,8 @@ object Form1: TForm1
       OnMouseDown = TabSheet1MouseDown
     end
     object Label_peer: TLabel
-      AnchorSideLeft.Control = Panel1
-      AnchorSideTop.Control = Panel1
+      AnchorSideLeft.Control = MyPanel
+      AnchorSideTop.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 76
@@ -2225,7 +2225,7 @@ object Form1: TForm1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = Label_IPS
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
       Height = 21
@@ -2243,7 +2243,7 @@ object Form1: TForm1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = Label_peer
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
       Height = 21
@@ -2259,7 +2259,7 @@ object Form1: TForm1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = Label_user
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
       Height = 21
@@ -2275,7 +2275,7 @@ object Form1: TForm1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = Label_pswd
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
       Height = 21
@@ -2285,10 +2285,11 @@ object Form1: TForm1
       BorderSpacing.Around = 8
       EchoMode = emPassword
       MaxLength = 100
+      OnChange = Edit_passwdChange
       PasswordChar = '*'
       TabOrder = 3
     end
-    object Label9: TLabel
+    object Label_auth: TLabel
       AnchorSideLeft.Control = CheckBox_reap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_reap
@@ -2302,11 +2303,11 @@ object Form1: TForm1
       ParentColor = False
       OnMouseDown = TabSheet1MouseDown
     end
-    object Label13: TLabel
+    object Label_mppe: TLabel
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = Edit_metric
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 719
       Height = 14
@@ -2333,7 +2334,7 @@ object Form1: TForm1
     end
     object CheckBox_reap: TCheckBox
       AnchorSideLeft.Control = CheckBox_rpap
-      AnchorSideTop.Control = Label9
+      AnchorSideTop.Control = Label_auth
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rpap
       Left = 579
@@ -2394,8 +2395,8 @@ object Form1: TForm1
       TabOrder = 18
     end
     object CheckBox_required: TCheckBox
-      AnchorSideLeft.Control = Label13
-      AnchorSideTop.Control = Label13
+      AnchorSideLeft.Control = Label_mppe
+      AnchorSideTop.Control = Label_mppe
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 719
@@ -2446,7 +2447,7 @@ object Form1: TForm1
       TabOrder = 14
     end
     object CheckBox_right: TCheckBox
-      AnchorSideLeft.Control = Panel1
+      AnchorSideLeft.Control = MyPanel
       AnchorSideTop.Control = CheckBox_pppd_log
       AnchorSideTop.Side = asrBottom
       Left = 11
@@ -2458,7 +2459,7 @@ object Form1: TForm1
       TabOrder = 6
     end
     object CheckBox_autostart: TCheckBox
-      AnchorSideLeft.Control = Panel1
+      AnchorSideLeft.Control = MyPanel
       AnchorSideTop.Control = CheckBox_right
       AnchorSideTop.Side = asrBottom
       Left = 11
@@ -2470,7 +2471,7 @@ object Form1: TForm1
       TabOrder = 7
     end
     object CheckBox_traffic: TCheckBox
-      AnchorSideLeft.Control = Panel1
+      AnchorSideLeft.Control = MyPanel
       AnchorSideTop.Control = CheckBox_nobuffer
       AnchorSideTop.Side = asrBottom
       Left = 11
@@ -2503,7 +2504,7 @@ object Form1: TForm1
       AnchorSideLeft.Side = asrBottom
       AnchorSideTop.Control = Label_metric
       AnchorSideTop.Side = asrCenter
-      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
       Height = 21
@@ -2514,7 +2515,7 @@ object Form1: TForm1
       TabOrder = 4
       Text = '1'
     end
-    object Memo1: TMemo
+    object MyMemo: TMemo
       Left = 0
       Height = 35
       Top = 0
@@ -2526,7 +2527,7 @@ object Form1: TForm1
       Visible = False
     end
     object CheckBox_nobuffer: TCheckBox
-      AnchorSideLeft.Control = Panel1
+      AnchorSideLeft.Control = MyPanel
       AnchorSideTop.Control = CheckBox_autostart
       AnchorSideTop.Side = asrBottom
       Left = 11
@@ -2541,9 +2542,9 @@ object Form1: TForm1
     end
     object Button_create: TBitBtn
       AnchorSideLeft.Side = asrCenter
-      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
-      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
       Left = 658
       Height = 138
@@ -4610,8 +4611,8 @@ object Form1: TForm1
       TabOrder = 21
     end
     object Button_exit: TBitBtn
-      AnchorSideLeft.Control = Panel1
-      AnchorSideBottom.Control = Panel1
+      AnchorSideLeft.Control = MyPanel
+      AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
       Left = 9
       Height = 138
@@ -6676,10 +6677,10 @@ object Form1: TForm1
       OnClick = Button_exitClick
       TabOrder = 20
     end
-    object Image1: TImage
-      AnchorSideLeft.Control = Panel1
+    object MyImage: TImage
+      AnchorSideLeft.Control = MyPanel
       AnchorSideLeft.Side = asrCenter
-      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
       Left = 258
       Height = 285
@@ -6687,7 +6688,7 @@ object Form1: TForm1
       Width = 300
       Anchors = [akLeft, akBottom]
       AutoSize = True
-      OnMouseDown = TabSheet1MouseDown
+      OnMouseDown = MyImageMouseDown
       Picture.Data = {
         1754506F727461626C654E6574776F726B477261706869634638010089504E47
         0D0A1A0A0000000D494844520000012C0000011D0806000000B65B5A7D000000
@@ -9192,7 +9193,7 @@ object Form1: TForm1
       }
     end
     object CheckBox_pppd_log: TCheckBox
-      AnchorSideLeft.Control = Panel1
+      AnchorSideLeft.Control = MyPanel
       AnchorSideTop.Control = Edit_metric
       AnchorSideTop.Side = asrBottom
       Left = 11
@@ -9206,18 +9207,17 @@ object Form1: TForm1
       State = cbChecked
       TabOrder = 5
     end
-    object Label1: TLabel
-      AnchorSideLeft.Control = Panel1
+    object Label_wait: TLabel
+      AnchorSideLeft.Control = MyPanel
       AnchorSideLeft.Side = asrCenter
-      AnchorSideBottom.Control = Panel1
-      AnchorSideBottom.Side = asrBottom
-      Left = 388
+      AnchorSideBottom.Control = Label_www
+      Left = 376
       Height = 14
-      Top = 557
-      Width = 41
+      Top = 535
+      Width = 65
       Anchors = [akLeft, akBottom]
       BorderSpacing.Around = 8
-      Caption = 'Label1'
+      Caption = 'Label_wait'
       Font.Height = -10
       Font.Name = 'Sans'
       Font.Style = [fsBold]
@@ -9226,5 +9226,53 @@ object Form1: TForm1
       ParentShowHint = False
       Visible = False
     end
+    object Label_www: TLabel
+      AnchorSideLeft.Control = MyPanel
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideBottom.Control = MyPanel
+      AnchorSideBottom.Side = asrBottom
+      Left = 300
+      Height = 14
+      Top = 557
+      Width = 216
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Around = 8
+      Caption = 'http://code.google.com/p/vpnpptp/'
+      Font.Height = -10
+      Font.Name = 'Sans'
+      Font.Style = [fsBold, fsUnderline]
+      ParentColor = False
+      ParentFont = False
+      ParentShowHint = False
+      Visible = False
+    end
+    object Label_timer: TLabel
+      AnchorSideLeft.Control = MyPanel
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideBottom.Control = Label_wait
+      Left = 372
+      Height = 14
+      Top = 513
+      Width = 73
+      Anchors = [akLeft, akBottom]
+      BorderSpacing.Around = 8
+      Caption = 'Label_timer'
+      Font.Height = -10
+      Font.Name = 'Sans'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      ParentShowHint = False
+      Visible = False
+    end
+  end
+  object MyTimer: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = MyTimerTimer
+    OnStartTimer = MyTimerStartTimer
+    OnStopTimer = MyTimerStopTimer
+    left = 184
+    top = 514
   end
 end

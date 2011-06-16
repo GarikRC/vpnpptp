@@ -18,7 +18,7 @@ begin
   Application.Title:='Настройка подключения к '
     +'VPN через PPTP';
   Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TMyForm, MyForm);
   Application.Run;
 end.
 
