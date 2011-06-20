@@ -13,7 +13,7 @@ Source1: vpnpptp.pm
 Source2: vpnmandriva.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: fpc-src >= 2.2.4, fpc >= 2.2.4, lazarus
+BuildRequires: fpc-src >= 2.4.2, fpc >= 2.4.2, lazarus >= 0.9.29
 Requires: pptp-linux, xl2tpd
 
 %description
@@ -54,6 +54,7 @@ mkdir -p %{buildroot}%/lib/libDrakX/network/connection
 cp -f ./vpnpptp/vpnpptp %{buildroot}%{_bindir}
 cp -f ./ponoff/ponoff %{buildroot}%{_bindir}
 cp -f ./vpnmandriva/vpnmandriva %{buildroot}%{_bindir}
+cp -f ./balloon/balloon %{buildroot}%{_bindir}
 cp -f ./ponoff.png %{buildroot}%{_datadir}/pixmaps/
 cp -f ./vpnpptp.png %{buildroot}%{_datadir}/pixmaps/
 chmod 0644 %{buildroot}%{_datadir}/pixmaps/ponoff.png
@@ -128,6 +129,7 @@ rm -rf %{buildroot}
 %{_bindir}/vpnpptp
 %{_bindir}/ponoff
 %{_bindir}/vpnmandriva
+%{_bindir}/balloon
 %{_datadir}/vpnpptp/lang
 %{_datadir}/pixmaps/ponoff.png
 %{_datadir}/pixmaps/vpnpptp.png

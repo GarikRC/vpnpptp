@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 472
   Height = 153
-  Top = 96
+  Top = 95
   Width = 533
   ActiveControl = Memo_Config
   BorderIcons = [biSystemMenu]
@@ -2125,11 +2125,12 @@ object Form1: TForm1
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
+  OnActivate = FormActivate
   OnCreate = FormCreate
   Position = poScreenCenter
   ShowHint = True
   ShowInTaskBar = stNever
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.30'
   WindowState = wsMinimized
   object Memo_Config: TMemo
     Left = 48

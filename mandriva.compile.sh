@@ -37,3 +37,10 @@ cd ./vpnmandriva
 $FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP -Fu$LAZARUS_LIB_IDEINTF -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./vpnmandriva/ -Fu. -ovpnmandriva -dLCL -dLCLgtk2 vpnmandriva.pas
 
 /usr/bin/strip -s ./vpnmandriva
+
+cd ..
+cd ./balloon
+
+$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP -Fu$LAZARUS_LIB_IDEINTF -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./balloon/ -Fu. -oballoon -dLCL -dLCLgtk2 balloon.lpr
+
+/usr/bin/strip -s ./balloon

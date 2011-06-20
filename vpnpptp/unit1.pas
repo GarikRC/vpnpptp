@@ -24,7 +24,7 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, UnitMyMessageBox,
+  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, UnitMyMessageBox, AsyncProcess,
   StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Unit2, Process,Typinfo,Gettext,BaseUnix, types;
 
 type
@@ -178,8 +178,6 @@ type
     procedure ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure DeleteClick(Sender: TObject);
-    procedure DeleteContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
     procedure Edit_peerChange(Sender: TObject);
     procedure etc_hostsChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -200,6 +198,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure DoIconDesktop(uin,prilozh:string;dodelete:boolean;Profile:string);
     procedure DoIconDesktopForAll(Prilozh:string);
+    procedure CheckFiles;
   private
     { private declarations }
   public
@@ -237,7 +236,7 @@ var
   More:boolean; //отслеживает, что кнопку Button_more уже нажимали
   DNS_auto:boolean; //если false, то DNS провайдер выдает для ручного ввода
   DNSA,DNSB,DNSdopC,DNSC,DNSD:string; //автоопределенные конфигуратором DNS
-  AProcess: TProcess; //для запуска внешних приложений
+  AProcess: TAsyncProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
   ubuntu:boolean; //используется ли дистрибутив ubuntu
   debian:boolean; //используется ли дистрибутив debian
@@ -503,138 +502,12 @@ resourcestring
   message209='Программе известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9].';
   message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
   message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
+  message212='Принудительно установлено блокирование всех всплывающих сообщений из трея, так как отсутствует';
 
 implementation
 
 uses
 LCLProc;
-
-constructor TMyHintWindow.Create(AOwner: TComponent);
-begin
-  inherited Create(AOwner);
-  with Canvas.Font do
-  begin
-    Size := AFont;
-    Color:=clBlack;
-  end;
-end;
-
-procedure TMyHintWindow.ActivateHint(Rect: TRect; const AHint: string);
-begin
-  Canvas.Font.Size:=AFont;
-  Canvas.Font.Color := clBlack;
-  inherited;
-end;
-
-{ TTranslator }
-
-constructor TTranslator.Create(POFileName: string);
-begin
-  inherited Create;
-  FPOFile := TPOFile.Create(POFileName);
-end;
-
-destructor TTranslator.Destroy;
-begin
-  FPOFile.Free;
-  inherited Destroy;
-end;
-
-procedure TTranslator.TranslateStringProperty(Sender: TObject;
-  const Instance: TPersistent; PropInfo: PPropInfo; var Content: string);
-begin
-  if Instance.InheritsFrom(TForm) then
-    begin
-      FFormClassName := Instance.ClassName;
-      DebugLn(UpperCase(FFormClassName + '.'+PropInfo^.Name) + '=' + Content);
-      Content := FPOFile.Translate(UpperCase(FFormClassName + '.' + PropInfo^.Name), Content);
-    end
-  else
-    begin
-      DebugLn(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.' + PropInfo^.Name) + '=' + Content);
-      Content := FPOFile.Translate(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.'+ PropInfo^.Name), Content);
-    end;
-  Content := UTF8ToSystemCharSet(Content); // перевод UTF8 в текущую локаль
-end;
-
-procedure CheckFiles;
-//проверяет наличие необходимых программе файлов
-var
-    str:string;
-begin
-    //некритичные файлы
-    str:=message101;
-    If not FileExists(MyPixmapsDir+'vpnpptp.png') then str:=str+MyPixmapsDir+'vpnpptp.png, ';
-    If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then str:=str+MyScriptsDir+'dhclient-exit-hooks, ';
-    If not FileExists(MyScriptsDir+'dhclient.conf') then str:=str+MyScriptsDir+'dhclient.conf, ';
-    If not FileExists(MyScriptsDir+'peermodify.sh') then str:=str+MyScriptsDir+'peermodify.sh, ';
-    If FallbackLang='ru' then
-                     begin
-                          If not FileExists(MyLangDir+'vpnpptp.ru.po') then str:=str+MyLangDir+'vpnpptp.ru.po, ';
-                          If not FileExists(MyLangDir+'success.ru') then str:=str+MyLangDir+'success.ru, ';
-                          If not FileExists(MyWikiDir+'Help_ru.doc') then str:=str+MyWikiDir+'Help_ru.doc, ';
-                     end;
-    If FallbackLang='en' then
-                     begin
-                          If not FileExists(MyLangDir+'vpnpptp.en.po') then str:=str+MyLangDir+'vpnpptp.en.po, ';
-                          If not FileExists(MyLangDir+'success.en') then str:=str+MyLangDir+'success.en, ';
-                          //If not FileExists(MyWikiDir+'Help_en.doc') then str:=str+MyWikiDir+'Help_en.doc, ';
-                     end;
-    If FallbackLang='uk' then
-                     begin
-                          If not FileExists(MyLangDir+'vpnpptp.uk.po') then str:=str+MyLangDir+'vpnpptp.uk.po, ';
-                          If not FileExists(MyLangDir+'success.uk') then str:=str+MyLangDir+'success.uk, ';
-                          If not FileExists(MyWikiDir+'Help_uk.doc') then str:=str+MyWikiDir+'Help_uk.doc, ';
-                     end;
-    If str<>message101 then
-                       begin
-                            str:=LeftStr(str,Length(str)-2);
-                            Form3.MyMessageBox(message0,str,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                       end;
-
-end;
-
-{procedure CheckVPN;
-//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
-var
-  str:string;
-begin
-  str:='';
-  PppIface:='';
-  popen (f,'ifconfig | grep Link','R');
-  Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then if LeftStr(str,3)='ppp' then
-                               begin
-                                    Code_up_ppp:=true;
-                                    PppIface:=LeftStr(str,4);
-                               end;
-     end;
-  PClose(f);
-end;}
-
-{procedure CheckVPN;
-//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
-var
-  str:string;
-begin
-  str:='';
-  PppIface:='';
-  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Edit_peer.Text+'.pid|grep ppp','R');
-  Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then
-                          begin
-                               Code_up_ppp:=true;
-                               PppIface:=str;
-                          end;
-     end;
-  PClose(f);
-end;  }
 
 procedure CheckVPN;
 //проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
@@ -717,9 +590,97 @@ begin
           If (not FileExists (SBinDir+'ifup')) or ubuntu or fedora then Shell ('ifconfig '+Iface+' up');
 end;
 
+{ TMyHintWindow }
+
+constructor TMyHintWindow.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  with Canvas.Font do
+  begin
+    Size := AFont;
+    Color:=clBlack;
+    Alignment:=taLeftJustify;
+  end;
+end;
+
+procedure TMyHintWindow.ActivateHint(Rect: TRect; const AHint: string);
+begin
+  Canvas.Font.Size:=AFont;
+  Canvas.Font.Color := clBlack;
+  inherited;
+end;
+
+{ TTranslator }
+
+constructor TTranslator.Create(POFileName: string);
+begin
+  inherited Create;
+  FPOFile := TPOFile.Create(POFileName);
+end;
+
+destructor TTranslator.Destroy;
+begin
+  FPOFile.Free;
+  inherited Destroy;
+end;
+
+procedure TTranslator.TranslateStringProperty(Sender: TObject;
+  const Instance: TPersistent; PropInfo: PPropInfo; var Content: string);
+begin
+  if Instance.InheritsFrom(TForm) then
+    begin
+      FFormClassName := Instance.ClassName;
+      DebugLn(UpperCase(FFormClassName + '.'+PropInfo^.Name) + '=' + Content);
+      Content := FPOFile.Translate(UpperCase(FFormClassName + '.' + PropInfo^.Name), Content);
+    end
+  else
+    begin
+      DebugLn(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.' + PropInfo^.Name) + '=' + Content);
+      Content := FPOFile.Translate(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.'+ PropInfo^.Name), Content);
+    end;
+  Content := UTF8ToSystemCharSet(Content); // перевод UTF8 в текущую локаль
+end;
+
 { TForm1 }
 
-procedure tForm1.DoIconDesktop(uin,prilozh:string;dodelete:boolean;Profile:string);
+procedure TForm1.CheckFiles;
+//проверяет наличие необходимых программе файлов
+var
+    str:string;
+begin
+    //некритичные файлы
+    str:=message101;
+    If not FileExists(MyPixmapsDir+'vpnpptp.png') then str:=str+MyPixmapsDir+'vpnpptp.png, ';
+    If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then str:=str+MyScriptsDir+'dhclient-exit-hooks, ';
+    If not FileExists(MyScriptsDir+'dhclient.conf') then str:=str+MyScriptsDir+'dhclient.conf, ';
+    If not FileExists(MyScriptsDir+'peermodify.sh') then str:=str+MyScriptsDir+'peermodify.sh, ';
+    If FallbackLang='ru' then
+                     begin
+                          If not FileExists(MyLangDir+'vpnpptp.ru.po') then str:=str+MyLangDir+'vpnpptp.ru.po, ';
+                          If not FileExists(MyLangDir+'success.ru') then str:=str+MyLangDir+'success.ru, ';
+                          If not FileExists(MyWikiDir+'Help_ru.doc') then str:=str+MyWikiDir+'Help_ru.doc, ';
+                     end;
+    If FallbackLang='en' then
+                     begin
+                          If not FileExists(MyLangDir+'vpnpptp.en.po') then str:=str+MyLangDir+'vpnpptp.en.po, ';
+                          If not FileExists(MyLangDir+'success.en') then str:=str+MyLangDir+'success.en, ';
+                          //If not FileExists(MyWikiDir+'Help_en.doc') then str:=str+MyWikiDir+'Help_en.doc, ';
+                     end;
+    If FallbackLang='uk' then
+                     begin
+                          If not FileExists(MyLangDir+'vpnpptp.uk.po') then str:=str+MyLangDir+'vpnpptp.uk.po, ';
+                          If not FileExists(MyLangDir+'success.uk') then str:=str+MyLangDir+'success.uk, ';
+                          If not FileExists(MyWikiDir+'Help_uk.doc') then str:=str+MyWikiDir+'Help_uk.doc, ';
+                     end;
+    If str<>message101 then
+                       begin
+                            str:=LeftStr(str,Length(str)-2);
+                            Form3.MyMessageBox(message0,str,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                       end;
+
+end;
+
+procedure TForm1.DoIconDesktop(uin,prilozh:string;dodelete:boolean;Profile:string);
 var
    i:integer;
    NoLinkDesktop:boolean;
@@ -844,7 +805,7 @@ If prilozh='vpnpptp' then
     end;
 end;
 
-procedure tForm1.DoIconDesktopForAll(Prilozh:string);
+procedure TForm1.DoIconDesktopForAll(Prilozh:string);
 var
    i:integer;
    FileProfiles:textfile;
@@ -925,6 +886,13 @@ If Unit2.Form2.CheckBoxusepeerdns.Checked then If ((EditDNS3.Text='81.176.72.82'
                                             Form3.MyMessageBox(message0,message153,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                             Children:=true;
                                             Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
+                                            Application.ProcessMessages;
+                                            Form1.Repaint;
+                                         end;
+If not FileExists(UsrBinDir+'balloon') then
+                                         begin //автоматическая поправка на отсутствие balloon
+                                            balloon.Checked:=true;
+                                            Form3.MyMessageBox(message0,message212+' '+UsrBinDir+'balloon.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                          end;
@@ -1126,6 +1094,7 @@ Form1.Hint:='';
 Label14.Hint:='';
 Application.ProcessMessages;
 Form1.Repaint;
+Application.ShowHint:=false;
 If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 If FileExists (EtcDir+'hosts.old') then Shell ('cp -f '+EtcDir+'hosts.old '+EtcDir+'hosts');
 Shell('rm -f '+MyLibDir+Edit_peer.Text+'/hosts');
@@ -2240,6 +2209,7 @@ DoIconDesktopForAll('vpnpptp');
  Button_exit.Enabled:=true;
  ButtonTest.Caption:=message109;
  ButtonTest.Visible:=true;
+ Application.ShowHint:=true;
  Application.ProcessMessages;
  Form1.Repaint;
  if not(FileExists('/bin/ip')) then Shell('ln -s '+SBinDir+'ip /bin/ip');
@@ -2322,7 +2292,7 @@ begin
                          end;
      If StrOffice<>'' then
                           begin
-                               AProcess := TProcess.Create(nil);
+                               AProcess := TAsyncProcess.Create(nil);
                                If FallbackLang='ru' then AProcess.CommandLine :=StrOffice+' '+MyWikiDir+'Help_ru.doc';
                                If FallbackLang='uk' then AProcess.CommandLine :=StrOffice+' '+MyWikiDir+'Help_uk.doc';
                                AProcess.Options:=AProcess.Options+[poWaitOnExit];
@@ -2438,7 +2408,7 @@ begin
  Form1.Repaint;
  if (Form3.Tag=3) or (Form3.Tag=0) then begin Application.ProcessMessages; Form1.Repaint; exit; end;
  ButtonTest.Enabled:=false;
- if Form3.Tag=1 then begin Application.ProcessMessages; Form1.Repaint; AProcess := TProcess.Create(nil); end;
+ if Form3.Tag=1 then begin Application.ProcessMessages; Form1.Repaint; AProcess := TAsyncProcess.Create(nil); end;
  Shell ('rm -f '+MyTmpDir+'test_vpn');
  Memo_create.Clear;
  if Form3.Tag=1 then AProcess.CommandLine := UsrBinDir+'ponoff '+Edit_peer.Text;
@@ -2752,12 +2722,6 @@ begin
                               end;
     Application.ProcessMessages;
     Form1.Repaint;
-end;
-
-procedure TForm1.DeleteContextPopup(Sender: TObject; MousePos: TPoint;
-  var Handled: Boolean);
-begin
-
 end;
 
 procedure TForm1.Edit_peerChange(Sender: TObject);

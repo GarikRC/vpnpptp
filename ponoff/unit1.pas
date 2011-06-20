@@ -26,8 +26,8 @@ unit Unit1;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, Process,
-  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox, BaseUnix, Unit2;
+  Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, Process, AsyncProcess,
+  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox, BaseUnix;
 
 type
 
@@ -49,6 +49,7 @@ type
     PopupMenu1: TPopupMenu;
     Timer1: TTimer;
     TrayIcon1: TTrayIcon;
+    procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
@@ -62,57 +63,20 @@ type
     procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure TrayIcon1MouseMove(Sender: TObject);
+    procedure BalloonMessage (i:integer;str1:string);
+    procedure CheckFiles;
+    procedure CheckVPN;
+    procedure ClearEtc_hosts;
+    procedure MakeDefaultGW;
+    procedure KillZombieBalloon;
   private
     { private declarations }
   public
     { public declarations }
   end;
 
-var
-  Form1: TForm1;
-  Lang,FallbackLang:string; // язык системы
-  Translate:boolean; // переведено или еще не переведено
-  POFileName : string; //файл перевода
-  BindUtils:boolean; //установлен ли пакет bind-utils
-  StartMessage:boolean; //запускать ли сообщения
-  NewIPS:boolean; //найден новый, неизвестный ранее ip-адрес vpn-сервера
-  NoPingIPS, NoDNS, NoPingGW, NoPingDNS1, NoPingDNS2, NoPingDNS3, NoPingDNS4:boolean;//события
-  NoInternet:boolean;//есть ли интернет
-  Filenetworktest, FileRemoteIPaddress, FileEtc_hosts, FileDoubleRun, FileDateStart, FileResolv_conf:textfile;//текстовые файлы
-  DhclientStart:boolean; //стартанул ли dhclient
-  RemoteIPaddress:string;
-  f,f1: text;//текстовый поток
-  RX,TX:string;//объем загруженного/отданного для вывода
-  RXbyte0,TXbyte0:string;//объем загруженного/отданного в байтах на предыдущем шаге
-  RXbyte1,TXbyte1:string;//объем загруженного/отданного в байтах на текущем шаге
-  DateStart,DateStop:int64;//время запуска/время текущее
-  RXSpeed,TXSpeed:string;//скорость загрузки/отдачи
-  ObnullRX,ObnullTX:integer; //отслеживает кол-во обнулений счетчика RX/TX
-  AFont:integer; //шрифт приложения
-  AProcess,AProcessDhclient,AProcessNet_Monitor: TProcess; //для запуска внешних приложений
-  ubuntu:boolean; // используется ли дистрибутив ubuntu
-  debian:boolean; // используется ли дистрибутив debian
-  fedora:boolean; // используется ли дистрибутив fedora
-  suse:boolean; // используется ли дистрибутив suse
-  mandriva:boolean; // используется ли дистрибутив mandriva
-  CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
-  DoubleRunPonoff:boolean; //многократный запуск ponoff
-  NetServiceStr:string; //какой сервис управляет сетью
-  ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
-  FlagMtu:boolean; //необходимость проверки mtu
-  FlagLengthSyslog:boolean; //проверен ли размер файла-лога /var/log/syslog
-  FlagLengthVpnlog:boolean; //проверен ли размер файла-лога /var/log/vpnlog
-  Code_up_ppp:boolean; //существует ли интерфейс pppN
-  PppIface:string; //точный интерфейс pppN
-  Net_MonitorRun:boolean; //запущен ли net_monitor
-  ProfileName:string; //определяет какое имя соединения использовать
-  ProfileStrDefault:string; //имя соединения, используемое по-умолчанию
-  TrafficRX, TrafficTX:int64; //общий трафик RX/TX
-  DoSpeedCount:boolean; //выводить ли скорость загрузки/отдачи
-  MaxSpeed:int64; //максимальная пропускная способность сети
-  LimitRX,LimitTX:byte; //счетчик сколько раз превышалась пропускная способность сети
-
 const
+  MaxMes=50;//максимальное кол-во выводимых одновременно сообщений (устанавливается с запасом)
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
   General_conf_n=5;//определяет сколько строк (кол-во) в файле general.conf программы максимально уже существует, считая от 1, а не от 0
   MyLibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
@@ -141,6 +105,53 @@ const
   EtcPppIpDownLDir='/etc/ppp/ip-down.l/';
   VarRunVpnpptp='/var/run/vpnpptp/';
   VarRunDir='/var/run/';
+
+var
+  Form1: TForm1;
+  Lang,FallbackLang:string; // язык системы
+  Translate:boolean; // переведено или еще не переведено
+  POFileName : string; //файл перевода
+  BindUtils:boolean; //установлен ли пакет bind-utils
+  StartMessage:boolean; //запускать ли сообщения
+  NewIPS:boolean; //найден новый, неизвестный ранее ip-адрес vpn-сервера
+  NoPingIPS, NoDNS, NoPingGW, NoPingDNS1, NoPingDNS2, NoPingDNS3, NoPingDNS4:boolean;//события
+  NoInternet:boolean;//есть ли интернет
+  Filenetworktest, FileRemoteIPaddress, FileEtc_hosts, FileDoubleRun, FileDateStart, FileResolv_conf:textfile;//текстовые файлы
+  DhclientStart:boolean; //стартанул ли dhclient
+  RemoteIPaddress:string;
+  f,f1: text;//текстовый поток
+  RX,TX:string;//объем загруженного/отданного для вывода
+  RXbyte0,TXbyte0:string;//объем загруженного/отданного в байтах на предыдущем шаге
+  RXbyte1,TXbyte1:string;//объем загруженного/отданного в байтах на текущем шаге
+  DateStart,DateStop:int64;//время запуска/время текущее
+  RXSpeed,TXSpeed:string;//скорость загрузки/отдачи
+  ObnullRX,ObnullTX:integer; //отслеживает кол-во обнулений счетчика RX/TX
+  AFont:integer; //шрифт приложения
+  AProcess,AProcessDhclient,AProcessNet_Monitor: TAsyncProcess; //для запуска внешних приложений
+  ubuntu:boolean; // используется ли дистрибутив ubuntu
+  debian:boolean; // используется ли дистрибутив debian
+  fedora:boolean; // используется ли дистрибутив fedora
+  suse:boolean; // используется ли дистрибутив suse
+  mandriva:boolean; // используется ли дистрибутив mandriva
+  CountInterface:integer; //считает сколько в системе поддерживаемых программой интерфейсов
+  DoubleRunPonoff:boolean; //многократный запуск ponoff
+  NetServiceStr:string; //какой сервис управляет сетью
+  ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
+  FlagMtu:boolean; //необходимость проверки mtu
+  FlagLengthSyslog:boolean; //проверен ли размер файла-лога /var/log/syslog
+  FlagLengthVpnlog:boolean; //проверен ли размер файла-лога /var/log/vpnlog
+  Code_up_ppp:boolean; //существует ли интерфейс pppN
+  PppIface:string; //точный интерфейс pppN
+  Net_MonitorRun:boolean; //запущен ли net_monitor
+  ProfileName:string; //определяет какое имя соединения использовать
+  ProfileStrDefault:string; //имя соединения, используемое по-умолчанию
+  TrafficRX, TrafficTX:int64; //общий трафик RX/TX
+  DoSpeedCount:boolean; //выводить ли скорость загрузки/отдачи
+  MaxSpeed:int64; //максимальная пропускная способность сети
+  LimitRX,LimitTX:byte; //счетчик сколько раз превышалась пропускная способность сети
+  MessIDNow,MessIDBefore:integer; //ID текущего и предыдущего balloon
+  ArrProcessBalloon:array [0..MaxMes] of TAsyncProcess; //массив процессов-балунов
+  ArrProcessBalloonBoolean:array [0..MaxMes] of boolean; //массив выполнения процессов-балунов
 
 resourcestring
   message0='Внимание!';
@@ -190,7 +201,7 @@ resourcestring
   message44='байт слишком большое.';
   message45='Размер файла-лога /var/log/syslog больше 1 GiB.';
   message46='Возможны проблемы с установлением соединения...';
-  message47='Запускается сервис xl2tpd...';
+ // message47='Запускается сервис xl2tpd...';
   message48='Отсутствуют некритичные файлы: ';
   message49='Отсутствуют критичные файлы: ';
   message50='Не найдено соединение';
@@ -212,198 +223,31 @@ resourcestring
 
 implementation
 
-{ TForm1 }
-
-procedure MySleep (sec:integer);
-//пауза
+procedure KillZombieNet_Monitor;
+//следит за дочерним процессом AProcessNet_Monitor, и если он уже только как зомби, то убирает его
 var
-  i,j:integer;
+   find_net_monitor:boolean;
+   str:string;
 begin
-   i:=0;
-   j:=0;
-   repeat
-         Sleep(100);
-         j:=j+1;
-         i:=i+100;
-         Application.ProcessMessages;
-   until i+100>sec;
-end;
-
-procedure BalloonMessage (i:integer;str1:string);
-begin
-     If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
-     If Form1.Memo_Config.Lines[23]<>'networktest-yes' then MySleep(1000);
-     Unit2.Form2.ShowMyBalloonHint(str1, message0, i, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
-     Application.ProcessMessages;
-end;
-
-procedure CheckFiles;
-//проверяет наличие необходимых программе файлов
-var
-    str:string;
-begin
-    //критичные файлы
-    str:=message49;
-    If not FileExists(MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.before') then str:=str+MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.before, ';
-    If not FileExists(MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.after') then str:=str+MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.after, ';
-    If str<>message49 then
-                     begin
-                          Form1.Timer1.Enabled:=False;
-                          Form1.Timer2.Enabled:=False;
-                          Form1.Hide;
-                          Form1.TrayIcon1.Hide;
-                          str:=LeftStr(str,Length(str)-2);
-                          Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                          Shell('rm -f '+VarRunVpnpptp+ProfileName);
-                          halt;
-                     end;
-    //некритичные файлы
-    str:=message48;
-    If not FileExists(MyPixmapsDir+'ponoff.png') then str:=str+MyPixmapsDir+'ponoff.png, ';
-    If FallbackLang='ru' then If not FileExists(MyLangDir+'ponoff.ru.po') then str:=str+MyLangDir+'ponoff.ru.po, ';
-    If FallbackLang='en' then If not FileExists(MyLangDir+'ponoff.en.po') then str:=str+MyLangDir+'ponoff.en.po, ';
-    If FallbackLang='uk' then If not FileExists(MyLangDir+'ponoff.uk.po') then str:=str+MyLangDir+'ponoff.uk.po, ';
-    If str<>message48 then
-                     begin
-                          str:=LeftStr(str,Length(str)-2);
-                          Form1.TrayIcon1.Show;
-                          BalloonMessage (8000,str);
-                          MySleep(8000);
-                          Application.ProcessMessages;
-                     end;
-end;
-
-Function DeleteSym(d, s: string): string;
-//Удаление любого символа из строки s, где d - символ для удаления
-Begin
-  While pos(d, s) <> 0 do
-  Delete(s, (pos(d, s)), 1); result := s;
-End;
-
-function CompareFiles(const FirstFile, SecondFile: string): Boolean;
-//сравнение файлов
-var
-  f1, f2: TMemoryStream;
-begin
-  Result := false;
-  f1 := TMemoryStream.Create;
-  f2 := TMemoryStream.Create;
-  try
-    f1.LoadFromFile(FirstFile);
-    f2.LoadFromFile(SecondFile);
-    if f1.Size = f2.Size then
-           Result := CompareMem(f1.Memory, f2.memory, f1.Size);
-  finally
-    f2.Free;
-    f1.Free;
-  end
-end;
-
-{procedure CheckVPN;
-//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
-var
-  str:string;
-begin
-  str:='';
-  PppIface:='';
-  popen (f,'ifconfig | grep Link','R');
-  Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then if LeftStr(str,3)='ppp' then
-                               begin
-                                    Code_up_ppp:=true;
-                                    PppIface:=LeftStr(str,4);
-                               end;
-     end;
-  PClose(f);
-end;}
-
-{procedure CheckVPN;
-//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
-var
-  str:string;
-begin
-  str:='';
-  PppIface:='';
-  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
-  Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then
-                          begin
-                               Code_up_ppp:=true;
-                               PppIface:=str;
-                          end;
-     end;
-  PClose(f);
-end; }
-
-procedure CheckVPN;
-//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
-var
-  str:string;
-begin
-  str:='';
-  PppIface:='';
-  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
-  Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then PppIface:=str;
-     end;
-  PClose(f);
-  popen (f,'ifconfig |grep '+PppIface,'R');
-  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
-  PClose(f);
-end;
-
-procedure Ifdown (Iface:string;wait:boolean);
-//опускает интерфейс
-begin
-          AProcess := TProcess.Create(nil);
-          If FileExists (SBinDir+'ifdown') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifdown '+Iface;
-          If (not FileExists (SBinDir+'ifdown')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' down';
-          if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
-          AProcess.Execute;
-          AProcess.Free;
-end;
-
-procedure Ifup (Iface:string;wait:boolean);
-//поднимает интерфейс
-begin
-          AProcess := TProcess.Create(nil);
-          If FileExists (SBinDir+'ifup') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifup '+Iface;
-          If (not FileExists (SBinDir+'ifup')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' up';
-          if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
-          AProcess.Execute;
-          AProcess.Free;
-end;
-
-procedure ClearEtc_hosts;
-//очистка /etc/hosts от старых мешающих записей
-var
-   Str_Etc_hosts:string;
-begin
-If FileExists (EtcDir+'hosts') then
-    begin
-        If not FileExists (EtcDir+'hosts.old') then Shell ('cp -f '+EtcDir+'hosts '+EtcDir+'hosts.old');
-        AssignFile (FileEtc_hosts,EtcDir+'hosts');
-        reset (FileEtc_hosts);
-        While not eof(FileEtc_hosts) do
-               begin
-                   readln(FileEtc_hosts, Str_Etc_hosts);
-                   If not (RightStr(Str_Etc_hosts,Length(Form1.Memo_Config.Lines[1]))=Form1.Memo_Config.Lines[1]) then
-                                  Shell('printf "'+Str_Etc_hosts+'\n" >> '+MyTmpDir+'hosts.tmp');
-               end;
-        closefile (FileEtc_hosts);
-        Shell('cp -f '+MyTmpDir+'hosts.tmp '+EtcDir+'hosts');
-        Shell('rm -f '+MyTmpDir+'hosts.tmp');
-        Shell('chmod 0644 '+EtcDir+'hosts');
-    end;
+  find_net_monitor:=false;
+  If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then if Net_MonitorRun then
+                    begin
+                         //проверка net_monitor в процессах root, игнорируя зомби
+                         popen(f,'ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39),'R');
+                         str:='';
+                         While not eof(f) do
+                              begin
+                                   Readln(f,str);
+                                   If str='net_monitor' then find_net_monitor:=true;
+                              end;
+                         PClose(f);
+                         If not find_net_monitor then
+                                                 begin
+                                                     Net_MonitorRun:=false;
+                                                     AProcessNet_Monitor.WaitOnExit;
+                                                     AProcessNet_Monitor.Free;
+                                                 end;
+                    end;
 end;
 
 Procedure DoCountInterface;
@@ -449,7 +293,193 @@ begin
   CountInterface:=i;
 end;
 
-procedure MakeDefaultGW;
+procedure Ifdown (Iface:string;wait:boolean);
+//опускает интерфейс
+begin
+         AProcess := TAsyncProcess.Create(nil);
+         If FileExists (SBinDir+'ifdown') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifdown '+Iface;
+         If (not FileExists (SBinDir+'ifdown')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' down';
+         if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
+         AProcess.Execute;
+         AProcess.Free;
+end;
+
+procedure Ifup (Iface:string;wait:boolean);
+//поднимает интерфейс
+begin
+         AProcess := TAsyncProcess.Create(nil);
+         If FileExists (SBinDir+'ifup') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifup '+Iface;
+         If (not FileExists (SBinDir+'ifup')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' up';
+         if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
+         AProcess.Execute;
+         AProcess.Free;
+end;
+
+Function DeleteSym(d, s: string): string;
+//Удаление любого символа из строки s, где d - символ для удаления
+Begin
+  While pos(d, s) <> 0 do
+  Delete(s, (pos(d, s)), 1); result := s;
+End;
+
+function CompareFiles(const FirstFile, SecondFile: string): Boolean;
+//сравнение файлов
+var
+  f1, f2: TMemoryStream;
+begin
+  Result := false;
+  f1 := TMemoryStream.Create;
+  f2 := TMemoryStream.Create;
+  try
+    f1.LoadFromFile(FirstFile);
+    f2.LoadFromFile(SecondFile);
+    if f1.Size = f2.Size then
+           Result := CompareMem(f1.Memory, f2.memory, f1.Size);
+  finally
+    f2.Free;
+    f1.Free;
+  end
+end;
+
+procedure MySleep (sec:integer);
+//пауза
+var
+  i,j:integer;
+begin
+   i:=0;
+   j:=0;
+   repeat
+         Sleep(100);
+         j:=j+1;
+         i:=i+100;
+         Application.ProcessMessages;
+   until i+100>sec;
+end;
+
+{ TForm1 }
+
+procedure TForm1.KillZombieBalloon;
+//следит за дочерним массивом процессов ArrProcess, и убирает зомби
+var
+  j:byte;
+begin
+  If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
+  for j:=0 to MaxMes do
+      If ArrProcessBalloonBoolean[j] then If not ArrProcessBalloon[j].Running then
+                                                                    begin
+                                                                         ArrProcessBalloon[j].Free;
+                                                                         ArrProcessBalloonBoolean[j]:=false;
+                                                                    end;
+end;
+
+procedure TForm1.BalloonMessage (i:integer;str1:string);
+var
+  j,Xmes:byte;
+begin
+     If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
+     Xmes:=0;
+     for j:=0 to MaxMes do
+         begin
+           if not ArrProcessBalloonBoolean[j] then
+                                         begin
+                                             Xmes:=j;
+                                             break;
+                                         end;
+         end;
+     Application.ProcessMessages;
+     ArrProcessBalloon[Xmes] := TAsyncProcess.Create(nil);
+     ArrProcessBalloon[Xmes].CommandLine :=UsrBinDir+'balloon '+chr(39)+str1+chr(39)+' '+chr(39)+message0+chr(39)+' '+IntToStr(i)+' '+IntToStr(Form1.TrayIcon1.GetPosition.X)+' '+IntToStr(Form1.TrayIcon1.GetPosition.Y)+' '+IntToStr(AFont)+' '+IntToStr(MessIDBefore);
+     ArrProcessBalloon[Xmes].Execute;
+     While not ArrProcessBalloon[Xmes].Running do
+                                          mysleep(30);
+     mysleep(200);
+     If ArrProcessBalloon[Xmes].Running then ArrProcessBalloonBoolean[Xmes]:=true;
+     MessIDNow:=ArrProcessBalloon[Xmes].ProcessID;
+     MessIDBefore:=MessIDNow;
+     Application.ProcessMessages;
+end;
+
+procedure TForm1.CheckFiles;
+//проверяет наличие необходимых программе файлов
+var
+    str:string;
+begin
+    //критичные файлы
+    str:=message49;
+    If not FileExists(MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.before') then str:=str+MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.before, ';
+    If not FileExists(MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.after') then str:=str+MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.after, ';
+    If Form1.Memo_Config.Lines[24]='balloon-no' then If not FileExists(UsrBinDir+'balloon') then str:=str+UsrBinDir+'balloon, ';
+    If str<>message49 then
+                     begin
+                          Form1.Timer1.Enabled:=False;
+                          Form1.Timer2.Enabled:=False;
+                          Form1.Hide;
+                          Form1.TrayIcon1.Hide;
+                          str:=LeftStr(str,Length(str)-2);
+                          Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                          Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                          halt;
+                     end;
+    //некритичные файлы
+    str:=message48;
+    If not FileExists(MyPixmapsDir+'ponoff.png') then str:=str+MyPixmapsDir+'ponoff.png, ';
+    If FallbackLang='ru' then If not FileExists(MyLangDir+'ponoff.ru.po') then str:=str+MyLangDir+'ponoff.ru.po, ';
+    If FallbackLang='en' then If not FileExists(MyLangDir+'ponoff.en.po') then str:=str+MyLangDir+'ponoff.en.po, ';
+    If FallbackLang='uk' then If not FileExists(MyLangDir+'ponoff.uk.po') then str:=str+MyLangDir+'ponoff.uk.po, ';
+    If str<>message48 then
+                     begin
+                          str:=LeftStr(str,Length(str)-2);
+                          Form1.TrayIcon1.Show;
+                          MySleep(1000);
+                          BalloonMessage (4000,str);
+                          Application.ProcessMessages;
+                     end;
+end;
+
+procedure TForm1.CheckVPN;
+//проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
+var
+  str:string;
+begin
+  str:='';
+  PppIface:='';
+  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
+  Code_up_ppp:=false;
+  While not eof(f) do
+     begin
+         Readln (f,str);
+         If str<>'' then PppIface:=str;
+     end;
+  PClose(f);
+  popen (f,'ifconfig |grep '+PppIface,'R');
+  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
+  PClose(f);
+end;
+
+procedure TForm1.ClearEtc_hosts;
+//очистка /etc/hosts от старых мешающих записей
+var
+   Str_Etc_hosts:string;
+begin
+If FileExists (EtcDir+'hosts') then
+    begin
+        If not FileExists (EtcDir+'hosts.old') then Shell ('cp -f '+EtcDir+'hosts '+EtcDir+'hosts.old');
+        AssignFile (FileEtc_hosts,EtcDir+'hosts');
+        reset (FileEtc_hosts);
+        While not eof(FileEtc_hosts) do
+               begin
+                   readln(FileEtc_hosts, Str_Etc_hosts);
+                   If not (RightStr(Str_Etc_hosts,Length(Form1.Memo_Config.Lines[1]))=Form1.Memo_Config.Lines[1]) then
+                                  Shell('printf "'+Str_Etc_hosts+'\n" >> '+MyTmpDir+'hosts.tmp');
+               end;
+        closefile (FileEtc_hosts);
+        Shell('cp -f '+MyTmpDir+'hosts.tmp '+EtcDir+'hosts');
+        Shell('rm -f '+MyTmpDir+'hosts.tmp');
+        Shell('chmod 0644 '+EtcDir+'hosts');
+    end;
+end;
+
+procedure TForm1.MakeDefaultGW;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сетевой интерфейс, на котором настроено VPN
 var
   nodefaultgw:boolean;
@@ -470,10 +500,10 @@ begin
                      begin
                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networking') or (NetServiceStr='networkmanager') then
                                                                                                 begin
-                                                                                                     AProcess := TProcess.Create(nil);
-                                                                                                     AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
-                                                                                                     AProcess.Execute;
-                                                                                                     AProcess.Free;
+                                                                                                    AProcess := TAsyncProcess.Create(nil);
+                                                                                                    AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                                                                                                    AProcess.Execute;
+                                                                                                    AProcess.Free;
                                                                                                 end;
                           Ifdown(Form1.Memo_Config.Lines[3],false);
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
@@ -481,33 +511,6 @@ begin
                           Ifup('lo',false);
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
                      end;
-end;
-
-procedure KillZombieNet_Monitor;
-//следит за дочерним процессом AProcessNet_Monitor, и если он уже только как зомби, то убирает его
-var
-   find_net_monitor:boolean;
-   str:string;
-begin
-  find_net_monitor:=false;
-  If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then if Net_MonitorRun then
-                    begin
-                         //проверка net_monitor в процессах root, игнорируя зомби
-                         popen(f,'ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39),'R');
-                         str:='';
-                         While not eof(f) do
-                              begin
-                                   Readln(f,str);
-                                   If str='net_monitor' then find_net_monitor:=true;
-                              end;
-                         PClose(f);
-                         If not find_net_monitor then
-                                                 begin
-                                                      Net_MonitorRun:=false;
-                                                      AProcessNet_Monitor.WaitOnExit;
-                                                      AProcessNet_Monitor.Free;
-                                                 end;
-                    end;
 end;
 
 procedure TForm1.MenuItem1Click(Sender: TObject);
@@ -532,16 +535,14 @@ begin
   //Проверяем размер файла-лога /var/log/syslog
   If not FlagLengthSyslog then If FileExists(VarLogDir+'syslog') then If FileSize(VarLogDir+'syslog')>1073741824 then // >1 Гб
            begin
-               BalloonMessage (8000,message45+' '+message46);
-               MySleep(3000);
+               BalloonMessage (4000,message45+' '+message46);
                Application.ProcessMessages;
            end;
    FlagLengthSyslog:=true;
    //Проверяем размер файла-лога /var/log/vpnlog
    If not FlagLengthVpnlog then If FileExists(VarLogDir+'vpnlog') then If FileSize(VarLogDir+'vpnlog')>1073741824 then // >1 Гб
             begin
-                BalloonMessage (8000,message65+' '+message46);
-                MySleep(3000);
+                BalloonMessage (4000,message65+' '+message46);
                 Application.ProcessMessages;
             end;
     FlagLengthVpnlog:=true;
@@ -604,9 +605,8 @@ If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked
      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
      If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
         begin
-             BalloonMessage (8000,message43+' '+MtuUsed+' '+message44);
+             BalloonMessage (4000,message43+' '+MtuUsed+' '+message44);
              Shell('touch '+MyTmpDir+'mtu.checked');
-             MySleep(3000);
              Application.ProcessMessages;
         end;
         FlagMtu:=true;
@@ -631,7 +631,7 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                                                                                                             //обнаружено совпадение RemoteIPaddress с ip-адресом самого vpn-сервера
                                                                                                             Application.ProcessMessages;
                                                                                                             str:=message20;
-                                                                                                            BalloonMessage (8000,str);
+                                                                                                            BalloonMessage (4000,str);
                                                                                                             Application.ProcessMessages;
                                                                                                             If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
                                                                                                             //изменение скрипта имя_соединения-ip-up
@@ -674,8 +674,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
                             If eof(f) then
                                                               begin
                                                                    NoPingDNS1:=true;
-                                                                   BalloonMessage (8000,message23);
-                                                                   Mysleep(1000);
+                                                                   BalloonMessage (4000,message23);
                                                               end;
                             PClose(f);
                             end;
@@ -687,8 +686,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
                                  If eof(f) then
                                                                    begin
                                                                         NoPingDNS2:=true;
-                                                                        BalloonMessage (8000,message24);
-                                                                        Mysleep(1000);
+                                                                        BalloonMessage (4000,message24);
                                                                    end;
                                  PClose(f);
                             end;
@@ -711,7 +709,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
 If not Code_up_ppp then DhclientStart:=false;
 If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' then //старт dhclient
                            begin
-                              AProcessDhclient := TProcess.Create(nil);
+                              AProcessDhclient := TAsyncProcess.Create(nil);
                               AProcessDhclient.CommandLine :='dhclient '+Memo_Config.Lines[3];
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then
@@ -722,7 +720,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                                 If not DhclientStart then
                                                       begin
                                                            if fedora then Shell('killall dhclient');
-                                                           AProcessDhclient.Execute;
+                                                          AProcessDhclient.Execute;
                                                            Mysleep(StrToInt(Memo_Config.Lines[5]) div 3);
                                                            Application.ProcessMessages;
                                                       end;
@@ -811,7 +809,7 @@ If not Code_up_ppp then If link=3 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
-                                                                Unit2.Form2.Hide;
+                                                                Shell ('killall balloon');
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                                 MenuItem2Click(Self);
                                                                 Shell('rm -f '+VarRunVpnpptp+ProfileName);
@@ -827,7 +825,7 @@ If not Code_up_ppp then If link=2 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
-                                                                Unit2.Form2.Hide;
+                                                                Shell ('killall balloon');
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                                 MenuItem2Click(Self);
                                                                 Shell('rm -f '+VarRunVpnpptp+ProfileName);
@@ -837,8 +835,8 @@ If not Code_up_ppp then If link=2 then
 If not Code_up_ppp then If ((link=2) or (link=3)) then
                            begin
                                   Application.ProcessMessages;
-                                  If NoPingDNS1 then BalloonMessage (8000,message23);
-                                  If NoPingDNS2 then BalloonMessage (8000,message24);
+                                  If NoPingDNS1 then BalloonMessage (4000,message23);
+                                  If NoPingDNS2 then BalloonMessage (4000,message24);
                                   str:='';
                                   If Memo_config.Lines[22]='routevpnauto-yes' then If NewIPS then str:=message14+str;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then if DhclientStart then str:=message13+str;
@@ -850,14 +848,14 @@ If not Code_up_ppp then If ((link=2) or (link=3)) then
                                   If (NoPingGW and NoDNS) then str:=message18+message17;
                                   If (NoPingGW and NoPingIPS) then str:=message18+message15;
                                   If (NoPingGW and NoPingIPS and NoDNS) then str:=message18+message15+message17;
-                                  If (NoPingIPS) or (NoPingGW) or (NoDNS) then BalloonMessage (8000,str);
+                                  If (NoPingIPS) or (NoPingGW) or (NoDNS) then BalloonMessage (4000,str);
                            end;
 If not Code_up_ppp then If link=1 then
                            begin
                                   Form1.MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
                                   Application.ProcessMessages;
-                                  If NoPingDNS1 then BalloonMessage (8000,message23);
-                                  If NoPingDNS2 then BalloonMessage (8000,message24);
+                                  If NoPingDNS1 then BalloonMessage (4000,message23);
+                                  If NoPingDNS2 then BalloonMessage (4000,message24);
                                   str:='';
                                   str:=message12+Memo_Config.Lines[0]+'...';
                                   If Memo_config.Lines[22]='routevpnauto-yes' then If NewIPS then str:=message14+str;
@@ -870,7 +868,7 @@ If not Code_up_ppp then If link=1 then
                                   If (NoPingIPS and NoDNS) then str:=message15+message17;
                                   If (NoPingGW and NoDNS) then str:=message18+message17;
                                   If (NoPingIPS and NoPingGW and NoDNS) then str:=message18+message15+message17;
-                                  BalloonMessage (8000,str);
+                                  BalloonMessage (4000,str);
                                   Application.ProcessMessages;
                                   If NoPingIPS or NoDNS then
                                                    begin
@@ -909,10 +907,12 @@ If not Code_up_ppp then If link=1 then
                                                                                                                    If eof(f) then
                                                                                                                         begin
                                                                                                                              Shell (ServiceCommand+'xl2tpd stop');
-                                                                                                                             Shell (ServiceCommand+'xl2tpd start');
-                                                                                                                             Form1.Repaint;
-                                                                                                                             BalloonMessage (3000,message47);
-                                                                                                                             Mysleep(3000);
+                                                                                                                             AProcess := TAsyncProcess.Create(nil);
+                                                                                                                             AProcess.CommandLine :=ServiceCommand+'xl2tpd start';
+                                                                                                                             AProcess.Execute;
+                                                                                                                             while AProcess.Running do
+                                                                                                                                                      MySleep(30);
+                                                                                                                             AProcess.Free;
                                                                                                                         end;
                                                                                                                   PClose(f);
                                                                                                                   Shell ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
@@ -920,8 +920,8 @@ If not Code_up_ppp then If link=1 then
                                                    end;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then
                                                 begin
-                                                     AProcessDhclient.WaitOnExit;
-                                                     AProcessDhclient.Free;
+                                                    AProcessDhclient.WaitOnExit;
+                                                    AProcessDhclient.Free;
                                                 end;
                            end;
 Application.ProcessMessages;
@@ -934,10 +934,10 @@ var
   str,stri,StrObnull:string;
   Apid:tpid;
   FileObnull:textfile;
+  XIcon:TIcon;
 begin
   if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
   if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
-  Application.CreateForm(TForm2, Form2);
   If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
   DoubleRunPonoff:=false;
   ubuntu:=false;
@@ -963,6 +963,8 @@ begin
   LimitRX:=0;
   LimitTX:=0;
   DoSpeedCount:=false;
+  MessIDBefore:=0;
+  MessIDNow:=0;
   If FileExists(MyTmpDir+'ObnullRX') then
                                      begin
                                           AssignFile (FileObnull,MyTmpDir+'ObnullRX');
@@ -1201,7 +1203,6 @@ If i>1 then
                         end;
                PClose(f);
             end;
-CheckFiles;//проверка наличия необходимых программе файлов
 //Проверяем поднялось ли соединение
 CheckVPN;
 If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
@@ -1210,6 +1211,7 @@ If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then If FileExists (
 Application.ProcessMessages;
 TrayIcon1.Show;
 Application.ProcessMessages;
+CheckFiles;//проверка наличия необходимых программе файлов
 If not FileExists (MyTmpDir+'DateStart') then DateStart:=0 else
                                        begin
                                             AssignFile (FileDateStart,MyTmpDir+'DateStart');
@@ -1268,7 +1270,7 @@ If suse then
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
-                   AProcess := TProcess.Create(nil);
+                   AProcess := TAsyncProcess.Create(nil);
                    AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                    AProcess.Execute;
                    AProcess.Free;
@@ -1321,6 +1323,11 @@ If suse then
                                                    Timer1.Interval:=100;
 end;
 
+procedure TForm1.FormActivate(Sender: TObject);
+begin
+  Form1.Hide;
+end;
+
 procedure TForm1.MenuItem2Click(Sender: TObject);
  //просто убивает pppd и других демонов и удаляет временные файлы
 var
@@ -1339,7 +1346,7 @@ begin
                                              Shell('killall pppd');
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then
                                                                                   begin
-                                                                                       AProcess := TProcess.Create(nil);
+                                                                                       AProcess := TAsyncProcess.Create(nil);
                                                                                        AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                                                                                        AProcess.Execute;
                                                                                        AProcess.Free;
@@ -1367,6 +1374,7 @@ begin
  Timer2.Enabled:=False;
  KillZombieNet_Monitor;
  Shell ('killall net_monitor');
+ Shell ('killall balloon');
  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   MenuItem2Click(Self);
   Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
@@ -1399,6 +1407,7 @@ begin
   Timer2.Enabled:=False;
   KillZombieNet_Monitor;
   Shell ('killall net_monitor');
+  Shell ('killall balloon');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   If FileExists(MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before') then If FileExists(EtcDir+'resolv.conf') then
           If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before', EtcDir+'resolv.conf') then
@@ -1457,7 +1466,7 @@ begin
   CheckVPN;
   If Code_up_ppp then If not Net_MonitorRun then
              begin
-                AProcessNet_Monitor := TProcess.Create(nil);
+                AProcessNet_Monitor := TAsyncProcess.Create(nil);
                 AProcessNet_Monitor.CommandLine := UsrBinDir+'net_monitor -i '+PppIface;
                 AProcessNet_Monitor.Execute;
                 Net_MonitorRun:=true;
@@ -1470,10 +1479,12 @@ begin
   Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
 end;
 
+
+
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
 begin
   Application.ProcessMessages;
-  Unit2.Form2.Hide;
+  //Shell ('killall balloon');
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
@@ -1496,6 +1507,7 @@ begin
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
   KillZombieNet_Monitor;
+  KillZombieBalloon;
   //определяем скорость, время
   popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $2}'+chr(39),'R');
   RXbyte1:='0';
@@ -1522,7 +1534,7 @@ begin
                                                     LimitRX:=LimitRX+1;
                                                     if LimitRX=3 then
                                                                      begin
-                                                                          BalloonMessage(10000,message64);
+                                                                          BalloonMessage(4000,message64);
                                                                           LimitRX:=0;
                                                                      end;
                                                end else LimitRX:=0;
@@ -1531,7 +1543,7 @@ begin
                                                     LimitTX:=LimitTX+1;
                                                     if LimitTX=3 then
                                                                      begin
-                                                                          BalloonMessage(10000,message63);
+                                                                          BalloonMessage(4000,message63);
                                                                           LimitTX:=0;
                                                                      end;
                                                end else LimitTX:=0;
@@ -1601,7 +1613,7 @@ begin
                                                        Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after '+EtcDir+'resolv.conf');
                              Application.ProcessMessages;
                              If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
-                             If StartMessage then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
+                             If StartMessage then BalloonMessage (4000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
                              If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
                              If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
@@ -1632,8 +1644,7 @@ begin
                                          If eof(f) then
                                                                    begin
                                                                         NoPingDNS3:=true;
-                                                                        BalloonMessage (8000,message42);
-                                                                        Mysleep(1000);
+                                                                        BalloonMessage (4000,message42);
                                                                    end;
                                          PClose(f);
                                     end;
@@ -1647,23 +1658,21 @@ begin
                                          If eof(f) then
                                                                    begin
                                                                         NoPingDNS4:=true;
-                                                                        BalloonMessage (8000,message40);
-                                                                        Mysleep(1000);
+                                                                        BalloonMessage (4000,message40);
                                                                    end;
                                          PClose(f);
                                     end;
                                  //тест интернета
                                  Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+chr(39)+'1 received'+chr(39);
-                                 //Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+Memo_Config.Lines[44]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39);
                                  Application.ProcessMessages;
                                  popen(f,str,'R');
                                  Application.ProcessMessages;
                                  If eof(f) then NoInternet:=true else NoInternet:=false;
                                  PClose(f);
                                  Application.ProcessMessages;
-                                 If NoInternet then BalloonMessage (16000,message6+' '+Memo_Config.Lines[0]+' '+message7+'... '+message16)
+                                 If NoInternet then BalloonMessage (4000,message16)
                                                     else
-                                                          BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message7+'... '+message19);
+                                                         BalloonMessage (4000,message19);
                                  Application.ProcessMessages;
                              end;
                              StartMessage:=false;
@@ -1684,7 +1693,7 @@ begin
                              Application.ProcessMessages;
                              If not StartMessage then
                                     begin
-                                         BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
+                                         BalloonMessage (4000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
                                          NoInternet:=true;
                                          Shell('rm -f '+MyTmpDir+'DateStart');
                                          TrafficRX:=0;
@@ -1862,10 +1871,10 @@ begin
                                                                      str1:=message6+': '+Memo_Config.Lines[0]+' ('+strVPN+')'+chr(13)+message22+' '+message8+chr(13)+message29+' '+'-'+chr(13)+message27+' '+'-'+chr(13)+message28+' '+'-';
                                                                      str0:=message60+'-'+chr(13)+message59+'-'+chr(13)+message58+'-'+chr(13)+'DNS1: '+'-'+chr(13)+'DNS2: '+'-';
                                                                 end;
-  //Unit2.Form2.ShowMyHint (str0, str1, 3000, Form1.TrayIcon1.GetPosition.X, Form1.TrayIcon1.GetPosition.Y, AFont);
   TrayIcon1.Hint:=str1+chr(13)+str0;
   Application.ProcessMessages;
 end;
+
 
 initialization
   {$I unit1.lrs}
