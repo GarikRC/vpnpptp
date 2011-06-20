@@ -1,0 +1,21 @@
+object Form1: TForm1
+  Left = 870
+  Height = 144
+  Top = 125
+  Width = 369
+  BorderIcons = []
+  BorderStyle = bsNone
+  Caption = 'balloon'
+  OnActivate = FormActivate
+  OnClick = FormClick
+  OnCreate = FormCreate
+  ShowInTaskBar = stNever
+  LCLVersion = '0.9.30'
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 2000
+    OnTimer = Timer1Timer
+    left = 292
+    top = 36
+  end
+end
