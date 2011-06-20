@@ -1207,3 +1207,7 @@ msgstr "Simultaneous work of Internet and local network is not configured or doe
 #: unit1.message211
 msgid "Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220."
 msgstr "Google Public DNS: 8.8.8.8 and 8.8.4.4. OpenDNS: 208.67.222.222 and 208.67.220.220."
+
+#: unit1.message212
+msgid "П#209�инудительно установлено блоки#209�ование всех всплывающих сообщений из т#209�ея, так как отсутствует"
+msgstr "Forcibly set to block all pop-ups from the tray, because there is no"
