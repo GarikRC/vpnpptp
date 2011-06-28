@@ -27,7 +27,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, Process, AsyncProcess,
-  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox, BaseUnix;
+  ExtCtrls, Menus, StdCtrls, Unix, Gettext, Translations,UnitMyMessageBox, BaseUnix, LCLProc;
 
 type
 
@@ -57,7 +57,6 @@ type
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
-    procedure PopupMenu1Popup(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -76,7 +75,7 @@ type
   end;
 
 const
-  MaxMes=50;//максимальное кол-во выводимых одновременно сообщений (устанавливается с запасом)
+  MaxMes=20;//максимальное кол-во выводимых одновременно сообщений (устанавливается с запасом)
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
   General_conf_n=5;//определяет сколько строк (кол-во) в файле general.conf программы максимально уже существует, считая от 1, а не от 0
   MyLibDir='/var/lib/vpnpptp/'; //директория для файлов, создаваемых в процессе работы программы
@@ -150,8 +149,7 @@ var
   MaxSpeed:int64; //максимальная пропускная способность сети
   LimitRX,LimitTX:byte; //счетчик сколько раз превышалась пропускная способность сети
   MessIDNow,MessIDBefore:integer; //ID текущего и предыдущего balloon
-  ArrProcessBalloon:array [0..MaxMes] of TAsyncProcess; //массив процессов-балунов
-  ArrProcessBalloonBoolean:array [0..MaxMes] of boolean; //массив выполнения процессов-балунов
+  ArrProcessBalloon:array of TAsyncProcess; //динамический массив процессов-балунов
 
 resourcestring
   message0='Внимание!';
@@ -295,24 +293,38 @@ end;
 
 procedure Ifdown (Iface:string;wait:boolean);
 //опускает интерфейс
+var
+   str:string;
 begin
-         AProcess := TAsyncProcess.Create(nil);
-         If FileExists (SBinDir+'ifdown') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifdown '+Iface;
-         If (not FileExists (SBinDir+'ifdown')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' down';
-         if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
-         AProcess.Execute;
-         AProcess.Free;
+         str:='';
+         If FileExists (SBinDir+'ifdown') then if not ubuntu then if not fedora then str:='ifdown '+Iface;
+         If (not FileExists (SBinDir+'ifdown')) or ubuntu or fedora then str:='ifconfig '+Iface+' down';
+         if str<>'' then
+                        begin
+                             AProcess := TAsyncProcess.Create(nil);
+                             if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
+                             AProcess.CommandLine:=str;
+                             AProcess.Execute;
+                             AProcess.Free;
+                        end;
 end;
 
 procedure Ifup (Iface:string;wait:boolean);
 //поднимает интерфейс
+var
+   str:string;
 begin
-         AProcess := TAsyncProcess.Create(nil);
-         If FileExists (SBinDir+'ifup') then if not ubuntu then if not fedora then AProcess.CommandLine :='ifup '+Iface;
-         If (not FileExists (SBinDir+'ifup')) or ubuntu or fedora then AProcess.CommandLine :='ifconfig '+Iface+' up';
-         if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
-         AProcess.Execute;
-         AProcess.Free;
+         str:='';
+         If FileExists (SBinDir+'ifup') then if not ubuntu then if not fedora then str:='ifup '+Iface;
+         If (not FileExists (SBinDir+'ifup')) or ubuntu or fedora then str:='ifconfig '+Iface+' up';
+         if str<>'' then
+                        begin
+                             AProcess := TAsyncProcess.Create(nil);
+                             if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
+                             AProcess.CommandLine:=str;
+                             AProcess.Execute;
+                             AProcess.Free;
+                        end;
 end;
 
 Function DeleteSym(d, s: string): string;
@@ -362,14 +374,26 @@ procedure TForm1.KillZombieBalloon;
 //следит за дочерним массивом процессов ArrProcess, и убирает зомби
 var
   j:byte;
+  no_message:boolean;
 begin
+  if ArrProcessBalloon=nil then exit;
+  no_message:=true;
   If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
-  for j:=0 to MaxMes do
-      If ArrProcessBalloonBoolean[j] then If not ArrProcessBalloon[j].Running then
-                                                                    begin
-                                                                         ArrProcessBalloon[j].Free;
-                                                                         ArrProcessBalloonBoolean[j]:=false;
-                                                                    end;
+  for j:=0 to High(ArrProcessBalloon)-1 do
+      begin
+           If ArrProcessBalloon[j]<>nil then If not ArrProcessBalloon[j].Running then
+                                                                                 begin
+                                                                                    ArrProcessBalloon[j].Free;
+                                                                                    ArrProcessBalloon[j]:=nil;
+                                                                                 end;
+      end;
+  for j:=0 to High(ArrProcessBalloon)-1 do
+           If ArrProcessBalloon[j]<>nil then
+                                        begin
+                                             no_message:=false;
+                                             break;
+                                        end;
+   if no_message then ArrProcessBalloon:=nil;
 end;
 
 procedure TForm1.BalloonMessage (i:integer;str1:string);
@@ -378,9 +402,15 @@ var
 begin
      If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
      Xmes:=0;
-     for j:=0 to MaxMes do
+     if ArrProcessBalloon=nil then
+                              begin
+                                   SetLength(ArrProcessBalloon,MaxMes);
+                                   for j:=0 to MaxMes-1 do
+                                         ArrProcessBalloon[j]:=nil;
+                              end;
+     for j:=0 to High(ArrProcessBalloon)-1 do
          begin
-           if not ArrProcessBalloonBoolean[j] then
+           if ArrProcessBalloon[j]=nil then
                                          begin
                                              Xmes:=j;
                                              break;
@@ -388,12 +418,11 @@ begin
          end;
      Application.ProcessMessages;
      ArrProcessBalloon[Xmes] := TAsyncProcess.Create(nil);
-     ArrProcessBalloon[Xmes].CommandLine :=UsrBinDir+'balloon '+chr(39)+str1+chr(39)+' '+chr(39)+message0+chr(39)+' '+IntToStr(i)+' '+IntToStr(Form1.TrayIcon1.GetPosition.X)+' '+IntToStr(Form1.TrayIcon1.GetPosition.Y)+' '+IntToStr(AFont)+' '+IntToStr(MessIDBefore);
+     ArrProcessBalloon[Xmes].CommandLine :=UsrBinDir+'balloon '+chr(39)+str1+chr(39)+' '+chr(39)+message0+chr(39)+' '+IntToStr(i)+' '+IntToStr(Form1.TrayIcon1.GetPosition.X)+' '+IntToStr(Form1.TrayIcon1.GetPosition.Y)+' '+IntToStr(AFont)+' '+IntToStr(MessIDBefore)+' '+MyPixmapsDir+'ponoff.png';
      ArrProcessBalloon[Xmes].Execute;
      While not ArrProcessBalloon[Xmes].Running do
                                           mysleep(30);
      mysleep(200);
-     If ArrProcessBalloon[Xmes].Running then ArrProcessBalloonBoolean[Xmes]:=true;
      MessIDNow:=ArrProcessBalloon[Xmes].ProcessID;
      MessIDBefore:=MessIDNow;
      Application.ProcessMessages;
@@ -443,17 +472,20 @@ var
 begin
   str:='';
   PppIface:='';
-  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
   Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then PppIface:=str;
-     end;
-  PClose(f);
-  popen (f,'ifconfig |grep '+PppIface,'R');
-  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
-  PClose(f);
+  If FileExists(VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid') then
+                                                                        begin
+                                                                             popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
+                                                                             While not eof(f) do
+                                                                                              begin
+                                                                                                   Readln (f,str);
+                                                                                                   If str<>'' then PppIface:=str;
+                                                                                              end;
+                                                                             PClose(f);
+                                                                             popen (f,'ifconfig |grep '+PppIface,'R');
+                                                                             If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
+                                                                             PClose(f);
+                                                                      end;
 end;
 
 procedure TForm1.ClearEtc_hosts;
@@ -934,8 +966,10 @@ var
   str,stri,StrObnull:string;
   Apid:tpid;
   FileObnull:textfile;
-  XIcon:TIcon;
 begin
+  SetLength(ArrProcessBalloon,MaxMes);
+  for i:=0 to MaxMes-1 do
+        ArrProcessBalloon[i]:=nil;
   if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
   if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
   If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
@@ -963,8 +997,6 @@ begin
   LimitRX:=0;
   LimitTX:=0;
   DoSpeedCount:=false;
-  MessIDBefore:=0;
-  MessIDNow:=0;
   If FileExists(MyTmpDir+'ObnullRX') then
                                      begin
                                           AssignFile (FileObnull,MyTmpDir+'ObnullRX');
@@ -1010,8 +1042,7 @@ begin
   If Screen.Height>1000 then AFont:=10;
 //проверка соединения
 str:=ProfileName;
-for i:=1 to Length(str) do
-     str[i]:=UpCase(str[i]);
+str:=UTF8UpperCase(str);
 If str='DEFAULT' then
                            begin
                               Timer1.Enabled:=False;
@@ -1258,7 +1289,7 @@ If suse then
         readln(f,str);
    if str<>'' then
                 begin
-                     for i:=1 to length(str) do
+                     for i:=1 to Length(str) do
                          if str[i]='0' then zero:=zero+1;
                 end;
    PClose(f);
@@ -1477,14 +1508,6 @@ procedure TForm1.MenuItem6Click(Sender: TObject);
 begin
   If Form3.Visible then exit;
   Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-end;
-
-
-
-procedure TForm1.PopupMenu1Popup(Sender: TObject);
-begin
-  Application.ProcessMessages;
-  //Shell ('killall balloon');
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
@@ -1878,6 +1901,9 @@ end;
 
 initialization
   {$I unit1.lrs}
+
+  MessIDBefore:=0;
+  MessIDNow:=0;
   ProfileName:='';
   ProfileStrDefault:='';
   If Paramcount=0 then if FileExists(MyLibDir+'default/default') then

@@ -1,21 +1,80 @@
 object Form1: TForm1
-  Left = 870
-  Height = 144
-  Top = 125
-  Width = 369
-  BorderIcons = []
-  BorderStyle = bsNone
+  Left = 527
+  Height = 209
+  Top = 130
+  Width = 525
   Caption = 'balloon'
-  OnActivate = FormActivate
+  ClientHeight = 209
+  ClientWidth = 525
   OnClick = FormClick
   OnCreate = FormCreate
-  ShowInTaskBar = stNever
-  LCLVersion = '0.9.30'
+  LCLVersion = '0.9.29'
+  object Panel1: TPanel
+    Left = 0
+    Height = 209
+    Top = 0
+    Width = 525
+    Align = alClient
+    ClientHeight = 209
+    ClientWidth = 525
+    TabOrder = 0
+    OnClick = FormClick
+    object Label0: TLabel
+      AnchorSideLeft.Control = Image1
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Panel1
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      Left = 74
+      Height = 18
+      Top = 4
+      Width = 447
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Left = 3
+      BorderSpacing.Top = 3
+      BorderSpacing.Right = 3
+      Caption = 'Label0'
+      ParentColor = False
+      WordWrap = True
+      OnClick = FormClick
+    end
+    object Label_text: TLabel
+      AnchorSideLeft.Control = Image1
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Label0
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = Panel1
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 74
+      Height = 180
+      Top = 25
+      Width = 447
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Around = 3
+      Caption = 'Label_text'
+      ParentColor = False
+      WordWrap = True
+      OnClick = FormClick
+    end
+    object Image1: TImage
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      AnchorSideTop.Side = asrCenter
+      Left = 1
+      Height = 65
+      Top = 72
+      Width = 70
+      Center = True
+      OnClick = FormClick
+      Proportional = True
+    end
+  end
   object Timer1: TTimer
     Enabled = False
-    Interval = 2000
     OnTimer = Timer1Timer
-    left = 292
-    top = 36
+    left = 16
+    top = 8
   end
 end

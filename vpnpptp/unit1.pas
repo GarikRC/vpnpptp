@@ -25,7 +25,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs, UnitMyMessageBox, AsyncProcess,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Unit2, Process,Typinfo,Gettext,BaseUnix, types;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Translations, Menus, Unit2, Process,Typinfo,Gettext,BaseUnix, types,LCLProc;
 
 type
 
@@ -205,14 +205,13 @@ type
     { public declarations }
   end;
 
-    { TTranslator }
-
   TMyHintWindow = class(THintWindow)
   public
     procedure ActivateHint(Rect: TRect; const AHint: string); override;
     constructor Create(AOwner: TComponent); override;
   end;
 
+{ TTranslator }
 TTranslator = class(TAbstractTranslator)
 private
   FFormClassName : String;
@@ -506,9 +505,6 @@ resourcestring
 
 implementation
 
-uses
-LCLProc;
-
 procedure CheckVPN;
 //проверяет поднялось ли соединение и на каком точно интерфейсе поднялось
 var
@@ -516,17 +512,20 @@ var
 begin
   str:='';
   PppIface:='';
-  popen (f,'cat '+VarRunDir+'ppp-'+Form1.Edit_peer.Text+'.pid|grep ppp','R');
   Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then PppIface:=str;
-     end;
-  PClose(f);
-  popen (f,'ifconfig |grep '+PppIface,'R');
-  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
-  PClose(f);
+  If FileExists(VarRunDir+'ppp-'+Form1.Edit_peer.Text+'.pid') then
+                                                                  begin
+                                                                      popen (f,'cat '+VarRunDir+'ppp-'+Form1.Edit_peer.Text+'.pid|grep ppp','R');
+                                                                      While not eof(f) do
+                                                                                     begin
+                                                                                         Readln (f,str);
+                                                                                         If str<>'' then PppIface:=str;
+                                                                                     end;
+                                                                      PClose(f);
+                                                                      popen (f,'ifconfig |grep '+PppIface,'R');
+                                                                      If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
+                                                                      PClose(f);
+                                                                  end;
 end;
 
 Function MakeHint(str:string;n:byte):string;
@@ -630,13 +629,13 @@ begin
   if Instance.InheritsFrom(TForm) then
     begin
       FFormClassName := Instance.ClassName;
-      DebugLn(UpperCase(FFormClassName + '.'+PropInfo^.Name) + '=' + Content);
-      Content := FPOFile.Translate(UpperCase(FFormClassName + '.' + PropInfo^.Name), Content);
+      DebugLn(UTF8UpperCase(FFormClassName + '.'+PropInfo^.Name) + '=' + Content);
+      Content := FPOFile.Translate(UTF8UpperCase(FFormClassName + '.' + PropInfo^.Name), Content);
     end
   else
     begin
-      DebugLn(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.' + PropInfo^.Name) + '=' + Content);
-      Content := FPOFile.Translate(UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.'+ PropInfo^.Name), Content);
+      DebugLn(UTF8UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.' + PropInfo^.Name) + '=' + Content);
+      Content := FPOFile.Translate(UTF8UpperCase(FFormClassName + '.'+Instance.GetNamePath + '.'+ PropInfo^.Name), Content);
     end;
   Content := UTF8ToSystemCharSet(Content); // перевод UTF8 в текущую локаль
 end;
@@ -2297,6 +2296,7 @@ begin
                                If FallbackLang='uk' then AProcess.CommandLine :=StrOffice+' '+MyWikiDir+'Help_uk.doc';
                                AProcess.Options:=AProcess.Options+[poWaitOnExit];
                                AProcess.Execute;
+                               sleep(100);
                                AProcess.Free;
                           end;
      ButtonHelp.Enabled:=a;
@@ -2918,13 +2918,13 @@ var
    a,b,c,d:string; //a.b.c.d-это шлюз
    FileResolv_conf:textfile;
    str,str1:string;
+   x,code:integer;
 begin
  y:=false;
 //проверка корректности имени соединения
   str:=Edit_peer.Text;
-  for i:=1 to Length(str) do
-       str[i]:=UpCase(str[i]);
-  if length(str)>=3 then str1:=LeftStr(str,3);
+  str:=UTF8UpperCase(str);
+  if Length(str)>=3 then str1:=LeftStr(str,3);
   if (str='DEFAULT') or (str='VPNMANDRIVA') or (str1='PPP') then
                          begin
                              Form3.MyMessageBox(message0,message169+' '+Edit_peer.Text+', '+message186,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -3035,15 +3035,14 @@ For i:=1 to Length (Form1.Edit_IPS.Text) do //символьная строка 
 If (j>3) or (Length(a)>3) or (Length(b)>3) or (Length(c)>3) or (Length(d)>3)
 or (a='') or (b='') or (c='') or (d='') then y:=true;
 //проверка на то, а все ли цифры, нет ли букв и иных символов
-Try
-    StrToInt(a);
-    StrToInt(b);
-    StrToInt(c);
-    StrToInt(d);
-  except
-    On EConvertError do
-      y:=true;
-  end;
+Val(a,x,code);
+if code<>0 then y:=true;
+Val(b,x,code);
+if code<>0 then y:=true;
+Val(c,x,code);
+if code<>0 then y:=true;
+Val(d,x,code);
+if code<>0 then y:=true;
 //каждый октет (или квадрант) может принимать значение от 0 до 255, итого 256 значений
 If not y then if not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
 If not y then if not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
@@ -3165,6 +3164,7 @@ var
    j:byte; //точка в написании шлюза
    y:boolean;
    a,b,c,d:string; //a.b.c.d-это шлюз
+   x,code:integer;
 begin
 y:=true;
 //проверка корректности ввода сетевого интерфейса
@@ -3176,10 +3176,10 @@ If (Edit_eth.Text='') or (Edit_eth.Text='none') then
                          Form1.Repaint;
                          exit;
                     end;
-if length(Edit_eth.Text)=4 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='t') then if (Edit_eth.Text[3]='h') then if (Edit_eth.Text[4] in ['0'..'9']) then y:=false;
-if length(Edit_eth.Text)=5 then if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[3]='a') then if (Edit_eth.Text[4]='n') then if (Edit_eth.Text[5] in ['0'..'9']) then y:=false;
-if length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
-if length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='m') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
+if Length(Edit_eth.Text)=4 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='t') then if (Edit_eth.Text[3]='h') then if (Edit_eth.Text[4] in ['0'..'9']) then y:=false;
+if Length(Edit_eth.Text)=5 then if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[3]='a') then if (Edit_eth.Text[4]='n') then if (Edit_eth.Text[5] in ['0'..'9']) then y:=false;
+if Length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
+if Length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='m') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
 if y then
                     begin
                           Form3.MyMessageBox(message0,message207+' '+message209+' '+message208,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
@@ -3243,15 +3243,14 @@ For i:=1 to Length (Edit_gate.Text) do //символьная строка шл�
 If (j>3) or (Length(a)>3) or (Length(b)>3) or (Length(c)>3) or (Length(d)>3)
 or (a='') or (b='') or (c='') or (d='') then y:=true;
 //проверка на то, а все ли цифры, нет ли букв и иных символов
-Try
-    StrToInt(a);
-    StrToInt(b);
-    StrToInt(c);
-    StrToInt(d);
-  except
-    On EConvertError do
-      y:=true;
-  end;
+Val(a,x,code);
+if code<>0 then y:=true;
+Val(b,x,code);
+if code<>0 then y:=true;
+Val(c,x,code);
+if code<>0 then y:=true;
+Val(d,x,code);
+if code<>0 then y:=true;
 If y then
          begin
            Form3.MyMessageBox(message0,message16,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -3298,15 +3297,14 @@ If (j>3) or (Length(a)>3) or (Length(b)>3) or (Length(c)>3) or (Length(d)>3)
 or (a='') or (b='') or (c='') or (d='') then y:=true;
 //проверка на то, а все ли цифры, нет ли букв и иных символов
 if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
-Try
-    StrToInt(a);
-    StrToInt(b);
-    StrToInt(c);
-    StrToInt(d);
-  except
-    On EConvertError do
-      y:=true;
-  end;
+Val(a,x,code);
+if code<>0 then y:=true;
+Val(b,x,code);
+if code<>0 then y:=true;
+Val(c,x,code);
+if code<>0 then y:=true;
+Val(d,x,code);
+if code<>0 then y:=true;
 If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
          begin
            Form3.MyMessageBox(message0,message81,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -3356,15 +3354,14 @@ If (j>3) or (Length(a)>3) or (Length(b)>3) or (Length(c)>3) or (Length(d)>3)
 or (a='') or (b='') or (c='') or (d='') then y:=true;
 //проверка на то, а все ли цифры, нет ли букв и иных символов
 if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
-Try
-    StrToInt(a);
-    StrToInt(b);
-    StrToInt(c);
-    StrToInt(d);
-  except
-    On EConvertError do
-      y:=true;
-  end;
+Val(a,x,code);
+if code<>0 then y:=true;
+Val(b,x,code);
+if code<>0 then y:=true;
+Val(c,x,code);
+if code<>0 then y:=true;
+Val(d,x,code);
+if code<>0 then y:=true;
 If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
          begin
            Form3.MyMessageBox(message0,message82,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -3925,10 +3922,9 @@ ButtonHelp.Enabled:=false;
                                     If Form3.Tag=0 then halt;
                              end;
  //проверка существования соединения
-  str:=ProfileName;
-  for i:=1 to Length(str) do
-       str[i]:=UpCase(str[i]);
- if length(str)>=3 then str1:=LeftStr(str,3);
+ str:=ProfileName;
+ str:=UTF8UpperCase(str);
+ if Length(str)>=3 then str1:=LeftStr(str,3);
  if (str='DEFAULT') or (str='VPNMANDRIVA') or (str1='PPP') then
                        begin
                           Form3.MyMessageBox(message0,message169+' '+ProfileName+', '+message186,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);

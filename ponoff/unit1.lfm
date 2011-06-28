@@ -2130,7 +2130,7 @@ object Form1: TForm1
   Position = poScreenCenter
   ShowHint = True
   ShowInTaskBar = stNever
-  LCLVersion = '0.9.30'
+  LCLVersion = '0.9.29'
   WindowState = wsMinimized
   object Memo_Config: TMemo
     Left = 48
@@ -2270,7 +2270,6 @@ object Form1: TForm1
     top = 8
   end
   object PopupMenu1: TPopupMenu
-    OnPopup = PopupMenu1Popup
     left = 32
     top = 56
     object MenuItem6: TMenuItem

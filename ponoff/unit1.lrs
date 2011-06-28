@@ -2387,7 +2387,7 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#10'OnActivate'#7#12'FormActivate'#8'OnCreate'#7#10'FormCreate'#8'Position'
   +#7#14'poScreenCenter'#8'ShowHint'#9#13'ShowInTaskBar'#7#7'stNever'#10'LCLVer'
-  +'sion'#6#6'0.9.30'#11'WindowState'#7#11'wsMinimized'#0#5'TMemo'#11'Memo_Conf'
+  +'sion'#6#6'0.9.29'#11'WindowState'#7#11'wsMinimized'#0#5'TMemo'#11'Memo_Conf'
   +'ig'#4'Left'#2'0'#6'Height'#2'%'#3'Top'#2#0#5'Width'#2'q'#13'Lines.Strings'#1
   +#6#5'Memo1'#0#8'TabOrder'#2#0#7'Visible'#8#0#0#5'TMemo'#19'Memo_bindutilshos'
   +'t0'#4'Left'#3#208#0#6'Height'#2'('#3'Top'#2'X'#5'Width'#3#156#0#13'Lines.St'
@@ -2493,15 +2493,15 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#7'Visible'#9#11'OnMouseDown'#7#18'TrayIcon1MouseDown'#11
   +'OnMouseMove'#7#18'TrayIcon1MouseMove'#4'left'#2' '#3'top'#2#8#0#0#10'TPopup'
-  +'Menu'#10'PopupMenu1'#7'OnPopup'#7#15'PopupMenu1Popup'#4'left'#2' '#3'top'#2
-  +'8'#0#9'TMenuItem'#9'MenuItem6'#7'Caption'#6#5'Money'#7'Enabled'#8#7'OnClick'
-  +#7#14'MenuItem6Click'#0#0#9'TMenuItem'#9'MenuItem5'#7'Caption'#6#4'Look'#7'O'
-  +'nClick'#7#14'MenuItem5Click'#0#0#9'TMenuItem'#9'MenuItem1'#7'Caption'#6#2'O'
-  ,'n'#7'Visible'#8#7'OnClick'#7#14'MenuItem1Click'#0#0#9'TMenuItem'#9'MenuItem'
-  +'2'#7'Caption'#6#3'Off'#7'Visible'#8#7'OnClick'#7#14'MenuItem2Click'#0#0#9'T'
-  +'MenuItem'#9'MenuItem4'#7'Caption'#6#8'Exit_bad'#7'OnClick'#7#14'MenuItem4Cl'
-  +'ick'#0#0#9'TMenuItem'#9'MenuItem3'#7'Caption'#6#9'Exit_well'#7'OnClick'#7#14
-  +'MenuItem3Click'#0#0#0#6'TTimer'#6'Timer1'#8'Interval'#3' N'#7'OnTimer'#7#11
-  +'Timer1Timer'#4'left'#2'X'#3'top'#2'8'#0#0#6'TTimer'#6'Timer2'#7'OnTimer'#7
-  +#11'Timer2Timer'#4'left'#2'X'#3'top'#2#8#0#0#0
+  +'Menu'#10'PopupMenu1'#4'left'#2' '#3'top'#2'8'#0#9'TMenuItem'#9'MenuItem6'#7
+  +'Caption'#6#5'Money'#7'Enabled'#8#7'OnClick'#7#14'MenuItem6Click'#0#0#9'TMen'
+  +'uItem'#9'MenuItem5'#7'Caption'#6#4'Look'#7'OnClick'#7#14'MenuItem5Click'#0#0
+  +#9'TMenuItem'#9'MenuItem1'#7'Caption'#6#2'On'#7'Visible'#8#7'OnClick'#7#14'M'
+  ,'enuItem1Click'#0#0#9'TMenuItem'#9'MenuItem2'#7'Caption'#6#3'Off'#7'Visible'
+  +#8#7'OnClick'#7#14'MenuItem2Click'#0#0#9'TMenuItem'#9'MenuItem4'#7'Caption'#6
+  +#8'Exit_bad'#7'OnClick'#7#14'MenuItem4Click'#0#0#9'TMenuItem'#9'MenuItem3'#7
+  +'Caption'#6#9'Exit_well'#7'OnClick'#7#14'MenuItem3Click'#0#0#0#6'TTimer'#6'T'
+  +'imer1'#8'Interval'#3' N'#7'OnTimer'#7#11'Timer1Timer'#4'left'#2'X'#3'top'#2
+  +'8'#0#0#6'TTimer'#6'Timer2'#7'OnTimer'#7#11'Timer2Timer'#4'left'#2'X'#3'top'
+  +#2#8#0#0#0
 ]);
