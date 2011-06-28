@@ -415,17 +415,20 @@ var
 begin
   str:='';
   PppIface:='';
-  popen (f,'cat '+VarRunDir+'ppp-vpnmandriva.pid|grep ppp','R');
   Code_up_ppp:=false;
-  While not eof(f) do
-     begin
-         Readln (f,str);
-         If str<>'' then PppIface:=str;
-     end;
-  PClose(f);
-  popen (f,'ifconfig |grep '+PppIface,'R');
-  If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
-  PClose(f);
+  If FileExists(VarRunDir+'ppp-vpnmandriva.pid') then
+                                                 begin
+                                                      popen (f,'cat '+VarRunDir+'ppp-vpnmandriva.pid|grep ppp','R');
+                                                      While not eof(f) do
+                                                                begin
+                                                                     Readln (f,str);
+                                                                     If str<>'' then PppIface:=str;
+                                                                end;
+                                                      PClose(f);
+                                                      popen (f,'ifconfig |grep '+PppIface,'R');
+                                                      If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
+                                                      PClose(f);
+                                                 end;
 end;
 
 { TMyForm }
@@ -439,6 +442,7 @@ var
   i,a:integer;
   NoInternet,FoundPpppd:boolean;
   AStringList: TStringList;
+  x,code:integer;
 begin
 Label_wait.Font.Size:=MyForm.Font.Size;
 Label_www.Font.Size:=MyForm.Font.Size;
@@ -447,12 +451,8 @@ Label_timer.Font.Color:=clRed;
 Label_timer.Caption:='0';
 //выход из создания подключения
 y:=false;
-Try
-    StrToInt(Edit_metric.Text);
-  except
-    On EConvertError do
-      y:=true;
-  end;
+Val(Edit_metric.Text,x,code);
+if code<>0 then y:=true;
 If y then
         begin
            If FallbackLang='ru' then Application.MessageBox(PChar(message55ru),PChar(message0ru),0) else
@@ -561,7 +561,6 @@ PClose(f);
 str:='';
 StrUsers:='';
 Shell ('killall net_applet');
-//Shell ('killall perl');
 if not net_applet_root then
                              begin
                                   popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
@@ -571,7 +570,6 @@ if not net_applet_root then
                                              if str<>'' then if pos(str,StrUsers)=0 then
                                                         begin
                                                              AAsyncProcess := TAsyncProcess.Create(nil);
-                                                             //AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'perl '+UsrBinDir+'net_applet"';
                                                              AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
                                                              AAsyncProcess.Execute;
                                                              while not AAsyncProcess.Running do
@@ -585,7 +583,6 @@ if not net_applet_root then
 if net_applet_root then
                       begin
                           AAsyncProcess := TAsyncProcess.Create(nil);
-                          //AAsyncProcess.CommandLine :=UsrBinDir+'perl '+UsrBinDir+'net_applet';
                           AAsyncProcess.CommandLine :=UsrBinDir+'net_applet';
                           AAsyncProcess.Execute;
                           while not AAsyncProcess.Running do
@@ -597,7 +594,6 @@ if FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12
                                                               Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en+' '+message52en),PChar(message0en),0);
 //обработка результата перезапуска net_applet
 found_net_applet:=false;
-//popen (f,'ps -e |grep perl','R');
 popen (f,'ps -e |grep net_applet','R');
 If not eof(f) then found_net_applet:=true;
 PClose(f);
@@ -713,7 +709,7 @@ if i=1 then
                                      Application.ProcessMessages;
                                      AStringList := TStringList.Create;
                                      AAsyncProcess := TAsyncProcess.Create(nil);
-                                     If Edit_IPS.Text='connect.swissvpn.net' then if Edit_user.Text='swissvpntest' then if Edit_passwd.Text='swissvpntest' then
+                                     If (Edit_IPS.Text='connect.swissvpn.net') and (Edit_user.Text='swissvpntest') and (Edit_passwd.Text='swissvpntest') then
                                                                                                                           AAsyncProcess.CommandLine :='ping -c1 swissvpn.net' else
                                                                                                                                         AAsyncProcess.CommandLine :='ping -c1 yandex.ru';
                                      AAsyncProcess.Options := AAsyncProcess.Options + [poUsePipes];
