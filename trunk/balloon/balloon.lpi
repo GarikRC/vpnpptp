@@ -41,6 +41,7 @@
         <Filename Value="balloon.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="balloon"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -54,10 +55,9 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="unitballoon"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="107"/>
+        <TopLine Value="1"/>
         <CursorPos X="111" Y="121"/>
         <UsageCount Value="49"/>
         <Loaded Value="True"/>

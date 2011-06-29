@@ -2,7 +2,7 @@
 VPNPPTP
 =======
 
-Tools for easy and quick setup and control VPN via PPTP/L2TP
+Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
 
 -------
 License

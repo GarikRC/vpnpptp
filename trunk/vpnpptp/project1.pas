@@ -14,7 +14,7 @@ uses
 
 begin
   Application.Title:='Настройка подключения к '
-    +'VPN через PPTP/L2TP';
+    +'VPN через PPTP/L2TP/OpenL2TP';
   {$I project1.lrs}
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);

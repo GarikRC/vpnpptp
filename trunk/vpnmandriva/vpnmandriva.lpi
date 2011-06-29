@@ -10,12 +10,11 @@
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <i18n>
-      <EnableI18N Value="True"/>
       <OutDir Value="lang"/>
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="2510"/>
+      <BuildNr Value="2512"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.1302"/>
     </VersionInfo>
@@ -43,7 +42,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="26">
       <Unit0>
         <Filename Value="vpnmandriva.pas"/>
         <IsPartOfProject Value="True"/>
@@ -72,7 +71,7 @@
         <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="../../EduSetup/branch/0.0.2/unit1.pas"/>
+        <Filename Value="/EduSetup/branch/0.0.2/unit1.pas"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
@@ -82,7 +81,7 @@
         <UsageCount Value="7"/>
       </Unit2>
       <Unit3>
-        <Filename Value="../../EduSetup/branch/0.0.1/setup.pas"/>
+        <Filename Value="/EduSetup/branch/0.0.1/setup.pas"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
@@ -92,7 +91,7 @@
         <UsageCount Value="8"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../../usr/lib/lazarus/components/indy-10.2.0.3/lazarus/IdDNSResolver.pas"/>
+        <Filename Value="/usr/lib/lazarus/components/indy-10.2.0.3/lazarus/IdDNSResolver.pas"/>
         <UnitName Value="IdDNSResolver"/>
         <TopLine Value="225"/>
         <CursorPos X="42" Y="236"/>
@@ -109,32 +108,32 @@
         <UsageCount Value="8"/>
       </Unit5>
       <Unit6>
-        <Filename Value="../../usr/lib/lazarus/lcl/textstrings.pas"/>
+        <Filename Value="/usr/lib/lazarus/lcl/textstrings.pas"/>
         <UnitName Value="TextStrings"/>
         <TopLine Value="206"/>
         <CursorPos X="1" Y="223"/>
         <UsageCount Value="38"/>
       </Unit6>
       <Unit7>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/control.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/control.inc"/>
         <TopLine Value="2213"/>
         <CursorPos X="1" Y="2228"/>
         <UsageCount Value="9"/>
       </Unit7>
       <Unit8>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/wincontrol.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/wincontrol.inc"/>
         <TopLine Value="4904"/>
         <CursorPos X="1" Y="4921"/>
         <UsageCount Value="2"/>
       </Unit8>
       <Unit9>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/buttoncontrol.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/buttoncontrol.inc"/>
         <TopLine Value="10"/>
         <CursorPos X="1" Y="27"/>
         <UsageCount Value="6"/>
       </Unit9>
       <Unit10>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/buttons.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/buttons.inc"/>
         <TopLine Value="302"/>
         <CursorPos X="1" Y="332"/>
         <UsageCount Value="6"/>
@@ -153,20 +152,20 @@
         <UsageCount Value="2"/>
       </Unit12>
       <Unit13>
-        <Filename Value="../../usr/lib/lazarus/lcl/translations.pas"/>
+        <Filename Value="/usr/lib/lazarus/lcl/translations.pas"/>
         <UnitName Value="Translations"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="516"/>
         <UsageCount Value="1"/>
       </Unit13>
       <Unit14>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/fileutil.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/fileutil.inc"/>
         <TopLine Value="64"/>
         <CursorPos X="1" Y="83"/>
         <UsageCount Value="6"/>
       </Unit14>
       <Unit15>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/customcheckbox.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/customcheckbox.inc"/>
         <TopLine Value="47"/>
         <CursorPos X="1" Y="65"/>
         <UsageCount Value="6"/>
@@ -182,27 +181,27 @@
         <UsageCount Value="195"/>
       </Unit16>
       <Unit17>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/customform.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/customform.inc"/>
         <TopLine Value="1665"/>
         <CursorPos X="1" Y="1682"/>
         <UsageCount Value="6"/>
       </Unit17>
       <Unit18>
-        <Filename Value="../../usr/lib/lazarus/lcl/lclmessageglue.pas"/>
+        <Filename Value="/usr/lib/lazarus/lcl/lclmessageglue.pas"/>
         <UnitName Value="LCLMessageGlue"/>
         <TopLine Value="104"/>
         <CursorPos X="1" Y="121"/>
         <UsageCount Value="7"/>
       </Unit18>
       <Unit19>
-        <Filename Value="../../usr/lib/lazarus/lcl/interfaces/gtk2/gtk2wsstdctrls.pp"/>
+        <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2wsstdctrls.pp"/>
         <UnitName Value="Gtk2WSStdCtrls"/>
         <TopLine Value="1837"/>
         <CursorPos X="1" Y="1854"/>
         <UsageCount Value="7"/>
       </Unit19>
       <Unit20>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/customedit.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/customedit.inc"/>
         <TopLine Value="460"/>
         <CursorPos X="1" Y="478"/>
         <UsageCount Value="3"/>
@@ -219,39 +218,32 @@
         <UsageCount Value="196"/>
       </Unit21>
       <Unit22>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/application.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/application.inc"/>
         <TopLine Value="1975"/>
         <CursorPos X="1" Y="1993"/>
         <UsageCount Value="1"/>
       </Unit22>
       <Unit23>
-        <Filename Value="/usr/lib/lazarus/lcl/include/customform.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="2578"/>
-        <CursorPos X="1" Y="2605"/>
-        <UsageCount Value="5"/>
-      </Unit23>
-      <Unit24>
         <Filename Value="/usr/lib/lazarus/lcl/include/picture.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="678"/>
         <CursorPos X="1" Y="705"/>
         <UsageCount Value="5"/>
-      </Unit24>
-      <Unit25>
+      </Unit23>
+      <Unit24>
         <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2callback.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1256"/>
         <CursorPos X="1" Y="1283"/>
         <UsageCount Value="8"/>
-      </Unit25>
-      <Unit26>
+      </Unit24>
+      <Unit25>
         <Filename Value="unit1.lrs"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="11953"/>
         <UsageCount Value="11"/>
-      </Unit26>
+      </Unit25>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
