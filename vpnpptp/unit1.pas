@@ -1,4 +1,4 @@
-{ PPTP/L2TP VPN setup
+{ PPTP/L2TP/OpenL2TP VPN setup
 
   Copyright (C) 2009 Alex Loginov (loginov_alex@inbox.ru, loginov.alex.valer@gmail.com)
 
@@ -292,13 +292,13 @@ resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
   message2='Не найдено офисное приложение для вывода справки, читающее формат doc. Вы можете самостоятельно прочитать справку, которая находится:';
-  message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd(xl2tpd) реконнекта проигнорирован.';
+  message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd(xl2tpd, openl2tp) реконнекта проигнорирован.';
   message4='Модуль ponoff еще не завершил свою работу. Дождитесь завершения работы модуля ponoff и повторно запустите конфигуратор vpnpptp.';
   message5='Не изменять дефолтный шлюз, запустив VPN L2TP в фоне';
   message6='Для того, чтобы разрешить пользователям конфигурировать соединение сначала установите пакет sudo.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
-  message9='Эта опция позволяет пользователям запускать конфигуратор VPN PPTP/L2TP без пароля администратора и конфигурировать соединение.';
+  message9='Эта опция позволяет пользователям запускать конфигуратор VPN PPTP/L2TP/OpenL2TP без пароля администратора и конфигурировать соединение.';
   message10='В поле "Время реконнекта" можно ввести лишь число в пределах от 0 до 255 сек.';
   message11='<Да> - установить в графике, <Нет> - установить без графики, <Отмена> - отмена.';
   message12='Сетевой интерфейс не определился.';
@@ -308,9 +308,9 @@ resourcestring
   message16='Поле "Шлюз локальной сети" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message18='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
-  message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP/L2TP. Нажмите <ОК> для отказа от двойного запуска.';
-  message20='Невозможно настроить VPN PPTP/L2TP в связи с отсутствием пакета pptp-linux или пакета pptp.';
-  message21='Эта опция позволяет запустить модуль ponoff при старте операционной системы и установить соединение VPN PPTP/L2TP автозагрузкой.';
+  message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP/L2TP/OpenL2TP. Нажмите <ОК> для отказа от двойного запуска.';
+  message20='Невозможно настроить VPN PPTP/L2TP/OpenL2TP в связи с отсутствием пакета pptp-linux или пакета pptp.';
+  message21='Эта опция позволяет запустить модуль ponoff при старте операционной системы и установить соединение VPN PPTP/L2TP/OpenL2TP автозагрузкой.';
   message22='Невозможно создать ярлык на рабочем столе, так как используется нестандартный идентификатор пользователя и/или локализация.';
   message23='Невозможно создать ярлык на рабочем столе, так как отсутствует файл';
   message24='Для того, чтобы разрешить автозапуск интернета при старте системы сначала установите пакет sudo.';
@@ -320,8 +320,8 @@ resourcestring
   message28='Нельзя определить IP-адрес VPN-сервера, так как строка для ввода не заполнена.';
   message29='Его установка необязательна, но она ускорит механизм программного добавления маршрута к VPN-серверу.';
   message30='Используйте опцию отключения контроля state сетевого кабеля если только по другому не работает (об этом попросит сама программа).';
-  message31='Встроенный в демон pppd(xl2tpd) механизм реконнекта не умеет контролировать state сетевого кабеля, поэтому он не желателен к использованию.';
-  message32='Ведите лог pppd(xl2tpd) для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
+  message31='Встроенный в демон pppd(xl2tpd, openl2tp) механизм реконнекта не умеет контролировать state сетевого кабеля, поэтому он не желателен к использованию.';
+  message32='Ведите лог pppd(xl2tpd, openl2tp) для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
   message33='Получение маршрутов через DHCP необходимо для одновременной работы локальной сети и интернета, но провайдер не всегда их присылает.';
   message34='Эта опция настраивает файервол лишь для интернета, но не для p2p и не для других соединений.';
   message35='Отменив получение маршрутов через DHCP, не будут одновременно работать интернет и локальная сеть, а будет работать только интернет.';
@@ -351,10 +351,10 @@ resourcestring
   message59='Выбор опции автозапуска интернета при старте системы возможен только при выборе опции разрешения пользователям управлять подключением.';
   message60='Автозапуск интернета при старте системы не настроен. Отсутствует ~/.config/autostart/ или используется нестандартный идентификатор пользователя.';
   message61='Автозапуск интернета при старте системы не настроен. Отсутствует файл /usr/share/applications/ponoff.desktop.';
-  message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff. Рекомендуется использовать с pppd(xl2tpd)-реконнектом.';
-  message63='Автозапуск интернета при старте системы демоном pppd(xl2tpd) без графики был отменен для соединения';
-  message64='Эта опция полезна если VPN PPTP/L2TP не должно быть главным.';
-  message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd(xl2tpd) и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP в фоне.';
+  message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff.';
+  message63='Автозапуск интернета при старте системы демоном pppd(xl2tpd, openl2tp) без графики был отменен для соединения';
+  message64='Эта опция полезна если VPN PPTP/L2TP/OpenL2TP не должно быть главным.';
+  message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd(xl2tpd, openl2tp) и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP/OpenL2TP в фоне.';
   message66='Не удалось автоматически определить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN.';
   message67='Поле "DNS1 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message68='Поле "DNS2 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
@@ -392,14 +392,14 @@ resourcestring
   message100='I) Введите адрес VPN-сервера... (например, tp.internet.beeline.ru)';
   message101='Отсутствуют некритичные файлы: ';
   message102='Шифрование mppe может быть настроено неверно, так как отсутствует файл: ';
-  message103='Настройка VPN PPTP/L2TP';
+  message103='Настройка VPN PPTP/L2TP/OpenL2TP';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
-  message105='Обнаружено, что VPN PPTP/L2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
+  message105='Обнаружено, что VPN PPTP/L2TP/OpenL2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP/OpenL2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
   message106='Встроенный в демон xl2tpd механизм реконнекта будет работать корректно, только если Вы используете пропатченный xl2tpd.';
-  message107='Запустить конфигуратор VPN PPTP/L2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
-  message108='Установить тестовое соединение VPN PPTP/L2TP в графике/без графики сейчас?';
+  message107='Запустить конфигуратор VPN PPTP/L2TP/OpenL2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP/OpenL2TP.';
+  message108='Установить тестовое соединение VPN PPTP/L2TP/OpenL2TP в графике/без графики сейчас?';
   message109='Тестовый запуск';
-  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd) в /var/log/ppp/vpnlog.';
+  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd, openl2tp) в /var/log/ppp/vpnlog.';
   message111='Команда запуска:';
   message112='Выбор этой опции позволяет установить соединение со случайным адресом VPN-сервера, заданного по имени, устанавливая соединение мгновенно.';
   message113='При отмене этой опции соединение не всегда сможет установиться мгновенно с еще неизвестным адресом VPN-сервера, особенно если их много.';
@@ -417,7 +417,7 @@ resourcestring
   message125='Отмена';
   message126='Тип VPN';
   message127='Внимательно читаем инструкцию и не забываем писать пожелания и замечания';
-  message128='Здесь также можно указать команды, которые выполнятся сразу, как только соединение VPN PPTP/L2TP будет установлено.';
+  message128='Здесь также можно указать команды, которые выполнятся сразу, как только соединение VPN PPTP/L2TP/OpenL2TP будет установлено.';
   message129='Значения MTU/MRU можно не вводить, тогда если не указана опция default-mru, то провайдер пришлет их сам (но не всегда).';
   message130='Шаблон: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message131='Шаблон: от eth0 до eth9 или от wlan0 до wlan9, или от br0 до br9, или от em0 до em9.';
@@ -447,7 +447,7 @@ resourcestring
   message155='Если у Вас низкоскоростное соединение, то отключите эту опцию.';
   message156='Но ее отключение при средне- или высокоскоростном соединении замедлит интернет.';
   message157='Эта опция используется только с VPN PPTP.';
-  message158='Одновременное получение маршрутов через DHCP, автозапуск интернета при старте системы демоном pppd(xl2tpd) без графики';
+  message158='Одновременное получение маршрутов через DHCP, автозапуск интернета при старте системы демоном pppd(xl2tpd, openl2tp) без графики';
   message159='- такое сочетание в Вашем дистрибутиве может работать некорректно.';
   message160='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
   message161='Будут проигнорированы недетские DNS при поднятом VPN, VPN будет поднято только на детских DNS.';
@@ -502,6 +502,12 @@ resourcestring
   message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
   message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
   message212='Принудительно установлено блокирование всех всплывающих сообщений из трея, так как отсутствует';
+  message213='Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp.';
+  message214='Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне';
+  message215='Для VPN OpenL2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
+  message216='Автозапуск интернета при старте системы демоном openl2tp без графики (не рекомендуется использовать)';
+  message217='Использовать встроенный в демон openl2tp механизм реконнекта (не рекомендуется если несколько сетевых карт)';
+  message218='Рекомендуется использовать с pppd(xl2tpd, openl2tp)-реконнектом.';
 
 implementation
 
@@ -705,9 +711,9 @@ begin
   Memo_create.Lines.Add('');
   Memo_create.Lines.Add('[Desktop Entry]');
   Memo_create.Lines.Add('Encoding=UTF-8');
-  Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP/L2TP');
-  Memo_create.Lines.Add('Comment[uk]=Управління з'' єднанням VPN PPTP/L2TP');
-  Memo_create.Lines.Add('Comment=Control VPN via PPTP/L2TP');
+  Memo_create.Lines.Add('Comment[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP');
+  Memo_create.Lines.Add('Comment[uk]=Управління з'' єднанням VPN PPTP/L2TP/OpenL2TP');
+  Memo_create.Lines.Add('Comment=Control VPN via PPTP/L2TP/OpenL2TP');
   If not Sudo_ponoff.Checked then
      begin
          If not gksu then if not beesu then Memo_create.Lines.Add('Exec=ponoff '+Profile);
@@ -719,9 +725,9 @@ begin
      begin
          Memo_create.Lines.Add('Exec=xsudo '+UsrBinDir+'ponoff '+Profile);
      end;
-  Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP/L2TP');
-  Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP/L2TP');
-  Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP Control');
+  Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP');
+  Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP/L2TP/OpenL2TP');
+  Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP/OpenL2TP Control');
   Memo_create.Lines.Add('Icon='+MyPixmapsDir+'ponoff.png');
   Memo_create.Lines.Add('MimeType=');
   Memo_create.Lines.Add('Name[ru]=Подключение '+Profile);
@@ -745,9 +751,9 @@ If prilozh='vpnpptp' then
      Memo_create.Lines.Add('');
      Memo_create.Lines.Add('[Desktop Entry]');
      Memo_create.Lines.Add('Encoding=UTF-8');
-     Memo_create.Lines.Add('Comment[ru]=Настройка соединения VPN PPTP/L2TP');
-     Memo_create.Lines.Add('Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP');
-     Memo_create.Lines.Add('Comment=Setup VPN via PPTP/L2TP');
+     Memo_create.Lines.Add('Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP');
+     Memo_create.Lines.Add('Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP');
+     Memo_create.Lines.Add('Comment=Setup VPN via PPTP/L2TP/OpenL2TP');
      If not Sudo_configure.Checked then
         begin
             If not gksu then if not beesu then Memo_create.Lines.Add('Exec=vpnpptp '+Profile);
@@ -759,9 +765,9 @@ If prilozh='vpnpptp' then
         begin
             Memo_create.Lines.Add('Exec=xsudo '+UsrBinDir+'vpnpptp '+Profile);
         end;
-     Memo_create.Lines.Add('GenericName[ru]=Настройка соединения VPN PPTP/L2TP');
-     Memo_create.Lines.Add('GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP');
-     Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP Setup');
+     Memo_create.Lines.Add('GenericName[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP');
+     Memo_create.Lines.Add('GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP');
+     Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP/OpenL2TP Setup');
      Memo_create.Lines.Add('Icon='+MyPixmapsDir+'vpnpptp.png');
      Memo_create.Lines.Add('MimeType=');
      Memo_create.Lines.Add('Name[ru]=Настройка '+Profile);
@@ -888,7 +894,7 @@ If Unit2.Form2.CheckBoxusepeerdns.Checked then If ((EditDNS3.Text='81.176.72.82'
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                          end;
-If not FileExists(UsrBinDir+'balloon') then
+If not FileExists(UsrBinDir+'balloon') then If not balloon.Checked then
                                          begin //автоматическая поправка на отсутствие balloon
                                             balloon.Checked:=true;
                                             Form3.MyMessageBox(message0,message212+' '+UsrBinDir+'balloon.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -984,6 +990,16 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Application.ProcessMessages;
                           Form1.Repaint;
                           Form3.MyMessageBox(message0,message94+' '+message95,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                          ComboBoxVPN.Text:='VPN PPTP';
+                          Application.ProcessMessages;
+                          Form1.Repaint;
+                     end;
+   If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then
+                     begin
+                          Label14.Caption:=message213+' '+message95;
+                          Application.ProcessMessages;
+                          Form1.Repaint;
+                          Form3.MyMessageBox(message0,message213+' '+message95,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                           ComboBoxVPN.Text:='VPN PPTP';
                           Application.ProcessMessages;
                           Form1.Repaint;
@@ -1226,7 +1242,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                      if nobuffer.Checked then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
                                      if not nobuffer.Checked then Memo_peer.Lines.Add('pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd"');
                                 end;
- If ComboBoxVPN.Text='VPN L2TP' then Memo_peer.Lines.Add('#pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
+ If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Memo_peer.Lines.Add('#pty "pptp ' +Edit_IPS.Text +' --nolaunchpppd --nobuffer"');
  Memo_peer.Lines.Add('remotename '+Edit_peer.Text);
  Memo_peer.Lines.Add('user "'+Edit_user.Text+'"');
  Memo_peer.Lines.Add('password "'+Edit_passwd.Text+'"');
@@ -1562,8 +1578,9 @@ end;
                                               Shell('printf "rpap-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If CheckBox_rmschapv2.Checked then Shell('printf "rmschapv2-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "rmschapv2-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If ComboBoxVPN.Text='VPN L2TP' then Shell('printf "l2tp\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
-                                              Shell('printf "pptp\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+ If ComboBoxVPN.Text='VPN L2TP' then Shell('printf "l2tp\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+ If ComboBoxVPN.Text='VPN PPTP' then Shell('printf "pptp\n" >> '+MyLibDir+Edit_peer.Text+'/config');
+ If ComboBoxVPN.Text='VPN OpenL2TP' then Shell('printf "openl2tp\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  Shell('printf "'+Edit_mru.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If etc_hosts.Checked then Shell('printf "etc-hosts-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               Shell('printf "etc-hosts-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
@@ -1694,12 +1711,13 @@ If FileExists (EtcRcDDir+'rc.local') then If (Autostartpppd.Checked) then If not
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') then
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') and (RightStr(str,14)<>'openl2tp-start') then
                                                                      Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
-                                 If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
-                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add(ServiceCommand+'xl2tpd restart');
+                                 If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text);
+                                 If ComboBoxVPN.Text='VPN L2TP' then If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add(ServiceCommand+'xl2tpd restart');
+                                 If ComboBoxVPN.Text='VPN OpenL2TP' then Memo_Autostartpppd.Lines.Add(MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f '+EtcRcDDir+'rc.local');
                                  Memo_Autostartpppd.Lines.SaveToFile(EtcRcDDir+'rc.local');
@@ -1713,7 +1731,7 @@ If FileExists (EtcRcDDir+'rc.local') then If not Autostartpppd.Checked then If n
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') then
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') and (RightStr(str,14)<>'openl2tp-start') then
                                                                      Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  closefile(FileAutostartpppd);
@@ -1733,13 +1751,14 @@ If not FileExists (EtcRcDDir+'rc.local') then If FileExists (EtcDir+'rc.local') 
                                    begin
                                      readln(FileAutostartpppd, str);
                                      if str='exit 0' then exit0find:=true;
-                                     If (str<>'exit 0') and (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,5)<>'sleep') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') then
+                                     If (str<>'exit 0') and (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,5)<>'sleep') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') and (RightStr(str,14)<>'openl2tp-start') then
                                                                     Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  If dhcp_route.Checked then Memo_Autostartpppd.Lines.Add('dhclient '+Edit_eth.Text);
                                  If dhcp_route.Checked then if fedora then Memo_Autostartpppd.Lines.Add('sleep 10');
-                                 If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text)
-                                                                     else If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add(ServiceCommand+'xl2tpd restart');
+                                 If ComboBoxVPN.Text='VPN PPTP' then Memo_Autostartpppd.Lines.Add('pppd call '+Edit_peer.Text);
+                                 If ComboBoxVPN.Text='VPN L2TP' then If not ubuntu then If not debian then Memo_Autostartpppd.Lines.Add(ServiceCommand+'xl2tpd restart');
+                                 If ComboBoxVPN.Text='VPN OpenL2TP' then Memo_Autostartpppd.Lines.Add(MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                  if exit0find then Memo_Autostartpppd.Lines.Add(str);
                                  closefile(FileAutostartpppd);
                                  Shell('rm -f '+EtcDir+'rc.local');
@@ -1754,7 +1773,7 @@ If not FileExists (EtcRcDDir+'rc.local') then If FileExists (EtcDir+'rc.local') 
                                 While not eof (FileAutostartpppd) do
                                    begin
                                      readln(FileAutostartpppd, str);
-                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,5)<>'sleep') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') then
+                                     If (leftstr(str,8)<>'dhclient') and (leftstr(str,9)<>'pppd call') and (leftstr(str,5)<>'sleep') and (leftstr(str,22)<>'service xl2tpd restart') and (leftstr(str,26)<>EtcInitDDir+'xl2tpd restart') and (RightStr(str,14)<>'openl2tp-start') then
                                                                      Memo_Autostartpppd.Lines.Add(str);
                                    end;
                                  closefile(FileAutostartpppd);
@@ -1785,6 +1804,18 @@ If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN L2TP' then
                    Shell ('touch '+EtcInitDDir+'after.local');
                    Shell ('printf "#!/bin/sh\n" >> '+EtcInitDDir+'after.local');
                    Shell ('printf "'+ServiceCommand+'xl2tpd restart\n" >> '+EtcInitDDir+'after.local');
+                   Shell ('chmod +x '+EtcInitDDir+'after.local');
+                end;
+If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN OpenL2TP' then
+                begin
+                   If FileExists (EtcInitDDir+'after.local') then If not FileExists (EtcInitDDir+'after.local.old') then
+                                                             begin
+                                                                  Shell ('cp -f '+EtcInitDDir+'after.local '+EtcInitDDir+'after.local.old');
+                                                                  Shell ('rm -f '+EtcInitDDir+'after.local');
+                                                             end;
+                   Shell ('touch '+EtcInitDDir+'after.local');
+                   Shell ('printf "#!/bin/sh\n" >> '+EtcInitDDir+'after.local');
+                   Shell ('printf "'+MyLibDir+Edit_peer.Text+'/openl2tp-start\n" >> '+EtcInitDDir+'after.local');
                    Shell ('chmod +x '+EtcInitDDir+'after.local');
                 end;
 If suse then if not Autostartpppd.Checked then
@@ -1916,11 +1947,69 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
  if not FileExists(EtcPppDir+'options.old') then Shell('cp -f '+EtcPppDir+'options '+EtcPppDir+'options.old');
  Shell('echo "#Clear config file" > '+EtcPppDir+'options');
  //учитывание особенностей SELinux в Fedora
-  If fedora then if ComboBoxVPN.Text='VPN L2TP' then If Pppd_log.Checked then
+  If fedora then if (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then If Pppd_log.Checked then
                  begin
                       If not FileExists(VarLogDir+'vpnlog') then Shell ('touch '+VarLogDir+'vpnlog');
                       Shell('restorecon -R -v '+VarLogDir);
                  end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then
+                                     begin
+                                          //создание скрипта включения для VPN OpenL2TP
+                                          Memo2.Clear;
+                                          Memo2.Lines.Add('#!/bin/sh');
+                                          Memo2.Lines.Add('echo "call '+Edit_peer.Text+'" > '+EtcPppDir+'options');
+                                          Memo2.Lines.Add('killall xl2tpd');
+                                          Memo2.Lines.Add('cp -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf '+EtcDir+'openl2tpd.conf');
+                                          Memo2.Lines.Add(ServiceCommand+'openl2tp restart');
+                                          Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
+                                          Shell('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
+                                          //создание скрипта отключения для VPN OpenL2TP
+                                          Memo2.Clear;
+                                          Memo2.Lines.Add('#!/bin/sh');
+                                          Memo2.Lines.Add('echo "#Clear config file" > '+EtcPppDir+'options');
+                                          Memo2.Lines.Add('rm -f '+EtcDir+'openl2tpd.conf');
+                                          Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
+                                          Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-stop');
+                                          Memo2.Lines.SaveToFile(MyLibDir+'default/openl2tp-stop');
+                                          Shell('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-stop');
+                                          Shell('chmod a+x '+MyLibDir+'default/openl2tp-stop');
+                                     end;
+ //создаем конфиг openl2tpd.conf для VPN OpenL2TP
+  If ComboBoxVPN.Text='VPN OpenL2TP' then
+                                     begin
+                                        If FileExists(EtcDir+'openl2tpd.conf') then if not FileExists(EtcDir+'openl2tpd.conf.old') then Shell ('cp -f '+EtcDir+'openl2tpd.conf '+EtcDir+'openl2tpd.conf.old');
+                                        Memo2.Clear;
+                                        Memo2.Lines.Add('system modify deny_remote_tunnel_creates=yes \');
+                                        Memo2.Lines.Add('tunnel_establish_timeout='+LeftStr(Edit_MaxTime.Text,Length(Edit_MaxTime.Text)-3)+' \');
+                                        Memo2.Lines.Add('session_establish_timeout='+LeftStr(Edit_MinTime.Text,Length(Edit_MinTime.Text)-3)+' \');
+                                        Memo2.Lines.Add('tunnel_persist_pend_timeout='+LeftStr(Edit_MaxTime.Text,Length(Edit_MaxTime.Text)-3)+' \');
+                                        Memo2.Lines.Add('session_persist_pend_timeout='+LeftStr(Edit_MinTime.Text,Length(Edit_MinTime.Text)-3)+' \');
+                                        Memo2.Lines.Add('');
+                                        Memo2.Lines.Add('peer profile modify profile_name=default lac_lns=lac \');
+                                        Memo2.Lines.Add('');
+                                        Memo2.Lines.Add('ppp profile modify profile_name=default \');
+                                        If Edit_mru.Text<>'' then if Edit_mru.Text<>'mru-none' then Memo2.Lines.Add('mru='+Edit_mru.Text+' \');
+                                        If Edit_mtu.Text<>'' then if Edit_mtu.Text<>'mtu-none' then Memo2.Lines.Add('mtu='+Edit_mtu.Text+' \');
+                                        If CheckBox_rpap.Checked then Memo2.Lines.Add('auth_pap=no \') else Memo2.Lines.Add('auth_pap=yes \');
+                                        If CheckBox_reap.Checked then Memo2.Lines.Add('auth_eap=no \') else Memo2.Lines.Add('auth_eap=yes \');
+                                        If Form2.CheckBoxnoauth.Checked then Memo2.Lines.Add('auth_none=no \');
+                                        If Form2.CheckBoxauth.Checked then Memo2.Lines.Add('auth_none=yes \');
+                                        If Form2.CheckBoxnodefaultroute.Checked then Memo2.Lines.Add('default_route=no \');
+                                        If Form2.CheckBoxdefaultroute.Checked then Memo2.Lines.Add('default_route=yes \');
+                                        Memo2.Lines.Add('proxy_arp=no \');
+                                        If CheckBox_rchap.Checked then Memo2.Lines.Add('auth_chap=no \') else Memo2.Lines.Add('auth_chap=yes \');
+                                        If CheckBox_rmschap.Checked then Memo2.Lines.Add('auth_mschapv1=no \') else Memo2.Lines.Add('auth_mschapv1=yes \');
+                                        If CheckBox_rmschapv2.Checked then Memo2.Lines.Add('auth_mschapv2=no \') else Memo2.Lines.Add('auth_mschapv2=yes \');
+                                        Memo2.Lines.Add('');
+                                        Memo2.Lines.Add('tunnel create tunnel_name=default dest_ipaddr='+Edit_IPS.Text+' \');
+                                        If Form2.CheckBoxpersist.Checked then Memo2.Lines.Add('persist=yes \') else Memo2.Lines.Add('persist=no \');
+                                        Memo2.Lines.Add('');
+                                        Memo2.Lines.Add('session create tunnel_name=default \');
+                                        Memo2.Lines.Add('session_name=default \');
+                                        Memo2.Lines.Add('user_name="'+Edit_user.Text+'" user_password="'+Edit_passwd.Text+'"');
+                                        Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
+                                        Shell('chmod 600 '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
+                                     end;
  //проверка технической возможности поднятия соединения
  EditDNS1ping:=true;
  EditDNS2ping:=true;
@@ -2464,6 +2553,17 @@ begin
                                         If not Pppd_log.Checked then If Form3.Tag=2 then Memo_create.Lines.Add (message111+' pppd call '+Edit_peer.Text);
                                         if Form3.Tag=2 then Shell ('pppd call '+Edit_peer.Text);
                                     end;
+ If ComboBoxVPN.Text='VPN OpenL2TP' then
+                                    begin
+                                        If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'vpnlog');
+                                        If Pppd_log.Checked then Shell('printf "'+message109+' VPN OpenL2TP ('+VarLogDir+'vpnlog)\n" >> '+VarLogDir+'vpnlog');
+                                        If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN OpenL2TP ('+VarLogDir+'vpnlog)');
+                                        If Pppd_log.Checked then if Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
+                                        If not Pppd_log.Checked then if Form3.Tag=1 then Memo_create.Lines.Add (message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text);
+                                        If Pppd_log.Checked then if Form3.Tag=2 then Shell('printf "'+message111+' sh '+MyLibDir+Edit_peer.Text+'/openl2tp-start\n" >> '+VarLogDir+'vpnlog');
+                                        If not Pppd_log.Checked then If Form3.Tag=2 then Memo_create.Lines.Add (message111+' sh '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
+                                        if Form3.Tag=2 then Shell ('sh '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
+                                    end;
 If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
 Memo_create.Hint:=message109;
 Application.ProcessMessages;
@@ -2626,12 +2726,17 @@ end;
 
 procedure TForm1.ComboBoxVPNChange(Sender: TObject);
 begin
-   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
-                     begin
-                          Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                          ComboBoxVPN.Text:='VPN PPTP';
-                     end;
-   If ComboBoxVPN.Text='VPN L2TP' then Label1.Caption:=message100 else Label1.Caption:=message99;
+  If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
+                    begin
+                         Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                         ComboBoxVPN.Text:='VPN PPTP';
+                    end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then
+                    begin
+                         Form3.MyMessageBox(message0,message213,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                         ComboBoxVPN.Text:='VPN PPTP';
+                    end;
+   If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
    Application.ProcessMessages;
    Form1.Repaint;
 end;
@@ -2717,6 +2822,11 @@ begin
                                 If found then If ProfileStrDefault<>'' then Shell('rm -f '+MyLibDir+'default/default');
                                 If not FileExists(MyLibDir+'profiles') then If not FileExists(MyLibDir+'default/default') then Shell ('rm -rf '+MyLibDir+'default');
                                 If not FileExists(MyLibDir+'profiles') then Shell ('rm -f '+MyLibDir+'general.conf');
+                                If not FileExists(MyLibDir+'profiles') then If FileExists(EtcDir+'openl2tpd.conf.old') then
+                                                                                                                           begin
+                                                                                                                                Shell('cp -f '+EtcDir+'openl2tpd.conf.old '+EtcDir+'openl2tpd.conf');
+                                                                                                                                Shell('rm -f '+EtcDir+'openl2tpd.conf.old');
+                                                                                                                           end;
                                 Form3.MyMessageBox(message0,message180+' '+ProfileForDelete+' '+message181,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                 halt;
                               end;
@@ -2984,13 +3094,16 @@ if ComboBoxDistr.Text=message151 then
                                 exit;
                             end;
 If ComboBoxVPN.Text='VPN L2TP' then Reconnect_pptp.Caption:=message96;
+If ComboBoxVPN.Text='VPN OpenL2TP' then Reconnect_pptp.Caption:=message217;
 If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
+If ComboBoxVPN.Text='VPN OpenL2TP' then Autostartpppd.Caption:=message216;
 If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
-If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_required.Enabled:=false; CheckBox_required.Checked:=false; StartMessage:=true; end;
-If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_stateless.Enabled:=false; CheckBox_stateless.Checked:=false; StartMessage:=true; end;
-If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no40.Enabled:=false; CheckBox_no40.Checked:=false; StartMessage:=true; end;
-If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no56.Enabled:=false; CheckBox_no56.Checked:=false; StartMessage:=true; end;
-If ComboBoxVPN.Text='VPN L2TP' then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
+If ComboBoxVPN.Text='VPN OpenL2TP' then pppnotdefault.Caption:=message214;
+If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_required.Enabled:=false; CheckBox_required.Checked:=false; StartMessage:=true; end;
+If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_stateless.Enabled:=false; CheckBox_stateless.Checked:=false; StartMessage:=true; end;
+If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_no40.Enabled:=false; CheckBox_no40.Checked:=false; StartMessage:=true; end;
+If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_no56.Enabled:=false; CheckBox_no56.Checked:=false; StartMessage:=true; end;
+If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
 If ComboBoxVPN.Text='VPN L2TP' then
                          begin
                               CheckBox_required.Hint:=MakeHint(message138,5);
@@ -2998,6 +3111,14 @@ If ComboBoxVPN.Text='VPN L2TP' then
                               CheckBox_no40.Hint:=MakeHint(message138,5);
                               CheckBox_no56.Hint:=MakeHint(message138,5);
                               CheckBox_no128.Hint:=MakeHint(message138,5);
+                         end;
+If ComboBoxVPN.Text='VPN OpenL2TP' then
+                         begin
+                              CheckBox_required.Hint:=MakeHint(message215,5);
+                              CheckBox_stateless.Hint:=MakeHint(message215,5);
+                              CheckBox_no40.Hint:=MakeHint(message215,5);
+                              CheckBox_no56.Hint:=MakeHint(message215,5);
+                              CheckBox_no128.Hint:=MakeHint(message215,5);
                          end;
 if not y then
               begin
@@ -3446,7 +3567,7 @@ begin
                                       end;
 end;
 Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont, MyLibDir, EtcPppPeersDir);
-If ComboBoxVPN.Text='VPN L2TP' then
+If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then
                                begin
                                    nobuffer.Enabled:=false;
                                    nobuffer.Checked:=true;
@@ -3635,7 +3756,7 @@ balloon.Hint:=MakeHint(message40,7);
 Sudo_ponoff.Hint:=MakeHint(message56,7);
 Sudo_configure.Hint:=MakeHint(message9,7);
 Autostart_ponoff.Hint:=MakeHint(message21,6);
-Autostartpppd.Hint:=MakeHint(message62,6);
+Autostartpppd.Hint:=MakeHint(message62+' '+message218,6);
 pppnotdefault.Hint:=MakeHint(message64,6);
 Memo_create.Hint:=MakeHint(message127,5);
 nobuffer.Hint:=MakeHint(message155+' '+message156+' '+message157,6);
@@ -3895,16 +4016,18 @@ ButtonHelp.Enabled:=false;
                                             if (Form3.Tag=3) or (Form3.Tag=0) then begin Application.ProcessMessages; Form1.Repaint; halt; end;
                                             Application.ProcessMessages;
                                             Form1.Repaint;
-                                            Shell ('killall ponoff');
+                                            Shell('killall ponoff');
+                                            Shell('sh '+MyLibDir+'default/openl2tp-stop');
                                             Shell('killall pppd');
-                                            Shell (ServiceCommand+'xl2tpd stop');
-                                            Shell ('killall xl2tpd');
-                                            Shell ('killall openl2tpd');
-                                            Shell ('killall l2tpd');
+                                            Shell(ServiceCommand+'xl2tpd stop');
+                                            Shell('killall xl2tpd');
+                                            Shell('killall openl2tpd');
+                                            Shell('killall l2tpd');
                                             ButtonRestartClick(Sender);
                                             if ComboBoxDistr.Text<>message151 then ComboBoxDistr.Enabled:=false;
                                           end;
  Shell ('killall ponoff');
+ Shell('sh '+MyLibDir+'default/openl2tp-stop');
  Shell ('killall pppd');
  Shell (ServiceCommand+'xl2tpd stop');
  Shell ('killall xl2tpd');
@@ -3997,8 +4120,10 @@ ButtonHelp.Enabled:=false;
         //EditDNS4.Text:=Memo_config.Lines[36];
         If Memo_config.Lines[37]='rpap-yes' then CheckBox_rpap.Checked:=true else CheckBox_rpap.Checked:=false;
         If Memo_config.Lines[38]='rmschapv2-yes' then CheckBox_rmschapv2.Checked:=true else CheckBox_rmschapv2.Checked:=false;
-        If Memo_config.Lines[39]='l2tp' then ComboBoxVPN.Text:='VPN L2TP' else ComboBoxVPN.Text:='VPN PPTP';
-        If Memo_config.Lines[39]='l2tp' then Label1.Caption:=message100 else Label1.Caption:=message99;
+        If Memo_config.Lines[39]='l2tp' then ComboBoxVPN.Text:='VPN L2TP';
+        If Memo_config.Lines[39]='pptp' then ComboBoxVPN.Text:='VPN PPTP';
+        If Memo_config.Lines[39]='openl2tp' then ComboBoxVPN.Text:='VPN OpenL2TP';
+        If (Memo_config.Lines[39]='l2tp') or (Memo_config.Lines[39]='openl2tp') then Label1.Caption:=message100 else Label1.Caption:=message99;
         Edit_mru.Text:=Memo_config.Lines[40];
         If Edit_mru.Text='mru-none' then Edit_mru.Text:='';
         If Memo_config.Lines[41]='etc-hosts-yes' then etc_hosts.Checked:=true else etc_hosts.Checked:=false;

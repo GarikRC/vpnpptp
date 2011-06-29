@@ -37,6 +37,7 @@
         <Filename Value="MyMessageBox.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="MyMessageBox"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -51,10 +52,9 @@
         <ComponentName Value="Form3"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UnitMyMessageBox"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="116"/>
+        <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
@@ -67,19 +67,19 @@
         <UsageCount Value="10"/>
       </Unit2>
       <Unit3>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/application.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/application.inc"/>
         <TopLine Value="1240"/>
         <CursorPos X="1" Y="1258"/>
         <UsageCount Value="10"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/customform.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/customform.inc"/>
         <TopLine Value="676"/>
         <CursorPos X="1" Y="694"/>
         <UsageCount Value="10"/>
       </Unit4>
       <Unit5>
-        <Filename Value="../../usr/lib/lazarus/lcl/include/icon.inc"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/icon.inc"/>
         <TopLine Value="717"/>
         <CursorPos X="1" Y="735"/>
         <UsageCount Value="10"/>

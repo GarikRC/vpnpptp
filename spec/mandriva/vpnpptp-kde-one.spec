@@ -1,6 +1,6 @@
 %define rel 1
 
-Summary: Tools for setup and control VPN via PPTP/L2TP
+Summary: Tools for setup and control VPN via PPTP/L2TP/OpenL2TP
 Name: vpnpptp-kde-one
 Version: 0.3.3
 Release: %mkrel %{rel}
@@ -17,7 +17,7 @@ BuildRequires: fpc-src >= 2.4.2, fpc >= 2.4.2, lazarus >= 0.9.29
 Requires: pptp-linux, xl2tpd
 
 %description
-Tools for easy and quick setup and control VPN via PPTP/L2TP
+Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
 
 %prep
 
@@ -70,16 +70,16 @@ cat > ponoff.desktop << EOF
 
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP/L2TP Control
-GenericName[ru]=Управление соединением VPN PPTP/L2TP
-GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP
+GenericName=VPN PPTP/L2TP/OpenL2TP Control
+GenericName[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP/OpenL2TP
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
 Exec=ponoff
-Comment=Control VPN via PPTP/L2TP
-Comment[ru]=Управление соединением VPN через PPTP/L2TP
-Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP
+Comment=Control VPN via PPTP/L2TP/OpenL2TP
+Comment[ru]=Управление соединением VPN через PPTP/L2TP/OpenL2TP
+Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/ponoff.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
@@ -96,16 +96,16 @@ cat > vpnpptp.desktop << EOF
 
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP/L2TP Setup
-GenericName[ru]=Настройка соединения VPN PPTP/L2TP
-GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP
+GenericName=VPN PPTP/L2TP/OpenL2TP Setup
+GenericName[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
 Exec=vpnpptp
-Comment=Setup VPN via PPTP/L2TP
-Comment[ru]=Настройка соединения VPN PPTP/L2TP
-Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP
+Comment=Setup VPN via PPTP/L2TP/OpenL2TP
+Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
+Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/vpnpptp.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;

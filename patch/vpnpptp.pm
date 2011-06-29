@@ -7,7 +7,7 @@ use common;
 use run_program;
 
 sub get_type { 'vpnpptp' }
-sub get_description { N("VPN PPTP/L2TP") }
+sub get_description { N("VPN PPTP/L2TP/OpenL2TP") }
 sub get_packages { 'drakconf' }
 
 sub read_config {

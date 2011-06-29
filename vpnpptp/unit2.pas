@@ -39,6 +39,10 @@ type
     CheckBoxlock: TCheckBox;
     Label1: TLabel;
     procedure Button1Click(Sender: TObject);
+    procedure CheckBoxauthChange(Sender: TObject);
+    procedure CheckBoxdefaultrouteChange(Sender: TObject);
+    procedure CheckBoxnoauthChange(Sender: TObject);
+    procedure CheckBoxnodefaultrouteChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Label1Click(Sender: TObject);
     procedure Obrabotka (str_peer:string; more:boolean; var AFont:integer; LibDir:string; PeersDir:string);
@@ -193,6 +197,26 @@ end;
 procedure TForm2.Button1Click(Sender: TObject);
 begin
    Form2.Close;
+end;
+
+procedure TForm2.CheckBoxauthChange(Sender: TObject);
+begin
+   If CheckBoxauth.Checked then CheckBoxnoauth.Checked:=false;
+end;
+
+procedure TForm2.CheckBoxdefaultrouteChange(Sender: TObject);
+begin
+  if CheckBoxdefaultroute.Checked then CheckBoxnodefaultroute.Checked:=false;
+end;
+
+procedure TForm2.CheckBoxnoauthChange(Sender: TObject);
+begin
+   If CheckBoxnoauth.Checked then CheckBoxauth.Checked:=false;
+end;
+
+procedure TForm2.CheckBoxnodefaultrouteChange(Sender: TObject);
+begin
+   if CheckBoxnodefaultroute.Checked then CheckBoxdefaultroute.Checked:=false;
 end;
 
 

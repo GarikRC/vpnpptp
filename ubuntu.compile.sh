@@ -36,16 +36,16 @@ cat > ./build/usr/share/applications/ponoff.desktop << EOF
 
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP/L2TP Control
-GenericName[ru]=Управление соединением VPN PPTP/L2TP
-GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP
+GenericName=VPN PPTP/L2TP/OpenL2TP Control
+GenericName[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP/OpenL2TP
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
 Exec=gksu /usr/bin/ponoff
-Comment=Control VPN via PPTP/L2TP
-Comment[ru]=Управление соединением VPN через PPTP/L2TP
-Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP
+Comment=Control VPN via PPTP/L2TP/OpenL2TP
+Comment[ru]=Управление соединением VPN через PPTP/L2TP/OpenL2TP
+Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/ponoff.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
@@ -61,16 +61,16 @@ cat > ./build/usr/share/applications/vpnpptp.desktop << EOF
 
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP/L2TP Setup
-GenericName[ru]=Настройка соединения VPN PPTP/L2TP
-GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP
+GenericName=VPN PPTP/L2TP/OpenL2TP Setup
+GenericName[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
 Exec=gksu /usr/bin/vpnpptp
-Comment=Setup VPN via PPTP/L2TP
-Comment[ru]=Настройка соединения VPN PPTP/L2TP
-Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP
+Comment=Setup VPN via PPTP/L2TP/OpenL2TP
+Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
+Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/vpnpptp.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
