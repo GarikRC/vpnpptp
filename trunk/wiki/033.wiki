@@ -29,7 +29,13 @@
 
 12) BuildRequires: fpc-src >= 2.4.2, fpc >= 2.4.2, lazarus >= 0.9.29,
 
-13) добавлена поддержка протокола VPN OpenL2TP: конфигуратор vpnpptp создает файл-конфиг /var/lib/vpnpptp/имясоединения/openl2tpd.conf, создаются также /var/lib/vpnpptp/имясоединения/openl2tp-start, /var/lib/vpnpptp/имясоединения/openl2tp-stop, /var/lib/vpnpptp/default/openl2tp-stop; таким образом используются уже существующие конфиги, созданные VPN PPTP и/или VPN L2TP с небольшими этими дополнениями.
+13) добавлена поддержка протокола VPN OpenL2TP: конфигуратор vpnpptp создает файл-конфиг /var/lib/vpnpptp/имясоединения/openl2tpd.conf, создаются также /var/lib/vpnpptp/имясоединения/openl2tp-start, /var/lib/vpnpptp/имясоединения/openl2tp-stop, /var/lib/vpnpptp/default/openl2tp-stop; таким образом используются уже существующие конфиги, созданные VPN PPTP и/или VPN L2TP с небольшими этими дополнениями,
+
+14) при настройке VPN OpenL2TP конфигуратор добавляет при необходимости плагины:
+
+/usr/lib/pppd/версия_pppd/pppol2tp.so, /usr/lib/pppd/версия_pppd/openl2tp.so,
+
+/usr/lib64/pppd/версия_pppd/pppol2tp.so, /usr/lib64/pppd/версия_pppd/openl2tp.so.
 
 Примечание:
 

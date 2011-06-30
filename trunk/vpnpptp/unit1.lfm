@@ -2647,6 +2647,7 @@ object Form1: TForm1
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 5
         ItemHeight = 0
+        OnChange = ComboBoxDistrChange
         OnKeyDown = ComboBoxDistrKeyDown
         Style = csSimple
         TabOrder = 9
