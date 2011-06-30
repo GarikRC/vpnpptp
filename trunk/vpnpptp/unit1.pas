@@ -4017,7 +4017,7 @@ ButtonHelp.Enabled:=false;
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                             Shell('killall ponoff');
-                                            Shell('sh '+MyLibDir+'default/openl2tp-stop');
+                                            If FileExists(MyLibDir+'default/openl2tp-stop') then Shell('sh '+MyLibDir+'default/openl2tp-stop');
                                             Shell('killall pppd');
                                             Shell(ServiceCommand+'xl2tpd stop');
                                             Shell('killall xl2tpd');
@@ -4027,7 +4027,7 @@ ButtonHelp.Enabled:=false;
                                             if ComboBoxDistr.Text<>message151 then ComboBoxDistr.Enabled:=false;
                                           end;
  Shell ('killall ponoff');
- Shell('sh '+MyLibDir+'default/openl2tp-stop');
+ If FileExists(MyLibDir+'default/openl2tp-stop') then Shell('sh '+MyLibDir+'default/openl2tp-stop');
  Shell ('killall pppd');
  Shell (ServiceCommand+'xl2tpd stop');
  Shell ('killall xl2tpd');
@@ -4414,7 +4414,7 @@ initialization
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
   If FallbackLang='be' then FallbackLang:='ru';
-  //FallbackLang:='uk'; //просто для проверки при отладке
+  //FallbackLang:='en'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
                                POFileName:= MyLangDir+'vpnpptp.ru.po';

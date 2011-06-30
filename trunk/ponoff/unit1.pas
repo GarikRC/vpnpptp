@@ -1,4 +1,4 @@
-{ Control pptp/l2tp vpn connection
+{ Control VPN PPTP/L2TP/OpenL2TP connection
 
   Copyright (C) 2009 Alex Loginov (loginov_alex@inbox.ru, loginov.alex.valer@gmail.com)
 
@@ -150,18 +150,19 @@ var
   LimitRX,LimitTX:byte; //счетчик сколько раз превышалась пропускная способность сети
   MessIDNow,MessIDBefore:integer; //ID текущего и предыдущего balloon
   ArrProcessBalloon:array of TAsyncProcess; //динамический массив процессов-балунов
+  NoConnectMessageShow:boolean; //выводить ли сообщение об отсутствии соединения
 
 resourcestring
   message0='Внимание!';
   message1='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
   message2='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
-  message3='Сначала сконфигурируйте соединение: Меню->Утилиты->Системные(или Меню->Интернет)->vpnpptp(Настройка соединения VPN PPTP/L2TP).';
-  message4='No ethernet. Cетевой интерфейс для VPN PPTP/L2TP недоступен. Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
-  message5='No link. Сетевой кабель для VPN PPTP/L2TP неподключен.';
+  message3='Сначала сконфигурируйте соединение: Меню->Утилиты->Системные(или Меню->Интернет)->vpnpptp(Настройка соединения VPN PPTP/L2TP/OpenL2TP).';
+  message4='No ethernet. Cетевой интерфейс для VPN PPTP/L2TP/OpenL2TP недоступен.';
+  message5='No link. Сетевой кабель для VPN PPTP/L2TP/OpenL2TP неподключен.';
   message6='Соединение';
   message7='установлено';
   message8='отсутствует';
-  message9='No link. Сетевой кабель для VPN PPTP/L2TP неподключен. А реконнект не включен.';
+  message9='No link. Сетевой кабель для VPN PPTP/L2TP/OpenL2TP неподключен. А реконнект не включен.';
   message10='Выход без аварии';
   message11='Выход при аварии';
   message12='Устанавливается соединение ';
@@ -177,8 +178,8 @@ resourcestring
   message22='Статус:';
   message23='DNS1-сервер до поднятия VPN не пингуется. ';
   message24='DNS2-сервер до поднятия VPN не пингуется. ';
-  message25='Вы можете в конфигураторе VPN PPTP/L2TP выбрать опцию разрешения пользователям управлять подключением.';
-  message26='Вы также можете сконфигурировать соединение из Центра Управления->Сеть и интернет->Настройка VPN-соединений->VPN PPTP/L2TP.';
+  message25='Вы можете в конфигураторе VPN PPTP/L2TP/OpenL2TP выбрать опцию разрешения пользователям управлять подключением.';
+  message26='Вы также можете сконфигурировать соединение из Центра Управления->Сеть и интернет->Настройка VPN-соединений->VPN PPTP/L2TP/OpenL2TP.';
   message27='Загружено:';
   message28='Отдано:';
   message29='Время в сети:';
@@ -199,7 +200,7 @@ resourcestring
   message44='байт слишком большое.';
   message45='Размер файла-лога /var/log/syslog больше 1 GiB.';
   message46='Возможны проблемы с установлением соединения...';
- // message47='Запускается сервис xl2tpd...';
+  message47='Если же он доступен, то установите "Не контролировать state сетевого кабеля" в Конфигураторе.';
   message48='Отсутствуют некритичные файлы: ';
   message49='Отсутствуют критичные файлы: ';
   message50='Не найдено соединение';
@@ -931,24 +932,30 @@ If not Code_up_ppp then If link=1 then
                                                                           Shell ('route del default');
                                                       Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
                                                       DoubleRunPonoff:=false;
-                                                      If Memo_Config.Lines[39]<>'l2tp' then
-                                                                                    Shell (UsrSBinDir+'pppd call '+Memo_Config.Lines[0]) else
-                                                                                                              begin
-                                                                                                                   //проверка xl2tpd в процессах
-                                                                                                                   popen(f,'ps -A | grep xl2tpd','R');
-                                                                                                                   If eof(f) then
-                                                                                                                        begin
-                                                                                                                             Shell (ServiceCommand+'xl2tpd stop');
-                                                                                                                             AProcess := TAsyncProcess.Create(nil);
-                                                                                                                             AProcess.CommandLine :=ServiceCommand+'xl2tpd start';
-                                                                                                                             AProcess.Execute;
-                                                                                                                             while AProcess.Running do
-                                                                                                                                                      MySleep(30);
-                                                                                                                             AProcess.Free;
-                                                                                                                        end;
-                                                                                                                  PClose(f);
-                                                                                                                  Shell ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
-                                                                                                              end;
+                                                      If Memo_Config.Lines[39]='pptp' then
+                                                                                    Shell (UsrSBinDir+'pppd call '+Memo_Config.Lines[0]);
+                                                      If Memo_Config.Lines[39]='l2tp' then
+                                                                                          begin
+                                                                                              //проверка xl2tpd в процессах
+                                                                                              popen(f,'ps -A | grep xl2tpd','R');
+                                                                                              If eof(f) then
+                                                                                                            begin
+                                                                                                                 Shell (ServiceCommand+'xl2tpd stop');
+                                                                                                                 AProcess := TAsyncProcess.Create(nil);
+                                                                                                                 AProcess.CommandLine :=ServiceCommand+'xl2tpd start';
+                                                                                                                 AProcess.Execute;
+                                                                                                                 while AProcess.Running do
+                                                                                                                                         MySleep(30);
+                                                                                                                 AProcess.Free;
+                                                                                                             end;
+                                                                                               PClose(f);
+                                                                                               Shell ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
+                                                                                          end;
+                                                       If Memo_Config.Lines[39]='openl2tp' then
+                                                                                           begin
+                                                                                                Shell('sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
+                                                                                                //Shell ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
+                                                                                           end;
                                                    end;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then
                                                 begin
@@ -1330,7 +1337,7 @@ If suse then
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
-                 Form3.MyMessageBox(message0,message4,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                 Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                  Shell('rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
@@ -1374,6 +1381,7 @@ begin
      readln(f,str);
      If str<>'' then If (LeftStr(str,4)='pppd') then
                                         begin
+                                             If Memo_Config.Lines[39]<>'openl2tp' then If FileExists(MyLibDir+'default/openl2tp-stop') then Shell('sh '+MyLibDir+'default/openl2tp-stop');
                                              Shell('killall pppd');
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then
                                                                                   begin
@@ -1386,11 +1394,12 @@ begin
                                         end;
    end;
  PClose(f);
- If Memo_Config.Lines[39]<>'l2tp' then
+ If Memo_Config.Lines[39]='pptp' then
                                  begin
                                       Shell (ServiceCommand+'xl2tpd stop');
                                       Shell ('killall xl2tpd');
                                  end;
+ If Memo_Config.Lines[39]='openl2tp' then Shell('sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-stop');
  Shell('killall openl2tpd');
  Shell('killall l2tpd');
  Application.ProcessMessages;
@@ -1408,7 +1417,7 @@ begin
  Shell ('killall balloon');
  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   MenuItem2Click(Self);
-  Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
+  If Memo_Config.Lines[39]='l2tp' then Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
   If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
   Application.ProcessMessages;
   For h:=1 to CountInterface do
@@ -1444,7 +1453,7 @@ begin
           If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before', EtcDir+'resolv.conf') then
                             Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
   MenuItem2Click(Self);
-  Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
+  If Memo_Config.Lines[39]='l2tp' then Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
   If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
   Application.ProcessMessages;
   For i:=0 to 9 do
@@ -1716,7 +1725,7 @@ begin
                              Application.ProcessMessages;
                              If not StartMessage then
                                     begin
-                                         BalloonMessage (4000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
+                                         If NoConnectMessageShow then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
                                          NoInternet:=true;
                                          Shell('rm -f '+MyTmpDir+'DateStart');
                                          TrafficRX:=0;
@@ -1734,6 +1743,7 @@ begin
                              If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
                              StartMessage:=true;
                            end;
+  NoConnectMessageShow:=true;
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
@@ -1883,15 +1893,17 @@ begin
                                                            end;
   str0:='';
   str1:='';
-  If Memo_Config.Lines[39]<>'l2tp' then strVPN:='VPN PPTP' else strVPN:='VPN L2TP';
+  If Memo_Config.Lines[39]='pptp' then strVPN:='VPN PPTP';
+  If Memo_Config.Lines[39]='l2tp' then strVPN:='VPN L2TP';
+  If Memo_Config.Lines[39]='openl2tp' then strVPN:='VPN OpenL2TP';
                                         If Code_up_ppp then
                                                        begin
-                                                            str1:=message6+': '+Memo_Config.Lines[0]+' ('+strVPN+')'+chr(13)+message22+' '+message7+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
+                                                            str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' ('+strVPN+')'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
                                                             str0:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
                                                        end
                                                             else
                                                                 begin
-                                                                     str1:=message6+': '+Memo_Config.Lines[0]+' ('+strVPN+')'+chr(13)+message22+' '+message8+chr(13)+message29+' '+'-'+chr(13)+message27+' '+'-'+chr(13)+message28+' '+'-';
+                                                                     str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' ('+strVPN+')'+chr(13)+message29+' '+'-'+chr(13)+message27+' '+'-'+chr(13)+message28+' '+'-';
                                                                      str0:=message60+'-'+chr(13)+message59+'-'+chr(13)+message58+'-'+chr(13)+'DNS1: '+'-'+chr(13)+'DNS2: '+'-';
                                                                 end;
   TrayIcon1.Hint:=str1+chr(13)+str0;
@@ -1904,6 +1916,7 @@ initialization
 
   MessIDBefore:=0;
   MessIDNow:=0;
+  NoConnectMessageShow:=false;
   ProfileName:='';
   ProfileStrDefault:='';
   If Paramcount=0 then if FileExists(MyLibDir+'default/default') then
