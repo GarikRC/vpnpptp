@@ -172,6 +172,7 @@ type
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
     procedure CheckBox_shorewallChange(Sender: TObject);
+    procedure ComboBoxDistrChange(Sender: TObject);
     procedure ComboBoxDistrKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure ComboBoxVPNChange(Sender: TObject);
@@ -287,6 +288,8 @@ const
   EtcPppIpDownLDir='/etc/ppp/ip-down.l/';
   VarRunVpnpptp='/var/run/vpnpptp/';
   VarRunDir='/var/run/';
+  UsrLibPppdDir='/usr/lib/pppd/';
+  UsrLib64PppdDir='/usr/lib64/pppd/';
 
 resourcestring
   message0='Внимание!';
@@ -502,12 +505,14 @@ resourcestring
   message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
   message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
   message212='Принудительно установлено блокирование всех всплывающих сообщений из трея, так как отсутствует';
-  message213='Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp.';
+  message213='Не установлен пакет openl2tp.';
   message214='Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне';
   message215='Для VPN OpenL2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
   message216='Автозапуск интернета при старте системы демоном openl2tp без графики (не рекомендуется использовать)';
   message217='Использовать встроенный в демон openl2tp механизм реконнекта (не рекомендуется если несколько сетевых карт)';
   message218='Рекомендуется использовать с pppd(xl2tpd, openl2tp)-реконнектом.';
+  message219='Невозможно выбрать VPN OpenL2TP.';
+  message220='Не найден модуль';
 
 implementation
 
@@ -881,6 +886,7 @@ var mppe_string:string;
     N:byte;
     exit0find,found,foundlac:boolean;
     Children:boolean;
+    pppol2tp_so,openl2tp_so:boolean;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
@@ -1952,6 +1958,9 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                       If not FileExists(VarLogDir+'vpnlog') then Shell ('touch '+VarLogDir+'vpnlog');
                       Shell('restorecon -R -v '+VarLogDir);
                  end;
+  Shell('rm -f '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
+  Shell('rm -f '+MyLibDir+Edit_peer.Text+'/openl2tp-stop');
+  Shell('rm -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
   If ComboBoxVPN.Text='VPN OpenL2TP' then
                                      begin
                                           //создание скрипта включения для VPN OpenL2TP
@@ -1960,7 +1969,8 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                           Memo2.Lines.Add('echo "call '+Edit_peer.Text+'" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('killall xl2tpd');
                                           Memo2.Lines.Add('cp -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf '+EtcDir+'openl2tpd.conf');
-                                          Memo2.Lines.Add(ServiceCommand+'openl2tp restart');
+                                          If FileExists(EtcInitDDir+'openl2tp') then Memo2.Lines.Add(ServiceCommand+'openl2tp start');
+                                          If FileExists(EtcInitDDir+'openl2tpd') then Memo2.Lines.Add(ServiceCommand+'openl2tpd start');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           Shell('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           //создание скрипта отключения для VPN OpenL2TP
@@ -1968,7 +1978,9 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                           Memo2.Lines.Add('#!/bin/sh');
                                           Memo2.Lines.Add('echo "#Clear config file" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('rm -f '+EtcDir+'openl2tpd.conf');
-                                          Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
+                                          If FileExists(EtcInitDDir+'openl2tp') then Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
+                                          If FileExists(EtcInitDDir+'openl2tpd') then Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
+                                          Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-stop');
                                           Memo2.Lines.SaveToFile(MyLibDir+'default/openl2tp-stop');
                                           Shell('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-stop');
@@ -2009,6 +2021,45 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                         Memo2.Lines.Add('user_name="'+Edit_user.Text+'" user_password="'+Edit_passwd.Text+'"');
                                         Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                         Shell('chmod 600 '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
+                                     end;
+  //проверяем наличие необходимых для VPN OpenL2TP плагинов и устанавливаем их
+  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLibPppdDir) then
+                                     begin
+                                          pppol2tp_so:=false;
+                                          popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
+                                          if not eof(f) then pppol2tp_so:=true;
+                                          pclose(f);
+                                          openl2tp_so:=false;
+                                          popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
+                                          if not eof(f) then openl2tp_so:=true;
+                                          pclose(f);
+                                          popen(f,'dir -1 '+UsrLibPppdDir,'R');
+                                          while not eof(f) do
+                                          begin
+                                               Readln(f,str);
+                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'pppol2tp.so '+UsrLibPppdDir+str+'/');
+                                               If not openl2tp_so then If FileExists(MyScriptsDir+'openl2tp.so') then Shell('cp -f '+MyScriptsDir+'openl2tp.so '+UsrLibPppdDir+str+'/');
+                                          end;
+                                          pclose(f);
+                                     end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
+                                     begin
+                                          pppol2tp_so:=false;
+                                          popen(f,'find '+UsrLib64PppdDir+' -name pppol2tp.so','R');
+                                          if not eof(f) then pppol2tp_so:=true;
+                                          pclose(f);
+                                          openl2tp_so:=false;
+                                          popen(f,'find '+UsrLib64PppdDir+' -name openl2tp.so','R');
+                                          if not eof(f) then openl2tp_so:=true;
+                                          pclose(f);
+                                          popen(f,'dir -1 '+UsrLib64PppdDir,'R');
+                                          while not eof(f) do
+                                          begin
+                                               Readln(f,str);
+                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'pppol2tp.so '+UsrLib64PppdDir+str+'/');
+                                               If not openl2tp_so then If FileExists(MyScriptsDir+'openl2tp.so') then Shell('cp -f '+MyScriptsDir+'openl2tp.so '+UsrLib64PppdDir+str+'/');
+                                          end;
+                                          pclose(f);
                                      end;
  //проверка технической возможности поднятия соединения
  EditDNS1ping:=true;
@@ -2716,6 +2767,11 @@ begin
    Form1.Repaint;
 end;
 
+procedure TForm1.ComboBoxDistrChange(Sender: TObject);
+begin
+
+end;
+
 procedure TForm1.ComboBoxDistrKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -2725,20 +2781,50 @@ begin
 end;
 
 procedure TForm1.ComboBoxVPNChange(Sender: TObject);
+var
+   StrBefore:string;
+   Str:string;
+   Problem:boolean;
+   FindModule:boolean;
 begin
+  StrBefore:='VPN PPTP';
+  Problem:=false;
+  FindModule:=false;
+  If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
+  Application.ProcessMessages;
+  Form1.Repaint;
+  str:=message219+' ';
   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
                     begin
                          Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                         ComboBoxVPN.Text:='VPN PPTP';
+                         ComboBoxVPN.Text:=StrBefore;
+                         Label1.Caption:=message99;
+                         exit;
                     end;
-  If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then
+  If ComboBoxVPN.Text='VPN OpenL2TP' then
                     begin
-                         Form3.MyMessageBox(message0,message213,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                         ComboBoxVPN.Text:='VPN PPTP';
+                      if not FileExists (UsrSBinDir+'openl2tpd') then begin str:=str+message213+' ';Problem:=true;end;
+                      if FileExists (UsrSBinDir+'openl2tpd') then
+                                                             begin
+                                                                  Shell('modprobe -r l2tp_ppp');
+                                                                  Shell('modprobe -r pppol2tp');
+                                                                  Shell('modprobe l2tp_ppp');
+                                                                  Shell('modprobe pppol2tp');
+                                                                  popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep l2tp_ppp','R');
+                                                                  if not eof(f) then FindModule:=true else begin str:=str+message220+' l2tp_ppp. ';end;
+                                                                  pclose(f);
+                                                                  popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep pppol2tp','R');
+                                                                  if not eof(f) then FindModule:=true else begin str:=str+message220+' pppol2tp. ';end;
+                                                                  pclose(f);
+                                                                  If not FindModule then Problem:=true;
+                                                             end;
                     end;
-   If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
-   Application.ProcessMessages;
-   Form1.Repaint;
+  If Problem then
+                 begin
+                      Form3.MyMessageBox(message0,LeftStr(str,Length(str)-1),'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                      ComboBoxVPN.Text:=StrBefore;
+                      Label1.Caption:=message99;
+                 end;
 end;
 
 procedure TForm1.ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
@@ -4340,6 +4426,7 @@ StartMessage:=true;
                                    end;
   Shell ('rm -f '+MyTmpDir+'gate');
   Memo_gate.Lines.Clear;
+  If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then ComboBoxVPNChange(nil);
 end;
 
 procedure TForm1.Sudo_configureChange(Sender: TObject);

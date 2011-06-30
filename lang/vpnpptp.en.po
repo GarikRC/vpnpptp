@@ -1216,10 +1216,6 @@ msgstr "Google Public DNS: 8.8.8.8 and 8.8.4.4. OpenDNS: 208.67.222.222 and 208.
 msgid "П#209�инудительно установлено блоки#209�ование всех всплывающих сообщений из т#209�ея, так как отсутствует"
 msgstr "Forcibly set to block all pop-ups from the tray, because there is no"
 
-#: unit1.message213
-msgid "Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp."
-msgstr "Unable to select VPN OpenL2TP, so as not installed openl2tp."
-
 #: unit1.message214
 msgid "Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне"
 msgstr "Do not change default gateway, VPN OpenL2TP running in the background"
@@ -1236,3 +1232,14 @@ msgstr "Autostart the Internet at startup with help openl2tp-daemon whithout gra
 msgid "Использовать встроенный в демон openl2tp механизм реконнекта (не рекомендуется если несколько сетевых карт)"
 msgstr "Use internak mechanism of openl2tp daemon for reconnect (not useful if more than one NIC's)"
 
+#: unit1.message213
+msgid "Не установлен пакет openl2tp."
+msgstr "Not installed openl2tp."
+
+#: unit1.message219
+msgid "Невозможно выб#209�ать VPN OpenL2TP."
+msgstr "Unable to select VPN OpenL2TP."
+
+#: unit1.message220
+msgid "Не найден модуль"
+msgstr "Module not found"
