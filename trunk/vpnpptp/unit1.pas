@@ -1969,6 +1969,7 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                           Memo2.Lines.Add('echo "call '+Edit_peer.Text+'" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('killall xl2tpd');
                                           Memo2.Lines.Add('cp -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf '+EtcDir+'openl2tpd.conf');
+                                          If FileExists(EtcInitDDir+'portmap') then Memo2.Lines.Add(ServiceCommand+'portmap restart');
                                           If FileExists(EtcInitDDir+'openl2tp') then Memo2.Lines.Add(ServiceCommand+'openl2tp start');
                                           If FileExists(EtcInitDDir+'openl2tpd') then Memo2.Lines.Add(ServiceCommand+'openl2tpd start');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
@@ -2031,25 +2032,6 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                         Shell('chmod 600 '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                      end;
   //проверяем наличие необходимых для VPN OpenL2TP плагинов и устанавливаем их
-  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLibPppdDir) then
-                                     begin
-                                          pppol2tp_so:=false;
-                                          popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
-                                          if not eof(f) then pppol2tp_so:=true;
-                                          pclose(f);
-                                          openl2tp_so:=false;
-                                          popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
-                                          if not eof(f) then openl2tp_so:=true;
-                                          pclose(f);
-                                          popen(f,'dir -1 '+UsrLibPppdDir,'R');
-                                          while not eof(f) do
-                                          begin
-                                               Readln(f,str);
-                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'pppol2tp.so '+UsrLibPppdDir+str+'/');
-                                               If not openl2tp_so then If FileExists(MyScriptsDir+'openl2tp.so') then Shell('cp -f '+MyScriptsDir+'openl2tp.so '+UsrLibPppdDir+str+'/');
-                                          end;
-                                          pclose(f);
-                                     end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
                                      begin
                                           pppol2tp_so:=false;
@@ -2064,8 +2046,27 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                           while not eof(f) do
                                           begin
                                                Readln(f,str);
-                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'pppol2tp.so '+UsrLib64PppdDir+str+'/');
-                                               If not openl2tp_so then If FileExists(MyScriptsDir+'openl2tp.so') then Shell('cp -f '+MyScriptsDir+'openl2tp.so '+UsrLib64PppdDir+str+'/');
+                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'lib64/pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'lib64/pppol2tp.so '+UsrLib64PppdDir+str+'/');
+                                               If not openl2tp_so then If FileExists(MyScriptsDir+'lib64/openl2tp.so') then Shell('cp -f '+MyScriptsDir+'lib64/openl2tp.so '+UsrLib64PppdDir+str+'/');
+                                          end;
+                                          pclose(f);
+                                     end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLibPppdDir) then
+                                     begin
+                                          pppol2tp_so:=false;
+                                          popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
+                                          if not eof(f) then pppol2tp_so:=true;
+                                          pclose(f);
+                                          openl2tp_so:=false;
+                                          popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
+                                          if not eof(f) then openl2tp_so:=true;
+                                          pclose(f);
+                                          popen(f,'dir -1 '+UsrLibPppdDir,'R');
+                                          while not eof(f) do
+                                          begin
+                                               Readln(f,str);
+                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'lib/pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'lib/pppol2tp.so '+UsrLibPppdDir+str+'/');
+                                               If not openl2tp_so then If FileExists(MyScriptsDir+'lib/openl2tp.so') then Shell('cp -f '+MyScriptsDir+'lib/openl2tp.so '+UsrLibPppdDir+str+'/');
                                           end;
                                           pclose(f);
                                      end;
