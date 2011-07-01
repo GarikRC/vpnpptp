@@ -1401,6 +1401,7 @@ begin
                                  end;
  If Memo_Config.Lines[39]='openl2tp' then Shell('sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-stop');
  Shell('killall openl2tpd');
+ Shell('killall openl2tp');
  Shell('killall l2tpd');
  Application.ProcessMessages;
 end;
