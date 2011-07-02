@@ -172,7 +172,6 @@ type
     procedure Button_next2Click(Sender: TObject);
     procedure Button_next3Click(Sender: TObject);
     procedure CheckBox_shorewallChange(Sender: TObject);
-    procedure ComboBoxDistrChange(Sender: TObject);
     procedure ComboBoxDistrKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure ComboBoxVPNChange(Sender: TObject);
@@ -513,6 +512,8 @@ resourcestring
   message218='Рекомендуется использовать с pppd(xl2tpd, openl2tp)-реконнектом.';
   message219='Невозможно выбрать VPN OpenL2TP.';
   message220='Не найден модуль';
+  message221='Не найден плагин';
+  message222='Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp.';
 
 implementation
 
@@ -886,7 +887,7 @@ var mppe_string:string;
     N:byte;
     exit0find,found,foundlac:boolean;
     Children:boolean;
-    pppol2tp_so,openl2tp_so:boolean;
+  //  pppol2tp_so,openl2tp_so:boolean;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
@@ -2031,7 +2032,8 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                         Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                         Shell('chmod 600 '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                      end;
-  //проверяем наличие необходимых для VPN OpenL2TP плагинов и устанавливаем их
+{  //проверяем наличие необходимых для VPN OpenL2TP плагинов и устанавливаем их
+  pppd_well:=false;
   If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
                                      begin
                                           pppol2tp_so:=false;
@@ -2046,8 +2048,11 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                           while not eof(f) do
                                           begin
                                                Readln(f,str);
-                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'lib64/pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'lib64/pppol2tp.so '+UsrLib64PppdDir+str+'/');
-                                               If not openl2tp_so then If FileExists(MyScriptsDir+'lib64/openl2tp.so') then Shell('cp -f '+MyScriptsDir+'lib64/openl2tp.so '+UsrLib64PppdDir+str+'/');
+                                               if str='2.4.5' then
+                                                                  begin
+                                                                       If not pppol2tp_so then If FileExists(MyScriptsDir+'lib64/pppol2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib64/pppol2tp.so '+UsrLib64PppdDir+str+'/');pppd_well:=true;end;
+                                                                       If not openl2tp_so then If FileExists(MyScriptsDir+'lib64/openl2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib64/openl2tp.so '+UsrLib64PppdDir+str+'/');pppd_well:=true;end;
+                                                                  end;
                                           end;
                                           pclose(f);
                                      end;
@@ -2065,11 +2070,14 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                           while not eof(f) do
                                           begin
                                                Readln(f,str);
-                                               If not pppol2tp_so then If FileExists(MyScriptsDir+'lib/pppol2tp.so') then Shell('cp -f '+MyScriptsDir+'lib/pppol2tp.so '+UsrLibPppdDir+str+'/');
-                                               If not openl2tp_so then If FileExists(MyScriptsDir+'lib/openl2tp.so') then Shell('cp -f '+MyScriptsDir+'lib/openl2tp.so '+UsrLibPppdDir+str+'/');
+                                               if str='2.4.5' then
+                                                                  begin
+                                                                       If not pppol2tp_so then If FileExists(MyScriptsDir+'lib/pppol2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib/pppol2tp.so '+UsrLibPppdDir+str+'/');pppd_well:=true;end;
+                                                                       If not openl2tp_so then If FileExists(MyScriptsDir+'lib/openl2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib/openl2tp.so '+UsrLibPppdDir+str+'/');pppd_well:=true;end;
+                                                                  end;
                                           end;
                                           pclose(f);
-                                     end;
+                                     end;}
  //проверка технической возможности поднятия соединения
  EditDNS1ping:=true;
  EditDNS2ping:=true;
@@ -2776,11 +2784,6 @@ begin
    Form1.Repaint;
 end;
 
-procedure TForm1.ComboBoxDistrChange(Sender: TObject);
-begin
-
-end;
-
 procedure TForm1.ComboBoxDistrKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -2794,11 +2797,13 @@ var
    StrBefore:string;
    Str:string;
    Problem:boolean;
-   FindModule:boolean;
+   FindModule_l2tp_ppp,FindModule_pppol2tp:boolean;
+   openl2tp,pppol2tp_so:boolean;
 begin
   StrBefore:='VPN PPTP';
   Problem:=false;
-  FindModule:=false;
+  FindModule_l2tp_ppp:=false;
+  FindModule_pppol2tp:=false;
   If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
   Application.ProcessMessages;
   Form1.Repaint;
@@ -2810,9 +2815,30 @@ begin
                          Label1.Caption:=message99;
                          exit;
                     end;
+  pppol2tp_so:=true;
+  openl2tp:=true;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then begin str:=str+message213+' ';Problem:=true;end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
+                                     begin
+                                          popen(f,'find '+UsrLib64PppdDir+' -name pppol2tp.so','R');
+                                          if eof(f) then begin pppol2tp_so:=false; str:=str+message221+' pppol2tp.so. ';Problem:=true;end;
+                                          pclose(f);
+                                          popen(f,'find '+UsrLib64PppdDir+' -name openl2tp.so','R');
+                                          if eof(f) then begin openl2tp:=false; str:=str+message221+' openl2tp.so. ';Problem:=true;end;
+                                          pclose(f);
+                                     end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLibPppdDir) then
+                                     begin
+                                          popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
+                                          if eof(f) then begin pppol2tp_so:=false; str:=str+message221+' pppol2tp.so. ';Problem:=true;end;
+                                          pclose(f);
+                                          popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
+                                          if eof(f) then begin openl2tp:=false; str:=str+message221+' openl2tp.so. ';Problem:=true;end;
+                                          pclose(f);
+                                     end;
+  If (not openl2tp) or (not pppol2tp_so) then str:=str+message222+' ';
   If ComboBoxVPN.Text='VPN OpenL2TP' then
                     begin
-                      if not FileExists (UsrSBinDir+'openl2tpd') then begin str:=str+message213+' ';Problem:=true;end;
                       if FileExists (UsrSBinDir+'openl2tpd') then
                                                              begin
                                                                   Shell('modprobe -r l2tp_ppp');
@@ -2820,12 +2846,16 @@ begin
                                                                   Shell('modprobe l2tp_ppp');
                                                                   Shell('modprobe pppol2tp');
                                                                   popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep l2tp_ppp','R');
-                                                                  if not eof(f) then FindModule:=true else begin str:=str+message220+' l2tp_ppp. ';end;
+                                                                  if not eof(f) then FindModule_l2tp_ppp:=true;
                                                                   pclose(f);
                                                                   popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep pppol2tp','R');
-                                                                  if not eof(f) then FindModule:=true else begin str:=str+message220+' pppol2tp. ';end;
+                                                                  if not eof(f) then FindModule_pppol2tp:=true;
                                                                   pclose(f);
-                                                                  If not FindModule then Problem:=true;
+                                                                  If not FindModule_pppol2tp then if FindModule_l2tp_ppp then
+                                                                                                                         begin
+                                                                                                                              Problem:=true;
+                                                                                                                              str:=str+message220+' l2tp_ppp. '+message220+' pppol2tp. ';
+                                                                                                                         end;
                                                              end;
                     end;
   If Problem then
