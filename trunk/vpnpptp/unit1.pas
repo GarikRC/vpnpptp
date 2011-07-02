@@ -2815,28 +2815,40 @@ begin
                          Label1.Caption:=message99;
                          exit;
                     end;
-  pppol2tp_so:=true;
-  openl2tp:=true;
+  pppol2tp_so:=false;
+  openl2tp:=false;
   If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then begin str:=str+message213+' ';Problem:=true;end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
                                      begin
                                           popen(f,'find '+UsrLib64PppdDir+' -name pppol2tp.so','R');
-                                          if eof(f) then begin pppol2tp_so:=false; str:=str+message221+' pppol2tp.so. ';Problem:=true;end;
+                                          if eof(f) then pppol2tp_so:=false else pppol2tp_so:=true;
                                           pclose(f);
                                           popen(f,'find '+UsrLib64PppdDir+' -name openl2tp.so','R');
-                                          if eof(f) then begin openl2tp:=false; str:=str+message221+' openl2tp.so. ';Problem:=true;end;
+                                          if eof(f) then openl2tp:=false else openl2tp:=true;
                                           pclose(f);
                                      end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLibPppdDir) then
                                      begin
-                                          popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
-                                          if eof(f) then begin pppol2tp_so:=false; str:=str+message221+' pppol2tp.so. ';Problem:=true;end;
-                                          pclose(f);
-                                          popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
-                                          if eof(f) then begin openl2tp:=false; str:=str+message221+' openl2tp.so. ';Problem:=true;end;
-                                          pclose(f);
+                                          if not pppol2tp_so then
+                                                                 begin
+                                                                      popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
+                                                                      if eof(f) then pppol2tp_so:=false else pppol2tp_so:=true;
+                                                                      pclose(f);
+                                                                 end;
+                                          if not openl2tp then
+                                                                 begin
+                                                                      popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
+                                                                      if eof(f) then openl2tp:=false else openl2tp:=true;
+                                                                      pclose(f);
+                                                                 end;
                                      end;
-  If (not openl2tp) or (not pppol2tp_so) then str:=str+message222+' ';
+  If (not openl2tp) or (not pppol2tp_so) then
+                                             begin
+                                                  if not openl2tp then str:=str+message221+' openl2tp.so. ';
+                                                  if not pppol2tp_so then str:=str+message221+' pppol2tp.so. ';
+                                                  str:=str+message222+' ';
+                                                  Problem:=true;
+                                             end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then
                     begin
                       if FileExists (UsrSBinDir+'openl2tpd') then
@@ -2851,7 +2863,7 @@ begin
                                                                   popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep pppol2tp','R');
                                                                   if not eof(f) then FindModule_pppol2tp:=true;
                                                                   pclose(f);
-                                                                  If not FindModule_pppol2tp then if FindModule_l2tp_ppp then
+                                                                  If not FindModule_pppol2tp then if not FindModule_l2tp_ppp then
                                                                                                                          begin
                                                                                                                               Problem:=true;
                                                                                                                               str:=str+message220+' l2tp_ppp. '+message220+' pppol2tp. ';
