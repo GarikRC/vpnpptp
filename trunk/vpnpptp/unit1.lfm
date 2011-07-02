@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 458
+  Left = 456
   Height = 580
-  Top = 165
+  Top = 164
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2647,7 +2647,6 @@ object Form1: TForm1
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 5
         ItemHeight = 0
-        OnChange = ComboBoxDistrChange
         OnKeyDown = ComboBoxDistrKeyDown
         Style = csSimple
         TabOrder = 9
@@ -2732,7 +2731,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         Left = 581
         Height = 14
-        Top = 169
+        Top = 168
         Width = 71
         BorderSpacing.Top = 10
         Caption = 'Примечания:'
@@ -2766,8 +2765,8 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrCenter
         Left = 581
         Height = 78
-        Top = 183
-        Width = 226
+        Top = 182
+        Width = 222
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Right = 5
         Caption = '- желательно вписать маршруты для VPN-сервера, DNS-серверов, особенно если включенных сетевых интерфейсов в системе более одного, а также вписать другие маршруты'
@@ -2784,8 +2783,8 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrCenter
         Left = 581
         Height = 78
-        Top = 261
-        Width = 226
+        Top = 260
+        Width = 222
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Right = 5
         Caption = '- если сетевой интерфейс и/или шлюз определились неправильно, то сделайте требующийся сетевой интерфейс основным и настройте все заново или введите эти значения вручную'
@@ -2802,9 +2801,9 @@ object Form1: TForm1
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrBottom
         Left = 581
-        Height = 142
-        Top = 339
-        Width = 226
+        Height = 135
+        Top = 338
+        Width = 222
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 5
         Caption = '- без занесения маршрутов не гарантируется одновременная работа интернета и локальной сети, но интернет в любом случае будет работать'
@@ -2897,7 +2896,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 581
         Height = 14
-        Top = 97
+        Top = 96
         Width = 106
         BorderSpacing.Top = 10
         Caption = 'Шифрование mppe:'
@@ -2986,7 +2985,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrCenter
         Left = 581
         Height = 24
-        Top = 39
+        Top = 38
         Width = 100
         Anchors = [akLeft]
         Caption = 'refuse-mschap'
@@ -2999,7 +2998,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 648
         Height = 24
-        Top = 111
+        Top = 110
         Width = 70
         Caption = 'stateless'
         TabOrder = 14
@@ -3011,7 +3010,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 581
         Height = 24
-        Top = 135
+        Top = 134
         Width = 50
         Caption = 'no40'
         TabOrder = 15
@@ -3023,7 +3022,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 631
         Height = 24
-        Top = 135
+        Top = 134
         Width = 50
         Caption = 'no56'
         TabOrder = 16
@@ -3035,7 +3034,7 @@ object Form1: TForm1
         AnchorSideRight.Control = CheckBox_no40
         AnchorSideBottom.Control = CheckBox_desktop
         Left = 0
-        Height = 190
+        Height = 182
         Top = 291
         Width = 581
         Anchors = [akTop, akLeft, akBottom]
@@ -3049,7 +3048,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 7
         Height = 24
-        Top = 481
+        Top = 473
         Width = 200
         Anchors = [akLeft, akBottom]
         Caption = 'Создать ярлык на рабочем столе'
@@ -3170,7 +3169,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 581
         Height = 24
-        Top = 111
+        Top = 110
         Width = 67
         Caption = 'required'
         TabOrder = 13
@@ -3182,7 +3181,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 681
         Height = 24
-        Top = 135
+        Top = 134
         Width = 56
         Caption = 'no128'
         TabOrder = 17
@@ -3193,7 +3192,7 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_rmschap
         Left = 681
         Height = 24
-        Top = 39
+        Top = 38
         Width = 79
         Caption = 'refuse-pap'
         TabOrder = 11
@@ -3204,7 +3203,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         Left = 581
         Height = 24
-        Top = 63
+        Top = 62
         Width = 116
         Caption = 'refuse-mschap-v2'
         TabOrder = 12
@@ -3239,7 +3238,7 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label43
         Left = 157
         Height = 14
-        Top = 477
+        Top = 469
         Width = 499
         Anchors = [akLeft, akBottom]
         Caption = 'Нажмите на кнопку "Создать подключение" для сохранения сконфигурированных настроек'
@@ -3254,7 +3253,7 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 132
         Height = 14
-        Top = 491
+        Top = 483
         Width = 549
         Anchors = [akLeft, akBottom]
         Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
@@ -3270,8 +3269,8 @@ object Form1: TForm1
         AnchorSideBottom.Side = asrBottom
         Left = 5
         Height = 28
-        Top = 477
-        Width = 802
+        Top = 469
+        Width = 798
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Right = 5
@@ -3489,17 +3488,17 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label14
         Left = 3
-        Height = 462
+        Height = 454
         Top = 10
-        Width = 807
+        Width = 803
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 3
         BorderSpacing.Top = 10
         BorderSpacing.Right = 2
         BorderSpacing.Bottom = 5
         Caption = 'Настройки для соединения'
-        ClientHeight = 447
-        ClientWidth = 803
+        ClientHeight = 439
+        ClientWidth = 799
         TabOrder = 19
         OnMouseDown = GroupBox3MouseDown
         object Mii_tool_no: TCheckBox
@@ -3674,14 +3673,14 @@ object Form1: TForm1
           AnchorSideBottom.Control = GroupBox3
           AnchorSideBottom.Side = asrBottom
           Left = 0
-          Height = 149
+          Height = 152
           Top = 298
-          Width = 803
+          Width = 799
           Anchors = [akTop, akLeft, akRight, akBottom]
           BorderSpacing.Top = 5
           Caption = 'Общие для всех соединений настройки'
-          ClientHeight = 134
-          ClientWidth = 799
+          ClientHeight = 137
+          ClientWidth = 795
           TabOrder = 12
           OnMouseDown = GroupBox1MouseDown
           object CheckBox_shorewall: TCheckBox
@@ -3736,14 +3735,14 @@ object Form1: TForm1
             AnchorSideBottom.Control = GroupBox1
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 52
+            Height = 66
             Top = 82
-            Width = 799
+            Width = 795
             Anchors = [akTop, akLeft, akRight, akBottom]
             BorderSpacing.Top = 5
             Caption = 'Взаимоисключающие для всех соединений настройки'
-            ClientHeight = 37
-            ClientWidth = 795
+            ClientHeight = 51
+            ClientWidth = 791
             TabOrder = 3
             OnMouseDown = GroupBox2MouseDown
             object Autostart_ponoff: TCheckBox
@@ -3788,9 +3787,9 @@ object Form1: TForm1
         AnchorSideBottom.Control = TabSheet4
         AnchorSideBottom.Side = asrBottom
         Left = 3
-        Height = 499
+        Height = 491
         Top = 3
-        Width = 806
+        Width = 802
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 3
         BorderStyle = bsNone

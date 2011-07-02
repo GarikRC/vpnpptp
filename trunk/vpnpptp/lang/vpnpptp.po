@@ -370,6 +370,11 @@ msgctxt "TFORM2.BUTTON1.CAPTION"
 msgid "OK"
 msgstr ""
 
+#: TFORM2.CAPTION
+msgctxt "TFORM2.CAPTION"
+msgid "Опции демона pppd (для"
+msgstr ""
+
 #: TFORM2.CHECKBOXAUTH.CAPTION
 msgid "auth"
 msgstr ""
@@ -462,13 +467,13 @@ msgstr ""
 msgid "usepeerdns"
 msgstr ""
 
-#: TFORM2.FORM2.CAPTION
-msgctxt "TFORM2.FORM2.CAPTION"
-msgid "Опции демона pppd (для"
-msgstr ""
-
 #: TFORM2.LABEL1.CAPTION
 msgid "www.opennet.ru/man.shtml?topic=pppd&&category=8"
+msgstr ""
+
+#: TFORM3.CAPTION
+msgctxt "TFORM3.CAPTION"
+msgid "Form3"
 msgstr ""
 
 #: TFORM3.FORM3.CAPTION
@@ -1030,6 +1035,14 @@ msgstr ""
 
 #: unit1.message220
 msgid "Не найден модуль"
+msgstr ""
+
+#: unit1.message221
+msgid "Не найден плагин"
+msgstr ""
+
+#: unit1.message222
+msgid "Пакет ppp ве#209�сии 2.4.5 и выше может соде#209�жать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp."
 msgstr ""
 
 #: unit1.message23
