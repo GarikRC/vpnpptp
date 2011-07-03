@@ -1244,3 +1244,11 @@ msgstr "Неможливо вибрати VPN OpenL2TP."
 #: unit1.message220
 msgid "Не найден модуль"
 msgstr "Не знайдено модуль"
+
+#: unit1.message221
+msgid "Не найден плагин"
+msgstr "Не знайдено плагін"
+
+#: unit1.message222
+msgid "Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp."
+msgstr "Пакет ppp версії 2.4.5 і вище може містити плагіни pppol2tp.so, openl2tp.so; також вони можуть бути в пакеті openl2tp."
