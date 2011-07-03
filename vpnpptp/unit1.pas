@@ -1964,24 +1964,49 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
   Shell('rm -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
   If ComboBoxVPN.Text='VPN OpenL2TP' then
                                      begin
-                                          //создание скрипта включения для VPN OpenL2TP
+                                          //создание скрипта включения для VPN OpenL2TP с учетом особенностей SELinux в Fedora
                                           Memo2.Clear;
                                           Memo2.Lines.Add('#!/bin/sh');
                                           Memo2.Lines.Add('echo "call '+Edit_peer.Text+'" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('killall xl2tpd');
                                           Memo2.Lines.Add('cp -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf '+EtcDir+'openl2tpd.conf');
                                           If FileExists(EtcInitDDir+'portmap') then Memo2.Lines.Add(ServiceCommand+'portmap restart');
-                                          If FileExists(EtcInitDDir+'openl2tp') then Memo2.Lines.Add(ServiceCommand+'openl2tp start');
-                                          If FileExists(EtcInitDDir+'openl2tpd') then Memo2.Lines.Add(ServiceCommand+'openl2tpd start');
+                                          If FileExists(EtcInitDDir+'rpcbind') then Memo2.Lines.Add(ServiceCommand+'rpcbind restart');
+                                          If FileExists(EtcInitDDir+'openl2tp') then
+                                                                                    begin
+                                                                                         if fedora then Memo2.Lines.Add('setenforce 0');
+                                                                                         Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
+                                                                                         Memo2.Lines.Add('killall openl2tp');
+                                                                                         Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
+                                                                                         Memo2.Lines.Add(ServiceCommand+'openl2tp start');
+                                                                                    end;
+                                          If FileExists(EtcInitDDir+'openl2tpd') then
+                                                                                    begin
+                                                                                         if fedora then Memo2.Lines.Add('setenforce 0');
+                                                                                         Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
+                                                                                         Memo2.Lines.Add('killall openl2tpd');
+                                                                                         Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
+                                                                                         Memo2.Lines.Add(ServiceCommand+'openl2tpd start');
+                                                                                    end;
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           Shell('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
-                                          //создание скрипта отключения для VPN OpenL2TP
+                                          //создание скрипта отключения для VPN OpenL2TP с учетом особенностей SELinux в Fedora
                                           Memo2.Clear;
                                           Memo2.Lines.Add('#!/bin/sh');
                                           Memo2.Lines.Add('echo "#Clear config file" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('rm -f '+EtcDir+'openl2tpd.conf');
-                                          If FileExists(EtcInitDDir+'openl2tp') then Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
-                                          If FileExists(EtcInitDDir+'openl2tpd') then Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
+                                          If FileExists(EtcInitDDir+'openl2tp') then
+                                                                                    begin
+                                                                                       if fedora then Memo2.Lines.Add('setenforce 0');
+                                                                                       Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
+                                                                                       Memo2.Lines.Add('killall openl2tp');
+                                                                                  end;
+                                          If FileExists(EtcInitDDir+'openl2tpd') then
+                                                                                    begin
+                                                                                       if fedora then Memo2.Lines.Add('setenforce 0');
+                                                                                       Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
+                                                                                       Memo2.Lines.Add('killall openl2tp');
+                                                                                  end;
                                           Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-stop');
                                           Memo2.Lines.SaveToFile(MyLibDir+'default/openl2tp-stop');
@@ -2032,52 +2057,6 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                         Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                         Shell('chmod 600 '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                      end;
-{  //проверяем наличие необходимых для VPN OpenL2TP плагинов и устанавливаем их
-  pppd_well:=false;
-  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
-                                     begin
-                                          pppol2tp_so:=false;
-                                          popen(f,'find '+UsrLib64PppdDir+' -name pppol2tp.so','R');
-                                          if not eof(f) then pppol2tp_so:=true;
-                                          pclose(f);
-                                          openl2tp_so:=false;
-                                          popen(f,'find '+UsrLib64PppdDir+' -name openl2tp.so','R');
-                                          if not eof(f) then openl2tp_so:=true;
-                                          pclose(f);
-                                          popen(f,'dir -1 '+UsrLib64PppdDir,'R');
-                                          while not eof(f) do
-                                          begin
-                                               Readln(f,str);
-                                               if str='2.4.5' then
-                                                                  begin
-                                                                       If not pppol2tp_so then If FileExists(MyScriptsDir+'lib64/pppol2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib64/pppol2tp.so '+UsrLib64PppdDir+str+'/');pppd_well:=true;end;
-                                                                       If not openl2tp_so then If FileExists(MyScriptsDir+'lib64/openl2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib64/openl2tp.so '+UsrLib64PppdDir+str+'/');pppd_well:=true;end;
-                                                                  end;
-                                          end;
-                                          pclose(f);
-                                     end;
-  If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLibPppdDir) then
-                                     begin
-                                          pppol2tp_so:=false;
-                                          popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
-                                          if not eof(f) then pppol2tp_so:=true;
-                                          pclose(f);
-                                          openl2tp_so:=false;
-                                          popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
-                                          if not eof(f) then openl2tp_so:=true;
-                                          pclose(f);
-                                          popen(f,'dir -1 '+UsrLibPppdDir,'R');
-                                          while not eof(f) do
-                                          begin
-                                               Readln(f,str);
-                                               if str='2.4.5' then
-                                                                  begin
-                                                                       If not pppol2tp_so then If FileExists(MyScriptsDir+'lib/pppol2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib/pppol2tp.so '+UsrLibPppdDir+str+'/');pppd_well:=true;end;
-                                                                       If not openl2tp_so then If FileExists(MyScriptsDir+'lib/openl2tp.so') then begin Shell('cp -f '+MyScriptsDir+'lib/openl2tp.so '+UsrLibPppdDir+str+'/');pppd_well:=true;end;
-                                                                  end;
-                                          end;
-                                          pclose(f);
-                                     end;}
  //проверка технической возможности поднятия соединения
  EditDNS1ping:=true;
  EditDNS2ping:=true;
@@ -2807,7 +2786,7 @@ begin
   If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
   Application.ProcessMessages;
   Form1.Repaint;
-  str:=message219+' ';
+  If ComboBoxVPN.Text='VPN PPTP' then exit;
   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
                     begin
                          Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -2815,6 +2794,7 @@ begin
                          Label1.Caption:=message99;
                          exit;
                     end;
+  str:=message219+' ';
   pppol2tp_so:=false;
   openl2tp:=false;
   If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then begin str:=str+message213+' ';Problem:=true;end;
@@ -2842,7 +2822,7 @@ begin
                                                                       pclose(f);
                                                                  end;
                                      end;
-  If (not openl2tp) or (not pppol2tp_so) then
+  If ComboBoxVPN.Text='VPN OpenL2TP' then If (not openl2tp) or (not pppol2tp_so) then
                                              begin
                                                   if not openl2tp then str:=str+message221+' openl2tp.so. ';
                                                   if not pppol2tp_so then str:=str+message221+' pppol2tp.so. ';

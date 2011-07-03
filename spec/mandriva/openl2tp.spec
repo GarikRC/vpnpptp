@@ -7,7 +7,7 @@ Group: System Environment/Daemons
 URL: ftp://downloads.sourceforge.net/projects/openl2tp/%{name}-%{version}.tar.gz
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
-Requires: ppp, readline >= 4.2, portmap
+Requires: ppp, readline >= 4.2, rpcbind
 ExclusiveOS: Linux
 
 BuildRequires: ppp, readline-devel >= 4.2, glibc >= 2.4, flex, bison, kernel-headers >= 2.6.23
