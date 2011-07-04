@@ -67,6 +67,7 @@ File_peer:textfile;
 str:string;
 begin
 Form2.Font.Size:=AFont;
+Label1.Font.Size:=AFont;
 if more then exit;
 If not CaptionWell then
                      begin

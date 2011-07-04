@@ -1241,8 +1241,8 @@ msgid "Невозможно выб#209�ать VPN OpenL2TP."
 msgstr "Unable to select VPN OpenL2TP."
 
 #: unit1.message220
-msgid "Не найден модуль"
-msgstr "Module not found"
+msgid "Не найден модуль яд#209�а"
+msgstr "Kernel module not found"
 
 #: unit1.message221
 msgid "Не найден плагин"
@@ -1251,3 +1251,7 @@ msgstr "Plugin not found"
 #: unit1.message222
 msgid "Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp."
 msgstr "Ppp package version 2.4.5 and higher can contain plugins pppol2tp.so, openl2tp.so; they can also be in the package openl2tp."
+
+#: unit1.message223
+msgid "Не найден ск#209�ипт"
+msgstr "Script not found"
