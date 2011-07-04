@@ -511,9 +511,10 @@ resourcestring
   message217='Использовать встроенный в демон openl2tp механизм реконнекта (не рекомендуется если несколько сетевых карт)';
   message218='Рекомендуется использовать с pppd(xl2tpd, openl2tp)-реконнектом.';
   message219='Невозможно выбрать VPN OpenL2TP.';
-  message220='Не найден модуль';
+  message220='Не найден модуль ядра';
   message221='Не найден плагин';
   message222='Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp.';
+  message223='Не найден скрипт';
 
 implementation
 
@@ -2788,73 +2789,82 @@ begin
   Form1.Repaint;
   If ComboBoxVPN.Text='VPN PPTP' then exit;
   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
-                    begin
-                         Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                         ComboBoxVPN.Text:=StrBefore;
-                         Label1.Caption:=message99;
-                         exit;
-                    end;
+                                                                              begin
+                                                                                   Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                                   ComboBoxVPN.Text:=StrBefore;
+                                                                                   Label1.Caption:=message99;
+                                                                                   exit;
+                                                                              end;
   str:=message219+' ';
   pppol2tp_so:=false;
   openl2tp:=false;
-  If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then begin str:=str+message213+' ';Problem:=true;end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then
+                                                                                         begin
+                                                                                              str:=str+message213+' ';
+                                                                                              Problem:=true;
+                                                                                         end;
+  If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (EtcInitDDir+'openl2tpd') then if not FileExists (EtcInitDDir+'openl2tp') then
+                                                                                                                                      begin
+                                                                                                                                           str:=str+message223+' '+EtcInitDDir+'openl2tp ('+EtcInitDDir+'openl2tpd).'+' ';
+                                                                                                                                           Problem:=true;
+                                                                                                                                      end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
-                                     begin
-                                          popen(f,'find '+UsrLib64PppdDir+' -name pppol2tp.so','R');
-                                          if eof(f) then pppol2tp_so:=false else pppol2tp_so:=true;
-                                          pclose(f);
-                                          popen(f,'find '+UsrLib64PppdDir+' -name openl2tp.so','R');
-                                          if eof(f) then openl2tp:=false else openl2tp:=true;
-                                          pclose(f);
-                                     end;
+                                                                                  begin
+                                                                                       popen(f,'find '+UsrLib64PppdDir+' -name pppol2tp.so','R');
+                                                                                       if eof(f) then pppol2tp_so:=false else pppol2tp_so:=true;
+                                                                                       pclose(f);
+                                                                                       popen(f,'find '+UsrLib64PppdDir+' -name openl2tp.so','R');
+                                                                                       if eof(f) then openl2tp:=false else openl2tp:=true;
+                                                                                       pclose(f);
+                                                                                  end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLibPppdDir) then
-                                     begin
-                                          if not pppol2tp_so then
-                                                                 begin
-                                                                      popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
-                                                                      if eof(f) then pppol2tp_so:=false else pppol2tp_so:=true;
-                                                                      pclose(f);
-                                                                 end;
-                                          if not openl2tp then
-                                                                 begin
-                                                                      popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
-                                                                      if eof(f) then openl2tp:=false else openl2tp:=true;
-                                                                      pclose(f);
-                                                                 end;
-                                     end;
+                                                                                begin
+                                                                                    if not pppol2tp_so then
+                                                                                                           begin
+                                                                                                                popen(f,'find '+UsrLibPppdDir+' -name pppol2tp.so','R');
+                                                                                                                if eof(f) then pppol2tp_so:=false else pppol2tp_so:=true;
+                                                                                                                pclose(f);
+                                                                                                           end;
+                                                                                    if not openl2tp then
+                                                                                                           begin
+                                                                                                                popen(f,'find '+UsrLibPppdDir+' -name openl2tp.so','R');
+                                                                                                                if eof(f) then openl2tp:=false else openl2tp:=true;
+                                                                                                                pclose(f);
+                                                                                                           end;
+                                                                                end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then If (not openl2tp) or (not pppol2tp_so) then
-                                             begin
-                                                  if not openl2tp then str:=str+message221+' openl2tp.so. ';
-                                                  if not pppol2tp_so then str:=str+message221+' pppol2tp.so. ';
-                                                  str:=str+message222+' ';
-                                                  Problem:=true;
-                                             end;
+                                                                                     begin
+                                                                                          if not openl2tp then str:=str+message221+' openl2tp.so. ';
+                                                                                          if not pppol2tp_so then str:=str+message221+' pppol2tp.so. ';
+                                                                                          str:=str+message222+' ';
+                                                                                          Problem:=true;
+                                                                                     end;
   If ComboBoxVPN.Text='VPN OpenL2TP' then
-                    begin
-                      if FileExists (UsrSBinDir+'openl2tpd') then
-                                                             begin
-                                                                  Shell('modprobe -r l2tp_ppp');
-                                                                  Shell('modprobe -r pppol2tp');
-                                                                  Shell('modprobe l2tp_ppp');
-                                                                  Shell('modprobe pppol2tp');
-                                                                  popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep l2tp_ppp','R');
-                                                                  if not eof(f) then FindModule_l2tp_ppp:=true;
-                                                                  pclose(f);
-                                                                  popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep pppol2tp','R');
-                                                                  if not eof(f) then FindModule_pppol2tp:=true;
-                                                                  pclose(f);
-                                                                  If not FindModule_pppol2tp then if not FindModule_l2tp_ppp then
-                                                                                                                         begin
-                                                                                                                              Problem:=true;
-                                                                                                                              str:=str+message220+' l2tp_ppp. '+message220+' pppol2tp. ';
-                                                                                                                         end;
-                                                             end;
-                    end;
+                                         begin
+                                              if FileExists (UsrSBinDir+'openl2tpd') then
+                                                                                         begin
+                                                                                              Shell('modprobe -r l2tp_ppp');
+                                                                                              Shell('modprobe -r pppol2tp');
+                                                                                              Shell('modprobe l2tp_ppp');
+                                                                                              Shell('modprobe pppol2tp');
+                                                                                              popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep l2tp_ppp','R');
+                                                                                              if not eof(f) then FindModule_l2tp_ppp:=true;
+                                                                                              pclose(f);
+                                                                                              popen(f,'lsmod | awk '+chr(39)+'{print $1}'+chr(39)+'|grep pppol2tp','R');
+                                                                                              if not eof(f) then FindModule_pppol2tp:=true;
+                                                                                              pclose(f);
+                                                                                              If not FindModule_pppol2tp then if not FindModule_l2tp_ppp then
+                                                                                                                                                             begin
+                                                                                                                                                                  Problem:=true;
+                                                                                                                                                                  str:=str+message220+' l2tp_ppp. '+message220+' pppol2tp. ';
+                                                                                                                                                             end;
+                                                                                         end;
+                                         end;
   If Problem then
                  begin
-                      Form3.MyMessageBox(message0,LeftStr(str,Length(str)-1),'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                       ComboBoxVPN.Text:=StrBefore;
                       Label1.Caption:=message99;
+                      Form3.MyMessageBox(message0,LeftStr(str,Length(str)-1),'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                  end;
 end;
 
