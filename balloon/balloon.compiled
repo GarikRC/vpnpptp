@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<CONFIG>
-  <Compiler Value="/usr/bin/fpc" Date="1296023611"/>
-  <Params Value=" -MObjFPC -Scghi -O1 -gl -WG -vewnhi -l -Fu/usr/lib/lazarus/lcl/units/i386-linux -Fu/usr/lib/lazarus/lcl/units/i386-linux/gtk2 -Fu/usr/lib/lazarus/packager/units/i386-linux -Fu/vpnpptp/trunk/balloon/ -Fu. -oballoon -dLCL -dLCLgtk2 balloon.lpr"/>
-</CONFIG>
