@@ -66,6 +66,7 @@ type
     procedure CheckVPN;
     procedure ClearEtc_hosts;
     procedure MakeDefaultGW;
+    procedure LoadIconForTray(PathToIcon,NameIcon:string);
   private
     { private declarations }
   public
@@ -367,7 +368,52 @@ begin
    until i+100>sec;
 end;
 
+procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
+//растягивает картинку
+ var
+    TmpBmp: TBitmap;
+    ARect: TRect;
+ begin
+   try
+     TmpBmp := TBitmap.Create;
+     try
+       TmpBmp.Width  := wid;
+       TmpBmp.Height := hei;
+       ARect := Rect(0,0, wid, hei);
+       TmpBmp.Canvas.StretchDraw(ARect, Bitmp);
+       bitmp.Assign(TmpBmp);
+     finally
+       TmpBmp.Free;
+     end;
+   except
+   end;
+ end;
+
 { TForm1 }
+
+procedure TForm1.LoadIconForTray(PathToIcon,NameIcon:string);
+var
+  ImageIconBitmap:tBitmap;
+  IconTmp:tIcon;
+begin
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico')) then
+                                                                                begin
+                                                                                    ImageIconBitmap:= TBitmap.create;
+                                                                                    ImageIconBitmap.Assign(TrayIcon1.Icon);
+                                                                                    ResizeBmp(ImageIconBitmap,TrayIcon1.Icon.Width,TrayIcon1.Icon.Height);
+                                                                                    TrayIcon1.Icon.Assign(ImageIconBitmap);
+                                                                                    ImageIconBitmap.Free;
+                                                                                    exit;
+                                                                                end;
+  ImageIconBitmap:= TBitmap.create;
+  IconTmp:= TIcon.create;
+  IconTmp.LoadFromFile(PathToIcon+NameIcon);
+  ImageIconBitmap.Assign(IconTmp);
+  ResizeBmp(ImageIconBitmap,TrayIcon1.Icon.Width,TrayIcon1.Icon.Height);
+  TrayIcon1.Icon.Assign(ImageIconBitmap);
+  ImageIconBitmap.Free;
+  IconTmp.Free;
+end;
 
 procedure TForm1.BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
 begin
@@ -774,7 +820,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
 If Code_up_ppp then If link<>1 then //когда связи по факту нет, но в NetApplet и в ifconfig ppp0 числится, а pppd продолжает сидеть в процессах
                                begin
                                  MenuItem2Click(Self);
-                                 If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                                 LoadIconForTray(MyDataDir,'off.ico');
                                  exit;
                                end;
 
@@ -784,7 +830,7 @@ If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 If not Code_up_ppp then If link=3 then
                                   begin
                                    MenuItem2Click(Self);
-                                   If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                                   LoadIconForTray(MyDataDir,'off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Timer1.Enabled:=False;
@@ -800,7 +846,7 @@ If not Code_up_ppp then If link=3 then
 If not Code_up_ppp then If link=2 then
                                   begin
                                    MenuItem2Click(Self);
-                                   If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                                   LoadIconForTray(MyDataDir,'off.ico');
                                        If Memo_Config.Lines[4]='0' then
                                                               begin
                                                                 Timer1.Enabled:=False;
@@ -1185,8 +1231,8 @@ If i>1 then
 //Проверяем поднялось ли соединение
 CheckVPN;
 If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-If Code_up_ppp then If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
-If not Code_up_ppp then If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
+If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
 Application.ProcessMessages;
 TrayIcon1.Show;
 Application.ProcessMessages;
@@ -1360,7 +1406,7 @@ begin
  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   MenuItem2Click(Self);
   If Memo_Config.Lines[39]='l2tp' then Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
-  If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+  LoadIconForTray(MyDataDir,'off.ico');
   Application.ProcessMessages;
   For h:=1 to CountInterface do
               Shell ('route del default');
@@ -1396,7 +1442,7 @@ begin
                             Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
   MenuItem2Click(Self);
   If Memo_Config.Lines[39]='l2tp' then Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
-  If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+  LoadIconForTray(MyDataDir,'off.ico');
   Application.ProcessMessages;
   For i:=0 to 9 do
       begin
@@ -1585,7 +1631,7 @@ begin
                                                 If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after', EtcDir+'resolv.conf') then
                                                        Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after '+EtcDir+'resolv.conf');
                              Application.ProcessMessages;
-                             If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
+                             LoadIconForTray(MyDataDir,'on.ico');
                              If StartMessage then BalloonMessage (4000,message0,message6+' '+Memo_Config.Lines[0]+' '+message7+'...',AFont);
                              If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
                              If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
@@ -1681,7 +1727,7 @@ begin
                                          Shell ('rm -f '+MyTmpDir+'ObnullRX');
                                          Shell ('rm -f '+MyTmpDir+'ObnullTX');
                                     end;
-                             If FileExists (MyDataDir+'off.ico') then If FileExists (MyDataDir+'on.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'off.ico');
+                             LoadIconForTray(MyDataDir,'off.ico');
                              StartMessage:=true;
                            end;
   NoConnectMessageShow:=true;
