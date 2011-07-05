@@ -15,7 +15,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="1418"/>
+      <BuildNr Value="1443"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.667"/>
     </VersionInfo>
@@ -61,8 +61,8 @@
         <UnitName Value="Unit1"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="125" Y="368"/>
+        <TopLine Value="1823"/>
+        <CursorPos X="106" Y="1855"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -146,7 +146,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="46" Y="17"/>
-        <UsageCount Value="197"/>
+        <UsageCount Value="199"/>
       </Unit12>
       <Unit13>
         <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2trayicon.inc"/>
@@ -296,9 +296,9 @@
         <UnitName Value="balloon_matrix"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="92"/>
-        <CursorPos X="85" Y="30"/>
-        <UsageCount Value="42"/>
+        <TopLine Value="49"/>
+        <CursorPos X="11" Y="49"/>
+        <UsageCount Value="44"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit32>
@@ -326,9 +326,9 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="34"/>
+        <TopLine Value="114"/>
+        <CursorPos X="20" Y="151"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit35>
@@ -336,123 +336,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="unit1.pas"/>
-        <Caret Line="24" Column="16" TopLine="1"/>
+        <Caret Line="1173" Column="59" TopLine="1130"/>
       </Position1>
       <Position2>
         <Filename Value="unit1.pas"/>
-        <Caret Line="34" Column="4" TopLine="1"/>
+        <Caret Line="1231" Column="72" TopLine="1188"/>
       </Position2>
       <Position3>
         <Filename Value="unit1.pas"/>
-        <Caret Line="70" Column="6" TopLine="27"/>
+        <Caret Line="1314" Column="52" TopLine="1271"/>
       </Position3>
       <Position4>
         <Filename Value="unit1.pas"/>
-        <Caret Line="72" Column="6" TopLine="29"/>
+        <Caret Line="1410" Column="55" TopLine="1367"/>
       </Position4>
       <Position5>
         <Filename Value="unit1.pas"/>
-        <Caret Line="233" Column="83" TopLine="190"/>
+        <Caret Line="1482" Column="70" TopLine="1439"/>
       </Position5>
       <Position6>
         <Filename Value="unit1.pas"/>
-        <Caret Line="370" Column="2" TopLine="327"/>
+        <Caret Line="1490" Column="70" TopLine="1447"/>
       </Position6>
       <Position7>
         <Filename Value="unit1.pas"/>
-        <Caret Line="466" Column="56" TopLine="423"/>
+        <Caret Line="1711" Column="83" TopLine="1668"/>
       </Position7>
       <Position8>
         <Filename Value="unit1.pas"/>
-        <Caret Line="473" Column="80" TopLine="430"/>
+        <Caret Line="1793" Column="86" TopLine="1750"/>
       </Position8>
       <Position9>
         <Filename Value="unit1.pas"/>
-        <Caret Line="535" Column="51" TopLine="492"/>
+        <Caret Line="1808" Column="86" TopLine="1765"/>
       </Position9>
       <Position10>
         <Filename Value="unit1.pas"/>
-        <Caret Line="542" Column="64" TopLine="499"/>
+        <Caret Line="1836" Column="104" TopLine="1825"/>
       </Position10>
       <Position11>
         <Filename Value="unit1.pas"/>
-        <Caret Line="577" Column="65" TopLine="534"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position11>
       <Position12>
         <Filename Value="unit1.pas"/>
-        <Caret Line="597" Column="101" TopLine="554"/>
+        <Caret Line="64" Column="22" TopLine="21"/>
       </Position12>
       <Position13>
         <Filename Value="unit1.pas"/>
-        <Caret Line="674" Column="124" TopLine="631"/>
+        <Caret Line="221" Column="13" TopLine="178"/>
       </Position13>
       <Position14>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="730" Column="117" TopLine="687"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="54" Column="191" TopLine="43"/>
       </Position14>
       <Position15>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="731" Column="111" TopLine="688"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position15>
       <Position16>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1134" Column="54" TopLine="1091"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="40" Column="248" TopLine="1"/>
       </Position16>
       <Position17>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1173" Column="59" TopLine="1130"/>
+        <Filename Value="balloon_matrix.pas"/>
+        <Caret Line="1" Column="22" TopLine="1"/>
       </Position17>
       <Position18>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1231" Column="72" TopLine="1188"/>
+        <Filename Value="balloon_matrix.pas"/>
+        <Caret Line="17" Column="25" TopLine="1"/>
       </Position18>
       <Position19>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1314" Column="52" TopLine="1271"/>
+        <Filename Value="balloon_matrix.pas"/>
+        <Caret Line="30" Column="92" TopLine="1"/>
       </Position19>
       <Position20>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1410" Column="55" TopLine="1367"/>
+        <Filename Value="balloon_matrix.pas"/>
+        <Caret Line="51" Column="107" TopLine="8"/>
       </Position20>
       <Position21>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1482" Column="70" TopLine="1439"/>
+        <Filename Value="balloon_matrix.pas"/>
+        <Caret Line="63" Column="105" TopLine="20"/>
       </Position21>
       <Position22>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1490" Column="70" TopLine="1447"/>
+        <Filename Value="balloon_matrix.pas"/>
+        <Caret Line="87" Column="35" TopLine="44"/>
       </Position22>
       <Position23>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1711" Column="83" TopLine="1668"/>
+        <Filename Value="balloon_matrix.pas"/>
+        <Caret Line="88" Column="34" TopLine="45"/>
       </Position23>
       <Position24>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1793" Column="86" TopLine="1750"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="121" Column="1" TopLine="85"/>
       </Position24>
       <Position25>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1808" Column="86" TopLine="1765"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="1" Column="3" TopLine="1"/>
       </Position25>
       <Position26>
         <Filename Value="hint_matrix.pas"/>
-        <Caret Line="59" Column="1" TopLine="99"/>
+        <Caret Line="40" Column="243" TopLine="1"/>
       </Position26>
       <Position27>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1836" Column="104" TopLine="1825"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="62" Column="255" TopLine="19"/>
       </Position27>
       <Position28>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="93" Column="18" TopLine="50"/>
       </Position28>
       <Position29>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="64" Column="22" TopLine="21"/>
+        <Filename Value="hint_matrix.pas"/>
+        <Caret Line="94" Column="9" TopLine="59"/>
       </Position29>
       <Position30>
         <Filename Value="unit1.pas"/>
-        <Caret Line="221" Column="13" TopLine="178"/>
+        <Caret Line="375" Column="1" TopLine="346"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

@@ -1,19 +1,19 @@
 object FormHintMatrix: TFormHintMatrix
-  Left = 753
-  Height = 233
-  Top = 85
-  Width = 371
+  Left = 473
+  Height = 232
+  Top = 181
+  Width = 414
   Caption = 'FormHintMatrix'
-  ClientHeight = 233
-  ClientWidth = 371
+  ClientHeight = 232
+  ClientWidth = 414
   OnClick = FormClick
   OnCreate = FormCreate
   LCLVersion = '0.9.29'
   object Image1: TImage
     Left = 0
-    Height = 233
+    Height = 232
     Top = 0
-    Width = 371
+    Width = 414
     Align = alClient
     Picture.Data = {
       0A544A706567496D616765F12F0300FFD8FFE000104A46494600010101004800
@@ -6869,6 +6869,7 @@ object FormHintMatrix: TFormHintMatrix
   end
   object TimerClose: TTimer
     Enabled = False
+    Interval = 10
     OnTimer = TimerCloseTimer
     left = 280
     top = 136

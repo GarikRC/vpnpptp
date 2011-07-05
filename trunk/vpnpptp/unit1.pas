@@ -503,7 +503,7 @@ resourcestring
   message209='Программе известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9].';
   message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
   message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
-  message212='Принудительно установлено блокирование всех всплывающих сообщений из трея, так как отсутствует';
+//  message212='Принудительно установлено блокирование всех всплывающих сообщений из трея, так как отсутствует';
   message213='Не установлен пакет openl2tp.';
   message214='Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне';
   message215='Для VPN OpenL2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
@@ -899,13 +899,6 @@ If Unit2.Form2.CheckBoxusepeerdns.Checked then If ((EditDNS3.Text='81.176.72.82'
                                             Form3.MyMessageBox(message0,message153,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                             Children:=true;
                                             Unit2.Form2.CheckBoxusepeerdns.Checked:=false;
-                                            Application.ProcessMessages;
-                                            Form1.Repaint;
-                                         end;
-If not FileExists(UsrBinDir+'balloon') then If not balloon.Checked then
-                                         begin //автоматическая поправка на отсутствие balloon
-                                            balloon.Checked:=true;
-                                            Form3.MyMessageBox(message0,message212+' '+UsrBinDir+'balloon.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                          end;
