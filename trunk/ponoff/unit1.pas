@@ -1884,21 +1884,21 @@ begin
   If Memo_Config.Lines[39]='openl2tp' then strVPN:='VPN OpenL2TP';
                                         If Code_up_ppp then
                                                        begin
-                                                            ConnectionInfo:=Memo_Config.Lines[0];
-                                                            StatusInfo:=message7+' ('+strVPN+')';
-                                                            TimeInNetInfo:=Time;
-                                                            DownloadInfo:=RX+' ('+RXSpeed+')';
-                                                            UploadInfo:=TX+' ('+TXSpeed+')';
-                                                            InterfaceInfo:=PppIface;
-                                                            IPAddressInfo:=IPaddress0;
-                                                            GatewayInfo:=RemoteIPaddress0;
-                                                            DNS1Info:=DNS3;
-                                                            DNS2Info:=DNS4;
+                                                            ConnectionInfo:=Trim(Memo_Config.Lines[0]);
+                                                            StatusInfo:=Trim(message7+' ('+strVPN+')');
+                                                            TimeInNetInfo:=Trim(Time);
+                                                            DownloadInfo:=Trim(RX+' ('+RXSpeed+')');
+                                                            UploadInfo:=Trim(TX+' ('+TXSpeed+')');
+                                                            InterfaceInfo:=Trim(PppIface);
+                                                            IPAddressInfo:=Trim(IPaddress0);
+                                                            GatewayInfo:=Trim(RemoteIPaddress0);
+                                                            DNS1Info:=Trim(DNS3);
+                                                            DNS2Info:=Trim(DNS4);
                                                        end
                                                             else
                                                                 begin
-                                                                    ConnectionInfo:=Memo_Config.Lines[0];
-                                                                    StatusInfo:=message8+' ('+strVPN+')';
+                                                                    ConnectionInfo:=Trim(Memo_Config.Lines[0]);
+                                                                    StatusInfo:=Trim(message8+' ('+strVPN+')');
                                                                     TimeInNetInfo:='-';
                                                                     DownloadInfo:='-';
                                                                     UploadInfo:='-';

@@ -131,6 +131,8 @@ begin
     if HintBalloon=nil then HintBalloon:=THintWindow.Create(nil);
     FormBalloonMatrix.Parent:=HintBalloon;
     HintBalloonQueueLength:=0;
+    While (Form1.TrayIcon1.GetPosition.X=0) or (Form1.TrayIcon1.GetPosition.Y=0) do
+                                                                               sleep(200);
 end;
 
 
