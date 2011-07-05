@@ -8,7 +8,8 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms
-  { you can add units after this }, Unit1, unitmymessagebox;
+  { you can add units after this }, Unit1, unitmymessagebox, balloon_matrix,
+  types, sysutils, hint_matrix;
 
 {$IFDEF WINDOWS}{$R project1.rc}{$ENDIF}
 
@@ -19,6 +20,8 @@ begin
     'Управление соединением VPN PPTP/L2TP';
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
+  Application.CreateForm(TFormHintMatrix, FormHintMatrix);
   Application.Run;
 end.
 

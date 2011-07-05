@@ -32,7 +32,6 @@ uses
 type
 
   { TForm1 }
-
   TForm1 = class(TForm)
     Image1: TImage;
     Memo_General_conf: TMemo;
@@ -62,12 +61,11 @@ type
     procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure TrayIcon1MouseMove(Sender: TObject);
-    procedure BalloonMessage (i:integer;str1:string);
+    procedure BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
     procedure CheckFiles;
     procedure CheckVPN;
     procedure ClearEtc_hosts;
     procedure MakeDefaultGW;
-    procedure KillZombieBalloon;
   private
     { private declarations }
   public
@@ -148,8 +146,6 @@ var
   DoSpeedCount:boolean; //выводить ли скорость загрузки/отдачи
   MaxSpeed:int64; //максимальная пропускная способность сети
   LimitRX,LimitTX:byte; //счетчик сколько раз превышалась пропускная способность сети
-  MessIDNow,MessIDBefore:integer; //ID текущего и предыдущего balloon
-  ArrProcessBalloon:array of TAsyncProcess; //динамический массив процессов-балунов
   NoConnectMessageShow:boolean; //выводить ли сообщение об отсутствии соединения
 
 resourcestring
@@ -221,6 +217,8 @@ resourcestring
   message65='Размер файла-лога /var/log/vpnlog больше 1 GiB.';
 
 implementation
+
+uses balloon_matrix,hint_matrix;
 
 procedure KillZombieNet_Monitor;
 //следит за дочерним процессом AProcessNet_Monitor, и если он уже только как зомби, то убирает его
@@ -371,62 +369,11 @@ end;
 
 { TForm1 }
 
-procedure TForm1.KillZombieBalloon;
-//следит за дочерним массивом процессов ArrProcess, и убирает зомби
-var
-  j:byte;
-  no_message:boolean;
+procedure TForm1.BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
 begin
-  if ArrProcessBalloon=nil then exit;
-  no_message:=true;
-  If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
-  for j:=0 to High(ArrProcessBalloon)-1 do
-      begin
-           If ArrProcessBalloon[j]<>nil then If not ArrProcessBalloon[j].Running then
-                                                                                 begin
-                                                                                    ArrProcessBalloon[j].Free;
-                                                                                    ArrProcessBalloon[j]:=nil;
-                                                                                 end;
-      end;
-  for j:=0 to High(ArrProcessBalloon)-1 do
-           If ArrProcessBalloon[j]<>nil then
-                                        begin
-                                             no_message:=false;
-                                             break;
-                                        end;
-   if no_message then ArrProcessBalloon:=nil;
-end;
-
-procedure TForm1.BalloonMessage (i:integer;str1:string);
-var
-  j,Xmes:byte;
-begin
-     If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
-     Xmes:=0;
-     if ArrProcessBalloon=nil then
-                              begin
-                                   SetLength(ArrProcessBalloon,MaxMes);
-                                   for j:=0 to MaxMes-1 do
-                                         ArrProcessBalloon[j]:=nil;
-                              end;
-     for j:=0 to High(ArrProcessBalloon)-1 do
-         begin
-           if ArrProcessBalloon[j]=nil then
-                                         begin
-                                             Xmes:=j;
-                                             break;
-                                         end;
-         end;
-     Application.ProcessMessages;
-     ArrProcessBalloon[Xmes] := TAsyncProcess.Create(nil);
-     ArrProcessBalloon[Xmes].CommandLine :=UsrBinDir+'balloon '+chr(39)+str1+chr(39)+' '+chr(39)+message0+chr(39)+' '+IntToStr(i)+' '+IntToStr(Form1.TrayIcon1.GetPosition.X)+' '+IntToStr(Form1.TrayIcon1.GetPosition.Y)+' '+IntToStr(AFont)+' '+IntToStr(MessIDBefore)+' '+MyPixmapsDir+'ponoff.png';
-     ArrProcessBalloon[Xmes].Execute;
-     While not ArrProcessBalloon[Xmes].Running do
-                                          mysleep(30);
-     mysleep(200);
-     MessIDNow:=ArrProcessBalloon[Xmes].ProcessID;
-     MessIDBefore:=MessIDNow;
-     Application.ProcessMessages;
+         If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
+         FormBalloonMatrix.BalloonMessage(time_of_show_msec,msg_title,msg_text,font_size);
+         Application.ProcessMessages;
 end;
 
 procedure TForm1.CheckFiles;
@@ -461,7 +408,7 @@ begin
                           str:=LeftStr(str,Length(str)-2);
                           Form1.TrayIcon1.Show;
                           MySleep(1000);
-                          BalloonMessage (4000,str);
+                          BalloonMessage (4000,message0,str,AFont);
                           Application.ProcessMessages;
                      end;
 end;
@@ -568,14 +515,14 @@ begin
   //Проверяем размер файла-лога /var/log/syslog
   If not FlagLengthSyslog then If FileExists(VarLogDir+'syslog') then If FileSize(VarLogDir+'syslog')>1073741824 then // >1 Гб
            begin
-               BalloonMessage (4000,message45+' '+message46);
+               BalloonMessage (4000,message0,message45+' '+message46,AFont);
                Application.ProcessMessages;
            end;
    FlagLengthSyslog:=true;
    //Проверяем размер файла-лога /var/log/vpnlog
    If not FlagLengthVpnlog then If FileExists(VarLogDir+'vpnlog') then If FileSize(VarLogDir+'vpnlog')>1073741824 then // >1 Гб
             begin
-                BalloonMessage (4000,message65+' '+message46);
+                BalloonMessage (4000,message0,message65+' '+message46,AFont);
                 Application.ProcessMessages;
             end;
     FlagLengthVpnlog:=true;
@@ -638,7 +585,7 @@ If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked
      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
      If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
         begin
-             BalloonMessage (4000,message43+' '+MtuUsed+' '+message44);
+             BalloonMessage (4000,message0,message43+' '+MtuUsed+' '+message44,AFont);
              Shell('touch '+MyTmpDir+'mtu.checked');
              Application.ProcessMessages;
         end;
@@ -664,7 +611,7 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                                                                                                             //обнаружено совпадение RemoteIPaddress с ip-адресом самого vpn-сервера
                                                                                                             Application.ProcessMessages;
                                                                                                             str:=message20;
-                                                                                                            BalloonMessage (4000,str);
+                                                                                                            BalloonMessage (4000,message0,str,AFont);
                                                                                                             Application.ProcessMessages;
                                                                                                             If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
                                                                                                             //изменение скрипта имя_соединения-ip-up
@@ -707,7 +654,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
                             If eof(f) then
                                                               begin
                                                                    NoPingDNS1:=true;
-                                                                   BalloonMessage (4000,message23);
+                                                                   BalloonMessage (4000,message0,message23,AFont);
                                                               end;
                             PClose(f);
                             end;
@@ -719,7 +666,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
                                  If eof(f) then
                                                                    begin
                                                                         NoPingDNS2:=true;
-                                                                        BalloonMessage (4000,message24);
+                                                                        BalloonMessage (4000,message0,message24,AFont);
                                                                    end;
                                  PClose(f);
                             end;
@@ -868,8 +815,8 @@ If not Code_up_ppp then If link=2 then
 If not Code_up_ppp then If ((link=2) or (link=3)) then
                            begin
                                   Application.ProcessMessages;
-                                  If NoPingDNS1 then BalloonMessage (4000,message23);
-                                  If NoPingDNS2 then BalloonMessage (4000,message24);
+                                  If NoPingDNS1 then BalloonMessage (4000,message0,message23,AFont);
+                                  If NoPingDNS2 then BalloonMessage (4000,message0,message24,AFont);
                                   str:='';
                                   If Memo_config.Lines[22]='routevpnauto-yes' then If NewIPS then str:=message14+str;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then if DhclientStart then str:=message13+str;
@@ -881,14 +828,14 @@ If not Code_up_ppp then If ((link=2) or (link=3)) then
                                   If (NoPingGW and NoDNS) then str:=message18+message17;
                                   If (NoPingGW and NoPingIPS) then str:=message18+message15;
                                   If (NoPingGW and NoPingIPS and NoDNS) then str:=message18+message15+message17;
-                                  If (NoPingIPS) or (NoPingGW) or (NoDNS) then BalloonMessage (4000,str);
+                                  If (NoPingIPS) or (NoPingGW) or (NoDNS) then BalloonMessage (4000,message0,str,AFont);
                            end;
 If not Code_up_ppp then If link=1 then
                            begin
                                   Form1.MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
                                   Application.ProcessMessages;
-                                  If NoPingDNS1 then BalloonMessage (4000,message23);
-                                  If NoPingDNS2 then BalloonMessage (4000,message24);
+                                  If NoPingDNS1 then BalloonMessage (4000,message0,message23,AFont);
+                                  If NoPingDNS2 then BalloonMessage (4000,message0,message24,AFont);
                                   str:='';
                                   str:=message12+Memo_Config.Lines[0]+'...';
                                   If Memo_config.Lines[22]='routevpnauto-yes' then If NewIPS then str:=message14+str;
@@ -901,7 +848,7 @@ If not Code_up_ppp then If link=1 then
                                   If (NoPingIPS and NoDNS) then str:=message15+message17;
                                   If (NoPingGW and NoDNS) then str:=message18+message17;
                                   If (NoPingIPS and NoPingGW and NoDNS) then str:=message18+message15+message17;
-                                  BalloonMessage (4000,str);
+                                  BalloonMessage (4000,message0,str,AFont);
                                   Application.ProcessMessages;
                                   If NoPingIPS or NoDNS then
                                                    begin
@@ -951,11 +898,7 @@ If not Code_up_ppp then If link=1 then
                                                                                                PClose(f);
                                                                                                Shell ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
                                                                                           end;
-                                                       If Memo_Config.Lines[39]='openl2tp' then
-                                                                                           begin
-                                                                                                Shell('sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
-                                                                                                //Shell ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
-                                                                                           end;
+                                                       If Memo_Config.Lines[39]='openl2tp' then Shell('sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
                                                    end;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then
                                                 begin
@@ -974,9 +917,6 @@ var
   Apid:tpid;
   FileObnull:textfile;
 begin
-  SetLength(ArrProcessBalloon,MaxMes);
-  for i:=0 to MaxMes-1 do
-        ArrProcessBalloon[i]:=nil;
   if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
   if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
   If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
@@ -1540,7 +1480,6 @@ begin
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
   KillZombieNet_Monitor;
-  KillZombieBalloon;
   //определяем скорость, время
   popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $2}'+chr(39),'R');
   RXbyte1:='0';
@@ -1567,7 +1506,7 @@ begin
                                                     LimitRX:=LimitRX+1;
                                                     if LimitRX=3 then
                                                                      begin
-                                                                          BalloonMessage(4000,message64);
+                                                                          BalloonMessage(4000,message0,message64,AFont);
                                                                           LimitRX:=0;
                                                                      end;
                                                end else LimitRX:=0;
@@ -1576,7 +1515,7 @@ begin
                                                     LimitTX:=LimitTX+1;
                                                     if LimitTX=3 then
                                                                      begin
-                                                                          BalloonMessage(4000,message63);
+                                                                          BalloonMessage(4000,message0,message63,AFont);
                                                                           LimitTX:=0;
                                                                      end;
                                                end else LimitTX:=0;
@@ -1646,7 +1585,7 @@ begin
                                                        Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after '+EtcDir+'resolv.conf');
                              Application.ProcessMessages;
                              If FileExists (MyDataDir+'on.ico') then If FileExists (MyDataDir+'off.ico') then TrayIcon1.Icon.LoadFromFile(MyDataDir+'on.ico');
-                             If StartMessage then BalloonMessage (4000,message6+' '+Memo_Config.Lines[0]+' '+message7+'...');
+                             If StartMessage then BalloonMessage (4000,message0,message6+' '+Memo_Config.Lines[0]+' '+message7+'...',AFont);
                              If Memo_Config.Lines[23]='networktest-no' then NoInternet:=false;
                              If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=false;
                              If StartMessage then If Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If NoInternet then
@@ -1677,7 +1616,7 @@ begin
                                          If eof(f) then
                                                                    begin
                                                                         NoPingDNS3:=true;
-                                                                        BalloonMessage (4000,message42);
+                                                                        BalloonMessage (4000,message0,message42,AFont);
                                                                    end;
                                          PClose(f);
                                     end;
@@ -1691,7 +1630,7 @@ begin
                                          If eof(f) then
                                                                    begin
                                                                         NoPingDNS4:=true;
-                                                                        BalloonMessage (4000,message40);
+                                                                        BalloonMessage (4000,message0,message40,AFont);
                                                                    end;
                                          PClose(f);
                                     end;
@@ -1703,9 +1642,9 @@ begin
                                  If eof(f) then NoInternet:=true else NoInternet:=false;
                                  PClose(f);
                                  Application.ProcessMessages;
-                                 If NoInternet then BalloonMessage (4000,message16)
+                                 If NoInternet then BalloonMessage (4000,message0,message16,AFont)
                                                     else
-                                                         BalloonMessage (4000,message19);
+                                                         BalloonMessage (4000,message0,message19,AFont);
                                  Application.ProcessMessages;
                              end;
                              StartMessage:=false;
@@ -1726,7 +1665,7 @@ begin
                              Application.ProcessMessages;
                              If not StartMessage then
                                     begin
-                                         If NoConnectMessageShow then BalloonMessage (8000,message6+' '+Memo_Config.Lines[0]+' '+message8+'...');
+                                         If NoConnectMessageShow then BalloonMessage (8000,message0,message6+' '+Memo_Config.Lines[0]+' '+message8+'...',AFont);
                                          NoInternet:=true;
                                          Shell('rm -f '+MyTmpDir+'DateStart');
                                          TrafficRX:=0;
@@ -1787,7 +1726,7 @@ end;
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
 // Вывод информации о соединении
 var
-  str,str0,str1,StrObnull,strVPN:string;
+  str,StrObnull,strVPN:string;
   SecondsPastRun:int64;
   hour,min,sec:int64;
   Time:string;
@@ -1795,6 +1734,7 @@ var
   Str_RemoteIPaddress0,RemoteIPaddress0,Str_IPaddress0,IPaddress0:string;
   DNS3,DNS4:string;
   FileObnull:textfile;
+  ConnectionInfo,StatusInfo,TimeInNetInfo,DownloadInfo,UploadInfo,InterfaceInfo,IPAddressInfo,GatewayInfo,DNS1Info,DNS2Info:string;
 begin
   SecondsPastRun:=0;
   fpGettimeofday(@TV,nil);
@@ -1892,22 +1832,36 @@ begin
                                                                                                 end;
                                                                 closefile(FileResolv_conf);
                                                            end;
-  str0:='';
-  str1:='';
   If Memo_Config.Lines[39]='pptp' then strVPN:='VPN PPTP';
   If Memo_Config.Lines[39]='l2tp' then strVPN:='VPN L2TP';
   If Memo_Config.Lines[39]='openl2tp' then strVPN:='VPN OpenL2TP';
                                         If Code_up_ppp then
                                                        begin
-                                                            str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message7+' ('+strVPN+')'+chr(13)+message29+' '+Time+chr(13)+message27+' '+RX+' ('+RXSpeed+')'+chr(13)+message28+' '+TX+' ('+TXSpeed+')';
-                                                            str0:=message60+PppIface+chr(13)+message59+IPaddress0+chr(13)+message58+RemoteIPaddress0+chr(13)+'DNS1: '+DNS3+chr(13)+'DNS2: '+DNS4;
+                                                            ConnectionInfo:=Memo_Config.Lines[0];
+                                                            StatusInfo:=message7+' ('+strVPN+')';
+                                                            TimeInNetInfo:=Time;
+                                                            DownloadInfo:=RX+' ('+RXSpeed+')';
+                                                            UploadInfo:=TX+' ('+TXSpeed+')';
+                                                            InterfaceInfo:=PppIface;
+                                                            IPAddressInfo:=IPaddress0;
+                                                            GatewayInfo:=RemoteIPaddress0;
+                                                            DNS1Info:=DNS3;
+                                                            DNS2Info:=DNS4;
                                                        end
                                                             else
                                                                 begin
-                                                                     str1:=message6+': '+Memo_Config.Lines[0]+chr(13)+message22+' '+message8+' ('+strVPN+')'+chr(13)+message29+' '+'-'+chr(13)+message27+' '+'-'+chr(13)+message28+' '+'-';
-                                                                     str0:=message60+'-'+chr(13)+message59+'-'+chr(13)+message58+'-'+chr(13)+'DNS1: '+'-'+chr(13)+'DNS2: '+'-';
+                                                                    ConnectionInfo:=Memo_Config.Lines[0];
+                                                                    StatusInfo:=message8+' ('+strVPN+')';
+                                                                    TimeInNetInfo:='-';
+                                                                    DownloadInfo:='-';
+                                                                    UploadInfo:='-';
+                                                                    InterfaceInfo:='-';
+                                                                    IPAddressInfo:='-';
+                                                                    GatewayInfo:='-';
+                                                                    DNS1Info:='-';
+                                                                    DNS2Info:='-';
                                                                 end;
-  TrayIcon1.Hint:=str1+chr(13)+str0;
+  FormHintMatrix.HintMessage(message6+':',message22,message29,message27,message28,message60,message59,message58,'DNS1:','DNS2:',ConnectionInfo,StatusInfo,TimeInNetInfo,DownloadInfo,UploadInfo,InterfaceInfo,IPAddressInfo,GatewayInfo,DNS1Info,DNS2Info,AFont);
   Application.ProcessMessages;
 end;
 
@@ -1915,8 +1869,6 @@ end;
 initialization
   {$I unit1.lrs}
 
-  MessIDBefore:=0;
-  MessIDNow:=0;
   NoConnectMessageShow:=false;
   ProfileName:='';
   ProfileStrDefault:='';

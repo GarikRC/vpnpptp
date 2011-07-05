@@ -130,28 +130,11 @@ fi
 
 cd ..
 cd ..
-cd ./vpnpptp-src-$NUM_VERSION/balloon/
-
-$FPC -MObjFPC -Scgi -O1 -gl -WG -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./balloon/ -Fu. -oballoon -dLCL -dLCLgtk2 balloon.lpr
-if [ ! -f ./balloon ]
-then
-     echo "Compillation balloon error!"
-     cd ..
-     cd ..
-     rm -rf ./build/
-     rm -rf ./vpnpptp-src-$NUM_VERSION/
-     exit 0
-fi
-/usr/bin/strip -s ./balloon
-
-cd ..
-cd ..
 
 mkdir -p ./build/usr/bin
 
 cp -f ./vpnpptp-src-$NUM_VERSION/ponoff/ponoff ./build/usr/bin/ponoff
 cp -f ./vpnpptp-src-$NUM_VERSION/vpnpptp/vpnpptp ./build/usr/bin/vpnpptp
-cp -f ./vpnpptp-src-$NUM_VERSION/balloon/balloon ./build/usr/bin/balloon
 
 mkdir -p ./build/usr/share/pixmaps
 
