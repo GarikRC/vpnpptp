@@ -90,20 +90,30 @@ begin
   LabelDNS2Info.Caption:=DNS2_2;
 
   Visible:=true;
-  Font.Size:=AFont;
-  Font.Color:=clBlack;
   Align:=alClient;
-  max_text_height:=LabelDNS2.Height+LabelDNS2.Top+7;
-  max_text_width:=150;
+
+  max_text_width:=0;
+
+  for i:=0 to FormHintMatrix.ComponentCount-2 do
+    begin
+     if pos(FormHintMatrix.Components[i].Name,'Timer')<>0 then continue;
+     (FormHintMatrix.Components[i] as TControl).Font.Size:=font_size;
+    end;
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
   begin
    if pos(FormHintMatrix.Components[i].Name,'Timer')<>0 then continue;
    if (FormHintMatrix.Components[i] is TLabel)  then
      if (FormHintMatrix.Components[i] as TLabel).Canvas.TextWidth((FormHintMatrix.Components[i] as TLabel).Caption)+(FormHintMatrix.Components[i] as TLabel).Left>max_text_width then
-       max_text_width:=(FormHintMatrix.Components[i] as TLabel).Left+(FormHintMatrix.Components[i] as TLabel).Canvas.TextWidth((FormHintMatrix.Components[i] as TLabel).Caption)+7;
+       max_text_width:=(FormHintMatrix.Components[i] as TLabel).Left+(FormHintMatrix.Components[i] as TLabel).Canvas.TextWidth((FormHintMatrix.Components[i] as TLabel).Caption);
    (FormHintMatrix.Components[i] as TControl).OnClick:=FormHintMatrix.OnClick;
   end;
+
+  max_text_height:=LabelDNS2.Height+LabelDNS2.Top+3;
+  max_text_width:=max_text_width+6;
+  FormHintMatrix.Height:=max_text_height;
+  FormHintMatrix.Width:=max_text_width;
+
   X:=Form1.TrayIcon1.GetPosition.X;
   Y:=Form1.TrayIcon1.GetPosition.Y;
   k3:=22;
@@ -131,9 +141,14 @@ end;
 procedure TFormHintMatrix.FormCreate(Sender: TObject);
 begin
     if HintSimle=nil then HintSimle:=THintWindow.Create(nil);
+    FormHintMatrix.Height:=1;
+    FormHintMatrix.Width:=1;
+    FormHintMatrix.Repaint;
+    Application.ProcessMessages;
     Parent:=HintSimle;
     FormHintMatrix.BorderSpacing.Around:=1;
     Image1.Visible:=false;
+    FormHintMatrix.Color:=$0092FFF8;
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);

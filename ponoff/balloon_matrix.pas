@@ -46,7 +46,7 @@ implementation
 
 { TFormBalloonMatrix }
 
-uses Unit1,hint_matrix;
+uses Unit1;
 
 procedure TFormBalloonMatrix.BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
 var
@@ -91,7 +91,6 @@ begin
      If X>(Screen.Width div 2) then A:=X-max_text_width;
      If X<=(Screen.Width div 2) then A:=X+k3;
      HintBalloon.ActivateHint(rect(A,B,A+max_text_width,B+max_text_height),'');
-     FormHintMatrix.HintHide;
      Application.ProcessMessages;
      FormBalloonMatrix.TimerClose.Interval:=time_of_show_msec;
      FormBalloonMatrix.TimerClose.Enabled:=true;

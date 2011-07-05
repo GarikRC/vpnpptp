@@ -372,6 +372,7 @@ end;
 procedure TForm1.BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
 begin
          If Form1.Memo_Config.Lines[24]<>'balloon-no' then exit;
+         FormHintMatrix.HintHide;
          FormBalloonMatrix.BalloonMessage(time_of_show_msec,msg_title,msg_text,font_size);
          Application.ProcessMessages;
 end;
