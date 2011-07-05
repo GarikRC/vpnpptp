@@ -67,38 +67,42 @@ var
 begin
   FormHintMatrix.TimerClose.Enabled:=true;
 
-  LabelConnection.Caption:=Connection_1;
-  LabelStatus.Caption:=Status_1;
-  LabelTimeInNet.Caption:=TimeInNet_1;
-  LabelDownload.Caption:=Download_1;
-  LabelUpload.Caption:=Upload_1;
-  LabelInterface.Caption:=Interface_1;
-  LabelIPAddress.Caption:=IPAddress_1;
-  LabelGateway.Caption:=Gateway_1;
-  LabelDNS1.Caption:=DNS1_1;
-  LabelDNS2.Caption:=DNS2_1;
+  LabelConnection.Caption:=Trim(Connection_1);
+  LabelStatus.Caption:=Trim(Status_1);
+  LabelTimeInNet.Caption:=Trim(TimeInNet_1);
+  LabelDownload.Caption:=Trim(Download_1);
+  LabelUpload.Caption:=Trim(Upload_1);
+  LabelInterface.Caption:=Trim(Interface_1);
+  LabelIPAddress.Caption:=Trim(IPAddress_1);
+  LabelGateway.Caption:=Trim(Gateway_1);
+  LabelDNS1.Caption:=Trim(DNS1_1);
+  LabelDNS2.Caption:=Trim(DNS2_1);
 
-  LabelConnectionInfo.Caption:=Connection_2;
-  LabelStatusInfo.Caption:=Status_2;
-  LabelTimeInNetInfo.Caption:=TimeInNet_2;
-  LabelDownloadInfo.Caption:=Download_2;
-  LabelUploadInfo.Caption:=Upload_2;
-  LabelInterfaceInfo.Caption:=Interface_2;
-  LabelIPAddressInfo.Caption:=IPAddress_2;
-  LabelGatewayInfo.Caption:=Gateway_2;
-  LabelDNS1Info.Caption:=DNS1_2;
-  LabelDNS2Info.Caption:=DNS2_2;
+  LabelConnectionInfo.Caption:=Trim(Connection_2);
+  LabelStatusInfo.Caption:=Trim(Status_2);
+  LabelTimeInNetInfo.Caption:=Trim(TimeInNet_2);
+  LabelDownloadInfo.Caption:=Trim(Download_2);
+  LabelUploadInfo.Caption:=Trim(Upload_2);
+  LabelInterfaceInfo.Caption:=Trim(Interface_2);
+  LabelIPAddressInfo.Caption:=Trim(IPAddress_2);
+  LabelGatewayInfo.Caption:=Trim(Gateway_2);
+  LabelDNS1Info.Caption:=Trim(DNS1_2);
+  LabelDNS2Info.Caption:=Trim(DNS2_2);
 
   Visible:=true;
   Align:=alClient;
 
   max_text_width:=0;
+  X:=Form1.TrayIcon1.GetPosition.X;
+  Y:=Form1.TrayIcon1.GetPosition.Y;
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
     begin
      if pos(FormHintMatrix.Components[i].Name,'Timer')<>0 then continue;
      (FormHintMatrix.Components[i] as TControl).Font.Size:=font_size;
     end;
+
+  if not HintSimle.Visible then  HintSimle.ActivateHint(rect(X,Y,X,Y),''); // заставляем элементы принято свои размеры  для правильных рассчетов
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
   begin
@@ -141,14 +145,12 @@ end;
 procedure TFormHintMatrix.FormCreate(Sender: TObject);
 begin
     if HintSimle=nil then HintSimle:=THintWindow.Create(nil);
-    FormHintMatrix.Height:=1;
-    FormHintMatrix.Width:=1;
-    FormHintMatrix.Repaint;
-    Application.ProcessMessages;
     Parent:=HintSimle;
     FormHintMatrix.BorderSpacing.Around:=1;
     Image1.Visible:=false;
     FormHintMatrix.Color:=$0092FFF8;
+   // While (Form1.TrayIcon1.GetPosition.X=0) or (Form1.TrayIcon1.GetPosition.Y=0) do
+     //                                                                   sleep(200);
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);
