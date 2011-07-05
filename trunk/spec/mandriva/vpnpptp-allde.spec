@@ -54,7 +54,6 @@ mkdir -p %{buildroot}%/lib/libDrakX/network/connection
 cp -f ./vpnpptp/vpnpptp %{buildroot}%{_bindir}
 cp -f ./ponoff/ponoff %{buildroot}%{_bindir}
 cp -f ./vpnmandriva/vpnmandriva %{buildroot}%{_bindir}
-cp -f ./balloon/balloon %{buildroot}%{_bindir}
 cp -f ./ponoff.png %{buildroot}%{_datadir}/pixmaps/
 cp -f ./vpnpptp.png %{buildroot}%{_datadir}/pixmaps/
 chmod 0644 %{buildroot}%{_datadir}/pixmaps/ponoff.png
@@ -129,7 +128,6 @@ rm -rf %{buildroot}
 %{_bindir}/vpnpptp
 %{_bindir}/ponoff
 %{_bindir}/vpnmandriva
-%{_bindir}/balloon
 %{_datadir}/vpnpptp/lang
 %{_datadir}/pixmaps/ponoff.png
 %{_datadir}/pixmaps/vpnpptp.png

@@ -36,6 +36,7 @@ msgid "Form2"
 msgstr ""
 
 #: TFORM2.LABEL1.CAPTION
+msgctxt "TFORM2.LABEL1.CAPTION"
 msgid "Label1"
 msgstr ""
 
@@ -54,6 +55,103 @@ msgstr ""
 #: TFORM3.FORM3.CAPTION
 msgctxt "TFORM3.FORM3.CAPTION"
 msgid "Form3"
+msgstr ""
+
+#: TFORMBALLOONMATRIX.FORMBALLOONMATRIX.CAPTION
+msgid "FormBalloonMatrix"
+msgstr ""
+
+#: TFORMBALLOONMATRIX.LABELTEXT.CAPTION
+msgid "LabelText"
+msgstr ""
+
+#: TFORMBALLOONMATRIX.LABELTITLE.CAPTION
+msgid "LabelTitle"
+msgstr ""
+
+#: TFORMHINTMATRIX.FORMHINTMATRIX.CAPTION
+msgid "FormHintMatrix"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELCONNECTION.CAPTION
+msgid "LabelConnection"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELCONNECTIONINFO.CAPTION
+msgctxt "TFORMHINTMATRIX.LABELCONNECTIONINFO.CAPTION"
+msgid "LabelConnectionInfo"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELDNS1.CAPTION
+msgid "LabelDNS1"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELDNS1INFO.CAPTION
+msgid "LabelDNS1Info"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELDNS2.CAPTION
+msgid "LabelDNS2"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELDNS2INFO.CAPTION
+msgid "LabelDNS2Info"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELDOWNLOAD.CAPTION
+msgid "LabelDownload"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELDOWNLOADINFO.CAPTION
+msgid "LabelDownloadInfo"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELGATEWAY.CAPTION
+msgid "LabelGateway"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELGATEWAYINFO.CAPTION
+msgid "LabelGatewayInfo"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELINTERFACE.CAPTION
+msgid "LabelInterface"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELINTERFACEINFO.CAPTION
+msgid "LabelInterfaceInfo"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELIPADDRESS.CAPTION
+msgid "LabelIPAddress"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELIPADDRESSINFO.CAPTION
+msgid "LabelIPAddressInfo"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELSTATUS.CAPTION
+msgid "LabelStatus"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELSTATUSINFO.CAPTION
+msgid "LabelStatusInfo"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELTIMEINNET.CAPTION
+msgid "LabelTimeInNet"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELTIMEINNETINFO.CAPTION
+msgid "LabelTimeInNetInfo"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELUPLOAD.CAPTION
+msgid "LabelUpload"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELUPLOADINFO.CAPTION
+msgid "LabelUploadInfo"
 msgstr ""
 
 #: unit1.message0
