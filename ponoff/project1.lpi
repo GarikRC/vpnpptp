@@ -15,7 +15,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="1500"/>
+      <BuildNr Value="1502"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.667"/>
     </VersionInfo>
@@ -294,10 +294,11 @@
         <ComponentName Value="FormBalloonMatrix"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="balloon_matrix"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="71"/>
-        <CursorPos X="80" Y="135"/>
+        <TopLine Value="91"/>
+        <CursorPos X="54" Y="135"/>
         <UsageCount Value="51"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -323,11 +324,10 @@
         <ComponentName Value="FormHintMatrix"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="hint_matrix"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="60"/>
-        <CursorPos X="110" Y="151"/>
+        <TopLine Value="116"/>
+        <CursorPos X="54" Y="153"/>
         <UsageCount Value="43"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -347,7 +347,7 @@
         <UsageCount Value="10"/>
       </Unit37>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="unit1.pas"/>
         <Caret Line="1341" Column="26" TopLine="1298"/>
@@ -464,10 +464,6 @@
         <Filename Value="hint_matrix.pas"/>
         <Caret Line="159" Column="158" TopLine="122"/>
       </Position29>
-      <Position30>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1" Column="1" TopLine="29"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

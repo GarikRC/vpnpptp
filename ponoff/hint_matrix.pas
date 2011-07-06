@@ -149,8 +149,8 @@ begin
     FormHintMatrix.BorderSpacing.Around:=1;
     Image1.Visible:=false;
     FormHintMatrix.Color:=$0092FFF8;
-   // While (Form1.TrayIcon1.GetPosition.X=0) or (Form1.TrayIcon1.GetPosition.Y=0) do
-     //                                                                   sleep(200);
+    While (Form1.TrayIcon1.GetPosition.X=0) do
+                                              sleep(50);
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);
