@@ -61,7 +61,7 @@ end;
 
 procedure TFormHintMatrix.HintMessage (Connection_1,Status_1,TimeInNet_1,Download_1,Upload_1,Interface_1,IPAddress_1,Gateway_1,DNS1_1,DNS2_1,Connection_2,Status_2,TimeInNet_2,Download_2,Upload_2,Interface_2,IPAddress_2,Gateway_2,DNS1_2,DNS2_2:string;font_size:integer);
 var
-  k3:integer; //размер иконки в трее
+  k4:integer; //размер иконки в трее
   X,Y,A,B:integer;
   max_text_width, max_text_height,i:integer;
 begin
@@ -93,8 +93,8 @@ begin
   Align:=alClient;
 
   max_text_width:=0;
-  X:=Form1.TrayIcon1.GetPosition.X;
-  Y:=Form1.TrayIcon1.GetPosition.Y;
+  X:=Mouse.CursorPos.X;
+  Y:=Mouse.CursorPos.Y;
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
     begin
@@ -118,13 +118,14 @@ begin
   FormHintMatrix.Height:=max_text_height;
   FormHintMatrix.Width:=max_text_width;
 
-  X:=Form1.TrayIcon1.GetPosition.X;
-  Y:=Form1.TrayIcon1.GetPosition.Y;
-  k3:=22;
-  If Y>(Screen.Height div 2) then B:=Y-max_text_height;
-  If Y<=(Screen.Height div 2) then B:=Y+k3;
+  X:=Mouse.CursorPos.X;
+  Y:=Mouse.CursorPos.Y;
+  k4:=Form1.TrayIcon1.Icon.Width;
+
+  If Y>(Screen.Height div 2) then B:=Y-5-max_text_height;
+  If Y<=(Screen.Height div 2) then B:=Y+5;
   If X>(Screen.Width div 2) then A:=X-max_text_width+max_text_width div 2;
-  If X<=(Screen.Width div 2) then A:=X+k3 div 2-max_text_width div 2;
+  If X<=(Screen.Width div 2) then A:=X+k4 div 2-max_text_width div 2;
   If A<0 then A:=0;
   If A>Screen.Width then A:=Screen.Width-max_text_width;
   If A+max_text_width>Screen.Width then A:=Screen.Width-max_text_width;
@@ -136,8 +137,8 @@ end;
 
 procedure TFormHintMatrix.TimerCloseTimer(Sender: TObject);
 begin
-  If Mouse.CursorPos.X>=Form1.TrayIcon1.GetPosition.X then If Mouse.CursorPos.X<=Form1.TrayIcon1.GetPosition.X+22 then
-                           If Mouse.CursorPos.Y>=Form1.TrayIcon1.GetPosition.Y then If Mouse.CursorPos.Y<=Form1.TrayIcon1.GetPosition.Y+22 then exit;
+   If Mouse.CursorPos.X>=Form1.TrayIcon1.GetPosition.X then If Mouse.CursorPos.X<=Form1.TrayIcon1.GetPosition.X+Form1.TrayIcon1.Icon.Width then
+                            If Mouse.CursorPos.Y>=Form1.TrayIcon1.GetPosition.Y then If Mouse.CursorPos.Y<=Form1.TrayIcon1.GetPosition.Y+Form1.TrayIcon1.Icon.Height then exit;
    HintHide;
    TimerClose.Enabled:=false;
 end;
@@ -149,8 +150,6 @@ begin
     FormHintMatrix.BorderSpacing.Around:=1;
     Image1.Visible:=false;
     FormHintMatrix.Color:=$0092FFF8;
-    While (Form1.TrayIcon1.GetPosition.X=0) do
-                                              sleep(50);
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);

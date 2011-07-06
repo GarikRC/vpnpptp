@@ -286,3 +286,18 @@ msgstr "Download speed three times during three seconds exceeded bandwidth."
 msgid "Разме#209� файла-лога /var/log/vpnlog больше 1 GiB."
 msgstr "The size of the log /var/log/vpnlog is more than 1 GiB."
 
+#: unit1.message66
+msgid "Увеличить иконку"
+msgstr "Increase the icon"
+
+#: unit1.message67
+msgid "Уменьшить иконку"
+msgstr "Decrease the icon"
+
+#: unit1.message68
+msgid "Цветная иконка"
+msgstr "Color icon"
+
+#: unit1.message69
+msgid "Че#209�но-белая иконка"
+msgstr "Black & White Icon"

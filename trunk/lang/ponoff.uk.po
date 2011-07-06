@@ -286,3 +286,18 @@ msgstr "Швидкість завантаження три рази підряд
 msgid "Разме#209� файла-лога /var/log/vpnlog больше 1 GiB."
 msgstr "Розмір файлу-логі /var/log/vpnlog більше 1 Gib."
 
+#: unit1.message66
+msgid "Увеличить иконку"
+msgstr "Збільшити іконку"
+
+#: unit1.message67
+msgid "Уменьшить иконку"
+msgstr "Зменшити іконку"
+
+#: unit1.message68
+msgid "Цветная иконка"
+msgstr "Кольорова іконка"
+
+#: unit1.message69
+msgid "Че#209�но-белая иконка"
+msgstr "Чорно-біла іконка"

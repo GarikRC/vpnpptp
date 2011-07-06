@@ -1,11 +1,11 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TFormBalloonMatrix','FORMDATA',[
-  'TPF0'#18'TFormBalloonMatrix'#17'FormBalloonMatrix'#4'Left'#3'x'#2#6'Height'#2
-  +#127#3'Top'#3#164#0#5'Width'#3'7'#2#7'Caption'#6#17'FormBalloonMatrix'#12'Cl'
-  +'ientHeight'#2#127#11'ClientWidth'#3'7'#2#7'OnClick'#7#9'FormClick'#8'OnCrea'
-  +'te'#7#10'FormCreate'#10'LCLVersion'#6#6'0.9.29'#0#6'TPanel'#6'Panel1'#4'Lef'
-  +'t'#2#0#6'Height'#2#127#3'Top'#2#0#5'Width'#3'7'#2#5'Align'#7#8'alClient'#12
+  'TPF0'#18'TFormBalloonMatrix'#17'FormBalloonMatrix'#4'Left'#3#199#1#6'Height'
+  +#2#127#3'Top'#3#19#1#5'Width'#3'7'#2#7'Caption'#6#17'FormBalloonMatrix'#12'C'
+  +'lientHeight'#2#127#11'ClientWidth'#3'7'#2#7'OnClick'#7#9'FormClick'#8'OnCre'
+  +'ate'#7#10'FormCreate'#10'LCLVersion'#6#6'0.9.30'#0#6'TPanel'#6'Panel1'#4'Le'
+  +'ft'#2#0#6'Height'#2#127#3'Top'#2#0#5'Width'#3'7'#2#5'Align'#7#8'alClient'#12
   +'ClientHeight'#2#127#11'ClientWidth'#3'7'#2#8'TabOrder'#2#0#0#6'TImage'#15'I'
   +'mageBackground'#4'Left'#2#1#6'Height'#2'}'#3'Top'#2#1#5'Width'#3'5'#2#5'Ali'
   +'gn'#7#8'alClient'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#0#0#6'TLabe'
