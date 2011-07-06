@@ -156,6 +156,7 @@ type
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
+    Timer1: TTimer;
     Tmpnostart: TMemo;
     procedure AutostartpppdChange(Sender: TObject);
     procedure Autostart_ponoffChange(Sender: TObject);
@@ -199,6 +200,7 @@ type
     procedure DoIconDesktop(uin,prilozh:string;dodelete:boolean;Profile:string);
     procedure DoIconDesktopForAll(Prilozh:string);
     procedure CheckFiles;
+    procedure Timer1Timer(Sender: TObject);
   private
     { private declarations }
   public
@@ -257,6 +259,7 @@ var
   gksu:boolean; //используется ли gksu
   link_on_desktop:boolean; //создался ли ярлык на рабочем столе
   beesu:boolean; //используется ли beesu
+  StartKoli4estvo:int64; //сколько последних строк лога просматривать в тестовом запуске
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -690,6 +693,19 @@ begin
                             Form3.MyMessageBox(message0,str,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                        end;
 
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+var
+    str_date:string;
+begin
+   str_date:='';
+   popen(f,'date','R');
+      While not eof(f) do
+      Readln(f,str_date);
+   pclose(f);
+   If Pppd_log.Checked then Shell('printf "'+str_date+'\n" >> '+VarLogDir+'vpnlog');
+   StartKoli4estvo:=StartKoli4estvo+10;
 end;
 
 procedure TForm1.DoIconDesktop(uin,prilozh:string;dodelete:boolean;Profile:string);
@@ -2532,9 +2548,10 @@ procedure TForm1.ButtonTestClick(Sender: TObject);
 var
  i,l,k:integer;
  flag:boolean;
- str_log:string;
+ str_log,str_date:string;
  FlagMtu:boolean;
  MtuUsed:string;
+ FileSizeStart:int64;
 begin
  Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,MyPixmapsDir+'vpnpptp.png',true,true,true,AFont,Form1.Icon,false,MyLibDir);
  Application.ProcessMessages;
@@ -2556,9 +2573,14 @@ begin
                                         if fedora then Sleep (10000) else Sleep(3000);
                                         Memo_create.Clear;
                                     end;
+ str_date:='';
+ popen(f,'date','R');
+      While not eof(f) do
+      Readln(f,str_date);
+ pclose(f);
  If ComboBoxVPN.Text='VPN L2TP' then
                                     begin
-                                       If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'vpnlog');
+                                       If Pppd_log.Checked then Shell('printf "'+str_date+'\n" >> '+VarLogDir+'vpnlog');
                                        If Pppd_log.Checked then Shell('printf "'+message109+' VPN L2TP ('+VarLogDir+'vpnlog)\n" >> '+VarLogDir+'vpnlog');
                                        If not Pppd_log.Checked then Memo_create.Lines.Add(message109+' VPN L2TP ('+VarLogDir+'vpnlog)');
                                        If Pppd_log.Checked then If Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
@@ -2588,7 +2610,7 @@ begin
                                     end;
  If ComboBoxVPN.Text='VPN PPTP' then
                                     begin
-                                        If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'vpnlog');
+                                        If Pppd_log.Checked then Shell('printf "'+str_date+'\n" >> '+VarLogDir+'vpnlog');
                                         If Pppd_log.Checked then Shell('printf "'+message109+' VPN PPTP ('+VarLogDir+'vpnlog)\n" >> '+VarLogDir+'vpnlog');
                                         If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN PPTP ('+VarLogDir+'vpnlog)');
                                         If Pppd_log.Checked then if Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
@@ -2599,7 +2621,7 @@ begin
                                     end;
  If ComboBoxVPN.Text='VPN OpenL2TP' then
                                     begin
-                                        If Pppd_log.Checked then Shell('printf "\n" >> '+VarLogDir+'vpnlog');
+                                        If Pppd_log.Checked then Shell('printf "'+str_date+'\n" >> '+VarLogDir+'vpnlog');
                                         If Pppd_log.Checked then Shell('printf "'+message109+' VPN OpenL2TP ('+VarLogDir+'vpnlog)\n" >> '+VarLogDir+'vpnlog');
                                         If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN OpenL2TP ('+VarLogDir+'vpnlog)');
                                         If Pppd_log.Checked then if Form3.Tag=1 then Shell('printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
@@ -2616,54 +2638,58 @@ str_log:=VarLogDir+'vpnlog';
 FlagMtu:=false;
 If Pppd_log.Checked then
 begin
+ FileSizeStart:=FileSize(str_log);
+ Memo_create.Lines.Add(message53);
+ Timer1.Enabled:=true;
+ Timer1.Interval:=10000;
+ StartKoli4estvo:=1000;
  While true do
-    begin
-       Shell ('tail -40 '+str_log+' > '+MyTmpDir+'test_vpn');
-       If FileExists (MyTmpDir+'test_vpn') then MemoTest.Lines.LoadFromFile(MyTmpDir+'test_vpn');
-       l:=0;
-       While l<=MemoTest.Lines.Count-1 do
-         begin
-           flag:=false;
-           For i:=0 to Memo_create.Lines.Count-1 do
-              begin
-                    If Memo_create.Lines[i]=MemoTest.Lines[l] then flag:=true;
-              end;
-           If not flag then If MemoTest.Lines[l]<>'' then
-                                                         begin
-                                                             For k:=l to MemoTest.Lines.Count-1 do
-                                                                  begin
-                                                                     Memo_create.Lines.Add(MemoTest.Lines[k]);
-                                                                     Application.ProcessMessages;
-                                                                     Form1.Repaint;
-                                                                  end;
-                                                             l:=MemoTest.Lines.Count;
-                                                         end;
-           l:=l+1;
-         end;
-       Application.ProcessMessages;
-       Form1.Repaint;
-       Sleep(100);
-       If not FlagMtu then
-           begin
-                 //Проверяем поднялось ли соединение
-                 CheckVPN;
-                 //Проверяем используемое mtu
-                 MtuUsed:='';
-                 If Code_up_ppp then
-                    begin
-                      popen (f,'ifconfig '+PppIface+'|grep MTU |awk '+ chr(39)+'{print $6}'+chr(39),'R');
-                      While not eof(f) do
-                         begin
-                           Readln (f,MtuUsed);
-                         end;
-                      PClose(f);
-                      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
-                      If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
-                              Shell('printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> '+VarLogDir+'vpnlog');
-                      FlagMtu:=true;
-                    end;
-           end;
-    end;
+     begin
+          Application.ProcessMessages;
+          while FileSize(str_log)<=FileSizeStart do
+                                                   begin
+                                                        sleep(100);
+                                                        Application.ProcessMessages;
+                                                   end;
+          If FileSize(str_log)>FileSizeStart then
+                                             begin
+                                                      Shell ('tail -'+IntToStr(StartKoli4estvo)+' '+str_log+' > '+MyTmpDir+'test_vpn');
+                                                      If FileExists (MyTmpDir+'test_vpn') then MemoTest.Lines.LoadFromFile(MyTmpDir+'test_vpn');
+                                                      Memo_create.Clear;
+                                                      Memo_create.Lines.Clear;
+                                                      k:=0;
+                                                      For i:=0 to MemoTest.Lines.Count-1 do
+                                                              if Trim(MemoTest.Lines[i])=Trim(str_date) then k:=i;
+                                                      for i:=k to MemoTest.Lines.Count-1 do
+                                                               begin
+                                                                 Memo_create.Lines.Add(MemoTest.Lines[i]);
+                                                                 Application.ProcessMessages;
+                                                                 Form1.Repaint;
+                                                               end;
+                                                      FileSizeStart:=FileSize(str_log);
+                                                      If not FlagMtu then
+                                                          begin
+                                                                //Проверяем поднялось ли соединение
+                                                                CheckVPN;
+                                                                //Проверяем используемое mtu
+                                                                MtuUsed:='';
+                                                                If Code_up_ppp then
+                                                                   begin
+                                                                     popen (f,'ifconfig '+PppIface+'|grep MTU |awk '+ chr(39)+'{print $6}'+chr(39),'R');
+                                                                     While not eof(f) do
+                                                                        begin
+                                                                          Readln (f,MtuUsed);
+                                                                        end;
+                                                                     PClose(f);
+                                                                     If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
+                                                                     If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
+                                                                             Shell('printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> '+VarLogDir+'vpnlog');
+                                                                     FlagMtu:=true;
+                                                                   end;
+                                                          end;
+                                                      Application.ProcessMessages;
+                                             end;
+     end;
 end;
  Shell ('rm -f '+MyTmpDir+'test_vpn');
  if Form3.Tag=1 then AProcess.Free;
