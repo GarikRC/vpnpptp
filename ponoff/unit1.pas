@@ -34,12 +34,18 @@ type
   { TForm1 }
   TForm1 = class(TForm)
     Image1: TImage;
+    ImageIconDefaultOn: TImage;
+    ImageIconDefaultOff: TImage;
     Memo_General_conf: TMemo;
     Memo_bindutilshost0: TMemo;
     MenuItem5: TMenuItem;
     Memo_Config: TMemo;
     MenuItem4: TMenuItem;
     MenuItem6: TMenuItem;
+    ColorIcon: TMenuItem;
+    NoColorIcon: TMenuItem;
+    Minus: TMenuItem;
+    Plus: TMenuItem;
     Panel1: TPanel;
     Timer2: TTimer;
     MenuItem1: TMenuItem;
@@ -48,6 +54,7 @@ type
     PopupMenu1: TPopupMenu;
     Timer1: TTimer;
     TrayIcon1: TTrayIcon;
+    procedure ColorIconClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
@@ -56,6 +63,8 @@ type
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
+    procedure MinusClick(Sender: TObject);
+    procedure PlusClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -67,6 +76,8 @@ type
     procedure ClearEtc_hosts;
     procedure MakeDefaultGW;
     procedure LoadIconForTray(PathToIcon,NameIcon:string);
+    procedure IconForTrayPlus;
+    procedure IconForTrayMinus;
   private
     { private declarations }
   public
@@ -216,6 +227,10 @@ resourcestring
   message63='Скорость отдачи три раза подряд в течение трех секунд превысила пропускную способность сети. Сеть неработоспособна.';
   message64='Скорость загрузки три раза подряд в течение трех секунд превысила пропускную способность сети.';
   message65='Размер файла-лога /var/log/vpnlog больше 1 GiB.';
+  message66='Увеличить иконку';
+  message67='Уменьшить иконку';
+  message68='Цветная иконка';
+  message69='Черно-белая иконка';
 
 implementation
 
@@ -374,6 +389,7 @@ procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
     TmpBmp: TBitmap;
     ARect: TRect;
  begin
+   If (Wid=0) or (hei=0) then exit;
    try
      TmpBmp := TBitmap.Create;
      try
@@ -391,25 +407,108 @@ procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
 
 { TForm1 }
 
+procedure TForm1.IconForTrayPlus;
+ var
+   ImageIconBitmap:tBitmap;
+   wid,hei:integer;
+   IconTmp:tIcon;
+begin
+  IconTmp:= TIcon.create;
+  wid:=TrayIcon1.Icon.Width;
+  hei:=TrayIcon1.Icon.Height;
+  if (wid>100) or (hei>100) then exit;
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
+         begin
+               If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
+               If not Code_up_ppp then IconTmp.Assign(ImageIconDefaultOff.Picture);
+               TrayIcon1.Icon.Assign(IconTmp);
+         end
+  else
+       begin
+            If Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'on.ico');
+            If not Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'off.ico');
+            TrayIcon1.Icon.Assign(IconTmp);
+       end;
+  ImageIconBitmap:= TBitmap.create;
+  ImageIconBitmap.Assign(TrayIcon1.Icon);
+  ResizeBmp(ImageIconBitmap,wid+1,hei+1);
+  TrayIcon1.Icon.Assign(ImageIconBitmap);
+  ImageIconBitmap.Free;
+  Shell('printf "'+IntToStr(wid+1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
+  IconTmp.Free;
+end;
+
+procedure TForm1.IconForTrayMinus;
+ var
+   ImageIconBitmap:tBitmap;
+   wid,hei:integer;
+   IconTmp:tIcon;
+begin
+  IconTmp:= TIcon.create;
+  wid:=TrayIcon1.Icon.Width;
+  hei:=TrayIcon1.Icon.Height;
+  if (wid<3) or (hei<3) then exit;
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
+         begin
+              If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
+              If not Code_up_ppp then IconTmp.Assign(ImageIconDefaultOff.Picture);
+              TrayIcon1.Icon.Assign(IconTmp);
+          end
+            else
+                begin
+                     If Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'on.ico');
+                     If not Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'off.ico');
+                     TrayIcon1.Icon.Assign(IconTmp);
+                end;
+  ImageIconBitmap:= TBitmap.create;
+  ImageIconBitmap.Assign(TrayIcon1.Icon);
+  ResizeBmp(ImageIconBitmap,wid-1,hei-1);
+  TrayIcon1.Icon.Assign(ImageIconBitmap);
+  ImageIconBitmap.Free;
+  Shell('printf "'+IntToStr(wid-1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
+  IconTmp.Free;
+end;
+
 procedure TForm1.LoadIconForTray(PathToIcon,NameIcon:string);
 var
   ImageIconBitmap:tBitmap;
   IconTmp:tIcon;
+  wid,hei:integer;
+  str:string;
 begin
-  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico')) then
+  wid:=TrayIcon1.Icon.Width;
+  hei:=TrayIcon1.Icon.Height;
+  str:='';
+  If FileExists(MyLibDir+Memo_config.Lines[0]+'/ponoff.conf') then
+         begin
+              popen(f,'cat '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf','R');
+              while not eof(f) do
+                    Readln(f,str);
+                    if str<>'' then
+                               begin
+                                    wid:=StrToInt(str);
+                                    hei:=StrToInt(str);
+                               end;
+                    pclose(f);
+         end;
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
                                                                                 begin
-                                                                                    ImageIconBitmap:= TBitmap.create;
-                                                                                    ImageIconBitmap.Assign(TrayIcon1.Icon);
-                                                                                    ResizeBmp(ImageIconBitmap,TrayIcon1.Icon.Width,TrayIcon1.Icon.Height);
-                                                                                    TrayIcon1.Icon.Assign(ImageIconBitmap);
-                                                                                    ImageIconBitmap.Free;
-                                                                                    exit;
+                                                                                     IconTmp:= TIcon.create;
+                                                                                     ImageIconBitmap:= TBitmap.create;
+                                                                                     If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
+                                                                                     If not Code_up_ppp then IconTmp.Assign(ImageIconDefaultOff.Picture);
+                                                                                     ImageIconBitmap.Assign(IconTmp);
+                                                                                     ResizeBmp(ImageIconBitmap,wid,hei);
+                                                                                     TrayIcon1.Icon.Assign(ImageIconBitmap);
+                                                                                     ImageIconBitmap.Free;
+                                                                                     IconTmp.Free;
+                                                                                     exit;
                                                                                 end;
   ImageIconBitmap:= TBitmap.create;
   IconTmp:= TIcon.create;
   IconTmp.LoadFromFile(PathToIcon+NameIcon);
   ImageIconBitmap.Assign(IconTmp);
-  ResizeBmp(ImageIconBitmap,TrayIcon1.Icon.Width,TrayIcon1.Icon.Height);
+  ResizeBmp(ImageIconBitmap,wid,hei);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
   ImageIconBitmap.Free;
   IconTmp.Free;
@@ -964,6 +1063,8 @@ var
   Apid:tpid;
   FileObnull:textfile;
 begin
+  Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
+  Application.CreateForm(TFormHintMatrix, FormHintMatrix);
   if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
   if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
   If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
@@ -978,6 +1079,8 @@ begin
   Application.Minimize;
   If FileExists (MyPixmapsDir+'ponoff.png') then Image1.Picture.LoadFromFile(MyPixmapsDir+'ponoff.png');
   Panel1.Caption:=message37+' '+message38;
+  Plus.Caption:=message66;
+  Minus.Caption:=message67;
   Form1.Height:=152;
   Form1.Width:=670;
   Form1.Font.Size:=AFont;
@@ -1353,6 +1456,14 @@ begin
   Form1.Hide;
 end;
 
+procedure TForm1.ColorIconClick(Sender: TObject);
+begin
+  If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
+  If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
+  If FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor') then Shell('rm -f '+MyLibDir+Memo_Config.Lines[0]+'/nocolor') else
+                                                                 Shell('touch '+MyLibDir+Memo_Config.Lines[0]+'/nocolor');
+end;
+
 procedure TForm1.MenuItem2Click(Sender: TObject);
  //просто убивает pppd и других демонов и удаляет временные файлы
 var
@@ -1505,6 +1616,16 @@ procedure TForm1.MenuItem6Click(Sender: TObject);
 begin
   If Form3.Visible then exit;
   Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+end;
+
+procedure TForm1.MinusClick(Sender: TObject);
+begin
+  IconForTrayMinus;
+end;
+
+procedure TForm1.PlusClick(Sender: TObject);
+begin
+  IconForTrayPlus;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
@@ -1743,6 +1864,11 @@ var
   str:string;
 begin
   If Button=MBLEFT then exit;
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico')) then
+                                                         ColorIcon.Enabled:=false
+                                                                               else
+                                                                                  ColorIcon.Enabled:=true;
+  If FileExists (MyLibDir+Memo_Config.Lines[0]+'/nocolor') then ColorIcon.Caption:=message68 else ColorIcon.Caption:=message69;
   If not FileExists (UsrBinDir+'net_monitor') then begin MenuItem5.Visible:=false; exit;end;
   If not FileExists (UsrBinDir+'vnstat') then begin MenuItem5.Visible:=false; exit;end;
   If Net_MonitorRun then begin MenuItem5.Enabled:=false; exit;end;
@@ -1933,7 +2059,7 @@ initialization
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
   If FallbackLang='be' then FallbackLang:='ru';
-  //FallbackLang:='uk'; //просто для проверки при отладке
+  //FallbackLang:='ru'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
                                POFileName:= MyLangDir+'ponoff.ru.po';

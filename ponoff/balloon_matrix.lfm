@@ -1,14 +1,14 @@
 object FormBalloonMatrix: TFormBalloonMatrix
-  Left = 632
+  Left = 455
   Height = 127
-  Top = 164
+  Top = 275
   Width = 567
   Caption = 'FormBalloonMatrix'
   ClientHeight = 127
   ClientWidth = 567
   OnClick = FormClick
   OnCreate = FormCreate
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.30'
   object Panel1: TPanel
     Left = 0
     Height = 127

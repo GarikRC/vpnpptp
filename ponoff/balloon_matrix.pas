@@ -55,7 +55,8 @@ var
 begin
      k0:=35;
      k1:=12;
-     k3:=22;
+     //k3:=22;
+     k3:=Form1.TrayIcon1.Icon.Width;
      FormBalloonMatrix.Visible:=true;
      Application.ProcessMessages;
      if HintBalloon.Visible then
@@ -131,8 +132,6 @@ begin
     if HintBalloon=nil then HintBalloon:=THintWindow.Create(nil);
     FormBalloonMatrix.Parent:=HintBalloon;
     HintBalloonQueueLength:=0;
-    While (Form1.TrayIcon1.GetPosition.X=0) do
-                                              sleep(50);
 end;
 
 

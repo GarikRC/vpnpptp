@@ -2299,6 +2299,9 @@ DoIconDesktopForAll('vpnpptp');
                                                         end;
                                        CloseFile(FileProfiles);
                                     end;
+ //сброс конфига для ponoff
+  Shell('rm -f '+MyLibDir+Edit_peer.Text+'/ponoff.conf');
+  Shell('rm -f '+MyLibDir+Edit_peer.Text+'/nocolor');
  //обработка соединения по-умолчанию
   If not FileExists(MyLibDir+'default/default') then Shell ('echo "'+Edit_peer.Text+'" > '+MyLibDir+'default/default');
   found:=false;
@@ -3729,6 +3732,8 @@ var i,N, CountGateway:integer;
     Apid,Apidroot:tpid;
     PeabodyIpUp, PeabodyIpDown:boolean;
 begin
+Screen.HintFont.Size:=30;
+Screen.MenuFont.Size:=30;
 if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
 if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
 Application.CreateForm(TForm3, Form3);

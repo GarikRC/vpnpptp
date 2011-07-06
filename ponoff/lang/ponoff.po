@@ -1,6 +1,10 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: TFORM1.COLORICON.CAPTION
+msgid "ColorIcon"
+msgstr ""
+
 #: TFORM1.FORM1.CAPTION
 msgctxt "TFORM1.FORM1.CAPTION"
 msgid "ponoff"
@@ -28,6 +32,14 @@ msgstr ""
 
 #: TFORM1.MENUITEM6.CAPTION
 msgid "Money"
+msgstr ""
+
+#: TFORM1.MINUS.CAPTION
+msgid "Minus"
+msgstr ""
+
+#: TFORM1.PLUS.CAPTION
+msgid "Plus"
 msgstr ""
 
 #: TFORM2.FORM2.CAPTION
@@ -413,6 +425,22 @@ msgstr ""
 
 #: unit1.message65
 msgid "Разме#209� файла-лога /var/log/vpnlog больше 1 GiB."
+msgstr ""
+
+#: unit1.message66
+msgid "Увеличить иконку"
+msgstr ""
+
+#: unit1.message67
+msgid "Уменьшить иконку"
+msgstr ""
+
+#: unit1.message68
+msgid "Цветная иконка"
+msgstr ""
+
+#: unit1.message69
+msgid "Че#209�но-белая иконка"
 msgstr ""
 
 #: unit1.message7

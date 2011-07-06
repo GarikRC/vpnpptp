@@ -20,8 +20,6 @@ begin
     'Управление соединением VPN PPTP/L2TP';
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
-  Application.CreateForm(TFormHintMatrix, FormHintMatrix);
   Application.Run;
 end.
 
