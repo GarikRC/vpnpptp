@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 439
   Height = 153
-  Top = 153
+  Top = 117
   Width = 533
   ActiveControl = Memo_Config
   BorderIcons = [biSystemMenu]
@@ -2192,7 +2192,7 @@ object Form1: TForm1
       BorderSpacing.Right = 10
     end
     object ImageIconDefaultOn: TImage
-      Left = 136
+      Left = 472
       Height = 22
       Top = 119
       Width = 22
@@ -2267,7 +2267,7 @@ object Form1: TForm1
       Visible = False
     end
     object ImageIconDefaultOff: TImage
-      Left = 164
+      Left = 502
       Height = 22
       Top = 119
       Width = 22

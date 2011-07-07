@@ -417,6 +417,7 @@ begin
   wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
   if (wid>100) or (hei>100) then exit;
+  CheckVPN;
   If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
          begin
                If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
@@ -448,6 +449,7 @@ begin
   wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
   if (wid<3) or (hei<3) then exit;
+  CheckVPN;
   If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
          begin
               If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
@@ -491,6 +493,7 @@ begin
                                end;
                     pclose(f);
          end;
+  CheckVPN;
   If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
                                                                                 begin
                                                                                      IconTmp:= TIcon.create;
@@ -1620,7 +1623,7 @@ end;
 
 procedure TForm1.MinusClick(Sender: TObject);
 begin
-  IconForTrayMinus;
+     IconForTrayMinus;
 end;
 
 procedure TForm1.PlusClick(Sender: TObject);

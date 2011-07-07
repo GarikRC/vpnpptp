@@ -201,6 +201,7 @@ type
     procedure DoIconDesktopForAll(Prilozh:string);
     procedure CheckFiles;
     procedure Timer1Timer(Sender: TObject);
+    procedure GetTestLog(str_log:string);
   private
     { private declarations }
   public
@@ -260,6 +261,7 @@ var
   link_on_desktop:boolean; //создался ли ярлык на рабочем столе
   beesu:boolean; //используется ли beesu
   StartKoli4estvo:int64; //сколько последних строк лога просматривать в тестовом запуске
+  str_date:string; //дата-метка в логе для поиска
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -658,6 +660,32 @@ end;
 
 { TForm1 }
 
+procedure TForm1.GetTestLog(str_log:string);
+var
+   str:string;
+   i,k:integer;
+begin
+popen(f,'tail -'+IntToStr(StartKoli4estvo)+' '+str_log,'R');
+str:='';
+while not eof(f) do
+                 begin
+                      Readln(f,str);
+                      MemoTest.Lines.Add(str);
+                 end;
+pclose(f);
+Memo_create.Clear;
+Memo_create.Lines.Clear;
+k:=0;
+For i:=0 to MemoTest.Lines.Count-1 do
+        if Trim(MemoTest.Lines[i])=Trim(str_date) then k:=i;
+for i:=k to MemoTest.Lines.Count-1 do
+         begin
+           Memo_create.Lines.Add(MemoTest.Lines[i]);
+           Application.ProcessMessages;
+           Form1.Repaint;
+         end;
+end;
+
 procedure TForm1.CheckFiles;
 //проверяет наличие необходимых программе файлов
 var
@@ -697,14 +725,10 @@ end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 var
-    str_date:string;
+    str_log:string;
 begin
-   str_date:='';
-   popen(f,'date','R');
-      While not eof(f) do
-      Readln(f,str_date);
-   pclose(f);
-   If Pppd_log.Checked then Shell('printf "'+str_date+'\n" >> '+VarLogDir+'vpnlog');
+   str_log:=VarLogDir+'vpnlog';
+   GetTestLog(str_log);
    StartKoli4estvo:=StartKoli4estvo+10;
 end;
 
@@ -904,7 +928,6 @@ var mppe_string:string;
     N:byte;
     exit0find,found,foundlac:boolean;
     Children:boolean;
-  //  pppol2tp_so,openl2tp_so:boolean;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
@@ -2332,6 +2355,7 @@ DoIconDesktopForAll('vpnpptp');
                      end;
                PClose(f);
          end;
+  Shell ('rm -f '+MyTmpDir+'test_vpn');
   If not found then If ProfileStrDefault<>'' then
           begin
             Label14.Caption:=message177;
@@ -2546,9 +2570,7 @@ end;
 procedure TForm1.ButtonTestClick(Sender: TObject);
  //тестовый запуск сконфигурированного соединения
 var
- i,l,k:integer;
- flag:boolean;
- str_log,str_date:string;
+ str_log:string;
  FlagMtu:boolean;
  MtuUsed:string;
  FileSizeStart:int64;
@@ -2559,7 +2581,6 @@ begin
  if (Form3.Tag=3) or (Form3.Tag=0) then begin Application.ProcessMessages; Form1.Repaint; exit; end;
  ButtonTest.Enabled:=false;
  if Form3.Tag=1 then begin Application.ProcessMessages; Form1.Repaint; AProcess := TAsyncProcess.Create(nil); end;
- Shell ('rm -f '+MyTmpDir+'test_vpn');
  Memo_create.Clear;
  if Form3.Tag=1 then AProcess.CommandLine := UsrBinDir+'ponoff '+Edit_peer.Text;
  if Form3.Tag=1 then AProcess.Execute;
@@ -2653,19 +2674,8 @@ begin
                                                    end;
           If FileSize(str_log)>FileSizeStart then
                                              begin
-                                                      Shell ('tail -'+IntToStr(StartKoli4estvo)+' '+str_log+' > '+MyTmpDir+'test_vpn');
-                                                      If FileExists (MyTmpDir+'test_vpn') then MemoTest.Lines.LoadFromFile(MyTmpDir+'test_vpn');
-                                                      Memo_create.Clear;
-                                                      Memo_create.Lines.Clear;
-                                                      k:=0;
-                                                      For i:=0 to MemoTest.Lines.Count-1 do
-                                                              if Trim(MemoTest.Lines[i])=Trim(str_date) then k:=i;
-                                                      for i:=k to MemoTest.Lines.Count-1 do
-                                                               begin
-                                                                 Memo_create.Lines.Add(MemoTest.Lines[i]);
-                                                                 Application.ProcessMessages;
-                                                                 Form1.Repaint;
-                                                               end;
+                                                      Timer1.Enabled:=false;
+                                                      GetTestLog(str_log);
                                                       FileSizeStart:=FileSize(str_log);
                                                       If not FlagMtu then
                                                           begin
@@ -2688,10 +2698,10 @@ begin
                                                                    end;
                                                           end;
                                                       Application.ProcessMessages;
+                                                      Timer1.Enabled:=true;
                                              end;
      end;
 end;
- Shell ('rm -f '+MyTmpDir+'test_vpn');
  if Form3.Tag=1 then AProcess.Free;
 end;
 
@@ -2748,7 +2758,7 @@ end;
 
 procedure TForm1.Button_exitClick(Sender: TObject);
 begin
-  Shell('rm -f '+MyTmpDir+'test_vpn');
+  Timer1.Enabled:=false;
   CheckVPN;
   If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message122,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
   halt;
