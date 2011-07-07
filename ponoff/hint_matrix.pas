@@ -132,6 +132,7 @@ begin
   HintSimle.Repaint;
   FormHintMatrix.Repaint;
   HintSimle.ActivateHint(rect(A,B,A+max_text_width,B+max_text_height),'');
+  FormHintMatrix.Repaint;
   HintSimle.Repaint;
 end;
 
@@ -150,6 +151,7 @@ begin
     FormHintMatrix.BorderSpacing.Around:=1;
     Image1.Visible:=false;
     FormHintMatrix.Color:=$0092FFF8;
+    TimerClose.Interval:=1000;
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);
