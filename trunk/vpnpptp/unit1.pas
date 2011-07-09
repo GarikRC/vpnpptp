@@ -2012,6 +2012,11 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                                                                          Memo2.Lines.Add('killall openl2tp');
                                                                                          Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                                                                          Memo2.Lines.Add(ServiceCommand+'openl2tp start');
+                                                                                         if fedora then
+                                                                                                       begin
+                                                                                                            Memo2.Lines.Add('sleep 1');
+                                                                                                            Memo2.Lines.Add('setenforce 1');
+                                                                                                       end;
                                                                                     end;
                                           If FileExists(EtcInitDDir+'openl2tpd') then
                                                                                     begin
@@ -2020,6 +2025,11 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                                                                          Memo2.Lines.Add('killall openl2tpd');
                                                                                          Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                                                                          Memo2.Lines.Add(ServiceCommand+'openl2tpd start');
+                                                                                         if fedora then
+                                                                                                       begin
+                                                                                                            Memo2.Lines.Add('sleep 1');
+                                                                                                            Memo2.Lines.Add('setenforce 1');
+                                                                                                       end;
                                                                                     end;
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           Shell('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
@@ -2033,12 +2043,22 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                                                                        if fedora then Memo2.Lines.Add('setenforce 0');
                                                                                        Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
                                                                                        Memo2.Lines.Add('killall openl2tp');
+                                                                                       if fedora then
+                                                                                                     begin
+                                                                                                          Memo2.Lines.Add('sleep 1');
+                                                                                                          Memo2.Lines.Add('setenforce 1');
+                                                                                                     end;
                                                                                   end;
                                           If FileExists(EtcInitDDir+'openl2tpd') then
                                                                                     begin
                                                                                        if fedora then Memo2.Lines.Add('setenforce 0');
                                                                                        Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
                                                                                        Memo2.Lines.Add('killall openl2tp');
+                                                                                       if fedora then
+                                                                                                     begin
+                                                                                                          Memo2.Lines.Add('sleep 1');
+                                                                                                          Memo2.Lines.Add('setenforce 1');
+                                                                                                     end;
                                                                                   end;
                                           Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-stop');

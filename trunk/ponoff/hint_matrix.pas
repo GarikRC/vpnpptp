@@ -93,8 +93,8 @@ begin
   Align:=alClient;
 
   max_text_width:=0;
-  X:=Mouse.CursorPos.X;
-  Y:=Mouse.CursorPos.Y;
+  X:=Form1.TrayIcon1.GetPosition.X;
+  Y:=Form1.TrayIcon1.GetPosition.Y;
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
     begin
@@ -118,12 +118,13 @@ begin
   FormHintMatrix.Height:=max_text_height;
   FormHintMatrix.Width:=max_text_width;
 
-  X:=Mouse.CursorPos.X;
-  Y:=Mouse.CursorPos.Y;
+
+  X:=Form1.TrayIcon1.GetPosition.X;
+  Y:=Form1.TrayIcon1.GetPosition.Y;
   k4:=Form1.TrayIcon1.Icon.Width;
 
-  If Y>(Screen.Height div 2) then B:=Y-5-max_text_height;
-  If Y<=(Screen.Height div 2) then B:=Y+5;
+  If Y>(Screen.Height div 2) then B:=Y-max_text_height;
+  If Y<=(Screen.Height div 2) then B:=Y+k4;
   If X>(Screen.Width div 2) then A:=X-max_text_width+max_text_width div 2;
   If X<=(Screen.Width div 2) then A:=X+k4 div 2-max_text_width div 2;
   If A<0 then A:=0;

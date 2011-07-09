@@ -15,7 +15,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="91"/>
+      <BuildNr Value="94"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.43"/>
     </VersionInfo>
@@ -65,8 +65,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4555"/>
-        <CursorPos X="59" Y="4581"/>
+        <TopLine Value="171"/>
+        <CursorPos X="130" Y="201"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -239,7 +239,7 @@
         <UsageCount Value="9"/>
       </Unit23>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="unit1.pas"/>
         <Caret Line="22" Column="16" TopLine="1"/>
@@ -356,6 +356,10 @@
         <Filename Value="unit1.pas"/>
         <Caret Line="4494" Column="53" TopLine="4446"/>
       </Position29>
+      <Position30>
+        <Filename Value="unit1.pas"/>
+        <Caret Line="2060" Column="139" TopLine="2008"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
