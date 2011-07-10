@@ -181,6 +181,7 @@ type
     procedure DeleteClick(Sender: TObject);
     procedure Edit_peerChange(Sender: TObject);
     procedure etc_hostsChange(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -3063,6 +3064,11 @@ begin
                        end;
 end;
 
+procedure TForm1.FormActivate(Sender: TObject);
+begin
+   If Form1.Visible then if Edit_IPS.Visible then Edit_IPS.SetFocus;
+end;
+
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
      CheckVPN;
@@ -3963,141 +3969,51 @@ DNSC:='none';
 DNSD:='none';
 ButtonHelp.Visible:=true;
 ButtonHelp.Enabled:=false;
+PageControl1.ShowTabs:=false;
 //масштабирование формы в зависимости от разрешения экрана
-   Form1.Height:=600;
-   Form1.Width:=794;
-   PageControl1.Top:=-31;
-   Form1.Position:=poDefault;
-   Form1.Top:=0;
-   Form1.Left:=0;
+   Form1.Position:=poScreenCenter;
    If Screen.Height<440 then
                             begin
-                             Form1.Position:=poScreenCenter;
                              AFont:=6;
+                             Form1.Font.Size:=AFont;
+                             ComboBoxVPN.Font.Size:=AFont;
+                             ComboBoxDistr.Font.Size:=AFont;
                              Form1.Height:=Screen.Height-50;
                              Form1.Width:=Screen.Width;
-                             Label1.BorderSpacing.Around:=0;
-                             Edit_IPS.BorderSpacing.Around:=0;
-                             Label2.BorderSpacing.Around:=0;
-                             Edit_peer.BorderSpacing.Around:=0;
-                             Label3.BorderSpacing.Around:=0;
-                             Edit_user.BorderSpacing.Around:=0;
-                             Label4.BorderSpacing.Around:=0;
-                             Edit_passwd.BorderSpacing.Around:=0;
-                             Label36.BorderSpacing.Around:=0;
-                             Edit_MaxTime.BorderSpacing.Around:=0;
-                             Label38.BorderSpacing.Around:=0;
-                             Edit_MinTime.BorderSpacing.Around:=0;
-                             Label6.BorderSpacing.Around:=0;
-                             Label8.BorderSpacing.Around:=0;
-                             Label7.BorderSpacing.Around:=0;
-                             Label11.BorderSpacing.Around:=0;
-                             Label37.BorderSpacing.Around:=0;
-                             Label39.BorderSpacing.Around:=0;
-                             Label41.BorderSpacing.Around:=0;
-                             Form1.Constraints.MaxHeight:=Screen.Height-50;
-                             Form1.Constraints.MinHeight:=Screen.Height-50;
-                             Button_create.BorderSpacing.Left:=Screen.Width-182;
-                             ButtonHelp.BorderSpacing.Left:=Screen.Width-182;
-                             ButtonTest.BorderSpacing.Left:=Screen.Width-182;
-                             PageControl1.Height:=Screen.Height-200;
-                             Button_next1.BorderSpacing.Left:=180;
-                             Button_next2.BorderSpacing.Left:=180;
-                             Button_more.BorderSpacing.Left:=180;
-                             Memo_route.Width:=400;
                             end;
    If Screen.Height<=480 then
                         begin
-                             Form1.Position:=poScreenCenter;
                              AFont:=6;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
                              Form1.Height:=Screen.Height-45;
                              Form1.Width:=Screen.Width;
-                             PageControl1.Width:=Screen.Width-1;
-                             PageControl1.Height:=Screen.Height-50;
-                             Button_create.BorderSpacing.Left:=Screen.Width-182;
-                             ButtonHelp.BorderSpacing.Left:=Screen.Width-182;
-                             ButtonTest.BorderSpacing.Left:=Screen.Width-182;
-                             Memo_create.Width:=Screen.Width-5;
-                             Form1.Constraints.MaxHeight:=Screen.Height-45;
-                             Form1.Constraints.MinHeight:=Screen.Height-45;
-                             Metka.BorderSpacing.Top:=0;
-                             Button_next1.BorderSpacing.Left:=220;
-                             Button_next2.BorderSpacing.Left:=220;
-                             Button_more.BorderSpacing.Left:=220;
-                             LabelDNS1.BorderSpacing.Top:=27;
-                             LabelDNS2.BorderSpacing.Top:=21;
-                             LabelDNS3.BorderSpacing.Top:=27;
-                             Memo_route.Width:=470;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
-                             Form1.Position:=poScreenCenter;
                              AFont:=6;
-                             Label1.BorderSpacing.Around:=0;
-                             Edit_IPS.BorderSpacing.Around:=0;
-                             Label2.BorderSpacing.Around:=0;
-                             Edit_peer.BorderSpacing.Around:=0;
-                             Label3.BorderSpacing.Around:=0;
-                             Edit_user.BorderSpacing.Around:=0;
-                             Label4.BorderSpacing.Around:=0;
-                             Edit_passwd.BorderSpacing.Around:=0;
-                             Label36.BorderSpacing.Around:=0;
-                             Edit_MaxTime.BorderSpacing.Around:=0;
-                             Label38.BorderSpacing.Around:=0;
-                             Edit_MinTime.BorderSpacing.Around:=0;
-                             Label6.BorderSpacing.Around:=0;
-                             Label8.BorderSpacing.Around:=0;
-                             Label7.BorderSpacing.Around:=0;
-                             Label11.BorderSpacing.Around:=0;
-                             Label37.BorderSpacing.Around:=0;
-                             Label39.BorderSpacing.Around:=0;
-                             Label41.BorderSpacing.Around:=0;
-                             Form1.Constraints.MaxHeight:=Screen.Height;
-                             Form1.Constraints.MinHeight:=Screen.Height;
+                             Form1.Font.Size:=AFont;
+                             ComboBoxVPN.Font.Size:=AFont;
+                             ComboBoxDistr.Font.Size:=AFont;
                          end;
    If Screen.Height>550 then   //разрешение в основном нетбуков
                         begin
-                             Form1.Position:=poScreenCenter;
                              AFont:=8;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
                              Form1.Height:=550;
                              Form1.Width:=794;
-                             Memo_create.Width:=788;
-                             Button_create.BorderSpacing.Left:=615;
-                             ButtonHelp.BorderSpacing.Left:=615;
-                             ButtonTest.BorderSpacing.Left:=615;
-                             Form1.Constraints.MaxHeight:=550;
-                             Form1.Constraints.MinHeight:=550;
-                             Form1.Constraints.MaxWidth:=794;
-                             Form1.Constraints.MinWidth:=794;
                         end;
    If Screen.Height>1000 then
                         begin
-                             Form1.Position:=poScreenCenter;
                              AFont:=10;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
                              Form1.Height:=650;
-                             Form1.Width:=884;
-                             Memo_create.Width:=880;
-                             Button_create.BorderSpacing.Left:=705;
-                             ButtonHelp.BorderSpacing.Left:=705;
-                             ButtonTest.BorderSpacing.Left:=705;
-                             Form1.Constraints.MaxHeight:=650;
-                             Form1.Constraints.MinHeight:=650;
-                             Form1.Constraints.MaxWidth:=884;
-                             Form1.Constraints.MinWidth:=884;
-                             PageControl1.Height:=640;
-                             Button_next1.BorderSpacing.Left:=350;
-                             Button_next2.BorderSpacing.Left:=350;
-                             Button_more.BorderSpacing.Left:=350;
-                             Memo_route.Width:=650;
+                             Form1.Width:=1000;
                          end;
  CheckFiles;//проверка наличия необходимых программе файлов
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
@@ -4598,7 +4514,7 @@ initialization
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
   If FallbackLang='be' then FallbackLang:='ru';
-  //FallbackLang:='en'; //просто для проверки при отладке
+  //FallbackLang:='uk'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
                                POFileName:= MyLangDir+'vpnpptp.ru.po';
