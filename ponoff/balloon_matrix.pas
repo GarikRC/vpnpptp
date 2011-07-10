@@ -97,7 +97,7 @@ begin
      FormBalloonMatrix.TimerClose.Enabled:=true;
      for i:=0 to FormBalloonMatrix.ComponentCount-2 do
      begin
-     if pos(FormBalloonMatrix.Components[i].Name,'Timer')<>0 then continue;
+     if (FormBalloonMatrix.Components[i] is TTimer) then continue;
      (FormBalloonMatrix.Components[i] as TControl).OnClick:=FormBalloonMatrix.OnClick;
      end;
 end;
@@ -132,6 +132,7 @@ begin
     if HintBalloon=nil then HintBalloon:=THintWindow.Create(nil);
     FormBalloonMatrix.Parent:=HintBalloon;
     HintBalloonQueueLength:=0;
+    sleep(300);
 end;
 
 

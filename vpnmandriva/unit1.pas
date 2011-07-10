@@ -1026,61 +1026,37 @@ else
     end;
 end;
 //масштабирование формы в зависимости от разрешения экрана
-   MyForm.Height:=600;
-   MyForm.Width:=794;
-   MyForm.Position:=poDefault;
-   MyForm.Top:=0;
-   MyForm.Left:=0;
+   MyForm.Position:=poScreenCenter;
    If Screen.Height<440 then
                             begin
-                             MyForm.Position:=poScreenCenter;
                              AFont:=6;
                              MyForm.Height:=Screen.Height-50;
                              MyForm.Width:=Screen.Width;
-                             MyForm.Constraints.MaxHeight:=Screen.Height-50;
-                             MyForm.Constraints.MinHeight:=Screen.Height-50;
-                             Button_create.BorderSpacing.Left:=Screen.Width-182;
                             end;
    If Screen.Height<=480 then
                         begin
-                             MyForm.Position:=poScreenCenter;
                              AFont:=6;
                              MyForm.Font.Size:=AFont;
                              MyForm.Height:=Screen.Height-45;
                              MyForm.Width:=Screen.Width;
-                             MyForm.Constraints.MaxHeight:=Screen.Height-45;
-                             MyForm.Constraints.MinHeight:=Screen.Height-45;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
-                             MyForm.Position:=poScreenCenter;
                              AFont:=6;
-                             MyForm.Constraints.MaxHeight:=Screen.Height;
-                             MyForm.Constraints.MinHeight:=Screen.Height;
                          end;
    If Screen.Height>550 then   //разрешение в основном нетбуков
                         begin
-                             MyForm.Position:=poScreenCenter;
                              AFont:=8;
                              MyForm.Font.Size:=AFont;
                              MyForm.Height:=550;
                              MyForm.Width:=794;
-                             MyForm.Constraints.MaxHeight:=550;
-                             MyForm.Constraints.MinHeight:=550;
-                             MyForm.Constraints.MaxWidth:=794;
-                             MyForm.Constraints.MinWidth:=794;
                         end;
    If Screen.Height>1000 then
                         begin
-                             MyForm.Position:=poScreenCenter;
                              AFont:=10;
                              MyForm.Font.Size:=AFont;
                              MyForm.Height:=650;
                              MyForm.Width:=884;
-                             MyForm.Constraints.MaxHeight:=650;
-                             MyForm.Constraints.MinHeight:=650;
-                             MyForm.Constraints.MaxWidth:=884;
-                             MyForm.Constraints.MinWidth:=884;
                          end;
 If not FileExists(UsrSBinDir+'pptp') then
                                         begin

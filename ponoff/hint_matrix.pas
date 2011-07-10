@@ -106,7 +106,7 @@ begin
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
   begin
-   if pos(FormHintMatrix.Components[i].Name,'Timer')<>0 then continue;
+   if (FormHintMatrix.Components[i] is TTimer) then continue;
    if (FormHintMatrix.Components[i] is TLabel)  then
      if (FormHintMatrix.Components[i] as TLabel).Canvas.TextWidth((FormHintMatrix.Components[i] as TLabel).Caption)+(FormHintMatrix.Components[i] as TLabel).Left>max_text_width then
        max_text_width:=(FormHintMatrix.Components[i] as TLabel).Left+(FormHintMatrix.Components[i] as TLabel).Canvas.TextWidth((FormHintMatrix.Components[i] as TLabel).Caption);
@@ -153,6 +153,7 @@ begin
     Image1.Visible:=false;
     FormHintMatrix.Color:=$0092FFF8;
     TimerClose.Interval:=1000;
+    sleep(300);
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);

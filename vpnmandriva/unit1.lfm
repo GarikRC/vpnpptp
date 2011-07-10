@@ -8,7 +8,6 @@ object MyForm: TMyForm
   VertScrollBar.Page = 540
   VertScrollBar.Visible = False
   ActiveControl = MyPanel
-  BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Настройка VPN PPTP'
   ClientHeight = 580
   ClientWidth = 816
