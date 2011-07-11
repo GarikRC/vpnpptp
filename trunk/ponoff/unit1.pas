@@ -534,7 +534,6 @@ begin
     str:=message49;
     If not FileExists(MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.before') then str:=str+MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.before, ';
     If not FileExists(MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.after') then str:=str+MyLibDir+Form1.Memo_Config.Lines[0]+'/resolv.conf.after, ';
-    If Form1.Memo_Config.Lines[24]='balloon-no' then If not FileExists(UsrBinDir+'balloon') then str:=str+UsrBinDir+'balloon, ';
     If str<>message49 then
                      begin
                           Form1.Timer1.Enabled:=False;

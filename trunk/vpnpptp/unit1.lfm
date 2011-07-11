@@ -2147,10 +2147,10 @@ object Form1: TForm1
     Height = 536
     Top = 0
     Width = 830
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 10
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -3252,7 +3252,7 @@ object Form1: TForm1
         AnchorSideBottom.Control = Label43
         Left = 153
         Height = 14
-        Top = 481
+        Top = 467
         Width = 523
         Anchors = [akLeft, akBottom]
         Caption = 'Нажмите на кнопку "Создать подключение" для сохранения сконфигурированных настроек'
@@ -3263,11 +3263,10 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Side = asrBottom
-        AnchorSideBottom.Control = TabSheet3
-        AnchorSideBottom.Side = asrBottom
+        AnchorSideBottom.Control = Label44
         Left = 127
         Height = 14
-        Top = 495
+        Top = 481
         Width = 574
         Anchors = [akLeft, akBottom]
         Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
@@ -3282,8 +3281,8 @@ object Form1: TForm1
         AnchorSideBottom.Control = TabSheet3
         AnchorSideBottom.Side = asrBottom
         Left = 5
-        Height = 28
-        Top = 481
+        Height = 42
+        Top = 467
         Width = 818
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
@@ -3502,7 +3501,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label14
         Left = 3
-        Height = 471
+        Height = 457
         Top = 5
         Width = 823
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -3511,7 +3510,7 @@ object Form1: TForm1
         BorderSpacing.Right = 2
         BorderSpacing.Bottom = 5
         Caption = 'Настройки для соединения'
-        ClientHeight = 456
+        ClientHeight = 442
         ClientWidth = 819
         TabOrder = 19
         OnMouseDown = GroupBox3MouseDown
@@ -3687,13 +3686,13 @@ object Form1: TForm1
           AnchorSideBottom.Control = GroupBox3
           AnchorSideBottom.Side = asrBottom
           Left = 0
-          Height = 194
+          Height = 180
           Top = 262
           Width = 819
           Anchors = [akTop, akLeft, akRight, akBottom]
           BorderSpacing.Top = 5
           Caption = 'Общие для всех соединений настройки'
-          ClientHeight = 179
+          ClientHeight = 165
           ClientWidth = 815
           TabOrder = 12
           OnMouseDown = GroupBox1MouseDown
@@ -3749,13 +3748,13 @@ object Form1: TForm1
             AnchorSideBottom.Control = GroupBox1
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 106
+            Height = 92
             Top = 73
             Width = 815
             Anchors = [akTop, akLeft, akRight, akBottom]
             BorderSpacing.Top = 5
             Caption = 'Взаимоисключающие для всех соединений настройки'
-            ClientHeight = 91
+            ClientHeight = 77
             ClientWidth = 811
             TabOrder = 3
             OnMouseDown = GroupBox2MouseDown
@@ -3787,6 +3786,22 @@ object Form1: TForm1
             end
           end
         end
+      end
+      object Label44: TLabel
+        AnchorSideLeft.Control = TabSheet3
+        AnchorSideLeft.Side = asrCenter
+        AnchorSideTop.Control = Label43
+        AnchorSideRight.Side = asrBottom
+        AnchorSideBottom.Control = TabSheet3
+        AnchorSideBottom.Side = asrBottom
+        Left = 405
+        Height = 14
+        Top = 495
+        Width = 19
+        Anchors = [akLeft, akBottom]
+        Caption = '      '
+        ParentBidiMode = False
+        ParentColor = False
       end
     end
     object TabSheet4: TTabSheet

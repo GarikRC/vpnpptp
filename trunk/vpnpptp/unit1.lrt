@@ -78,6 +78,7 @@ TFORM1.SUDO_CONFIGURE.CAPTION=Разрешить пользователям ко
 TFORM1.GROUPBOX2.CAPTION=Взаимоисключающие для всех соединений настройки
 TFORM1.AUTOSTART_PONOFF.CAPTION=Автозапуск интернета при старте системы (графический)
 TFORM1.AUTOSTARTPPPD.CAPTION=Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)
+TFORM1.LABEL44.CAPTION=      
 TFORM1.TABSHEET4.CAPTION=Этап 4
 TFORM1.BUTTON_EXIT.CAPTION=Выход
 TFORM1.BUTTON_NEXT1.CAPTION=Далее

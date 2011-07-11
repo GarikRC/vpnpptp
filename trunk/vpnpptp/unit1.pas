@@ -63,6 +63,7 @@ type
     Edit_mru: TEdit;
     Label13: TLabel;
     Label14: TLabel;
+    Label44: TLabel;
     Label9: TLabel;
     LabelDNS3: TLabel;
     LabelDNS4: TLabel;
@@ -3756,6 +3757,13 @@ If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then
                                begin
                                    nobuffer.Enabled:=false;
                                    nobuffer.Checked:=true;
+                               end;
+If (ComboBoxVPN.Text='VPN OpenL2TP') then
+                               begin
+                                   StartMessage:=false;
+                                   Autostartpppd.Enabled:=false;
+                                   Autostartpppd.Checked:=false;
+                                   StartMessage:=true;
                                end;
 If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1460) then
                                       begin
