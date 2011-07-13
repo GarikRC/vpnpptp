@@ -1,4 +1,4 @@
-%define rel 3
+%define rel 4
 
 Summary: Tools for setup and control VPN via PPTP/L2TP/OpenL2TP
 Name: vpnpptp-allde

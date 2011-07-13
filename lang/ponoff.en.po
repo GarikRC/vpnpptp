@@ -300,4 +300,4 @@ msgstr "Color icon"
 
 #: unit1.message69
 msgid "Че#209�но-белая иконка"
-msgstr "Black & White Icon"
+msgstr "Black and White Icon"
