@@ -301,7 +301,7 @@ resourcestring
   message0='Внимание!';
   message1='Поля "Провайдер (IP или имя)", "Имя соединения", "Пользователь", "Пароль" обязательны к заполнению.';
   message2='Не найдено офисное приложение для вывода справки, читающее формат doc. Вы можете самостоятельно прочитать справку, которая находится:';
-  message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd(xl2tpd, openl2tp) реконнекта проигнорирован.';
+  message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd/xl2tpd/openl2tp/openl2tpd реконнекта проигнорирован.';
   message4='Модуль ponoff еще не завершил свою работу. Дождитесь завершения работы модуля ponoff и повторно запустите конфигуратор vpnpptp.';
   message5='Не изменять дефолтный шлюз, запустив VPN L2TP в фоне';
   message6='Для того, чтобы разрешить пользователям конфигурировать соединение сначала установите пакет sudo.';
@@ -329,8 +329,8 @@ resourcestring
   message28='Нельзя определить IP-адрес VPN-сервера, так как строка для ввода не заполнена.';
   message29='Его установка необязательна, но она ускорит механизм программного добавления маршрута к VPN-серверу.';
   message30='Используйте опцию отключения контроля state сетевого кабеля если только по другому не работает (об этом попросит сама программа).';
-  message31='Встроенный в демон pppd(xl2tpd, openl2tp) механизм реконнекта не умеет контролировать state сетевого кабеля, поэтому он не желателен к использованию.';
-  message32='Ведите лог pppd(xl2tpd, openl2tp) для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
+  message31='Встроенный в демон pppd/xl2tpd/openl2tp/openl2tpd механизм реконнекта не умеет контролировать state сетевого кабеля,';
+  message32='Ведите лог pppd для того, чтобы выяснить ошибки настройки соединения, ошибки при соединении и т.д.';
   message33='Получение маршрутов через DHCP необходимо для одновременной работы локальной сети и интернета, но провайдер не всегда их присылает.';
   message34='Эта опция настраивает файервол лишь для интернета, но не для p2p и не для других соединений.';
   message35='Отменив получение маршрутов через DHCP, не будут одновременно работать интернет и локальная сеть, а будет работать только интернет.';
@@ -361,9 +361,9 @@ resourcestring
   message60='Автозапуск интернета при старте системы не настроен. Отсутствует ~/.config/autostart/ или используется нестандартный идентификатор пользователя.';
   message61='Автозапуск интернета при старте системы не настроен. Отсутствует файл /usr/share/applications/ponoff.desktop.';
   message62='Эта опция осуществляет автозапуск интернета при старте системы без использования ponoff.';
-  message63='Автозапуск интернета при старте системы демоном pppd(xl2tpd, openl2tp) без графики был отменен для соединения';
+  message63='Автозапуск интернета при старте системы демоном pppd/xl2tpd/openl2tp/openl2tpd без графики был отменен для соединения';
   message64='Эта опция полезна если VPN PPTP/L2TP/OpenL2TP не должно быть главным.';
-  message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd(xl2tpd, openl2tp) и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP/OpenL2TP в фоне.';
+  message65='Пока нельзя одновременно выбрать автозапуск интернета демоном pppd/xl2tpd/openl2tp/openl2tpd и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP/OpenL2TP в фоне.';
   message66='Не удалось автоматически определить ни DNS1 до поднятия VPN, ни DNS2 до поднятия VPN.';
   message67='Поле "DNS1 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
   message68='Поле "DNS2 до поднятия VPN" заполнено неверно. Правильно: xxx.xxx.xxx.xxx, где xxx - число от 0 до 255.';
@@ -408,7 +408,7 @@ resourcestring
   message107='Запустить конфигуратор VPN PPTP/L2TP/OpenL2TP можно также из Центра Управления->Сеть и Интернет->Настройка VPN-соединений->VPN PPTP/L2TP/OpenL2TP.';
   message108='Установить тестовое соединение VPN PPTP/L2TP/OpenL2TP в графике/без графики сейчас?';
   message109='Тестовый запуск';
-  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd(xl2tpd, openl2tp) в /var/log/ppp/vpnlog.';
+  message110='Лог ведется неполный или не ведется, так как Вы не выбрали опцию ведения лога pppd в /var/log/ppp/vpnlog.';
   message111='Команда запуска:';
   message112='Выбор этой опции позволяет установить соединение со случайным адресом VPN-сервера, заданного по имени, устанавливая соединение мгновенно.';
   message113='При отмене этой опции соединение не всегда сможет установиться мгновенно с еще неизвестным адресом VPN-сервера, особенно если их много.';
@@ -456,7 +456,7 @@ resourcestring
   message155='Если у Вас низкоскоростное соединение, то отключите эту опцию.';
   message156='Но ее отключение при средне- или высокоскоростном соединении замедлит интернет.';
   message157='Эта опция используется только с VPN PPTP.';
-  message158='Одновременное получение маршрутов через DHCP, автозапуск интернета при старте системы демоном pppd(xl2tpd, openl2tp) без графики';
+  message158='Одновременное получение маршрутов через DHCP, автозапуск интернета при старте системы демоном pppd/xl2tpd/openl2tp/openl2tpd без графики';
   message159='- такое сочетание в Вашем дистрибутиве может работать некорректно.';
   message160='Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!';
   message161='Будут проигнорированы недетские DNS при поднятом VPN, VPN будет поднято только на детских DNS.';
@@ -510,18 +510,19 @@ resourcestring
   message209='Программе известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9].';
   message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
   message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
-//  message212='Принудительно установлено блокирование всех всплывающих сообщений из трея, так как отсутствует';
+  message212='поэтому он не желателен к использованию.';
   message213='Не установлен пакет openl2tp.';
   message214='Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне';
   message215='Для VPN OpenL2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
-  message216='Автозапуск интернета при старте системы демоном openl2tp без графики (не рекомендуется использовать)';
-  message217='Использовать встроенный в демон openl2tp механизм реконнекта (не рекомендуется если несколько сетевых карт)';
-  message218='Рекомендуется использовать с pppd(xl2tpd, openl2tp)-реконнектом.';
+  message216='Автозапуск интернета при старте системы демоном openl2tp/openl2tpd без графики (не рекомендуется использовать)';
+  message217='Использовать встроенный в демон openl2tp/openl2tpd механизм реконнекта (не рекомендуется если несколько сетевых карт)';
+  message218='Рекомендуется использовать с pppd/xl2tpd/openl2tp/openl2tpd-реконнектом.';
   message219='Невозможно выбрать VPN OpenL2TP.';
   message220='Не найден модуль ядра';
   message221='Не найден плагин';
   message222='Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp.';
   message223='Не найден скрипт';
+  message224='<ОК> - игнорировать это предупреждение и продолжить (рекомендуется). <Отмена> - поправить.';
 
 implementation
 
@@ -966,7 +967,7 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
                                       end;
 If Unit2.Form2.CheckBoxusepeerdns.Checked then If not ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if not ((EditDNS4.Text='none') or (EditDNS4.Text='')) then
                                          begin
-                                            Form3.MyMessageBox(message0,message80+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
+                                            Form3.MyMessageBox(message0,message80+' '+message224,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
                                             if (Form3.Tag=3) or (Form3.Tag=0) then
                                                                                  begin
                                                                                       Label14.Caption:='';
@@ -3781,7 +3782,7 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
                                         Application.ProcessMessages;
                                         Form1.Repaint;
                                       end;
- If ComboBoxVPN.Text='VPN PPTP' then Reconnect_pptp.Hint:=MakeHint(message31,6);
+ If ComboBoxVPN.Text='VPN PPTP' then Reconnect_pptp.Hint:=MakeHint(message31+' '+message212,6);
  Button_more.Visible:=True;
  Button_create.Visible:=True;
  TabSheet1.TabVisible:= False;
@@ -3902,6 +3903,9 @@ Label45.Hint:=MakeHint(message143+' '+message149,5);
 Label46.Hint:=MakeHint(message143+' '+message149,5);
 Label47.Hint:=MakeHint(message143+' '+message149,5);
 Label14.Hint:=MakeHint(message143+' '+message149,5);
+Label42.Hint:=MakeHint(message143+' '+message149,5);
+Label43.Hint:=MakeHint(message143+' '+message149,5);
+Label44.Hint:=MakeHint(message143+' '+message149,5);
 Edit_IPS.Hint:=MakeHint(message1,7);
 ButtonVPN.Hint:=ButtonVPN.Caption;
 Edit_peer.Hint:=MakeHint(message1,7);
@@ -3941,7 +3945,7 @@ CheckBox_no40.Hint:=MakeHint(message90+' '+message88,6);
 CheckBox_no56.Hint:=MakeHint(message91+' '+message88,6);
 CheckBox_no128.Hint:=MakeHint(message92+' '+message88,6);
 Mii_tool_no.Hint:=MakeHint(message30,6);
-Reconnect_pptp.Hint:=MakeHint(message31+' '+message106,7);
+Reconnect_pptp.Hint:=MakeHint(message31+' '+message212+' '+message106,7);
 Pppd_log.Hint:=MakeHint(message32,5);
 dhcp_route.Hint:=MakeHint(message33+' '+message35,6);
 CheckBox_shorewall.Hint:=MakeHint(message34+' '+message36,6);
@@ -4023,7 +4027,7 @@ PageControl1.ShowTabs:=false;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
                              Form1.Height:=650;
-                             Form1.Width:=1000;
+                             Form1.Width:=1020;
                          end;
  CheckFiles;//проверка наличия необходимых программе файлов
 //проверка vpnpptp в процессах root, исключение запуска под иными пользователями
