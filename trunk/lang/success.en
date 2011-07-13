@@ -20,7 +20,7 @@ There are 2 exit of the program:
 
 The connection is set automatically during the time of dialing. If it is during this time is not established, then does a second attempt to establish a connection during the time of dial-up, etc. The program can automatically reconnect in case of accidents.
 If the connection is established, but the Internet does not work, then check the firewall settings (or disable firewall completely).
-More information and supporting documentation about the program you can found in the folder /opt/vpnpptp/wiki/
+More information and supporting documentation about the program you can found in the folder /usr/share/vpnpptp/wiki/
 
 With remarks and wishes you can contact: loginov_alex@inbox.ru
 

@@ -468,6 +468,10 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
  lns = tp.internet.beeline.ru
  pppoptfile = /etc/ppp/peers/beeline
  autodial = yes
+ tunnel rws = 8
+Также в файле '''/etc/xl2tpd/xl2tpd.conf''' часто нужно добавить:
+ tx bps = 100000000
+Опция tx bps есть лишь в последних версиях xl2tpd >= 1.2.7, ее указание часто требуется для высокоскоростных тарифов, здесь указывается сколько bit/s Ваша сетевая карта.
 Также в файле '''/etc/xl2tpd/xl2tpd.conf''' можно добавить:
  ppp debug = yes
 для вывода отладочной информации в лог /var/log/ppp/vpnlog.

@@ -1962,6 +1962,8 @@ If ComboBoxVPN.Text='VPN L2TP' then
                                      Shell('printf "'+'pppoptfile = '+EtcPppPeersDir+Edit_peer.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                      If Autostartpppd.Checked then Shell('printf "'+'autodial = yes'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                      If Pppd_log.Checked then Shell('printf "'+'ppp debug = yes'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
+                                     Shell('printf "'+'tunnel rws = 8'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
+                                     Shell('printf "'+'tx bps = 100000000'+'\n" >> '+MyLibDir+Edit_peer.Text+'/xl2tpd.conf.lac');
                                   end;
 foundlac:=false;
 If FileExists(MyLibDir+'profiles') then

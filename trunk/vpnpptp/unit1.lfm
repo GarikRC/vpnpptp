@@ -2143,13 +2143,14 @@ object Form1: TForm1
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Button_exit
-    Left = 0
-    Height = 536
-    Top = 0
-    Width = 830
+    Left = 1
+    Height = 534
+    Top = 1
+    Width = 828
     ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 10
+    BorderSpacing.Around = 1
     TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -2157,8 +2158,8 @@ object Form1: TForm1
       AnchorSideBottom.Control = PageControl1
       AnchorSideBottom.Side = asrBottom
       Caption = 'Этап 1'
-      ClientHeight = 509
-      ClientWidth = 828
+      ClientHeight = 507
+      ClientWidth = 826
       OnMouseDown = TabSheet1MouseDown
       TabVisible = False
       object Label_IPS: TLabel
@@ -2464,7 +2465,7 @@ object Form1: TForm1
         Left = 159
         Height = 21
         Top = 35
-        Width = 304
+        Width = 302
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 100
@@ -2481,7 +2482,7 @@ object Form1: TForm1
         Left = 159
         Height = 21
         Top = 86
-        Width = 304
+        Width = 302
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 15
@@ -2497,7 +2498,7 @@ object Form1: TForm1
         Left = 159
         Height = 21
         Top = 137
-        Width = 304
+        Width = 302
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 100
@@ -2512,7 +2513,7 @@ object Form1: TForm1
         Left = 159
         Height = 21
         Top = 188
-        Width = 304
+        Width = 302
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         EchoMode = emPassword
@@ -2529,7 +2530,7 @@ object Form1: TForm1
         Left = 159
         Height = 21
         Top = 239
-        Width = 304
+        Width = 302
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 10
@@ -2547,7 +2548,7 @@ object Form1: TForm1
         Left = 159
         Height = 21
         Top = 290
-        Width = 304
+        Width = 302
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Around = 8
         MaxLength = 10
@@ -2562,7 +2563,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label_IPS
         AnchorSideBottom.Side = asrCenter
-        Left = 471
+        Left = 469
         Height = 20
         Top = 35
         Width = 352
@@ -2580,7 +2581,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label_pswd
         AnchorSideBottom.Side = asrCenter
-        Left = 471
+        Left = 469
         Height = 20
         Top = 188
         Width = 352
@@ -2598,7 +2599,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label_peer
         AnchorSideBottom.Side = asrCenter
-        Left = 471
+        Left = 469
         Height = 20
         Top = 86
         Width = 352
@@ -2616,7 +2617,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Edit_user
         AnchorSideBottom.Side = asrCenter
-        Left = 471
+        Left = 469
         Height = 20
         Top = 137
         Width = 352
@@ -2641,7 +2642,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Edit_MaxTime
         AnchorSideBottom.Side = asrCenter
-        Left = 472
+        Left = 470
         Height = 20
         Top = 239
         Width = 351
@@ -2660,7 +2661,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label40
         AnchorSideBottom.Side = asrCenter
-        Left = 471
+        Left = 469
         Height = 20
         Top = 290
         Width = 352
@@ -2673,8 +2674,8 @@ object Form1: TForm1
     end
     object TabSheet2: TTabSheet
       Caption = 'Этап 2'
-      ClientHeight = 509
-      ClientWidth = 828
+      ClientHeight = 507
+      ClientWidth = 826
       OnMouseDown = TabSheet1MouseDown
       object Label_gate: TLabel
         AnchorSideLeft.Control = Edit_gate
@@ -2692,35 +2693,41 @@ object Form1: TForm1
         OnMouseDown = TabSheet1MouseDown
       end
       object Label_route: TLabel
+        AnchorSideLeft.Control = TabSheet2
         AnchorSideTop.Control = Label_mru
         AnchorSideTop.Side = asrBottom
-        Left = 7
+        Left = 5
         Height = 14
         Top = 238
         Width = 349
+        BorderSpacing.Left = 5
         BorderSpacing.Top = 10
         Caption = 'Дополнительные маршруты (необязательно, но желательно):'
         ParentColor = False
         OnMouseDown = TabSheet1MouseDown
       end
       object Label5: TLabel
+        AnchorSideLeft.Control = TabSheet2
         AnchorSideTop.Control = Label10
         AnchorSideTop.Side = asrBottom
-        Left = 7
+        Left = 5
         Height = 14
         Top = 266
         Width = 379
+        BorderSpacing.Left = 5
         Caption = '/sbin/route add -net [ip] netmask [маска] gw [шлюз] dev [устройство]'
         ParentColor = False
         OnMouseDown = TabSheet1MouseDown
       end
       object Label10: TLabel
+        AnchorSideLeft.Control = TabSheet2
         AnchorSideTop.Control = Label_route
         AnchorSideTop.Side = asrBottom
-        Left = 7
+        Left = 5
         Height = 14
         Top = 252
         Width = 384
+        BorderSpacing.Left = 5
         Caption = '/sbin/route add -host [ip] netmask [маска] gw [шлюз] dev [устройство]'
         ParentColor = False
         OnMouseDown = TabSheet1MouseDown
@@ -2733,7 +2740,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrCenter
-        Left = 597
+        Left = 595
         Height = 14
         Top = 166
         Width = 74
@@ -2763,7 +2770,7 @@ object Form1: TForm1
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrCenter
-        Left = 600
+        Left = 598
         Height = 78
         Top = 180
         Width = 223
@@ -2782,7 +2789,7 @@ object Form1: TForm1
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrCenter
-        Left = 600
+        Left = 598
         Height = 94
         Top = 258
         Width = 223
@@ -2802,8 +2809,8 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrBottom
-        Left = 600
-        Height = 136
+        Left = 598
+        Height = 134
         Top = 352
         Width = 223
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -2891,7 +2898,7 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_eth
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = CheckBox_rchap
-        Left = 600
+        Left = 598
         Height = 14
         Top = 13
         Width = 97
@@ -2905,7 +2912,7 @@ object Form1: TForm1
         AnchorSideLeft.Control = CheckBox_rmschapv2
         AnchorSideTop.Control = CheckBox_rmschapv2
         AnchorSideTop.Side = asrBottom
-        Left = 597
+        Left = 595
         Height = 14
         Top = 100
         Width = 114
@@ -2937,7 +2944,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 10
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 10
@@ -2953,7 +2960,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 41
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 100
@@ -2966,7 +2973,7 @@ object Form1: TForm1
         AnchorSideRight.Control = CheckBox_rmschap
         AnchorSideBottom.Control = CheckBox_rmschap
         AnchorSideBottom.Side = asrCenter
-        Left = 597
+        Left = 595
         Height = 21
         Top = 27
         Width = 88
@@ -2981,7 +2988,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = CheckBox_desktop
         AnchorSideBottom.Side = asrCenter
-        Left = 690
+        Left = 688
         Height = 21
         Top = 27
         Width = 82
@@ -2996,7 +3003,7 @@ object Form1: TForm1
         AnchorSideRight.Control = CheckBox_rpap
         AnchorSideBottom.Control = CheckBox_desktop
         AnchorSideBottom.Side = asrCenter
-        Left = 597
+        Left = 595
         Height = 21
         Top = 48
         Width = 104
@@ -3010,7 +3017,7 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_required
         AnchorSideBottom.Side = asrBottom
-        Left = 666
+        Left = 664
         Height = 21
         Top = 114
         Width = 70
@@ -3022,7 +3029,7 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_required
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
-        Left = 597
+        Left = 595
         Height = 21
         Top = 135
         Width = 51
@@ -3034,7 +3041,7 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_no40
         AnchorSideBottom.Side = asrBottom
-        Left = 648
+        Left = 646
         Height = 21
         Top = 135
         Width = 50
@@ -3047,11 +3054,12 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Label9
         AnchorSideBottom.Control = CheckBox_desktop
-        Left = 0
-        Height = 208
+        Left = 5
+        Height = 206
         Top = 280
-        Width = 595
+        Width = 588
         Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Left = 5
         BorderSpacing.Right = 5
         Lines.Strings = (
           ''
@@ -3063,11 +3071,12 @@ object Form1: TForm1
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = TabSheet2
         AnchorSideBottom.Side = asrBottom
-        Left = 0
+        Left = 5
         Height = 21
-        Top = 488
+        Top = 486
         Width = 210
         Anchors = [akLeft, akBottom]
+        BorderSpacing.Left = 5
         Caption = 'Создать ярлык на рабочем столе'
         Checked = True
         OnMouseDown = TabSheet1MouseDown
@@ -3084,7 +3093,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 68
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         Enabled = False
@@ -3101,7 +3110,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 99
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         Enabled = False
@@ -3118,7 +3127,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 180
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 10
@@ -3131,7 +3140,7 @@ object Form1: TForm1
         AnchorSideTop.Side = asrBottom
         AnchorSideRight.Control = Memo_route
         AnchorSideRight.Side = asrBottom
-        Left = 401
+        Left = 399
         Height = 21
         Top = 243
         Width = 194
@@ -3151,7 +3160,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 126
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 100
@@ -3167,7 +3176,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 153
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 100
@@ -3178,7 +3187,7 @@ object Form1: TForm1
         AnchorSideTop.Control = Label13
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
-        Left = 597
+        Left = 595
         Height = 21
         Top = 114
         Width = 69
@@ -3190,7 +3199,7 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_no56
         AnchorSideBottom.Side = asrBottom
-        Left = 698
+        Left = 696
         Height = 21
         Top = 135
         Width = 57
@@ -3203,7 +3212,7 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_rmschap
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
-        Left = 706
+        Left = 704
         Height = 21
         Top = 48
         Width = 82
@@ -3216,7 +3225,7 @@ object Form1: TForm1
         AnchorSideLeft.Control = CheckBox_rmschap
         AnchorSideTop.Control = CheckBox_rmschap
         AnchorSideTop.Side = asrBottom
-        Left = 597
+        Left = 595
         Height = 21
         Top = 69
         Width = 120
@@ -3233,7 +3242,7 @@ object Form1: TForm1
         Left = 382
         Height = 21
         Top = 211
-        Width = 213
+        Width = 211
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Top = 10
         MaxLength = 10
@@ -3242,17 +3251,17 @@ object Form1: TForm1
     end
     object TabSheet3: TTabSheet
       Caption = 'Этап 3'
-      ClientHeight = 509
-      ClientWidth = 828
+      ClientHeight = 507
+      ClientWidth = 826
       OnMouseDown = TabSheet1MouseDown
       object Label42: TLabel
         AnchorSideLeft.Control = TabSheet3
         AnchorSideLeft.Side = asrCenter
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = Label43
-        Left = 153
+        Left = 152
         Height = 14
-        Top = 467
+        Top = 460
         Width = 523
         Anchors = [akLeft, akBottom]
         Caption = 'Нажмите на кнопку "Создать подключение" для сохранения сконфигурированных настроек'
@@ -3264,9 +3273,9 @@ object Form1: TForm1
         AnchorSideTop.Side = asrCenter
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label44
-        Left = 127
+        Left = 126
         Height = 14
-        Top = 481
+        Top = 474
         Width = 574
         Anchors = [akLeft, akBottom]
         Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
@@ -3281,9 +3290,9 @@ object Form1: TForm1
         AnchorSideBottom.Control = TabSheet3
         AnchorSideBottom.Side = asrBottom
         Left = 5
-        Height = 42
-        Top = 467
-        Width = 818
+        Height = 47
+        Top = 460
+        Width = 816
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Right = 5
@@ -3501,17 +3510,17 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Label14
         Left = 3
-        Height = 457
+        Height = 450
         Top = 5
-        Width = 823
+        Width = 820
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 3
         BorderSpacing.Top = 5
-        BorderSpacing.Right = 2
+        BorderSpacing.Right = 3
         BorderSpacing.Bottom = 5
         Caption = 'Настройки для соединения'
-        ClientHeight = 442
-        ClientWidth = 819
+        ClientHeight = 435
+        ClientWidth = 816
         TabOrder = 19
         OnMouseDown = GroupBox3MouseDown
         object Mii_tool_no: TCheckBox
@@ -3686,14 +3695,14 @@ object Form1: TForm1
           AnchorSideBottom.Control = GroupBox3
           AnchorSideBottom.Side = asrBottom
           Left = 0
-          Height = 180
+          Height = 173
           Top = 262
-          Width = 819
+          Width = 816
           Anchors = [akTop, akLeft, akRight, akBottom]
           BorderSpacing.Top = 5
           Caption = 'Общие для всех соединений настройки'
-          ClientHeight = 165
-          ClientWidth = 815
+          ClientHeight = 158
+          ClientWidth = 812
           TabOrder = 12
           OnMouseDown = GroupBox1MouseDown
           object CheckBox_shorewall: TCheckBox
@@ -3748,14 +3757,14 @@ object Form1: TForm1
             AnchorSideBottom.Control = GroupBox1
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 92
+            Height = 85
             Top = 73
-            Width = 815
+            Width = 812
             Anchors = [akTop, akLeft, akRight, akBottom]
             BorderSpacing.Top = 5
             Caption = 'Взаимоисключающие для всех соединений настройки'
-            ClientHeight = 77
-            ClientWidth = 811
+            ClientHeight = 70
+            ClientWidth = 808
             TabOrder = 3
             OnMouseDown = GroupBox2MouseDown
             object Autostart_ponoff: TCheckBox
@@ -3794,11 +3803,12 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = TabSheet3
         AnchorSideBottom.Side = asrBottom
-        Left = 405
+        Left = 404
         Height = 14
-        Top = 495
+        Top = 488
         Width = 19
         Anchors = [akLeft, akBottom]
+        BorderSpacing.Bottom = 5
         Caption = '      '
         ParentBidiMode = False
         ParentColor = False
@@ -3806,8 +3816,8 @@ object Form1: TForm1
     end
     object TabSheet4: TTabSheet
       Caption = 'Этап 4'
-      ClientHeight = 509
-      ClientWidth = 828
+      ClientHeight = 507
+      ClientWidth = 826
       object Memo_create: TMemo
         AnchorSideLeft.Control = TabSheet4
         AnchorSideTop.Control = TabSheet4
@@ -3816,9 +3826,9 @@ object Form1: TForm1
         AnchorSideBottom.Control = TabSheet4
         AnchorSideBottom.Side = asrBottom
         Left = 3
-        Height = 503
+        Height = 501
         Top = 3
-        Width = 822
+        Width = 820
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 3
         BorderStyle = bsNone
