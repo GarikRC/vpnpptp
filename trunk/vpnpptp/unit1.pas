@@ -965,7 +965,7 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
                                         Application.ProcessMessages;
                                         Form1.Repaint;
                                       end;
-If Unit2.Form2.CheckBoxusepeerdns.Checked then If not ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if not ((EditDNS4.Text='none') or (EditDNS4.Text='')) then
+If Unit2.Form2.CheckBoxusepeerdns.Checked then
                                          begin
                                             Form3.MyMessageBox(message0,message80+' '+message224,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
                                             if (Form3.Tag=3) or (Form3.Tag=0) then
@@ -4026,7 +4026,7 @@ PageControl1.ShowTabs:=false;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
-                             Form1.Height:=650;
+                             Form1.Height:=700;
                              Form1.Width:=1020;
                          end;
  CheckFiles;//проверка наличия необходимых программе файлов
@@ -4528,7 +4528,7 @@ initialization
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
   If FallbackLang='be' then FallbackLang:='ru';
-  //FallbackLang:='uk'; //просто для проверки при отладке
+//  FallbackLang:='en'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
                                POFileName:= MyLangDir+'vpnpptp.ru.po';
