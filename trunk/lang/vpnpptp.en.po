@@ -263,8 +263,8 @@ msgid "Д#209�угая такая же п#209�ог#209�амма уже п�
 msgstr "Another copy of program try to configure VPN PPTP/L2TP/OpenL2TP. Press <OK> for cancel double run."
 
 #: unit1.message3
-msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd(xl2tpd, openl2tp) #209�еконнекта п#209�оигно#209�и#209�ован."
-msgstr "Select internal pppd(xl2tpd, openl2tp) daemon reconnect is ignore since you have not selected reconnect option."
+msgid "Так как Вы не выб#209�али #209�еконнект, то выбо#209� вст#209�оенного в демон pppd/xl2tpd/openl2tp/openl2tpd #209�еконнекта п#209�оигно#209�и#209�ован."
+msgstr "Select internal pppd/xl2tpd/openl2tp/openl2tpd daemon reconnect is ignore since you have not selected reconnect option."
 
 #: unit1.message7
 msgid "Рабочий стол"
@@ -320,12 +320,16 @@ msgid "Используйте опцию отключения конт#209�о�
 msgstr "Use the disable control state network cable if other way not works (program will say you if needed)."
 
 #: unit1.message31
-msgid "Вст#209�оенный в демон pppd(xl2tpd, openl2tp) механизм #209�еконнекта не умеет конт#209�оли#209�овать state сетевого кабеля, поэтому он не желателен к использованию."
-msgstr "Built-in pppd(xl2tpd, openl2tp) daemon's reconnect mechanism can not control the state network cable, so it is not desirable to use."
+msgid "Вст#209�оенный в демон pppd/xl2tpd/openl2tp/openl2tpd механизм #209�еконнекта не умеет конт#209�оли#209�овать state сетевого кабеля,"
+msgstr "Built-in pppd/xl2tpd/openl2tp/openl2tpd daemon's reconnect mechanism can not control the state network cable,"
+
+#: unit1.message212
+msgid "поэтому он не желателен к использованию."
+msgstr "so it is not desirable to use."
 
 #: unit1.message32
-msgid "Ведите лог pppd(xl2tpd, openl2tp) для того, чтобы выяснить ошибки наст#209�ойки соединения, ошибки п#209�и соединении и т.д."
-msgstr "Use a log of pppd(xl2tpd, openl2tp) in order to identify the connection setup errors, errors when connecting, etc."
+msgid "Ведите лог pppd для того, чтобы выяснить ошибки наст#209�ойки соединения, ошибки п#209�и соединении и т.д."
+msgstr "Use a log of pppd in order to identify the connection setup errors, errors when connecting, etc."
 
 #: unit1.message33
 msgid "Получение ма#209�ш#209�утов че#209�ез DHCP необходимо для однов#209�еменной #209�аботы локальной сети и инте#209�нета, но п#209�овайде#209� не всегда их п#209�исылает."
@@ -475,8 +479,8 @@ msgid "Эта опция осуществляет автозапуск инте�
 msgstr "This option configures Autostart the Internet at system startup without using ponoff."
 
 #: unit1.message218
-msgid "Рекомендуется использовать с pppd(xl2tpd, openl2tp)-реконнектом."
-msgstr "It is recommended to use with pppd(xl2tpd, openl2tp)-reconnect."
+msgid "Рекомендуется использовать с pppd/xl2tpd/openl2tp/openl2tpd-#209�еконнектом."
+msgstr "It is recommended to use with pppd/xl2tpd/openl2tp/openl2tpd-reconnect."
 
 #: unit1.message64
 msgid "Эта опция полезна если VPN PPTP/L2TP/OpenL2TP не должно быть главным."
@@ -487,8 +491,8 @@ msgid "Не изменять дефолтный шлюз, запустив VPN P
 msgstr "Do not change default gateway, VPN PPTP running in the background"
 
 #: unit1.message65
-msgid "Пока нельзя однов#209�еменно выб#209�ать автозапуск инте#209�нета демоном pppd(xl2tpd, openl2tp) и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP/OpenL2TP в фоне."
-msgstr "Not yet simultaneously select autostart Internet daemon pppd(xl2tpd, openl2tp) and no change the default gateway, VPN PPTP/L2TP/OpenL2TP running in the background."
+msgid "Пока нельзя однов#209�еменно выб#209�ать автозапуск инте#209�нета демоном pppd/xl2tpd/openl2tp/openl2tpd и не изменять дефолтный шлюз, запустив VPN PPTP/L2TP/OpenL2TP в фоне."
+msgstr "Not yet simultaneously select autostart Internet daemon pppd/xl2tpd/openl2tp/openl2tpd and no change the default gateway, VPN PPTP/L2TP/OpenL2TP running in the background."
 
 #: TFORM1.BUTTON_MORE.CAPTION
 msgid "Дополнительно"
@@ -843,12 +847,12 @@ msgid "П#209�и низких #209�аз#209�ешениях эк#209�ан
 msgstr "At low screen resolutions simultaneously pressing the Alt key and left mouse button will move the window."
 
 #: unit1.message110
-msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd(xl2tpd, openl2tp) в /var/log/ppp/vpnlog."
-msgstr "The log is incomplete or is not being, because you have not chosen the option logging pppd(xl2tpd, openl2tp) on /var/log/ppp/vpnlog."
+msgid "Лог ведется неполный или не ведется, так как Вы не выб#209�али опцию ведения лога pppd в /var/log/ppp/vpnlog."
+msgstr "The log is incomplete or is not being, because you have not chosen the option logging pppd on /var/log/ppp/vpnlog."
 
 #: TFORM1.PPPD_LOG.CAPTION
-msgid "Вести подробный лог pppd(xl2tpd, openl2tp) в /var/log/ppp/vpnlog"
-msgstr "pppd(xl2tpd, openl2tp) detailed log on /var/log/ppp/vpnlog"
+msgid "Вести подробный лог pppd в /var/log/ppp/vpnlog"
+msgstr "pppd detailed log on /var/log/ppp/vpnlog"
 
 #: unit1.message20
 msgid "Невозможно наст#209�оить VPN PPTP/L2TP/OpenL2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
@@ -919,8 +923,8 @@ msgid "Средне- или высокоскоростная линия (nobuffe
 msgstr "Medium-or high-speed line (nobuffer)"
 
 #: unit1.message158
-msgid "Однов#209�еменное получение ма#209�ш#209�утов че#209�ез DHCP, автозапуск инте#209�нета п#209�и ста#209�те системы демоном pppd(xl2tpd, openl2tp) без г#209�афики"
-msgstr "Simultaneous receipt of routing via DHCP, Internet autorun at system startup daemon pppd (xl2tpd, openl2tp) without graphics"
+msgid "Однов#209�еменное получение ма#209�ш#209�утов че#209�ез DHCP, автозапуск инте#209�нета п#209�и ста#209�те системы демоном pppd/xl2tpd/openl2tp/openl2tpd без г#209�афики"
+msgstr "Simultaneous receipt of routing via DHCP, Internet autorun at system startup daemon pppd/xl2tpd/openl2tp/openl2tpd without graphics"
 
 #: unit1.message159
 msgid "- такое сочетание в Вашем дист#209�ибутиве может #209�аботать неко#209�#209�ектно."
@@ -1084,8 +1088,8 @@ msgstr "Options in this section are set only for the current connection"
 
 #: unit1.message63
 msgctxt "unit1.message63"
-msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном pppd(xl2tpd, openl2tp) без г#209�афики был отменен для соединения"
-msgstr "Autostart the Internet at startup daemon pppd (xl2tpd, openl2tp) without graphics was canceled for connecting"
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном pppd/xl2tpd/openl2tp/openl2tpd без г#209�афики был отменен для соединения"
+msgstr "Autostart the Internet at startup daemon pppd/xl2tpd/openl2tp/openl2tpd without graphics was canceled for connecting"
 
 #: unit1.message188
 msgid "Опции в этой секции устанавливаются для текущего соединения, но отменяются у д#209�угих соединений"
@@ -1212,10 +1216,6 @@ msgstr "Simultaneous work of Internet and local network is not configured or doe
 msgid "Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220."
 msgstr "Google Public DNS: 8.8.8.8 and 8.8.4.4. OpenDNS: 208.67.222.222 and 208.67.220.220."
 
-#: unit1.message212
-msgid "П#209�инудительно установлено блоки#209�ование всех всплывающих сообщений из т#209�ея, так как отсутствует"
-msgstr "Forcibly set to block all pop-ups from the tray, because there is no"
-
 #: unit1.message214
 msgid "Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне"
 msgstr "Do not change default gateway, VPN OpenL2TP running in the background"
@@ -1225,12 +1225,12 @@ msgid "Для VPN OpenL2TP шифрование mppe не используетс
 msgstr "For VPN OpenL2TP encryption mppe is not used, it is used only for VPN PPTP."
 
 #: unit1.message216
-msgid "Автозапуск интернета при старте системы демоном openl2tp без графики (не рекомендуется использовать)"
-msgstr "Autostart the Internet at startup with help openl2tp-daemon whithout graphics (do not use)"
+msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном openl2tp/openl2tpd без г#209�афики (не #209�екомендуется использовать)"
+msgstr "Autostart the Internet at startup with help openl2tp/openl2tpd-daemon whithout graphics (do not use)"
 
 #: unit1.message217
-msgid "Использовать встроенный в демон openl2tp механизм реконнекта (не рекомендуется если несколько сетевых карт)"
-msgstr "Use internak mechanism of openl2tp daemon for reconnect (not useful if more than one NIC's)"
+msgid "Использовать вст#209�оенный в демон openl2tp/openl2tpd механизм #209�еконнекта (не #209�екомендуется если несколько сетевых ка#209�т)"
+msgstr "Use internak mechanism of openl2tp/openl2tpd daemon for reconnect (not useful if more than one NIC's)"
 
 #: unit1.message213
 msgid "Не установлен пакет openl2tp."
@@ -1255,3 +1255,7 @@ msgstr "Ppp package version 2.4.5 and higher can contain plugins pppol2tp.so, op
 #: unit1.message223
 msgid "Не найден ск#209�ипт"
 msgstr "Script not found"
+
+#: unit1.message224
+msgid "<ОК> - игно#209�и#209�овать это п#209�едуп#209�еждение и п#209�одолжить (#209�екомендуется). <Отмена> - поп#209�авить."
+msgstr "<OK> - ignore this warning and continue (recommended). <Cancel> - Correct."
