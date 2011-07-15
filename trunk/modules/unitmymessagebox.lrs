@@ -5533,5 +5533,8 @@ LazarusResources.Add('TForm3','FORMDATA',[
   +'abOrder'#2#3#0#0#6'TImage'#6'Image1'#22'AnchorSideLeft.Control'#7#5'Owner'
   +#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBo'
   +'ttom'#4'Left'#2#0#6'Height'#3#138#0#3'Top'#2#15#5'Width'#2#127#7'Anchors'#11
-  +#6'akLeft'#8'akBottom'#0#19'BorderSpacing.Right'#2#10#0#0#0#0
+  +#6'akLeft'#8'akBottom'#0#19'BorderSpacing.Right'#2#10#0#0#0#7'TButton'#7'But'
+  +'ton4'#4'Left'#2#24#6'Height'#2#25#3'Top'#2'x'#5'Width'#2'K'#6'Cancel'#9#7'C'
+  +'aption'#6#5'Close'#7'OnClick'#7#12'Button4Click'#8'TabOrder'#2#1#7'Visible'
+  +#8#0#0#0
 ]);

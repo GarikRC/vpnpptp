@@ -4279,4 +4279,15 @@ object Form3: TForm3
       BorderSpacing.Right = 10
     end
   end
+  object Button4: TButton
+    Left = 24
+    Height = 25
+    Top = 120
+    Width = 75
+    Cancel = True
+    Caption = 'Close'
+    OnClick = Button4Click
+    TabOrder = 1
+    Visible = False
+  end
 end

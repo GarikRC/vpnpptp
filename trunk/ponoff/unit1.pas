@@ -541,7 +541,7 @@ begin
                           Form1.Hide;
                           Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
-                          Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                          Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                           Shell('rm -f '+VarRunVpnpptp+ProfileName);
                           halt;
                      end;
@@ -938,7 +938,7 @@ If not Code_up_ppp then If link=3 then
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
                                                                 Shell ('killall balloon');
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
                                                                 Shell('rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
@@ -954,7 +954,7 @@ If not Code_up_ppp then If link=2 then
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
                                                                 Shell ('killall balloon');
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
                                                                 Shell('rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
@@ -1148,7 +1148,7 @@ If str='DEFAULT' then
                               Timer2.Enabled:=False;
                               Form1.Hide;
                               TrayIcon1.Hide;
-                              Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                              Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                               Shell('rm -f '+VarRunVpnpptp+ProfileName);
                               halt;
                            end;
@@ -1158,7 +1158,7 @@ If str='DEFAULT' then
                                                      Timer2.Enabled:=False;
                                                      Form1.Hide;
                                                      TrayIcon1.Hide;
-                                                     Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                     Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                      Shell('rm -f '+VarRunVpnpptp+ProfileName);
                                                      halt;
                                                    end;
@@ -1168,7 +1168,7 @@ If str='DEFAULT' then
                                                                 Timer2.Enabled:=False;
                                                                 Form1.Hide;
                                                                 TrayIcon1.Hide;
-                                                                Form3.MyMessageBox(message0,message53+' '+message54+' '+message55,'',message33,message36,MyPixmapsDir+'ponoff.png',false,true,true,AFont,Form1.Icon,true,MyLibDir);
+                                                                Form3.MyMessageBox(message0,message53+' '+message54+' '+message55,'',message33,message36,MyPixmapsDir+'ponoff.png',false,true,true,AFont,Form1.Icon,true,MyLibDir,2);
                                                                 If Form3.Tag=2 then If Form3.ComboBoxProfile.Text<>'' then
                                                                                                   begin
                                                                                                         ProfileName:=Form3.ComboBoxProfile.Text;
@@ -1194,7 +1194,7 @@ If str='DEFAULT' then
                       Timer2.Enabled:=False;
                       Form1.Hide;
                       TrayIcon1.Hide;
-                      Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                      Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                       PClose(f);
                       Shell('rm -f '+VarRunVpnpptp+ProfileName);
                       halt;
@@ -1228,7 +1228,7 @@ If str='DEFAULT' then
             Timer2.Enabled:=False;
             Form1.Hide;
             TrayIcon1.Hide;
-            Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+            Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
             Shell('rm -f '+VarRunVpnpptp+ProfileName);
             halt;
            end;
@@ -1239,7 +1239,7 @@ If str='DEFAULT' then
     Timer2.Enabled:=False;
     Form1.Hide;
     TrayIcon1.Hide;
-    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
     Shell('rm -f '+VarRunVpnpptp+ProfileName);
     halt;
    end;
@@ -1278,7 +1278,7 @@ If str='DEFAULT' then
                                Form1.Timer2.Enabled:=False;
                                Form1.Hide;
                                Form1.TrayIcon1.Hide;
-                               Form3.MyMessageBox(message0,message2,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                               Form3.MyMessageBox(message0,message2,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                Form1.Timer1.Enabled:=true;
                                Form1.Timer2.Enabled:=true;
                                Form1.TrayIcon1.Show;
@@ -1320,7 +1320,7 @@ If i>1 then
                                 Timer2.Enabled:=False;
                                 Form1.Hide;
                                 TrayIcon1.Hide;
-                                Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                 Shell('rm -f '+VarRunVpnpptp+ProfileName);
                                 halt;
                              end;
@@ -1363,7 +1363,7 @@ If suse then
                                            Timer2.Enabled:=False;
                                            Form1.Hide;
                                            TrayIcon1.Hide;
-                                           Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                           Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                            PClose(f);
                                            Shell('rm -f '+VarRunVpnpptp+ProfileName);
                                            halt;
@@ -1429,13 +1429,13 @@ If suse then
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
-                 Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                 Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                  Shell('rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
    if link=2 then
                 begin
-                 Form3.MyMessageBox(message0,message5,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                 Form3.MyMessageBox(message0,message5,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
@@ -1617,7 +1617,7 @@ end;
 procedure TForm1.MenuItem6Click(Sender: TObject);
 begin
   If Form3.Visible then exit;
-  Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+  Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
 end;
 
 procedure TForm1.MinusClick(Sender: TObject);

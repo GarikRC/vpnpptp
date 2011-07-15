@@ -475,6 +475,10 @@ msgstr ""
 msgid "www.opennet.ru/man.shtml?topic=pppd&&category=8"
 msgstr ""
 
+#: TFORM3.BUTTON4.CAPTION
+msgid "Close"
+msgstr ""
+
 #: TFORM3.FORM3.CAPTION
 msgctxt "TFORM3.FORM3.CAPTION"
 msgid "Form3"

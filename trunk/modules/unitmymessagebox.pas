@@ -16,6 +16,7 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
     ComboBoxProfile: TComboBox;
                 //возвращает 1 - нажата 1-ая кнопка, возвращает 2 - нажата 2-ая кнопка,
                 //возвращает 3 - нажата 3-ая кнопка,
@@ -26,10 +27,11 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
     procedure ComboBoxProfileKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
-    procedure MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string);
+    procedure MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string;NumberDefault:byte);
   private
     { private declarations }
   public
@@ -44,10 +46,10 @@ implementation
 
 { TForm3 }
 
-Procedure TForm3.MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string);
+Procedure TForm3.MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string;NumberDefault:byte);
 //заголовок, текст сообщения, текст 1-ой кнопки, текст 2-ой кнопки, текст 3-ей кнопки,
 //файл изображения, видимость 1-ой кнопки, видимость 2-ой кнопки, видимость 3-ей кнопки, шрифт, иконка в заголовке
-//видимость ComboBoxProfile, директория библиотек
+//видимость ComboBoxProfile, директория библиотек, номер кнопки дефолтной (1,2,3)
 var
    FileProfiles:textfile;
    str0:string;
@@ -112,6 +114,26 @@ begin
    Form3.Width:=670;
    Form3.Font.Size:=FontSize;
    Application.ProcessMessages;
+   Form3.Show;
+   If Form3.Visible then
+                begin
+                     If NumberDefault=1 then if Form3.Button1.Visible then
+                                                                      begin
+                                                                           Form3.Button1.Default:=true;
+                                                                           Form3.Button1.SetFocus;
+                                                                      end;
+                     If NumberDefault=2 then if Form3.Button2.Visible then
+                                                                      begin
+                                                                           Form3.Button2.Default:=true;
+                                                                           Form3.Button2.SetFocus;
+                                                                      end;
+                     If NumberDefault=3 then if Form3.Button3.Visible then
+                                                                      begin
+                                                                           Form3.Button3.Default:=true;
+                                                                           Form3.Button3.SetFocus;
+                                                                      end;
+                end;
+   Form3.Hide;
    Form3.ShowModal;
    ComboBoxProfile.Visible:=false;
    ComboBoxProfile.Items.Clear;
@@ -151,6 +173,11 @@ begin
    Form3.Close;
 end;
 
+procedure TForm3.Button4Click(Sender: TObject);
+begin
+   Form3.Close;
+end;
+
 procedure TForm3.ComboBoxProfileKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -160,7 +187,6 @@ begin
    if Key=9 then If not Button2.Visible then If Button3.Visible then Button3.SetFocus;
    Key:=0;
 end;
-
 
 initialization
   {$I unitmymessagebox.lrs}
