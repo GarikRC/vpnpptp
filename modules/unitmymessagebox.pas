@@ -114,7 +114,7 @@ begin
    Form3.Width:=670;
    Form3.Font.Size:=FontSize;
    Application.ProcessMessages;
-   Form3.Show;
+{   Form3.Show;
    If Form3.Visible then
                 begin
                      If NumberDefault=1 then if Form3.Button1.Visible then
@@ -133,7 +133,7 @@ begin
                                                                            Form3.Button3.SetFocus;
                                                                       end;
                 end;
-   Form3.Hide;
+   Form3.Hide;}
    Form3.ShowModal;
    ComboBoxProfile.Visible:=false;
    ComboBoxProfile.Items.Clear;

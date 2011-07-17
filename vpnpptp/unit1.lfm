@@ -2147,11 +2147,11 @@ object Form1: TForm1
     Height = 534
     Top = 1
     Width = 828
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 10
     BorderSpacing.Around = 1
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -3286,6 +3286,7 @@ object Form1: TForm1
         Anchors = [akLeft, akBottom]
         Caption = 'Нажмите на кнопку "Создать подключение" для сохранения сконфигурированных настроек'
         ParentColor = False
+        OnMouseDown = TabSheet1MouseDown
       end
       object Label43: TLabel
         AnchorSideLeft.Control = TabSheet3
@@ -3301,6 +3302,7 @@ object Form1: TForm1
         Caption = 'или нажмите на кнопку "Выход" для выхода из программы и сброса сконфигурированных настроек...'
         ParentBidiMode = False
         ParentColor = False
+        OnMouseDown = TabSheet1MouseDown
       end
       object Label14: TLabel
         AnchorSideLeft.Control = TabSheet3
@@ -3831,6 +3833,7 @@ object Form1: TForm1
         Caption = '      '
         ParentBidiMode = False
         ParentColor = False
+        OnMouseDown = TabSheet1MouseDown
       end
     end
     object TabSheet4: TTabSheet
