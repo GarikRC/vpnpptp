@@ -524,6 +524,7 @@ resourcestring
   message222='Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp.';
   message223='Не найден скрипт';
   message224='<ОК> - игнорировать это предупреждение и продолжить (рекомендуется). <Отмена> - поправить.';
+  message225='Для Fedora для работы VPN OpenL2TP требуется selinux-policy>=3.9.16-33, иначе может не работать. SELinux можно также отключить.';
 
 implementation
 
@@ -780,14 +781,11 @@ begin
   Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP/L2TP/OpenL2TP');
   Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP/OpenL2TP Control');
   Memo_create.Lines.Add('Icon='+MyPixmapsDir+'ponoff.png');
-  Memo_create.Lines.Add('MimeType=');
   Memo_create.Lines.Add('Name[ru]=Подключение '+Profile);
   Memo_create.Lines.Add('Name[uk]=Підключення '+Profile);
   Memo_create.Lines.Add('Name=Connect '+Profile);
-  Memo_create.Lines.Add('Path=');
   Memo_create.Lines.Add('StartupNotify=true');
   Memo_create.Lines.Add('Terminal=false');
-  Memo_create.Lines.Add('TerminalOptions=');
   Memo_create.Lines.Add('Type=Application');
   Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
   If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
@@ -820,14 +818,11 @@ If prilozh='vpnpptp' then
      Memo_create.Lines.Add('GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP');
      Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP/OpenL2TP Setup');
      Memo_create.Lines.Add('Icon='+MyPixmapsDir+'vpnpptp.png');
-     Memo_create.Lines.Add('MimeType=');
      Memo_create.Lines.Add('Name[ru]=Настройка '+Profile);
      Memo_create.Lines.Add('Name[uk]=Налаштування '+Profile);
      Memo_create.Lines.Add('Name=Setup '+Profile);
-     Memo_create.Lines.Add('Path=');
      Memo_create.Lines.Add('StartupNotify=true');
      Memo_create.Lines.Add('Terminal=false');
-     Memo_create.Lines.Add('TerminalOptions=');
      Memo_create.Lines.Add('Type=Application');
      Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
      If not Sudo_configure.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
@@ -2003,7 +1998,7 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
   Shell('rm -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
   If ComboBoxVPN.Text='VPN OpenL2TP' then
                                      begin
-                                          //создание скрипта включения для VPN OpenL2TP с учетом особенностей SELinux в Fedora
+                                          //создание скрипта включения для VPN OpenL2TP
                                           Memo2.Clear;
                                           Memo2.Lines.Add('#!/bin/sh');
                                           Memo2.Lines.Add('echo "call '+Edit_peer.Text+'" > '+EtcPppDir+'options');
@@ -2013,58 +2008,34 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then Shell('cp -f '+EtcXl2tpdDir+'
                                           If FileExists(EtcInitDDir+'rpcbind') then Memo2.Lines.Add(ServiceCommand+'rpcbind restart');
                                           If FileExists(EtcInitDDir+'openl2tp') then
                                                                                     begin
-                                                                                         if fedora then Memo2.Lines.Add('setenforce 0');
                                                                                          Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
                                                                                          Memo2.Lines.Add('killall openl2tp');
                                                                                          Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                                                                          Memo2.Lines.Add(ServiceCommand+'openl2tp start');
-                                                                                         if fedora then
-                                                                                                       begin
-                                                                                                            Memo2.Lines.Add('sleep 1');
-                                                                                                            Memo2.Lines.Add('setenforce 1');
-                                                                                                       end;
                                                                                     end;
                                           If FileExists(EtcInitDDir+'openl2tpd') then
                                                                                     begin
-                                                                                         if fedora then Memo2.Lines.Add('setenforce 0');
                                                                                          Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
                                                                                          Memo2.Lines.Add('killall openl2tpd');
                                                                                          Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                                                                          Memo2.Lines.Add(ServiceCommand+'openl2tpd start');
-                                                                                         if fedora then
-                                                                                                       begin
-                                                                                                            Memo2.Lines.Add('sleep 1');
-                                                                                                            Memo2.Lines.Add('setenforce 1');
-                                                                                                       end;
                                                                                     end;
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           Shell('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
-                                          //создание скрипта отключения для VPN OpenL2TP с учетом особенностей SELinux в Fedora
+                                          //создание скрипта отключения для VPN OpenL2TP
                                           Memo2.Clear;
                                           Memo2.Lines.Add('#!/bin/sh');
                                           Memo2.Lines.Add('echo "#Clear config file" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('rm -f '+EtcDir+'openl2tpd.conf');
                                           If FileExists(EtcInitDDir+'openl2tp') then
                                                                                     begin
-                                                                                       if fedora then Memo2.Lines.Add('setenforce 0');
                                                                                        Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
                                                                                        Memo2.Lines.Add('killall openl2tp');
-                                                                                       if fedora then
-                                                                                                     begin
-                                                                                                          Memo2.Lines.Add('sleep 1');
-                                                                                                          Memo2.Lines.Add('setenforce 1');
-                                                                                                     end;
                                                                                   end;
                                           If FileExists(EtcInitDDir+'openl2tpd') then
                                                                                     begin
-                                                                                       if fedora then Memo2.Lines.Add('setenforce 0');
                                                                                        Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
                                                                                        Memo2.Lines.Add('killall openl2tp');
-                                                                                       if fedora then
-                                                                                                     begin
-                                                                                                          Memo2.Lines.Add('sleep 1');
-                                                                                                          Memo2.Lines.Add('setenforce 1');
-                                                                                                     end;
                                                                                   end;
                                           Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-stop');
@@ -2392,13 +2363,22 @@ DoIconDesktopForAll('vpnpptp');
             Application.ProcessMessages;
             Form1.Repaint;
           end;
-              Button_create.Visible:=True;
-              TabSheet2.TabVisible:= False;
-              TabSheet1.TabVisible:= False;
-              TabSheet3.TabVisible:= False;
-              TabSheet4.TabVisible:= True;
-              PageControl1.ActivePageIndex:=3;
-              Button_next2.Visible:=False;
+ If fedora then if (ComboBoxVPN.Text='VPN OpenL2TP') then //предупреждение о SELinux в Fedora с VPN OpenL2TP
+                                  begin
+                                       Label14.Caption:=message225;
+                                       Application.ProcessMessages;
+                                       Form1.Repaint;
+                                       Form3.MyMessageBox(message0,message225,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                       Application.ProcessMessages;
+                                       Form1.Repaint;
+                                  end;
+ Button_create.Visible:=True;
+ TabSheet2.TabVisible:= False;
+ TabSheet1.TabVisible:= False;
+ TabSheet3.TabVisible:= False;
+ TabSheet4.TabVisible:= True;
+ PageControl1.ActivePageIndex:=3;
+ Button_next2.Visible:=False;
  Memo_create.Clear;
  If FallbackLang='ru' then If FileExists (MyLangDir+'success.ru') then begin Memo_create.Lines.LoadFromFile(MyLangDir+'success.ru'); Translate:=true; end;
  If FallbackLang='uk' then If FileExists (MyLangDir+'success.uk') then begin Memo_create.Lines.LoadFromFile(MyLangDir+'success.uk'); Translate:=true; end;
@@ -4182,8 +4162,6 @@ PageControl1.ShowTabs:=false;
         Edit_peer.Text:=Memo_config.Lines[0];
         ProfileForDelete:=Memo_config.Lines[0];
         Edit_IPS.Text:=Memo_config.Lines[1];
-        //Edit_gate.Text:=Memo_config.Lines[2];
-        //Edit_eth.Text:=Memo_config.Lines[3];
         len:=Length(Memo_config.Lines[4]);
         If Memo_config.Lines[4]<>'0' then Edit_MinTime.Text:=LeftStr(Memo_config.Lines[4],len-3);
         If Memo_config.Lines[4]='0' then Edit_MinTime.Text:=Memo_config.Lines[4];
@@ -4203,25 +4181,16 @@ PageControl1.ShowTabs:=false;
         If Memo_config.Lines[15]='stateless-yes' then CheckBox_stateless.Checked:=true else CheckBox_stateless.Checked:=false;
         If Memo_config.Lines[16]='no40-yes' then CheckBox_no40.Checked:=true else CheckBox_no40.Checked:=false;
         If Memo_config.Lines[17]='no56-yes' then CheckBox_no56.Checked:=true else CheckBox_no56.Checked:=false;
-        //If Memo_config.Lines[18]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
         If Memo_config.Lines[19]='link-desktop-yes' then CheckBox_desktop.Checked:=true else CheckBox_desktop.Checked:=false;
         If Memo_config.Lines[20]='no128-yes' then CheckBox_no128.Checked:=true else CheckBox_no128.Checked:=false;
         If Memo_config.Lines[21]='IPS-yes' then IPS:=true else IPS:=false;
         If Memo_config.Lines[22]='routevpnauto-yes' then routevpnauto.Checked:=true else routevpnauto.Checked:=false;
         If Memo_config.Lines[23]='networktest-yes' then networktest.Checked:=true else networktest.Checked:=false;
         If Memo_config.Lines[24]='balloon-yes' then balloon.Checked:=true else balloon.Checked:=false;
-        //If Memo_config.Lines[25]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
-        //If Memo_config.Lines[26]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
         If Memo_config.Lines[27]='autostart-ponoff-yes' then Autostart_ponoff.Checked:=true else Autostart_ponoff.Checked:=false;
         If Memo_config.Lines[28]='autostart-pppd-yes' then Autostartpppd.Checked:=true else Autostartpppd.Checked:=false;
         If Memo_config.Lines[29]='pppnotdefault-yes' then pppnotdefault.Checked:=true else pppnotdefault.Checked:=false;
-        //EditDNS1.Text:=Memo_config.Lines[30];
-        //EditDNS2.Text:=Memo_config.Lines[31];
-        //EditDNSdop3.Text:=Memo_config.Lines[32];
         If Memo_config.Lines[33]='routednsauto-yes' then routeDNSauto.Checked:=true else routeDNSauto.Checked:=false;
-        //Memo_config.Lines[34] не восстанавливается из конфига
-        //EditDNS3.Text:=Memo_config.Lines[35];
-        //EditDNS4.Text:=Memo_config.Lines[36];
         If Memo_config.Lines[37]='rpap-yes' then CheckBox_rpap.Checked:=true else CheckBox_rpap.Checked:=false;
         If Memo_config.Lines[38]='rmschapv2-yes' then CheckBox_rmschapv2.Checked:=true else CheckBox_rmschapv2.Checked:=false;
         If Memo_config.Lines[39]='l2tp' then ComboBoxVPN.Text:='VPN L2TP';

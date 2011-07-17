@@ -1259,3 +1259,7 @@ msgstr "Script not found"
 #: unit1.message224
 msgid "<ОК> - игно#209�и#209�овать это п#209�едуп#209�еждение и п#209�одолжить (#209�екомендуется). <Отмена> - поп#209�авить."
 msgstr "<OK> - ignore this warning and continue (recommended). <Cancel> - Correct."
+
+#: unit1.message225
+msgid "Для Fedora для #209�аботы VPN OpenL2TP т#209�ебуется selinux-policy>=3.9.16-33, иначе может не #209�аботать. SELinux можно также отключить."
+msgstr "For Fedora for VPN OpenL2TP required selinux-policy>=3.9.16-33, otherwise it can not work. You can also disable SELinux."
