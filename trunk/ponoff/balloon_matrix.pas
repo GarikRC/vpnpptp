@@ -132,7 +132,7 @@ begin
     if HintBalloon=nil then HintBalloon:=THintWindow.Create(nil);
     FormBalloonMatrix.Parent:=HintBalloon;
     HintBalloonQueueLength:=0;
-    sleep(300);
+   // sleep(300);
 end;
 
 

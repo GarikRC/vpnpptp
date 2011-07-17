@@ -15,7 +15,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="1579"/>
+      <BuildNr Value="1581"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.667"/>
     </VersionInfo>
@@ -45,6 +45,7 @@
         <Filename Value="project1.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="project1"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -59,11 +60,10 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2045"/>
-        <CursorPos X="5" Y="2089"/>
+        <TopLine Value="1053"/>
+        <CursorPos X="59" Y="1069"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -298,7 +298,7 @@
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="99"/>
-        <CursorPos X="4" Y="140"/>
+        <CursorPos X="6" Y="135"/>
         <UsageCount Value="70"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -327,7 +327,7 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="125"/>
-        <CursorPos X="4" Y="166"/>
+        <CursorPos X="6" Y="156"/>
         <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>

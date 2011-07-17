@@ -153,7 +153,7 @@ begin
     Image1.Visible:=false;
     FormHintMatrix.Color:=$0092FFF8;
     TimerClose.Interval:=1000;
-    sleep(300);
+   // sleep(300);
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);
