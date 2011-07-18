@@ -135,7 +135,7 @@ const
   message9ru='Программа завершает свою работу.';
   message10ru='Эту опцию выбрать нельзя, так как не найден';
   message11ru='Соединение было успешно создано.';
-  message12ru='Управлять соединением можно через net_applet (пакет drakx-net)';
+  message12ru='Управлять соединением можно через net_applet (пакет drakx-net/drakx-net-applet)';
   message13ru='или в консоли под администратором командами ifup, ifdown, передавая им интерфейс.';
   message14ru='Соединение установится при загрузке системы без ввода пароля администратора.';
   message15ru='При выборе опции nobuffer не будет буферизации, что желательно для быстрого соединения, но нежелательно для медленного, нестабильного.';
@@ -212,7 +212,7 @@ const
   message9uk='Програма завершує свою роботу.';
   message10uk='Цю опцію вибрати не можна, тому що не знайдено';
   message11uk='З''єднання було успішно створено.';
-  message12uk='Керувати з''єднанням можна через net_applet (пакет drakx-net)';
+  message12uk='Керувати з''єднанням можна через net_applet (пакет drakx-net/drakx-net-applet)';
   message13uk='або в консолі під адміністратором командами ifup, ifdown, передаючи їм інтерфейс.';
   message14uk='З''єднання встановиться при завантаженні системи без введення пароля адміністратора.';
   message15uk='При виборі опції nobuffer не буде буферизації, що бажано для швидкого з''єднання, але небажано для повільного, нестабільного.';
@@ -289,7 +289,7 @@ const
   message9en='The program complete its work.';
   message10en='This option can not be selected, because was not found';
   message11en='The connection was successfully created.';
-  message12en='You can manage the connection with help net_applet (package drakx-net)';
+  message12en='You can manage the connection with help net_applet (package drakx-net/drakx-net-applet)';
   message13en='or in the root''s console by commands: ifup pppN, ifdown pppN.';
   message14en='Connection will be established at boot without entering a root''s password.';
   message15en='When you select nobuffer, then will not be buffering; it is desirable for fast connections, but not desirable for a unstable.';
@@ -564,10 +564,11 @@ Shell ('killall net_applet');
 if not net_applet_root then
                              begin
                                   popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
+                                  if eof(f) then popen (f,'who /var/log/wtmp | awk '+chr(39)+'{print $1}'+chr(39),'R');
                                   While not eof(f) do
                                         begin
                                              readln(f,str);
-                                             if str<>'' then if pos(str,StrUsers)=0 then
+                                             if str<>'' then if str<>'root' then if pos(str,StrUsers)=0 then
                                                         begin
                                                              AAsyncProcess := TAsyncProcess.Create(nil);
                                                              AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
@@ -579,6 +580,32 @@ if not net_applet_root then
                                              StrUsers:=StrUsers+str;
                                         end;
                                   PClose(f);
+                                  //обработка результата перезапуска net_applet
+                                  found_net_applet:=false;
+                                  popen (f,'ps -e |grep net_applet','R');
+                                  If not eof(f) then found_net_applet:=true;
+                                  PClose(f);
+                                  StrUsers:='';
+                                  if not found_net_applet then //пытаемся еще раз перезапустить net_applet другой командой
+                                             begin
+                                                  popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
+                                                  if eof(f) then popen (f,'who /var/log/wtmp | awk '+chr(39)+'{print $1}'+chr(39),'R');
+                                                  While not eof(f) do
+                                                        begin
+                                                             readln(f,str);
+                                                             if str<>'' then if str<>'root' then if pos(str,StrUsers)=0 then
+                                                                        begin
+                                                                             AAsyncProcess := TAsyncProcess.Create(nil);
+                                                                             AAsyncProcess.CommandLine :='su '+str+' -c "'+UsrBinDir+'net_applet"';
+                                                                             AAsyncProcess.Execute;
+                                                                             while not AAsyncProcess.Running do
+                                                                                                      MySleep(30);
+                                                                             AAsyncProcess.Free;
+                                                                        end;
+                                                             StrUsers:=StrUsers+str;
+                                                        end;
+                                                  PClose(f);
+                                             end;
                              end;
 if net_applet_root then
                       begin
