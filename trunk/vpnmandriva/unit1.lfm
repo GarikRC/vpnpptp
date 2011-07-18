@@ -1,5 +1,5 @@
 object MyForm: TMyForm
-  Left = 435
+  Left = 206
   Height = 580
   Top = 96
   Width = 816
@@ -2134,7 +2134,7 @@ object MyForm: TMyForm
   OnMouseDown = TabSheet1MouseDown
   Position = poDesktopCenter
   ShowHint = True
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.30'
   object MyPanel: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -2177,10 +2177,10 @@ object MyForm: TMyForm
       AnchorSideRight.Control = Label_IPS
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
-      Left = 75
+      Left = 76
       Height = 14
       Top = 119
-      Width = 9
+      Width = 8
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 30
       Caption = 'C'
@@ -2227,8 +2227,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 72
+      Height = 23
+      Top = 71
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2245,8 +2245,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 28
+      Height = 23
+      Top = 27
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2261,8 +2261,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 116
+      Height = 23
+      Top = 115
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2277,8 +2277,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 160
+      Height = 23
+      Top = 159
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2292,9 +2292,9 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = CheckBox_reap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_reap
-      Left = 579
+      Left = 586
       Height = 14
-      Top = 255
+      Top = 256
       Width = 8
       Anchors = [akLeft, akBottom]
       BorderSpacing.Top = 30
@@ -2310,7 +2310,7 @@ object MyForm: TMyForm
       AnchorSideRight.Side = asrBottom
       Left = 719
       Height = 14
-      Top = 255
+      Top = 256
       Width = 88
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 30
@@ -2323,10 +2323,10 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = CheckBox_rmschap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rmschap
-      Left = 579
+      Left = 586
       Height = 21
-      Top = 311
-      Width = 88
+      Top = 312
+      Width = 82
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-chap'
       TabOrder = 12
@@ -2336,10 +2336,10 @@ object MyForm: TMyForm
       AnchorSideTop.Control = Label_auth
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rpap
-      Left = 579
+      Left = 586
       Height = 21
-      Top = 269
-      Width = 82
+      Top = 270
+      Width = 76
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-eap'
       TabOrder = 10
@@ -2349,10 +2349,10 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_rchap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rmschapv2
-      Left = 579
+      Left = 586
       Height = 21
-      Top = 332
-      Width = 104
+      Top = 333
+      Width = 97
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-mschap'
       TabOrder = 13
@@ -2364,8 +2364,8 @@ object MyForm: TMyForm
       AnchorSideBottom.Side = asrBottom
       Left = 719
       Height = 21
-      Top = 290
-      Width = 70
+      Top = 291
+      Width = 67
       Caption = 'stateless'
       TabOrder = 16
     end
@@ -2376,8 +2376,8 @@ object MyForm: TMyForm
       AnchorSideBottom.Side = asrBottom
       Left = 719
       Height = 21
-      Top = 311
-      Width = 51
+      Top = 312
+      Width = 47
       Caption = 'no40'
       TabOrder = 17
     end
@@ -2388,8 +2388,8 @@ object MyForm: TMyForm
       AnchorSideBottom.Side = asrBottom
       Left = 719
       Height = 21
-      Top = 332
-      Width = 50
+      Top = 333
+      Width = 47
       Caption = 'no56'
       TabOrder = 18
     end
@@ -2400,8 +2400,8 @@ object MyForm: TMyForm
       AnchorSideBottom.Side = asrBottom
       Left = 719
       Height = 21
-      Top = 269
-      Width = 69
+      Top = 270
+      Width = 64
       Caption = 'required'
       TabOrder = 15
     end
@@ -2412,8 +2412,8 @@ object MyForm: TMyForm
       AnchorSideBottom.Side = asrBottom
       Left = 719
       Height = 21
-      Top = 353
-      Width = 57
+      Top = 354
+      Width = 53
       Caption = 'no128'
       TabOrder = 19
     end
@@ -2422,10 +2422,10 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_reap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rchap
-      Left = 579
+      Left = 586
       Height = 21
-      Top = 290
-      Width = 82
+      Top = 291
+      Width = 76
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-pap'
       TabOrder = 11
@@ -2436,10 +2436,10 @@ object MyForm: TMyForm
       AnchorSideRight.Control = CheckBox_no128
       AnchorSideBottom.Control = CheckBox_no128
       AnchorSideBottom.Side = asrBottom
-      Left = 579
+      Left = 586
       Height = 21
-      Top = 353
-      Width = 120
+      Top = 354
+      Width = 113
       Anchors = [akRight, akBottom]
       BorderSpacing.Right = 20
       Caption = 'refuse-mschap-v2'
@@ -2451,7 +2451,7 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 276
+      Top = 277
       Width = 26
       BorderSpacing.Left = 10
       Caption = 'J'
@@ -2463,7 +2463,7 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 297
+      Top = 298
       Width = 31
       BorderSpacing.Left = 10
       Caption = 'H'
@@ -2475,7 +2475,7 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 339
+      Top = 340
       Width = 26
       BorderSpacing.Left = 10
       Caption = 'J'
@@ -2506,8 +2506,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 204
+      Height = 23
+      Top = 203
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2531,7 +2531,7 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 318
+      Top = 319
       Width = 26
       BorderSpacing.Left = 10
       Caption = 'I'
@@ -2545,10 +2545,10 @@ object MyForm: TMyForm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
-      Left = 658
-      Height = 138
-      Top = 433
-      Width = 149
+      Left = 659
+      Height = 140
+      Top = 431
+      Width = 148
       Anchors = [akRight, akBottom]
       AutoSize = True
       BorderSpacing.Around = 8
@@ -4614,8 +4614,8 @@ object MyForm: TMyForm
       AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
       Left = 9
-      Height = 138
-      Top = 433
+      Height = 140
+      Top = 431
       Width = 150
       Anchors = [akLeft, akBottom]
       AutoSize = True
@@ -9197,7 +9197,7 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       Left = 11
       Height = 21
-      Top = 255
+      Top = 256
       Width = 29
       BorderSpacing.Left = 10
       BorderSpacing.Top = 30
@@ -9210,10 +9210,10 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = MyPanel
       AnchorSideLeft.Side = asrCenter
       AnchorSideBottom.Control = Label_www
-      Left = 376
+      Left = 378
       Height = 14
       Top = 535
-      Width = 65
+      Width = 60
       Anchors = [akLeft, akBottom]
       BorderSpacing.Around = 8
       Caption = 'Label_wait'
@@ -9230,10 +9230,10 @@ object MyForm: TMyForm
       AnchorSideLeft.Side = asrCenter
       AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
-      Left = 300
+      Left = 309
       Height = 14
       Top = 557
-      Width = 216
+      Width = 199
       Anchors = [akLeft, akBottom]
       BorderSpacing.Around = 8
       Caption = 'http://code.google.com/p/vpnpptp/'
@@ -9249,10 +9249,10 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = MyPanel
       AnchorSideLeft.Side = asrCenter
       AnchorSideBottom.Control = Label_wait
-      Left = 372
+      Left = 375
       Height = 14
       Top = 513
-      Width = 73
+      Width = 66
       Anchors = [akLeft, akBottom]
       BorderSpacing.Around = 8
       Caption = 'Label_timer'
