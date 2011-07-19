@@ -15,7 +15,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="1583"/>
+      <BuildNr Value="1584"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.667"/>
     </VersionInfo>
@@ -59,10 +59,9 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1853"/>
+        <TopLine Value="1838"/>
         <CursorPos X="88" Y="1838"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -295,10 +294,11 @@
         <ComponentName Value="FormBalloonMatrix"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="balloon_matrix"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="99"/>
-        <CursorPos X="6" Y="135"/>
+        <CursorPos X="62" Y="135"/>
         <UsageCount Value="70"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -326,8 +326,8 @@
         <UnitName Value="hint_matrix"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="125"/>
-        <CursorPos X="6" Y="156"/>
+        <TopLine Value="124"/>
+        <CursorPos X="34" Y="155"/>
         <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
