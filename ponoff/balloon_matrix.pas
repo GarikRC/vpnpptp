@@ -128,11 +128,19 @@ begin
 end;
 
 procedure TFormBalloonMatrix.FormCreate(Sender: TObject);
+var
+   i:integer;
 begin
     if HintBalloon=nil then HintBalloon:=THintWindow.Create(nil);
     FormBalloonMatrix.Parent:=HintBalloon;
     HintBalloonQueueLength:=0;
-    while (Form1.TrayIcon1.GetPosition.X=0) do sleep (50);
+    i:=0;
+    while (Form1.TrayIcon1.GetPosition.X=0) do
+    begin
+      sleep (50);
+      inc(i);
+      if i>20 then break;
+    end;
 end;
 
 

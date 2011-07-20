@@ -1071,6 +1071,7 @@ begin
   if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
   If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
   DoubleRunPonoff:=false;
+  StartMessage:=true;
   ubuntu:=false;
   debian:=false;
   fedora:=false;
