@@ -3821,6 +3821,12 @@ PClose(f);
 popen (f,'cat '+EtcDir+'issue|grep ROSA','R');
 If not eof(f) then mandriva:=true;
 PClose(f);
+popen (f,'cat '+EtcDir+'issue|grep Kubuntu','R');
+If not eof(f) then ubuntu:=true;
+PClose(f);
+popen (f,'cat '+EtcDir+'issue|grep Mint','R');
+If not eof(f) then ubuntu:=true;
+PClose(f);
 ComboBoxDistr.Text:=message151;
 ComboBoxDistr.Items.Add('Mandriva '+message150);
 ComboBoxDistr.Items.Add('Ubuntu '+message150);
@@ -3831,7 +3837,6 @@ PressCreate:=false;
 //присваивание хинтов элементам формы и их настройка
 HintWindowClass := TMyHintWindow;
 Application.HintColor:=$0092FFF8;
-Application.ShowHint := False;
 Application.ShowHint := True;
 TabSheet1.Hint:=MakeHint(message143+' '+message149,5);
 TabSheet2.Hint:=MakeHint(message143+' '+message149,5);
@@ -4482,7 +4487,6 @@ end;
 initialization
 
   {$I unit1.lrs}
-
   If Paramcount=0 then ProfileName:='';
   If Paramcount>0 then ProfileName:=Paramstr(1);
   Gettext.GetLanguageIDs(Lang,FallbackLang);
