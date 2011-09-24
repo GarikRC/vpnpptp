@@ -1,0 +1,214 @@
+#!/bin/sh
+
+# Автор - ism c unixforum.org и freepascal.ru Иванов Станислав.
+
+DIRECTORY="/var/lib/vpnpptp"
+PROFILES="$DIRECTORY/profiles"
+NAME=$1
+
+l1=`locale | grep LANG | grep ru`
+l2=`locale | grep LANG | grep uk`
+l3=`locale | grep LANG | grep be`
+
+if [ -n "$l1" -o -n "$l2" -o -n "$l3" ]
+then 
+  MES0="Только пользователь с правами root может запускать скрипт"
+  MES1="Имя соединения"
+  MES2="не найдено."
+  MES3="Создайте соединение с помощью конфигуратора vpnpptp."
+  MES4="Передайте скрипту"
+  MES5="в качестве параметра имя соединения, которое необходимо установить, или stop для остановки всех соединений VPN PPTP/L2TP/OpenL2TP."
+  MES6="Устанавливается соединение VPN"
+  MES7="Останавливаются все соединения VPN PPTP/L2TP/OpenL2TP"
+  MES8="Ошибка определения типа VPN (PPTP/L2TP/OpenL2TP) для соединения с именем"
+  MES9="Процессы"
+  MES10="Завершаются все процессы"
+  MES11="Все процессы"
+  MES12="не установлено. Возможно необходимо подождать."
+  MES13="Соединение VPN"
+  MES14="Завершено."
+  MES15="установлено."
+  MES16="убиты принудительно. Возможно требуется рестарт сети."
+  MES17="успешно завершены."
+else
+  MES0="Only a user with root privileges can run the script"
+  MES1="Connection name"
+  MES2="not found."
+  MES3="Create a connection with help configurator vpnpptp."
+  MES4="Give to script"
+  MES5="as a parameter name for the connection that you want to connect, or stop for stopping all connections VPN PPTP/L2TP/OpenL2TP."
+  MES6="Connecting VPN"
+  MES7="Stop all connections VPN PPTP/L2TP/OpenL2TP"
+  MES8="Error of the determination type of VPN (PPTP/L2TP/OpenL2TP) for connection with name"
+  MES9="Processes"  
+  MES10="Terminates all processes"  
+  MES11="All processes"
+  MES12="not established. Maybe you should wait." 
+  MES13="Connection VPN"
+  MES14="Completed."
+  MES15="established."    
+  MES16="killed forcibly. You may need to restart the network."
+  MES17="stopped correctly."
+fi
+
+kill_process_with_control () {
+pid=`ps -A |grep --word-regexp $1| awk '{print $1}'`   
+ if [ -n "$pid" ] 
+   then 
+     echo $MES10 $1
+     killall $1
+     sleep 1      
+     i=0
+     pid=`ps -A |grep --word-regexp $1| awk '{print $1}'`
+     while [ -n "$pid" ]
+     do        
+        pid=`ps -A |grep --word-regexp $1| awk '{print $1}'`    
+        sleep 1
+        if [ 10 -lt $i -a -n "$pid" ] 
+         then
+           killall -9 $1               
+           echo $MES9 $1 $MES16
+           break         
+        fi
+        if [ -z "$pid" ] 
+         then          
+           echo $MES11 $1 $MES17
+           break         
+        fi
+        let i=i+1
+     done
+  fi
+  return 0
+}
+
+total_kill_process_with_control () {
+  kill_process_with_control pppd
+  kill_process_with_control xl2tpd
+  if [ -f $DIRECTORY/default/openl2tp-stop ] 
+  then
+    $DIRECTORY/default/openl2tp-stop
+  fi
+  kill_process_with_control openl2tp
+  kill_process_with_control openl2tpd
+  sleep 1
+  return 0
+}
+
+connection_control () {
+  i=0;
+  IFCONFIG=""
+  if [ -f /var/run/ppp-$NAME.pid ]
+  then
+     IFACE=`cat /var/run/ppp-$NAME.pid|grep ppp`
+  fi
+  if [ "$IFACE" != "" ]
+  then
+     IFCONFIG=`ifconfig $IFACE`
+  fi
+  while [ "$IFCONFIG" = "" ]
+     do 
+       sleep 1
+       let i=i+1
+       if [ -f /var/run/ppp-$NAME.pid ]
+       then
+          IFACE=`cat /var/run/ppp-$NAME.pid|grep ppp`
+          if [ "$IFACE" != "" ]
+          then
+             IFCONFIG=`ifconfig $IFACE`
+          fi
+       fi
+       if [ $i = 10 ] 
+       then          
+           break         
+       fi
+     done
+  if [ "$IFCONFIG" = "" ]
+  then
+     echo $MES13 $TYPE $MES12
+  else
+     echo $MES13 $TYPE $MES15
+     ifconfig $IFACE
+  fi
+  return 0
+}
+
+USER=`whoami`
+if [ "$USER" != "root" ]
+then
+   echo $MES0 $0
+   echo $MES4 $0 $MES5  
+   echo $MES14 
+   exit 1
+fi
+
+if [ "$NAME" = "" ]
+then
+    echo $MES4 $0 $MES5
+    echo $MES14
+    exit 1
+fi
+
+if [ "$NAME" = "stop" ]
+then   
+   echo $MES7...
+   total_kill_process_with_control
+   echo $MES14
+   exit 0
+fi
+
+NAME0=`cat $PROFILES|grep -x $NAME`
+if [ "$NAME0" != $NAME ]
+then
+    echo $MES1 $NAME $MES2 $MES3
+    echo $MES14
+    exit 1
+fi
+
+TYPE0=`cat $DIRECTORY/$NAME/config|grep -x pptp`
+if [ "$TYPE0" = "pptp" ]
+then
+    TYPE="PPTP"
+fi
+TYPE0=`cat $DIRECTORY/$NAME/config|grep -x openl2tp`
+if [ "$TYPE0" = "openl2tp" ]
+then
+    TYPE="OpenL2TP"
+fi
+TYPE0=`cat $DIRECTORY/$NAME/config|grep -x l2tp`
+if [ "$TYPE0" = "l2tp" ]
+then
+    TYPE="L2TP"
+fi
+
+if [ "$TYPE" = "" ]
+then
+   echo $MES8 $NAME
+   echo $MES14
+   exit 1
+fi
+if [ "$TYPE" = "PPTP" ]
+then
+   echo $MES6 $TYPE...
+   total_kill_process_with_control
+   pppd call $NAME && connection_control
+fi
+
+if [ "$TYPE" = "L2TP" ]
+then
+   echo $MES6 $TYPE...
+   total_kill_process_with_control
+   /etc/init.d/xl2tpd restart
+   sleep 1
+   echo "c $NAME" > /var/run/xl2tpd/l2tp-control && connection_control
+fi
+
+if [ "$TYPE" = "OpenL2TP" ]
+then
+   echo $MES6 $TYPE...
+   total_kill_process_with_control
+   $DIRECTORY/$NAME/openl2tp-start && connection_control
+fi
+
+echo $MES14
+
+exit 0

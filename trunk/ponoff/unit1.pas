@@ -78,6 +78,8 @@ type
     procedure LoadIconForTray(PathToIcon,NameIcon:string);
     procedure IconForTrayPlus;
     procedure IconForTrayMinus;
+    procedure Ifdown (Iface:string);
+    procedure Ifup (Iface:string);
   private
     { private declarations }
   public
@@ -99,6 +101,7 @@ const
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
   SBinDir='/sbin/';
+  BinDir='/bin/';
   EtcDir='/etc/';
   VarLogDir='/var/log/';
   UsrSBinDir='/usr/sbin/';
@@ -159,6 +162,9 @@ var
   MaxSpeed:int64; //максимальная пропускная способность сети
   LimitRX,LimitTX:byte; //счетчик сколько раз превышалась пропускная способность сети
   NoConnectMessageShow:boolean; //выводить ли сообщение об отсутствии соединения
+  nostart:boolean;
+  DopParam:string;
+  Apid:tpid;
 
 resourcestring
   message0='Внимание!';
@@ -231,10 +237,29 @@ resourcestring
   message67='Уменьшить иконку';
   message68='Цветная иконка';
   message69='Черно-белая иконка';
+  message70='Введите пароль root:';
 
 implementation
 
 uses balloon_matrix,hint_matrix;
+
+function ProgrammRoot(Name:string;DoHalt:boolean):boolean;
+//возвращает истину если программа запущена под root
+//прерывает выполнение если DoHalt истина и программа под root
+var
+  Apid:tpid;
+begin
+     If DoHalt then
+                begin
+                  popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
+                  If not eof(f) then halt;
+                  PClose(f);
+                end;
+     Apid:=FpGetpid;
+     popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name+'| '+BinDir+'grep '+IntToStr(Apid),'R');
+     If eof(f) then Result:=false else Result:=true;
+     PClose(f);
+end;
 
 procedure KillZombieNet_Monitor;
 //следит за дочерним процессом AProcessNet_Monitor, и если он уже только как зомби, то убирает его
@@ -246,7 +271,7 @@ begin
   If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then if Net_MonitorRun then
                     begin
                          //проверка net_monitor в процессах root, игнорируя зомби
-                         popen(f,'ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39),'R');
+                         popen(f,BinDir+'ps -u root | '+BinDir+'grep net_monitor | '+BinDir+'awk '+chr(39)+'{print $4$5}'+chr(39),'R');
                          str:='';
                          While not eof(f) do
                               begin
@@ -271,7 +296,7 @@ var
 begin
   i:=0;
   str:='';
-  popen (f,'ifconfig |grep '+chr(39)+'eth'+chr(39),'R');
+  popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+chr(39)+'eth'+chr(39),'R');
   While not eof(f) do
      begin
        Readln (f,str);
@@ -279,7 +304,7 @@ begin
      end;
   PClose(f);
   str:='';
-  popen (f,'ifconfig |grep '+chr(39)+'wlan'+chr(39),'R');
+  popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+chr(39)+'wlan'+chr(39),'R');
   While not eof(f) do
      begin
        Readln (f,str);
@@ -287,7 +312,7 @@ begin
      end;
   PClose(f);
   str:='';
-  popen (f,'ifconfig |grep '+chr(39)+'br'+chr(39),'R');
+  popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+chr(39)+'br'+chr(39),'R');
   While not eof(f) do
      begin
        Readln (f,str);
@@ -295,7 +320,7 @@ begin
      end;
   PClose(f);
   str:='';
-  popen (f,'ifconfig |grep '+chr(39)+'em'+chr(39),'R');
+  popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+chr(39)+'em'+chr(39),'R');
   While not eof(f) do
      begin
        Readln (f,str);
@@ -306,39 +331,47 @@ begin
   CountInterface:=i;
 end;
 
-procedure Ifdown (Iface:string;wait:boolean);
+procedure TForm1.Ifdown (Iface:string);
 //опускает интерфейс
 var
    str:string;
 begin
          str:='';
-         If FileExists (SBinDir+'ifdown') then if not ubuntu then if not fedora then str:='ifdown '+Iface;
-         If (not FileExists (SBinDir+'ifdown')) or ubuntu or fedora then str:='ifconfig '+Iface+' down';
+         If FileExists (SBinDir+'ifdown') then if not ubuntu then if not fedora then str:=SBinDir+'ifdown '+Iface;
+         If (not FileExists (SBinDir+'ifdown')) or ubuntu or fedora then str:=SBinDir+'ifconfig '+Iface+' down';
          if str<>'' then
                         begin
+                             Timer1.Enabled:=false;
+                             Timer2.Enabled:=false;
                              AProcess := TAsyncProcess.Create(nil);
-                             if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
+                             AProcess.Options:=AProcess.Options+[poWaitOnExit];
                              AProcess.CommandLine:=str;
                              AProcess.Execute;
                              AProcess.Free;
+                             Timer1.Enabled:=true;
+                             Timer2.Enabled:=true;
                         end;
 end;
 
-procedure Ifup (Iface:string;wait:boolean);
+procedure TForm1.Ifup (Iface:string);
 //поднимает интерфейс
 var
    str:string;
 begin
          str:='';
-         If FileExists (SBinDir+'ifup') then if not ubuntu then if not fedora then str:='ifup '+Iface;
-         If (not FileExists (SBinDir+'ifup')) or ubuntu or fedora then str:='ifconfig '+Iface+' up';
+         If FileExists (SBinDir+'ifup') then if not ubuntu then if not fedora then str:=SBinDir+'ifup '+Iface;
+         If (not FileExists (SBinDir+'ifup')) or ubuntu or fedora then str:=SBinDir+'ifconfig '+Iface+' up';
          if str<>'' then
                         begin
+                             Timer1.Enabled:=false;
+                             Timer2.Enabled:=false;
                              AProcess := TAsyncProcess.Create(nil);
-                             if wait then AProcess.Options:=AProcess.Options+[poWaitOnExit];
+                             AProcess.Options:=AProcess.Options+[poWaitOnExit];
                              AProcess.CommandLine:=str;
                              AProcess.Execute;
                              AProcess.Free;
+                             Timer1.Enabled:=true;
+                             Timer2.Enabled:=true;
                         end;
 end;
 
@@ -435,7 +468,7 @@ begin
   ResizeBmp(ImageIconBitmap,wid+1,hei+1);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
   ImageIconBitmap.Free;
-  Shell('printf "'+IntToStr(wid+1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
+  Shell(UsrBinDir+'printf "'+IntToStr(wid+1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
   IconTmp.Free;
 end;
 
@@ -467,7 +500,7 @@ begin
   ResizeBmp(ImageIconBitmap,wid-1,hei-1);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
   ImageIconBitmap.Free;
-  Shell('printf "'+IntToStr(wid-1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
+  Shell(UsrBinDir+'printf "'+IntToStr(wid-1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
   IconTmp.Free;
 end;
 
@@ -483,7 +516,7 @@ begin
   str:='';
   If FileExists(MyLibDir+Memo_config.Lines[0]+'/ponoff.conf') then
          begin
-              popen(f,'cat '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf','R');
+              popen(f,BinDir+'cat '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf','R');
               while not eof(f) do
                     Readln(f,str);
                     if str<>'' then
@@ -542,7 +575,7 @@ begin
                           Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
                           Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                          Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                          Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                           halt;
                      end;
     //некритичные файлы
@@ -571,16 +604,19 @@ begin
   Code_up_ppp:=false;
   If FileExists(VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid') then
                                                                         begin
-                                                                             popen (f,'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|grep ppp','R');
+                                                                             popen (f,BinDir+'cat '+VarRunDir+'ppp-'+Form1.Memo_Config.Lines[0]+'.pid|'+BinDir+'grep ppp','R');
                                                                              While not eof(f) do
                                                                                               begin
                                                                                                    Readln (f,str);
                                                                                                    If str<>'' then PppIface:=str;
                                                                                               end;
                                                                              PClose(f);
-                                                                             popen (f,'ifconfig |grep '+PppIface,'R');
-                                                                             If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
-                                                                             PClose(f);
+                                                                             If PppIface<>'' then
+                                                                                    begin
+                                                                                         popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+PppIface,'R');
+                                                                                         If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
+                                                                                         PClose(f);
+                                                                                    end;
                                                                       end;
 end;
 
@@ -591,19 +627,19 @@ var
 begin
 If FileExists (EtcDir+'hosts') then
     begin
-        If not FileExists (EtcDir+'hosts.old') then Shell ('cp -f '+EtcDir+'hosts '+EtcDir+'hosts.old');
+        If not FileExists (EtcDir+'hosts.old') then Shell (BinDir+'cp -f '+EtcDir+'hosts '+EtcDir+'hosts.old');
         AssignFile (FileEtc_hosts,EtcDir+'hosts');
         reset (FileEtc_hosts);
         While not eof(FileEtc_hosts) do
                begin
                    readln(FileEtc_hosts, Str_Etc_hosts);
                    If not (RightStr(Str_Etc_hosts,Length(Form1.Memo_Config.Lines[1]))=Form1.Memo_Config.Lines[1]) then
-                                  Shell('printf "'+Str_Etc_hosts+'\n" >> '+MyTmpDir+'hosts.tmp');
+                                  Shell(UsrBinDir+'printf "'+Str_Etc_hosts+'\n" >> '+MyTmpDir+'hosts.tmp');
                end;
         closefile (FileEtc_hosts);
-        Shell('cp -f '+MyTmpDir+'hosts.tmp '+EtcDir+'hosts');
-        Shell('rm -f '+MyTmpDir+'hosts.tmp');
-        Shell('chmod 0644 '+EtcDir+'hosts');
+        Shell(BinDir+'cp -f '+MyTmpDir+'hosts.tmp '+EtcDir+'hosts');
+        Shell(BinDir+'rm -f '+MyTmpDir+'hosts.tmp');
+        Shell(BinDir+'chmod 0644 '+EtcDir+'hosts');
     end;
 end;
 
@@ -613,14 +649,14 @@ var
   nodefaultgw:boolean;
 begin
   nodefaultgw:=false;
-  popen (f,SBinDir+'ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39),'R');
+  popen (f,SBinDir+'ip r|'+BinDir+'grep default|'+BinDir+'awk '+ chr(39)+'{print $3}'+chr(39),'R');
   If eof(f) then nodefaultgw:=true;
   PClose(f);
   If nodefaultgw then //исправление default и повторная проверка
                       begin
-                          Shell ('route add default gw '+Form1.Memo_Config.Lines[2]+' dev '+Form1.Memo_Config.Lines[3]);
+                          Shell (SBinDir+'route add default gw '+Form1.Memo_Config.Lines[2]+' dev '+Form1.Memo_Config.Lines[3]);
                           nodefaultgw:=false;
-                          popen (f,SBinDir+'ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39),'R');
+                          popen (f,SBinDir+'ip r|'+BinDir+'grep default|'+BinDir+'awk '+ chr(39)+'{print $3}'+chr(39),'R');
                           If eof(f) then nodefaultgw:=true;
                           PClose(f);
                      end;
@@ -633,10 +669,10 @@ begin
                                                                                                     AProcess.Execute;
                                                                                                     AProcess.Free;
                                                                                                 end;
-                          Ifdown(Form1.Memo_Config.Lines[3],false);
+                          Ifdown(Form1.Memo_Config.Lines[3]);
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
-                          Ifup(Form1.Memo_Config.Lines[3],false);
-                          Ifup('lo',false);
+                          Ifup(Form1.Memo_Config.Lines[3]);
+                          Ifup('lo');
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
                      end;
 end;
@@ -682,14 +718,14 @@ If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=true;
 If Code_up_ppp then
  begin
  RealPppIface:='';
- popen (f,SBinDir+'ip r|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39),'R');
+ popen (f,SBinDir+'ip r|'+BinDir+'grep ppp|'+BinDir+'awk '+ chr(39)+'{print $3}'+chr(39),'R');
  While not eof(f) do
     begin
         Readln (f,RealPppIface);
     end;
  PClose(f);
  RealPppIfaceDefault:='';
- popen (f,SBinDir+'ip r|grep default|grep ppp|awk '+ chr(39)+'{print $3}'+chr(39),'R');
+ popen (f,SBinDir+'ip r|'+BinDir+'grep default|'+BinDir+'grep ppp|'+BinDir+'awk '+ chr(39)+'{print $3}'+chr(39),'R');
  While not eof(f) do
     begin
         Readln (f,RealPppIfaceDefault);
@@ -717,14 +753,14 @@ If Code_up_ppp then
 end;
 If Code_up_ppp then If FileExists (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after') then If FileExists (EtcDir+'resolv.conf') then
                        If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after', EtcDir+'resolv.conf') then
-                                            Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after '+EtcDir+'resolv.conf');
+                                            Shell (BinDir+'cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after '+EtcDir+'resolv.conf');
 If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
 //Проверяем используемое mtu
 If not Code_up_ppp then FlagMtu:=false;
 MtuUsed:='';
 If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked') then
    begin
-     popen (f,'ifconfig '+PppIface+'|grep MTU |awk '+ chr(39)+'{print $6}'+chr(39),'R');
+     popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39),'R');
      While not eof(f) do
         begin
           Readln (f,MtuUsed);
@@ -734,7 +770,7 @@ If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked
      If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
         begin
              BalloonMessage (3000,message0,message43+' '+MtuUsed+' '+message44,AFont);
-             Shell('touch '+MyTmpDir+'mtu.checked');
+             Shell(BinDir+'touch '+MyTmpDir+'mtu.checked');
              Application.ProcessMessages;
         end;
         FlagMtu:=true;
@@ -744,7 +780,7 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                If FileExists(MyLibDir+Memo_Config.Lines[0]+'/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                             if Memo_config.Lines[21]='IPS-no' then
                                       begin
-                                         popen (f,'ifconfig '+PppIface+'|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39),'R');
+                                         popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep P-t-P|'+BinDir+'awk '+chr(39)+'{print $3}'+chr(39),'R');
                                          if not eof(f) then
                                                                                  begin
                                                                                     While not eof(f) do
@@ -764,11 +800,11 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                                                                                                             If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
                                                                                                             //изменение скрипта имя_соединения-ip-up
                                                                                                             If FileExists(EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up') then
-                                                                                                                                               Shell ('printf "'+SBinDir+'route add -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up');
+                                                                                                                                               Shell (UsrBinDir+'printf "'+SBinDir+'route add -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up');
                                                                                                             //изменение скрипта имя_соединения-ip-down
                                                                                                             if FileExists(EtcPppIpDownLDir+Memo_Config.Lines[0]+'-ip-down') then
-                                                                                                                                                        Shell ('printf "'+SBinDir+'route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpDownLDir+Memo_Config.Lines[0]+'-ip-down');
-                                                                                                            Shell('rm -f '+MyLibDir+Memo_Config.Lines[0]+'/hosts');
+                                                                                                                                                        Shell (UsrBinDir+'printf "'+SBinDir+'route del -host \$IPREMOTE gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpDownLDir+Memo_Config.Lines[0]+'-ip-down');
+                                                                                                            Shell(BinDir+'rm -f '+MyLibDir+Memo_Config.Lines[0]+'/hosts');
                                                                                                           end;
                                                                                  end;
                                           PClose(f);
@@ -792,12 +828,12 @@ If link=1 then If NoInternet then MakeDefaultGW;
 If not Code_up_ppp then
        If FileExists(MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before') then If FileExists(EtcDir+'resolv.conf') then
              If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before', EtcDir+'resolv.conf') then
-                                 Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
+                                 Shell (BinDir+'cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
 //проверка технической возможности поднятия соединения
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_config.Lines[30]<>'none' then
                             begin //тест dns1-сервера
                             Application.ProcessMessages;
-                            popen (f,'ping -c1 '+Memo_config.Lines[30]+'|grep '+chr(39)+'1 received'+chr(39),'R');
+                            popen (f,BinDir+'ping -c1 '+Memo_config.Lines[30]+'|'+BinDir+'grep '+chr(39)+'1 received'+chr(39),'R');
                             Application.ProcessMessages;
                             If eof(f) then
                                                               begin
@@ -809,7 +845,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_config.Lines[31]<>'none' then
                             begin //тест dns2-сервера
                                  Application.ProcessMessages;
-                                 popen (f,'ping -c1 '+Memo_config.Lines[31]+'|grep '+chr(39)+'1 received'+chr(39),'R');
+                                 popen (f,BinDir+'ping -c1 '+Memo_config.Lines[31]+'|'+BinDir+'grep '+chr(39)+'1 received'+chr(39),'R');
                                  Application.ProcessMessages;
                                  If eof(f) then
                                                                    begin
@@ -821,7 +857,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then If Memo_
 If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindUtils)) or ((Memo_Config.Lines[23]='networktest-yes') and (Memo_config.Lines[22]='routevpnauto-no')) then
                             begin //тест vpn-сервера
                                  Application.ProcessMessages;
-                                 popen (f,'ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39),'R');
+                                 popen (f,BinDir+'ping -c1 '+Memo_config.Lines[1]+'|'+BinDir+'grep '+Memo_config.Lines[1]+'|'+BinDir+'awk '+chr(39)+'{print $3}'+chr(39)+'|'+BinDir+'grep '+chr(39)+'('+chr(39),'R');
                                  Application.ProcessMessages;
                                  If eof(f) then NoPingIPS:=true;
                                  PClose(f);
@@ -829,7 +865,7 @@ If not Code_up_ppp then If ((Memo_Config.Lines[23]='networktest-yes') and (BindU
 If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
                             begin //тест шлюза локальной сети
                                  Application.ProcessMessages;
-                                 popen (f,'ping -c1 '+Memo_config.Lines[2]+'|grep '+chr(39)+'1 received'+chr(39),'R');
+                                 popen (f,BinDir+'ping -c1 '+Memo_config.Lines[2]+'|'+BinDir+'grep '+chr(39)+'1 received'+chr(39),'R');
                                  Application.ProcessMessages;
                                  If eof(f) then NoPingGW:=true;
                                  PClose(f);
@@ -838,16 +874,16 @@ If not Code_up_ppp then DhclientStart:=false;
 If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' then //старт dhclient
                            begin
                               AProcessDhclient := TAsyncProcess.Create(nil);
-                              AProcessDhclient.CommandLine :='dhclient '+Memo_Config.Lines[3];
+                              AProcessDhclient.CommandLine :=SBinDir+'dhclient '+Memo_Config.Lines[3];
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then
                               begin
                                 For h:=1 to CountInterface do
-                                                            Shell ('route del default');
-                                Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+                                                            Shell (SBinDir+'route del default');
+                                Shell (SBinDir+'route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
                                 If not DhclientStart then
                                                       begin
-                                                           if fedora then Shell('killall dhclient');
+                                                           if fedora then Shell(UsrBinDir+'killall dhclient');
                                                           AProcessDhclient.Execute;
                                                            Mysleep(StrToInt(Memo_Config.Lines[5]) div 3);
                                                            Application.ProcessMessages;
@@ -857,19 +893,19 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                               If link=1 then If NoInternet then //проверка поднялся ли интерфейс после dhclient
                               begin
                                    none:=false;
-                                   popen (f,SBinDir+'ip r|grep '+Memo_Config.Lines[3],'R');
+                                   popen (f,SBinDir+'ip r|'+BinDir+'grep '+Memo_Config.Lines[3],'R');
                                    If eof(f) then none:=true;
                                    PClose(f);
                                    if none then
                                       begin
                                          Mysleep(StrToInt(Memo_Config.Lines[5]) div 3);
                                          none:=false;
-                                         popen (f,SBinDir+'ip r|grep '+Memo_Config.Lines[3],'R');
+                                         popen (f,SBinDir+'ip r|'+BinDir+'grep '+Memo_Config.Lines[3],'R');
                                          If eof(f) then none:=true;
                                          PClose(f);
                                          if none then
                                                  begin
-                                                      Ifup(Form1.Memo_Config.Lines[3],false);
+                                                      Ifup(Form1.Memo_Config.Lines[3]);
                                                       DhclientStart:=false;
                                                  end;
                                       end;
@@ -877,8 +913,8 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                            end;
   //определение и сохранение всех актуальных в данный момент ip-адресов vpn-сервера с занесением маршрутов везде
   If not FileExists(MyLibDir+Memo_Config.Lines[0]+'/hosts') then NewIPS:=false;
-  if BindUtils then Str:='host '+Memo_config.Lines[1]+'|grep address|grep '+Memo_config.Lines[1]+'|awk '+ chr(39)+'{print $4}'+chr(39);
-  if not BindUtils then Str:='ping -c1 '+Memo_config.Lines[1]+'|grep '+Memo_config.Lines[1]+'|awk '+chr(39)+'{print $3}'+chr(39)+'|grep '+chr(39)+'('+chr(39);
+  if BindUtils then Str:=UsrBinDir+'host '+Memo_config.Lines[1]+'|'+BinDir+'grep address|'+BinDir+'grep '+Memo_config.Lines[1]+'|'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39);
+  if not BindUtils then Str:=BinDir+'ping -c1 '+Memo_config.Lines[1]+'|'+BinDir+'grep '+Memo_config.Lines[1]+'|'+BinDir+'awk '+chr(39)+'{print $3}'+chr(39)+'|'+BinDir+'grep '+chr(39)+'('+chr(39);
   If not Code_up_ppp then If link=1 then
                If FileExists(MyLibDir+Memo_Config.Lines[0]+'/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                        if Memo_config.Lines[21]='IPS-no' then
@@ -903,17 +939,17 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                                                                       If Str_networktest=Memo_bindutilshost0.Lines[i] then
                                                                                                                       NewIPS:=false;
                                                   end;
-                                                  If Memo_Config.Lines[41]='etc-hosts-yes' then Shell ('printf "'+Str_networktest+' '+Memo_config.Lines[1]+'\n" >> '+EtcDir+'hosts');
+                                                  If Memo_Config.Lines[41]='etc-hosts-yes' then Shell (UsrBinDir+'printf "'+Str_networktest+' '+Memo_config.Lines[1]+'\n" >> '+EtcDir+'hosts');
                                                   If NewIPS then
                                                      begin //определился новый, неизвестный ранее ip-адрес vpn-сервера
-                                                        Shell('printf "'+Str_networktest+'\n'+'" >> '+MyLibDir+Memo_Config.Lines[0]+'/hosts');
+                                                        Shell(UsrBinDir+'printf "'+Str_networktest+'\n'+'" >> '+MyLibDir+Memo_Config.Lines[0]+'/hosts');
                                                         Shell (SBinDir+'route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]);
                                                         //изменение скрипта имя_соединения-ip-up
                                                         If FileExists(EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up') then
-                                                                                        Shell ('printf "'+SBinDir+'route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up');
+                                                                                        Shell (UsrBinDir+'printf "'+SBinDir+'route add -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpUpDDir+Memo_Config.Lines[0]+'-ip-up');
                                                         //изменение скрипта имя_соединения-ip-down
                                                         if FileExists(EtcPppIpDownLDir+Memo_Config.Lines[0]+'-ip-down') then
-                                                                                        Shell ('printf "'+SBinDir+'route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpDownLDir+Memo_Config.Lines[0]+'-ip-down');
+                                                                                        Shell (UsrBinDir+'printf "'+SBinDir+'route del -host ' + Str_networktest + ' gw '+ Memo_config.Lines[2]+ ' dev '+ Memo_config.Lines[3]+'\n" >> '+EtcPppIpDownLDir+Memo_Config.Lines[0]+'-ip-down');
                                                     end;
                                               end;
                                            PClose(f);
@@ -937,10 +973,9 @@ If not Code_up_ppp then If link=3 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
-                                                                Shell ('killall balloon');
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
-                                                                Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                                                                Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
                                                               end;
                                   end;
@@ -953,10 +988,9 @@ If not Code_up_ppp then If link=2 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 TrayIcon1.Hide;
-                                                                Shell ('killall balloon');
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
-                                                                Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                                                                Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
                                                               end;
                                   end;
@@ -1001,15 +1035,15 @@ If not Code_up_ppp then If link=1 then
                                   If NoPingIPS or NoDNS then
                                                    begin
                                                       For h:=1 to CountInterface do
-                                                                                Shell ('route del default');
-                                                      Ifdown(Memo_Config.Lines[3],false);
-                                                      Ifup(Form1.Memo_Config.Lines[3],false);
+                                                                                Shell (SBinDir+'route del default');
+                                                      Ifdown(Memo_Config.Lines[3]);
+                                                      Ifup(Form1.Memo_Config.Lines[3]);
                                                    end;
                                   If not NoPingIPS then If not NoDNS then If not NoPingGW then
                                                    begin
                                                       If FileExists(MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before') then If FileExists(EtcDir+'resolv.conf') then
                                                            If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before', EtcDir+'resolv.conf') then
-                                                               Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
+                                                               Shell (BinDir+'cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
                                                       TrafficRX:=0;
                                                       TrafficTX:=0;
                                                       RXbyte0:='0';
@@ -1019,20 +1053,20 @@ If not Code_up_ppp then If link=1 then
                                                       ObnullRX:=0;
                                                       ObnullTX:=0;
                                                       DoSpeedCount:=false;
-                                                      Shell ('rm -f '+MyTmpDir+'ObnullRX');
-                                                      Shell ('rm -f '+MyTmpDir+'ObnullTX');
+                                                      Shell (BinDir+'rm -f '+MyTmpDir+'ObnullRX');
+                                                      Shell (BinDir+'rm -f '+MyTmpDir+'ObnullTX');
                                                       If not FileExists(MyTmpDir+'DateStart') then DateStart:=0;
-                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo',false);
+                                                      If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
                                                       For h:=1 to CountInterface do
-                                                                          Shell ('route del default');
-                                                      Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+                                                                          Shell (SBinDir+'route del default');
+                                                      Shell (SBinDir+'route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
                                                       DoubleRunPonoff:=false;
                                                       If Memo_Config.Lines[39]='pptp' then
                                                                                     Shell (UsrSBinDir+'pppd call '+Memo_Config.Lines[0]);
                                                       If Memo_Config.Lines[39]='l2tp' then
                                                                                           begin
                                                                                               //проверка xl2tpd в процессах
-                                                                                              popen(f,'ps -A | grep xl2tpd','R');
+                                                                                              popen(f,BinDir+'ps -A | '+BinDir+'grep xl2tpd','R');
                                                                                               If eof(f) then
                                                                                                             begin
                                                                                                                  Shell (ServiceCommand+'xl2tpd stop');
@@ -1044,14 +1078,18 @@ If not Code_up_ppp then If link=1 then
                                                                                                                  AProcess.Free;
                                                                                                              end;
                                                                                                PClose(f);
-                                                                                               Shell ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
+                                                                                               Shell (BinDir+'echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
                                                                                           end;
-                                                       If Memo_Config.Lines[39]='openl2tp' then Shell('sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
+                                                       If Memo_Config.Lines[39]='openl2tp' then Shell(BinDir+'sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
                                                    end;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then
                                                 begin
+                                                    Timer1.Enabled:=false;
+                                                    Timer2.Enabled:=false;
                                                     AProcessDhclient.WaitOnExit;
                                                     AProcessDhclient.Free;
+                                                    Timer1.Enabled:=true;
+                                                    Timer2.Enabled:=true;
                                                 end;
                            end;
 Application.ProcessMessages;
@@ -1062,14 +1100,91 @@ var
   link:byte; //1-link ok, 2-no link, 3-none
   i,j,h,zero:integer;
   str,stri,StrObnull:string;
-  Apid:tpid;
   FileObnull:textfile;
 begin
+  Timer1.Enabled:=False;
+  Timer2.Enabled:=False;
+  If not ProgrammRoot('ponoff',false) then
+                          begin
+                               Form1.Hide;
+                               TrayIcon1.Hide;
+                               Application.ProcessMessages;
+                          end;
   Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
   Application.CreateForm(TFormHintMatrix, FormHintMatrix);
-  if FileSize(MyLibDir+'profiles')=0 then Shell ('rm -f '+MyLibDir+'profiles');
-  if FileSize(MyLibDir+'default/default')=0 then Shell ('rm -f '+MyLibDir+'default/default');
-  If FileExists (SBinDir+'service') or FileExists (UsrSBinDir+'service') then ServiceCommand:='service ' else ServiceCommand:=EtcInitDDir;
+  Application.CreateForm(TForm3, Form3);
+  //проверка ponoff в процессах root, исключение запуска под иными пользователями
+  If not ProgrammRoot('ponoff',false) then nostart:=true else nostart:=false;
+  DopParam:=' ';
+  If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
+  If DopParam=' ' then DopParam:='';
+  If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
+  If nostart then If FileExists('/usr/lib64/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
+          begin
+               AProcess := TAsyncProcess.Create(nil);
+               AProcess.CommandLine :='/usr/lib64/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
+               AProcess.Execute;
+               while AProcess.Running do
+               begin
+                   ProgrammRoot('ponoff',true);
+                   sleep(100);
+               end;
+               Application.ProcessMessages;
+               AProcess.Free;
+          end;
+  If nostart then If FileExists('/usr/lib/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
+             begin
+                  AProcess := TAsyncProcess.Create(nil);
+                  AProcess.CommandLine :='/usr/lib/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
+                  AProcess.Execute;
+                  while AProcess.Running do
+                  begin
+                      ProgrammRoot('ponoff',true);
+                      sleep(100);
+                  end;
+                  Application.ProcessMessages;
+                  AProcess.Free;
+             end;
+  If nostart then If FileExists(UsrBinDir+'beesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через beesu
+         begin
+              AProcess := TAsyncProcess.Create(nil);
+              AProcess.CommandLine :=UsrBinDir+'beesu - '+'"'+Paramstr(0)+DopParam+'"';
+              AProcess.Execute;
+              while AProcess.Running do
+              begin
+                  ProgrammRoot('ponoff',true);
+                  sleep(100);
+              end;
+              Application.ProcessMessages;
+              AProcess.Free;
+         end;
+  If nostart then If FileExists(UsrBinDir+'gksu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через gksu
+             begin
+                  AProcess := TAsyncProcess.Create(nil);
+                  AProcess.CommandLine :=UsrBinDir+'gksu -g -u root '+'"'+Paramstr(0)+DopParam+'"'+' -m "'+message70+'"';
+                  AProcess.Execute;
+                  while AProcess.Running do
+                  begin
+                      ProgrammRoot('ponoff',true);
+                      sleep(100);
+                  end;
+                  Application.ProcessMessages;
+                  AProcess.Free;
+             end;
+  If not ProgrammRoot('ponoff',false) then
+                begin
+                     Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                     PClose(f);
+                     Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
+                     halt;
+                end;
+  Timer1.Enabled:=true;
+  Timer2.Enabled:=true;
+  if FileSize(MyLibDir+'profiles')=0 then Shell (BinDir+'rm -f '+MyLibDir+'profiles');
+  if FileSize(MyLibDir+'default/default')=0 then Shell (BinDir+'rm -f '+MyLibDir+'default/default');
+  If FileExists (SBinDir+'service') then ServiceCommand:=SBinDir+'service ';
+  If FileExists (UsrSBinDir+'service') then ServiceCommand:=UsrSBinDir+'service ';
+  If not FileExists (SBinDir+'service') then if not FileExists (UsrSBinDir+'service') then ServiceCommand:=EtcInitDDir;
   DoubleRunPonoff:=false;
   StartMessage:=true;
   ubuntu:=false;
@@ -1077,7 +1192,6 @@ begin
   fedora:=false;
   suse:=false;
   mandriva:=false;
-  Application.CreateForm(TForm3, Form3);
   Application.ShowMainForm:=false;
   Application.Minimize;
   If FileExists (MyPixmapsDir+'ponoff.png') then Image1.Picture.LoadFromFile(MyPixmapsDir+'ponoff.png');
@@ -1150,7 +1264,7 @@ If str='DEFAULT' then
                               Form1.Hide;
                               TrayIcon1.Hide;
                               Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                              Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                              Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                               halt;
                            end;
   If ProfileName<>'' then if not DirectoryExists(MyLibDir+ProfileName) then
@@ -1160,7 +1274,7 @@ If str='DEFAULT' then
                                                      Form1.Hide;
                                                      TrayIcon1.Hide;
                                                      Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                                     Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                                                     Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                      halt;
                                                    end;
   If ProfileName='' then if FileExists(MyLibDir+'profiles') then if not FileExists(MyLibDir+'default/default') then
@@ -1173,35 +1287,19 @@ If str='DEFAULT' then
                                                                 If Form3.Tag=2 then If Form3.ComboBoxProfile.Text<>'' then
                                                                                                   begin
                                                                                                         ProfileName:=Form3.ComboBoxProfile.Text;
-                                                                                                        Shell ('mkdir -p '+MyLibDir+'default');
-                                                                                                        Shell ('echo "'+ProfileName+'" > '+MyLibDir+'default/default');
+                                                                                                        Shell (BinDir+'mkdir -p '+MyLibDir+'default');
+                                                                                                        Shell (BinDir+'echo "'+ProfileName+'" > '+MyLibDir+'default/default');
                                                                                                   end;
                                                                 If (Form3.Tag=0) or (Form3.Tag=3) or (Form3.ComboBoxProfile.Text='') then
                                                                                                                                      begin
-                                                                                                                                          Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                                                                                                                                          Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                                                                                                           halt;
                                                                                                                                      end;
                                                                 Timer1.Enabled:=true;
                                                                 Timer2.Enabled:=true;
                                                                 TrayIcon1.Show;
                                                             end;
-  //проверка ponoff в процессах root, исключение запуска под иными пользователями
-   Apid:=FpGetpid;
-   popen (f,'ps -u root |grep ponoff| grep '+IntToStr(Apid),'R');
-   If eof(f) then
-                   begin
-                      //запуск не под root
-                      Timer1.Enabled:=False;
-                      Timer2.Enabled:=False;
-                      Form1.Hide;
-                      TrayIcon1.Hide;
-                      Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                      PClose(f);
-                      Shell('rm -f '+VarRunVpnpptp+ProfileName);
-                      halt;
-                   end;
-  PClose(f);
-  If not FileExists(MyTmpDir) then Shell ('mkdir -p '+MyTmpDir);
+  If not FileExists(MyTmpDir) then Shell (BinDir+'mkdir -p '+MyTmpDir);
   //обеспечение совместимости старого config с новым
   If FileExists(MyLibDir+ProfileName+'/config') then
      begin
@@ -1209,7 +1307,7 @@ If str='DEFAULT' then
         If Memo_config.Lines.Count<Config_n then
                                             begin
                                                for i:=Memo_config.Lines.Count to Config_n do
-                                                  Shell('printf "none\n" >> '+MyLibDir+ProfileName+'/config');
+                                                  Shell(UsrBinDir+'printf "none\n" >> '+MyLibDir+ProfileName+'/config');
                                             end;
      end;
   //обеспечение совместимости старого general.conf с новым
@@ -1219,7 +1317,7 @@ If str='DEFAULT' then
              If Memo_General_conf.Lines.Count<General_conf_n then
                                                  begin
                                                     for i:=Memo_General_conf.Lines.Count to General_conf_n do
-                                                       Shell('printf "none\n" >> '+MyLibDir+'general.conf');
+                                                       Shell(UsrBinDir+'printf "none\n" >> '+MyLibDir+'general.conf');
                                                  end;
           end;
  If FileExists(MyLibDir+'general.conf') then begin Memo_General_conf.Lines.LoadFromFile(MyLibDir+'general.conf');end
@@ -1230,7 +1328,7 @@ If str='DEFAULT' then
             Form1.Hide;
             TrayIcon1.Hide;
             Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-            Shell('rm -f '+VarRunVpnpptp+ProfileName);
+            Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
             halt;
            end;
   If FileExists(MyLibDir+ProfileName+'/config') then begin Memo_Config.Lines.LoadFromFile(MyLibDir+ProfileName+'/config');end
@@ -1241,7 +1339,7 @@ If str='DEFAULT' then
     Form1.Hide;
     TrayIcon1.Hide;
     Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-    Shell('rm -f '+VarRunVpnpptp+ProfileName);
+    Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
     halt;
    end;
    if Memo_General_conf.Lines[3]<>'none' then AFont:=StrToInt(Memo_General_conf.Lines[3]);
@@ -1257,19 +1355,19 @@ If str='DEFAULT' then
   If FileExists (EtcInitDDir+'networking') then NetServiceStr:='networking';
   If FileExists (EtcInitDDir+'network-manager') then
                                                     begin
-                                                       popen (f,'ps -e |grep NetworkManager','R');
+                                                       popen (f,BinDir+'ps -e |'+BinDir+'grep NetworkManager','R');
                                                        if not eof(f) then NetServiceStr:='NetworkManager';
                                                        PClose(f);
                                                     end;
   If FileExists (EtcInitDDir+'NetworkManager') then
                                                     begin
-                                                       popen (f,'ps -e |grep NetworkManager','R');
+                                                       popen (f,BinDir+'ps -e |'+BinDir+'grep NetworkManager','R');
                                                        if not eof(f) then NetServiceStr:='NetworkManager';
                                                        PClose(f);
                                                     end;
   If FileExists (EtcInitDDir+'networkmanager') then
                                                     begin
-                                                       popen (f,'ps -e |grep networkmanager','R');
+                                                       popen (f,BinDir+'ps -e |'+BinDir+'grep networkmanager','R');
                                                        if not eof(f) then NetServiceStr:='networkmanager';
                                                        PClose(f);
                                                     end;
@@ -1286,7 +1384,7 @@ If str='DEFAULT' then
                                Application.ProcessMessages;
                             end;
 //проверка ponoff в процессах root, обработка двойного запуска программы
-popen (f,'ps -u root | grep ponoff | awk '+chr(39)+'{print $4}'+chr(39),'R');
+popen (f,BinDir+'ps -u root | '+BinDir+'grep ponoff | '+BinDir+'awk '+chr(39)+'{print $4}'+chr(39),'R');
 i:=0;
 while not eof(f) do
 begin
@@ -1296,15 +1394,15 @@ end;
 PClose(f);
 If i=1 then
      begin
-        Shell('rm -rf '+VarRunVpnpptp);
-        Shell('mkdir -p '+VarRunVpnpptp);
-        Shell ('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
+        Shell(BinDir+'rm -rf '+VarRunVpnpptp);
+        Shell(BinDir+'mkdir -p '+VarRunVpnpptp);
+        Shell(BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
      end;
 If i>1 then
               begin
                   DoubleRunPonoff:=true;
                   Apid:=FpGetpid;
-                  popen(f1,'cat '+VarRunVpnpptp+'*','R');
+                  popen(f1,BinDir+'cat '+VarRunVpnpptp+'*','R');
                   j:=0;
                   stri:='';
                   while not eof(f1) do
@@ -1322,10 +1420,10 @@ If i>1 then
                                 Form1.Hide;
                                 TrayIcon1.Hide;
                                 Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                                Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                 halt;
                              end;
-               popen(f,'ps -e|grep ponoff|awk '+chr(39)+'{print$1}'+chr(39),'R');
+               popen(f,BinDir+'ps -e|'+BinDir+'grep ponoff|'+BinDir+'awk '+chr(39)+'{print$1}'+chr(39),'R');
                str:='';
                     While not eof(f) do
                         begin
@@ -1357,7 +1455,7 @@ If not FileExists (MyTmpDir+'DateStart') then DateStart:=0 else
 //учитывание особенностей openSUSE
 If suse then
         begin
-             popen(f,'/sbin/ip r|grep dsl','R');
+             popen(f,SBinDir+'ip r|'+BinDir+'grep dsl','R');
              If not eof(f) then
                                          begin
                                            Timer1.Enabled:=False;
@@ -1366,7 +1464,7 @@ If suse then
                                            TrayIcon1.Hide;
                                            Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                            PClose(f);
-                                           Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                                           Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                            halt;
                                          end;
              PClose(f);
@@ -1383,7 +1481,7 @@ If suse then
    PClose(f);
    //определение пропускной способности сети
    zero:=0;
-   popen (f,SBinDir+'mii-tool '+Memo_Config.Lines[3]+'|awk '+chr(39)+'{print $3}'+chr(39),'R');
+   popen (f,SBinDir+'mii-tool '+Memo_Config.Lines[3]+'|'+BinDir+'awk '+chr(39)+'{print $3}'+chr(39),'R');
    str:='';
    while not eof(f) do
         readln(f,str);
@@ -1406,10 +1504,10 @@ If suse then
                    AProcess.Execute;
                    AProcess.Free;
                    For h:=1 to CountInterface do
-                                          Shell ('route del default');
-                   Ifdown(Memo_Config.Lines[3],false);
+                                          Shell (SBinDir+'route del default');
+                   Ifdown(Memo_Config.Lines[3]);
                    Mysleep(3000);
-                   Ifup(Memo_Config.Lines[3],false);
+                   Ifup(Memo_Config.Lines[3]);
                    //повторная проверка состояния сетевого интерфейса
                    If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep(3000);
                    popen (f,SBinDir+'mii-tool '+Memo_Config.Lines[3],'R');
@@ -1431,7 +1529,7 @@ If suse then
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
                  Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                 Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                 Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
    if link=2 then
@@ -1440,7 +1538,7 @@ If suse then
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  TrayIcon1.Hide;
-                 Shell('rm -f '+VarRunVpnpptp+ProfileName);
+                 Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
   Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
@@ -1463,8 +1561,8 @@ procedure TForm1.ColorIconClick(Sender: TObject);
 begin
   If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
   If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
-  If FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor') then Shell('rm -f '+MyLibDir+Memo_Config.Lines[0]+'/nocolor') else
-                                                                 Shell('touch '+MyLibDir+Memo_Config.Lines[0]+'/nocolor');
+  If FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor') then Shell(BinDir+'rm -f '+MyLibDir+Memo_Config.Lines[0]+'/nocolor') else
+                                                                 Shell(BinDir+'touch '+MyLibDir+Memo_Config.Lines[0]+'/nocolor');
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
@@ -1474,7 +1572,7 @@ var
 begin
  If DoubleRunPonoff then exit;
 //проверка наличия в процессах демона pppd
- popen(f,'ps -u root | grep pppd | awk '+chr(39)+'{print $4}'+chr(39),'R');
+ popen(f,BinDir+'ps -u root | '+BinDir+'grep pppd | '+BinDir+'awk '+chr(39)+'{print $4}'+chr(39),'R');
  Application.ProcessMessages;
  str:='';
  while not eof(f) do
@@ -1482,8 +1580,8 @@ begin
      readln(f,str);
      If str<>'' then If (LeftStr(str,4)='pppd') then
                                         begin
-                                             If Memo_Config.Lines[39]<>'openl2tp' then If FileExists(MyLibDir+'default/openl2tp-stop') then Shell('sh '+MyLibDir+'default/openl2tp-stop');
-                                             Shell('killall pppd');
+                                             If Memo_Config.Lines[39]<>'openl2tp' then If FileExists(MyLibDir+'default/openl2tp-stop') then Shell(BinDir+'sh '+MyLibDir+'default/openl2tp-stop');
+                                             Shell(UsrBinDir+'killall pppd');
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then
                                                                                   begin
                                                                                        AProcess := TAsyncProcess.Create(nil);
@@ -1498,12 +1596,12 @@ begin
  If Memo_Config.Lines[39]='pptp' then
                                  begin
                                       Shell (ServiceCommand+'xl2tpd stop');
-                                      Shell ('killall xl2tpd');
+                                      Shell (UsrBinDir+'killall xl2tpd');
                                  end;
- If Memo_Config.Lines[39]='openl2tp' then Shell('sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-stop');
- Shell('killall openl2tpd');
- Shell('killall openl2tp');
- Shell('killall l2tpd');
+ If Memo_Config.Lines[39]='openl2tp' then Shell(BinDir+'sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-stop');
+ Shell(UsrBinDir+'killall openl2tpd');
+ Shell(UsrBinDir+'killall openl2tp');
+ Shell(UsrBinDir+'killall l2tpd');
  Application.ProcessMessages;
 end;
 
@@ -1515,27 +1613,26 @@ begin
  Timer1.Enabled:=False;
  Timer2.Enabled:=False;
  KillZombieNet_Monitor;
- Shell ('killall net_monitor');
- Shell ('killall balloon');
+ Shell (UsrBinDir+'killall net_monitor');
  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   MenuItem2Click(Self);
-  If Memo_Config.Lines[39]='l2tp' then Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
+  If Memo_Config.Lines[39]='l2tp' then Shell (BinDir+'echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
   LoadIconForTray(MyDataDir,'off.ico');
   Application.ProcessMessages;
   For h:=1 to CountInterface do
-              Shell ('route del default');
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo',false);
-  Shell('rm -f '+MyTmpDir+'xl2tpd.conf');
+              Shell (SBinDir+'route del default');
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
+  Shell(BinDir+'rm -f '+MyTmpDir+'xl2tpd.conf');
   If FileExists(MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before') then If FileExists(EtcDir+'resolv.conf') then
          If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before', EtcDir+'resolv.conf') then
-                         Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
-  Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
-  Shell ('rm -f '+MyTmpDir+'DateStart');
-  Shell ('rm -f '+MyTmpDir+'ObnullRX');
-  Shell ('rm -f '+MyTmpDir+'ObnullTX');
-  Shell ('rm -f '+MyTmpDir+'mtu.checked');
+                         Shell (BinDir+'cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
+  Shell (SBinDir+'route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+  Shell (BinDir+'rm -f '+MyTmpDir+'DateStart');
+  Shell (BinDir+'rm -f '+MyTmpDir+'ObnullRX');
+  Shell (BinDir+'rm -f '+MyTmpDir+'ObnullTX');
+  Shell (BinDir+'rm -f '+MyTmpDir+'mtu.checked');
   MakeDefaultGW;
-  Shell('rm -f '+VarRunVpnpptp+ProfileName);
+  Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
   halt;
 end;
 
@@ -1548,54 +1645,53 @@ begin
   Timer1.Enabled:=False;
   Timer2.Enabled:=False;
   KillZombieNet_Monitor;
-  Shell ('killall net_monitor');
-  Shell ('killall balloon');
+  Shell (UsrBinDir+'killall net_monitor');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   If FileExists(MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before') then If FileExists(EtcDir+'resolv.conf') then
           If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before', EtcDir+'resolv.conf') then
-                            Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
+                            Shell (BinDir+'cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before '+EtcDir+'resolv.conf');
   MenuItem2Click(Self);
-  If Memo_Config.Lines[39]='l2tp' then Shell ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
+  If Memo_Config.Lines[39]='l2tp' then Shell (BinDir+'echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
   LoadIconForTray(MyDataDir,'off.ico');
   Application.ProcessMessages;
   For i:=0 to 9 do
       begin
-        Ifdown('eth'+IntToStr(i),true);
-        Ifdown('wlan'+IntToStr(i),true);
-        Ifdown('br'+IntToStr(i),true);
-        Ifdown('em'+IntToStr(i),true);
+        Ifdown('eth'+IntToStr(i));
+        Ifdown('wlan'+IntToStr(i));
+        Ifdown('br'+IntToStr(i));
+        Ifdown('em'+IntToStr(i));
       end;
   Shell (ServiceCommand+NetServiceStr+' restart'); // организация конкурса интерфейсов
   If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep(3000);
-  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo',true);
-  Shell ('route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
+  If (Memo_Config.Lines[30]='127.0.0.1') or (Memo_Config.Lines[31]='127.0.0.1') then Ifup('lo');
+  Shell (SBinDir+'route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
  //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть своим алгоритмом
-  popen(f,SBinDir+'ip r|grep default|awk '+ chr(39)+'{print $3}'+chr(39),'R');
+  popen(f,SBinDir+'ip r|'+BinDir+'grep default|'+BinDir+'awk '+ chr(39)+'{print $3}'+chr(39),'R');
   If eof(f) then
      begin
          For i:=0 to 9 do
              begin
-              Ifdown('eth'+IntToStr(i),true);
-              Ifdown('wlan'+IntToStr(i),true);
-              Ifdown('br'+IntToStr(i),true);
-              Ifdown('em'+IntToStr(i),true);
+              Ifdown('eth'+IntToStr(i));
+              Ifdown('wlan'+IntToStr(i));
+              Ifdown('br'+IntToStr(i));
+              Ifdown('em'+IntToStr(i));
              end;
             Shell (ServiceCommand+NetServiceStr+' restart');
             For i:=0 to 9 do
                  begin
-                    Ifup('eth'+IntToStr(i),true);
-                    Ifup('wlan'+IntToStr(i),true);
-                    Ifup('br'+IntToStr(i),true);
-                    Ifup('em'+IntToStr(i),true);
+                    Ifup('eth'+IntToStr(i));
+                    Ifup('wlan'+IntToStr(i));
+                    Ifup('br'+IntToStr(i));
+                    Ifup('em'+IntToStr(i));
                  end;
-           Ifup('lo',true);
+           Ifup('lo');
      end;
   PClose(f);
-  Shell ('rm -f '+MyTmpDir+'DateStart');
-  Shell ('rm -f '+MyTmpDir+'ObnullRX');
-  Shell ('rm -f '+MyTmpDir+'ObnullTX');
-  Shell ('rm -f '+MyTmpDir+'mtu.checked');
-  Shell ('rm -f '+VarRunVpnpptp+ProfileName);
+  Shell (BinDir+'rm -f '+MyTmpDir+'DateStart');
+  Shell (BinDir+'rm -f '+MyTmpDir+'ObnullRX');
+  Shell (BinDir+'rm -f '+MyTmpDir+'ObnullTX');
+  Shell (BinDir+'rm -f '+MyTmpDir+'mtu.checked');
+  Shell (BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
   halt;
 end;
 
@@ -1643,7 +1739,7 @@ var
   TV : timeval;
   DNS3,DNS4:string;
 begin
-  If not FileExists (VarRunVpnpptp+ProfileName) then Shell ('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
+  If not FileExists (VarRunVpnpptp+ProfileName) then Shell (BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
   TrayIcon1.Show;
   Application.ProcessMessages;
@@ -1652,24 +1748,27 @@ begin
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
   KillZombieNet_Monitor;
   //определяем скорость, время
-  popen (f,'ifconfig '+PppIface+'|grep RX|grep bytes|awk '+chr(39)+'{print $2}'+chr(39),'R');
-  RXbyte1:='0';
-  While not eof(f) do
-     begin
-       Readln (f,RXbyte1);
-     end;
-  PClose(f);
-  If RXbyte1='' then RXbyte1:='0';
-  popen (f,'ifconfig '+PppIface+'|grep TX|grep bytes|awk '+chr(39)+'{print $6}'+chr(39),'R');
-  TXbyte1:='0';
-  While not eof(f) do
-     begin
-       Readln (f,TXbyte1);
-     end;
-  PClose(f);
-  If TXbyte1='' then TXbyte1:='0';
-  If RXbyte1<>'0' then Delete(RXbyte1,1,6);
-  If TXbyte1<>'0' then Delete(TXbyte1,1,6);
+  If Code_up_ppp then
+            begin
+                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep RX|'+BinDir+'grep bytes|'+BinDir+'awk '+chr(39)+'{print $2}'+chr(39),'R');
+                RXbyte1:='0';
+                While not eof(f) do
+                   begin
+                     Readln (f,RXbyte1);
+                   end;
+                PClose(f);
+                If RXbyte1='' then RXbyte1:='0';
+                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep TX|'+BinDir+'grep bytes|'+BinDir+'awk '+chr(39)+'{print $6}'+chr(39),'R');
+                TXbyte1:='0';
+                While not eof(f) do
+                   begin
+                     Readln (f,TXbyte1);
+                   end;
+                PClose(f);
+                If TXbyte1='' then TXbyte1:='0';
+                If RXbyte1<>'0' then Delete(RXbyte1,1,6);
+                If TXbyte1<>'0' then Delete(TXbyte1,1,6);
+            end;
   If MaxSpeed<>0 then If Code_up_ppp then
           begin
                 if StrToInt64(RXbyte1)-StrToInt64(RXbyte0)>MaxSpeed then
@@ -1697,13 +1796,13 @@ begin
           If StrToInt64(RXbyte1)-StrToInt64(RXbyte0)<0 then
                                                        begin
                                                             ObnullRX:=ObnullRX+1;
-                                                            Shell ('printf "'+IntToStr(ObnullRX)+'\n" > '+MyTmpDir+'ObnullRX');
+                                                            Shell (UsrBinDir+'printf "'+IntToStr(ObnullRX)+'\n" > '+MyTmpDir+'ObnullRX');
                                                        end;
           TrafficTX:=StrToInt64(TXbyte1);
           If StrToInt64(TXbyte1)-StrToInt64(TXbyte0)<0 then
                                                        begin
                                                             ObnullTX:=ObnullTX+1;
-                                                            Shell ('printf "'+IntToStr(ObnullTX)+'\n" > '+MyTmpDir+'ObnullTX');
+                                                            Shell (UsrBinDir+'printf "'+IntToStr(ObnullTX)+'\n" > '+MyTmpDir+'ObnullTX');
                                                        end;
         end else
                 begin
@@ -1716,8 +1815,8 @@ begin
                     ObnullRX:=0;
                     ObnullTX:=0;
                     DoSpeedCount:=false;
-                    Shell ('rm -f '+MyTmpDir+'ObnullRX');
-                    Shell ('rm -f '+MyTmpDir+'ObnullTX');
+                    Shell (BinDir+'rm -f '+MyTmpDir+'ObnullRX');
+                    Shell (BinDir+'rm -f '+MyTmpDir+'ObnullTX');
                 end;
   If (StrToInt64(RXbyte1)-StrToInt64(RXbyte0))>=0 then RXSpeed:=IntToStr(StrToInt64(RXbyte1)-StrToInt64(RXbyte0)) else RXSpeed:='-';
   If RXSpeed='' then RXSpeed:='0';
@@ -1747,13 +1846,13 @@ begin
                       begin
                            fpGettimeofday(@TV,nil);
                            DateStart:=TV.tv_sec;
-                           If not FileExists (MyTmpDir+'DateStart') then Shell ('printf "'+IntToStr(DateStart)+'\n" > '+MyTmpDir+'DateStart');
+                           If not FileExists (MyTmpDir+'DateStart') then Shell (UsrBinDir+'printf "'+IntToStr(DateStart)+'\n" > '+MyTmpDir+'DateStart');
                       end;
   If Code_up_ppp then
                      begin
                              If Code_up_ppp then If FileExists (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after') then If FileExists (EtcDir+'resolv.conf') then
                                                 If not CompareFiles (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after', EtcDir+'resolv.conf') then
-                                                       Shell ('cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after '+EtcDir+'resolv.conf');
+                                                       Shell (BinDir+'cp -f '+MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.after '+EtcDir+'resolv.conf');
                              Application.ProcessMessages;
                              LoadIconForTray(MyDataDir,'on.ico');
                              If StartMessage then BalloonMessage (3000,message0,message6+' '+Memo_Config.Lines[0]+' '+message7+'...',AFont);
@@ -1780,7 +1879,7 @@ begin
                                  //тест dns3-сервера
                                  If DNS3<>'none' then
                                     begin
-                                         Str:='ping -c1 '+DNS3+'|grep '+chr(39)+'1 received'+chr(39);
+                                         Str:=BinDir+'ping -c1 '+DNS3+'|'+BinDir+'grep '+chr(39)+'1 received'+chr(39);
                                          Application.ProcessMessages;
                                          popen(f,Str,'R');
                                          Application.ProcessMessages;
@@ -1794,7 +1893,7 @@ begin
                                  //тест dns4-сервера
                                  If DNS4<>'none' then
                                     begin
-                                         Str:='ping -c1 '+DNS4+'|grep '+chr(39)+'1 received'+chr(39);
+                                         Str:=BinDir+'ping -c1 '+DNS4+'|'+BinDir+'grep '+chr(39)+'1 received'+chr(39);
                                          Application.ProcessMessages;
                                          popen(f,Str,'R');
                                          Application.ProcessMessages;
@@ -1806,7 +1905,7 @@ begin
                                          PClose(f);
                                     end;
                                  //тест интернета
-                                 Str:='ping -c1 '+Memo_Config.Lines[44]+'|grep '+chr(39)+'1 received'+chr(39);
+                                 Str:=BinDir+'ping -c1 '+Memo_Config.Lines[44]+'|'+BinDir+'grep '+chr(39)+'1 received'+chr(39);
                                  Application.ProcessMessages;
                                  popen(f,str,'R');
                                  Application.ProcessMessages;
@@ -1831,14 +1930,14 @@ begin
                              ObnullRX:=0;
                              ObnullTX:=0;
                              DoSpeedCount:=false;
-                             Shell ('rm -f '+MyTmpDir+'ObnullRX');
-                             Shell ('rm -f '+MyTmpDir+'ObnullTX');
+                             Shell (BinDir+'rm -f '+MyTmpDir+'ObnullRX');
+                             Shell (BinDir+'rm -f '+MyTmpDir+'ObnullTX');
                              Application.ProcessMessages;
                              If not StartMessage then
                                     begin
                                          If NoConnectMessageShow then BalloonMessage (6000,message0,message6+' '+Memo_Config.Lines[0]+' '+message8+'...',AFont);
                                          NoInternet:=true;
-                                         Shell('rm -f '+MyTmpDir+'DateStart');
+                                         Shell(BinDir+'rm -f '+MyTmpDir+'DateStart');
                                          TrafficRX:=0;
                                          TrafficTX:=0;
                                          RXbyte0:='0';
@@ -1848,8 +1947,8 @@ begin
                                          ObnullRX:=0;
                                          ObnullTX:=0;
                                          DoSpeedCount:=false;
-                                         Shell ('rm -f '+MyTmpDir+'ObnullRX');
-                                         Shell ('rm -f '+MyTmpDir+'ObnullTX');
+                                         Shell (BinDir+'rm -f '+MyTmpDir+'ObnullRX');
+                                         Shell (BinDir+'rm -f '+MyTmpDir+'ObnullTX');
                                     end;
                              LoadIconForTray(MyDataDir,'off.ico');
                              StartMessage:=true;
@@ -1886,7 +1985,7 @@ begin
   If Code_up_ppp then If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then
                     begin
                          //проверка net_monitor в процессах root, игнорируя зомби
-                         popen(f,'ps -u root | grep net_monitor | awk '+chr(39)+'{print $4$5}'+chr(39),'R');
+                         popen(f,BinDir+'ps -u root | '+BinDir+'grep net_monitor | '+BinDir+'awk '+chr(39)+'{print $4$5}'+chr(39),'R');
                          str:='';
                          While not eof(f) do
                               begin
@@ -1968,7 +2067,7 @@ begin
   RemoteIPaddress0:='-';
   If Code_up_ppp then
                      begin
-                          popen (f,'ifconfig '+PppIface+'|grep P-t-P|awk '+chr(39)+'{print $3}'+chr(39),'R');
+                          popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep P-t-P|'+BinDir+'awk '+chr(39)+'{print $3}'+chr(39),'R');
                           if not eof(f) then
                                             begin
                                                  While not eof(f) do
@@ -1983,7 +2082,7 @@ begin
   IPaddress0:='-';
   If Code_up_ppp then
                      begin
-                          popen (f,'ifconfig '+PppIface+'|grep P-t-P|awk '+chr(39)+'{print $2}'+chr(39),'R');
+                          popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep P-t-P|'+BinDir+'awk '+chr(39)+'{print $2}'+chr(39),'R');
                           if not eof(f) then
                                             begin
                                                  While not eof(f) do
@@ -2050,15 +2149,15 @@ initialization
   ProfileStrDefault:='';
   If Paramcount=0 then if FileExists(MyLibDir+'default/default') then
                               begin
-                                   popen(f,'cat '+MyLibDir+'default/default','R');
+                                   popen(f,BinDir+'cat '+MyLibDir+'default/default','R');
                                    while not eof(f) do
                                                     readln(f,ProfileStrDefault);
                                    PClose(f);
                                    If ProfileStrDefault<>'' then ProfileName:=ProfileStrDefault;
                               end;
   If Paramcount>0 then ProfileName:=Paramstr(1);
-  Shell('mkdir -p '+VarRunVpnpptp);
-  Shell ('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
+  Shell(BinDir+'mkdir -p '+VarRunVpnpptp);
+  Shell(BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
   If FallbackLang='be' then FallbackLang:='ru';

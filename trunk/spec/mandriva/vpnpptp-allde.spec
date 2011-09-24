@@ -1,8 +1,8 @@
-%define rel 4
+%define rel 1
 
 Summary: Tools for setup and control VPN via PPTP/L2TP/OpenL2TP
 Name: vpnpptp-allde
-Version: 0.3.3
+Version: 0.3.4
 Release: %mkrel %{rel}
 License: GPL2
 Group: System/Configuration/Networking
@@ -14,7 +14,6 @@ Source2: vpnmandriva.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: fpc-src >= 2.4.2, fpc >= 2.4.2, lazarus >= 0.9.29
-Requires: gksu, pptp-linux, xl2tpd >= 1.2.7, openl2tp
 
 %description
 Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
@@ -22,16 +21,6 @@ Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
 %prep
 
 %setup -q -n vpnpptp-src-%{version}
-
-%pre
-#удалить ссылки если есть
-rm -f %{_bindir}/vpnpptp
-rm -f %{_bindir}/ponoff
-rm -f %{_datadir}/pixmaps/ponoff.png
-rm -f %{_datadir}/pixmaps/vpnpptp.png
-#обеспечить переход с allde на kde-one или наоборот
-rm -f %{_datadir}/applications/ponoff.desktop.old
-rm -f %{_datadir}/applications/vpnpptp.desktop.old
 
 %build
 %ifarch x86_64
@@ -59,6 +48,7 @@ cp -f ./vpnpptp.png %{buildroot}%{_datadir}/pixmaps/
 chmod 0644 %{buildroot}%{_datadir}/pixmaps/ponoff.png
 chmod 0644 %{buildroot}%{_datadir}/pixmaps/vpnpptp.png
 cp -f ./*.ico %{buildroot}%{_datadir}/vpnpptp
+cp -f ./vpnlinux %{buildroot}%{_bindir}
 cp -rf ./scripts %{buildroot}%{_datadir}/vpnpptp/
 cp -rf ./wiki %{buildroot}%{_datadir}/vpnpptp/
 cp -rf ./lang %{buildroot}%{_datadir}/vpnpptp/
@@ -75,7 +65,7 @@ GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP/OpenL2TP
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
-Exec=gksu -u root -l /usr/bin/ponoff
+Exec=/usr/bin/ponoff
 Comment=Control VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP/OpenL2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/OpenL2TP
@@ -102,7 +92,7 @@ GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
-Exec=gksu -u root -l /usr/bin/vpnpptp
+Exec=/usr/bin/vpnpptp
 Comment=Setup VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
 Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
@@ -127,6 +117,7 @@ rm -rf %{buildroot}
 
 %{_bindir}/vpnpptp
 %{_bindir}/ponoff
+%{_bindir}/vpnlinux
 %{_bindir}/vpnmandriva
 %{_datadir}/vpnpptp/lang
 %{_datadir}/pixmaps/ponoff.png

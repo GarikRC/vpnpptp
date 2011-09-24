@@ -1,1 +1,1 @@
-Для PCLinuxOS используются spec-файлы от Mandriva.
+Для PCLinuxOS используется spec-файл от Mandriva.

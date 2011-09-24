@@ -55,7 +55,6 @@ var
 begin
      k0:=35;
      k1:=12;
-     //k3:=22;
      k3:=Form1.TrayIcon1.Icon.Width;
      FormBalloonMatrix.Visible:=true;
      Application.ProcessMessages;

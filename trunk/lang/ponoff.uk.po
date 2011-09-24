@@ -301,3 +301,7 @@ msgstr "Кольорова іконка"
 #: unit1.message69
 msgid "Че#209�но-белая иконка"
 msgstr "Чорно-біла іконка"
+
+#: unit1.message70
+msgid "Введите па#209�оль root:"
+msgstr "Введіть пароль root:"
