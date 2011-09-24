@@ -451,6 +451,10 @@ msgstr ""
 msgid "установлено"
 msgstr ""
 
+#: unit1.message70
+msgid "Введите па#209�оль root:"
+msgstr ""
+
 #: unit1.message8
 msgid "отсутствует"
 msgstr ""

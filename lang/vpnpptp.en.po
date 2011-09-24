@@ -1263,3 +1263,7 @@ msgstr "<OK> - ignore this warning and continue (recommended). <Cancel> - Correc
 #: unit1.message225
 msgid "Для Fedora для #209�аботы VPN OpenL2TP т#209�ебуется selinux-policy>=3.9.16-33, иначе может не #209�аботать. SELinux можно также отключить."
 msgstr "For Fedora for VPN OpenL2TP required selinux-policy>=3.9.16-33, otherwise it can not work. You can also disable SELinux."
+
+#: unit1.message226
+msgid "Введите па#209�оль root:"
+msgstr "Enter root password:"

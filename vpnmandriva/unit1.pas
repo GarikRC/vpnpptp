@@ -115,6 +115,7 @@ const
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
   SBinDir='/sbin/';
+  BinDir='/bin/';
   UsrSBinDir='/usr/sbin/';
   EtcPppPeersDir='/etc/ppp/peers/';
   IfcfgDir='/etc/sysconfig/network-scripts/';
@@ -418,16 +419,19 @@ begin
   Code_up_ppp:=false;
   If FileExists(VarRunDir+'ppp-vpnmandriva.pid') then
                                                  begin
-                                                      popen (f,'cat '+VarRunDir+'ppp-vpnmandriva.pid|grep ppp','R');
+                                                      popen (f,BinDir+'cat '+VarRunDir+'ppp-vpnmandriva.pid|'+BinDir+'grep ppp','R');
                                                       While not eof(f) do
                                                                 begin
                                                                      Readln (f,str);
                                                                      If str<>'' then PppIface:=str;
                                                                 end;
                                                       PClose(f);
-                                                      popen (f,'ifconfig |grep '+PppIface,'R');
-                                                      If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
-                                                      PClose(f);
+                                                      if PppIface<>'' then
+                                                              begin
+                                                                   popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+PppIface,'R');
+                                                                   If not eof(f) then If PppIface<>'' then Code_up_ppp:=true;
+                                                                   PClose(f);
+                                                              end;
                                                  end;
 end;
 
@@ -470,15 +474,15 @@ If (Edit_IPS.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                     end;
 Application.ShowHint:=false;
 //запись файла /etc/sysconfig/network-scripts/ifcfg-pppN
-Shell('printf "DEVICE=ppp'+IntToStr(Number_PPP_Iface)+'\n" > '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-if not CheckBox_autostart.Checked then Shell('printf "ONBOOT=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "ONBOOT=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-Shell('printf "METRIC='+Edit_metric.Text+'\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-Shell('printf "TYPE=ADSL\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-if not CheckBox_right.Checked then Shell('printf "USERCTL=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "USERCTL=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-if not CheckBox_traffic.Checked then Shell('printf "ACCOUNTING=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell('printf "ACCOUNTING=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-Shell ('chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+Shell(UsrBinDir+'printf "DEVICE=ppp'+IntToStr(Number_PPP_Iface)+'\n" > '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+if not CheckBox_autostart.Checked then Shell(UsrBinDir+'printf "ONBOOT=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell(UsrBinDir+'printf "ONBOOT=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+Shell(UsrBinDir+'printf "METRIC='+Edit_metric.Text+'\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+Shell(UsrBinDir+'printf "TYPE=ADSL\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+if not CheckBox_right.Checked then Shell(UsrBinDir+'printf "USERCTL=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell(UsrBinDir+'printf "USERCTL=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+if not CheckBox_traffic.Checked then Shell(UsrBinDir+'printf "ACCOUNTING=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell(UsrBinDir+'printf "ACCOUNTING=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+Shell (BinDir+'chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 //запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
-If not DirectoryExists (EtcPppIpUpDDir) then Shell ('mkdir -p '+EtcPppIpUpDDir);
+If not DirectoryExists (EtcPppIpUpDDir) then Shell (BinDir+'mkdir -p '+EtcPppIpUpDDir);
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('#!/bin/sh');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
@@ -487,30 +491,33 @@ MyMemo.Lines.Add('exit 0');
 MyMemo.Lines.Add('fi');
 MyMemo.Lines.Add('if [ $USEPEERDNS = "1" ]');
 MyMemo.Lines.Add('then');
-MyMemo.Lines.Add('     [ -n "$DNS1" ] && rm -f '+EtcDir+'resolv.conf');
-MyMemo.Lines.Add('     [ -n "$DNS2" ] && rm -f '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('     [ -n "$DNS1" ] && '+BinDir+'rm -f '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('     [ -n "$DNS2" ] && '+BinDir+'rm -f '+EtcDir+'resolv.conf');
 MyMemo.Lines.Add('            if [ ! -f '+EtcDir+'resolv.conf ]');
 MyMemo.Lines.Add('            then');
-MyMemo.Lines.Add('                  cat /etc/resolvconf/resolv.conf.d/head|grep nameserver >> '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('                  '+BinDir+'cat /etc/resolvconf/resolv.conf.d/head|'+BinDir+'grep nameserver >> '+EtcDir+'resolv.conf');
 MyMemo.Lines.Add('            fi');
-MyMemo.Lines.Add('     [ -n "$DNS1" ] && echo "nameserver $DNS1" >> '+EtcDir+'resolv.conf');
-MyMemo.Lines.Add('     [ -n "$DNS2" ] && echo "nameserver $DNS2" >> '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('     [ -n "$DNS1" ] && '+BinDir+'echo "nameserver $DNS1" >> '+EtcDir+'resolv.conf');
+MyMemo.Lines.Add('     [ -n "$DNS2" ] && '+BinDir+'echo "nameserver $DNS2" >> '+EtcDir+'resolv.conf');
 MyMemo.Lines.Add('fi');
 MyMemo.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmandriva-ip-up');
-Shell('chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
+Shell(BinDir+'chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
 //запись файла /etc/ppp/ip-down.d/vpnmandriva-ip-down
-If not DirectoryExists (EtcPppIpDownDDir) then Shell ('mkdir -p '+EtcPppIpDownDDir);
+If not DirectoryExists (EtcPppIpDownDDir) then Shell (BinDir+'mkdir -p '+EtcPppIpDownDDir);
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('#!/bin/sh');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
 MyMemo.Lines.Add('then');
 MyMemo.Lines.Add('exit 0');
 MyMemo.Lines.Add('fi');
-If FileExists (SBinDir+'service') then MyMemo.Lines.Add('service network restart') else MyMemo.Lines.Add(EtcInitDDir+' network restart');
+//If FileExists (SBinDir+'service') then MyMemo.Lines.Add('service network restart') else MyMemo.Lines.Add(EtcInitDDir+' network restart');h
+If FileExists (SBinDir+'service') then MyMemo.Lines.Add(SBinDir+'service network restart');
+If FileExists (UsrSBinDir+'service') then MyMemo.Lines.Add(UsrSBinDir+'service network restart');
+If not FileExists (SBinDir+'service') then if not FileExists (UsrSBinDir+'service') then MyMemo.Lines.Add(EtcInitDDir+' network restart');
 MyMemo.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmandriva-ip-down');
-Shell('chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
+Shell(BinDir+'chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
 //запись файла /etc/ppp/peers/pppN
-If not DirectoryExists (EtcPppPeersDir) then Shell ('mkdir -p '+EtcPppPeersDir);
+If not DirectoryExists (EtcPppPeersDir) then Shell (BinDir+'mkdir -p '+EtcPppPeersDir);
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('unit '+IntToStr(Number_PPP_Iface));
 MyMemo.Lines.Add('noipdefault');
@@ -527,7 +534,7 @@ MyMemo.Lines.Add('novj');
 MyMemo.Lines.Add('kdebug 1');
 MyMemo.Lines.Add('holdoff 4');
 MyMemo.Lines.Add('maxfail 5');
-If CheckBox_nobuffer.Checked then MyMemo.Lines.Add('pty "/usr/sbin/pptp '+Edit_IPS.Text+' --nolaunchpppd --nobuffer"') else MyMemo.Lines.Add('pty "/usr/sbin/pptp '+Edit_IPS.Text+' --nolaunchpppd"');
+If CheckBox_nobuffer.Checked then MyMemo.Lines.Add('pty "'+UsrSBinDir+'pptp '+Edit_IPS.Text+' --nolaunchpppd --nobuffer"') else MyMemo.Lines.Add('pty "'+UsrSBinDir+'pptp '+Edit_IPS.Text+' --nolaunchpppd"');
 MyMemo.Lines.Add('user "'+Edit_user.Text+'"');
 MyMemo.Lines.Add('password "'+Edit_passwd.Text+'"');
 If CheckBox_rmschap.Checked then MyMemo.Lines.Add(CheckBox_rmschap.Caption);
@@ -548,33 +555,34 @@ if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
    If mppe_string<>'mppe ' then MyMemo.Lines.Add(mppe_string);
 If CheckBox_pppd_log.Checked then
                              begin
-                                If not DirectoryExists(MyLogDir) then Shell ('mkdir -p '+MyLogDir);
+                                If not DirectoryExists(MyLogDir) then Shell (BinDir+'mkdir -p '+MyLogDir);
                                 MyMemo.Lines.Add('debug');
                                 MyMemo.Lines.Add('logfile '+MyLogDir+'vpnmandriva.log');
                              end;
 MyMemo.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
-Shell ('chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
+Shell (BinDir+'chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 //применение изменений перезапуском net_applet
-popen(f,'ps -u root|grep net_applet','R');
+popen(f,BinDir+'ps -u root|'+BinDir+'grep net_applet','R');
 if eof(f) then net_applet_root:=false else net_applet_root:=true;
 PClose(f);
 str:='';
 StrUsers:='';
-Shell ('killall net_applet');
+Shell (UsrBinDir+'killall net_applet');
 if not net_applet_root then
                              begin
-                                  popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
-                                  if eof(f) then popen (f,'who /var/log/wtmp | awk '+chr(39)+'{print $1}'+chr(39),'R');
+                                  popen (f,UsrBinDir+'who | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
+                                  if eof(f) then popen (f,UsrBinDir+'who /var/log/wtmp | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R');
                                   While not eof(f) do
                                         begin
                                              readln(f,str);
                                              if str<>'' then if str<>'root' then if pos(str,StrUsers)=0 then
                                                         begin
                                                              AAsyncProcess := TAsyncProcess.Create(nil);
-                                                             AAsyncProcess.CommandLine :='su - '+str+' -c "'+UsrBinDir+'net_applet"';
+                                                             AAsyncProcess.CommandLine :=BinDir+'su - '+str+' -c "'+UsrBinDir+'net_applet"';
                                                              AAsyncProcess.Execute;
                                                              while not AAsyncProcess.Running do
                                                                                       MySleep(30);
+                                                             Sleep(2000);
                                                              AAsyncProcess.Free;
                                                         end;
                                              StrUsers:=StrUsers+str;
@@ -582,24 +590,25 @@ if not net_applet_root then
                                   PClose(f);
                                   //обработка результата перезапуска net_applet
                                   found_net_applet:=false;
-                                  popen (f,'ps -e |grep net_applet','R');
+                                  popen (f,BinDir+'ps -e |'+BinDir+'grep net_applet','R');
                                   If not eof(f) then found_net_applet:=true;
                                   PClose(f);
                                   StrUsers:='';
                                   if not found_net_applet then //пытаемся еще раз перезапустить net_applet другой командой
                                              begin
-                                                  popen (f,'who | awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
-                                                  if eof(f) then popen (f,'who /var/log/wtmp | awk '+chr(39)+'{print $1}'+chr(39),'R');
+                                                  popen (f,UsrBinDir+'who | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
+                                                  if eof(f) then popen (f,UsrBinDir+'who /var/log/wtmp | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R');
                                                   While not eof(f) do
                                                         begin
                                                              readln(f,str);
                                                              if str<>'' then if str<>'root' then if pos(str,StrUsers)=0 then
                                                                         begin
                                                                              AAsyncProcess := TAsyncProcess.Create(nil);
-                                                                             AAsyncProcess.CommandLine :='su '+str+' -c "'+UsrBinDir+'net_applet"';
+                                                                             AAsyncProcess.CommandLine :=BinDir+'su '+str+' -c "'+UsrBinDir+'net_applet"';
                                                                              AAsyncProcess.Execute;
                                                                              while not AAsyncProcess.Running do
                                                                                                       MySleep(30);
+                                                                             Sleep(2000);
                                                                              AAsyncProcess.Free;
                                                                         end;
                                                              StrUsers:=StrUsers+str;
@@ -614,6 +623,7 @@ if net_applet_root then
                           AAsyncProcess.Execute;
                           while not AAsyncProcess.Running do
                                                    MySleep(30);
+                          Sleep(2000);
                           AAsyncProcess.Free;
                       end;
 if FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
@@ -621,7 +631,7 @@ if FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12
                                                               Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en+' '+message52en),PChar(message0en),0);
 //обработка результата перезапуска net_applet
 found_net_applet:=false;
-popen (f,'ps -e |grep net_applet','R');
+popen (f,BinDir+'ps -e |'+BinDir+'grep net_applet','R');
 If not eof(f) then found_net_applet:=true;
 PClose(f);
 str:='';
@@ -659,7 +669,7 @@ if i=1 then
                                                                      Label_timer.Visible:=true;
                                                                      Application.ProcessMessages;
                                                                      AAsyncProcess := TAsyncProcess.Create(nil);
-                                                                     AAsyncProcess.CommandLine :='ifdown '+PppIface;
+                                                                     AAsyncProcess.CommandLine :=SBinDir+'ifdown '+PppIface;
                                                                      AAsyncProcess.Execute;
                                                                      while AAsyncProcess.Running do
                                                                                                  begin
@@ -683,7 +693,7 @@ if i=1 then
                                                                  end;
                //проверка pppd в процессах, игнорируя зомби
                FoundPpppd:=false;
-               popen(f,'ps -e | grep pppd','R');
+               popen(f,BinDir+'ps -e | '+BinDir+'grep pppd','R');
                While not eof(f) do
                                 begin
                                     Readln(f,str);
@@ -698,7 +708,7 @@ if i=1 then
                                    if i=1 then
                                               begin
                                                   AAsyncProcess := TAsyncProcess.Create(nil);
-                                                  AAsyncProcess.CommandLine :='killall pppd';
+                                                  AAsyncProcess.CommandLine :=UsrBinDir+'killall pppd';
                                                   AAsyncProcess.Execute;
                                                   while AAsyncProcess.Running do
                                                                               begin
@@ -709,7 +719,7 @@ if i=1 then
                                               end;
                                end;
                AAsyncProcess := TAsyncProcess.Create(nil);
-               AAsyncProcess.CommandLine :='ifup ppp'+IntToStr(Number_PPP_Iface);
+               AAsyncProcess.CommandLine :=SBinDir+'ifup ppp'+IntToStr(Number_PPP_Iface);
                AAsyncProcess.Execute;
                AAsyncProcess.Free;
                If FallbackLang='ru' then i:=Application.MessageBox(PChar(message63ru+' '+message67ru),PChar(message0ru),1) else
@@ -737,8 +747,8 @@ if i=1 then
                                      AStringList := TStringList.Create;
                                      AAsyncProcess := TAsyncProcess.Create(nil);
                                      If (Edit_IPS.Text='connect.swissvpn.net') and (Edit_user.Text='swissvpntest') and (Edit_passwd.Text='swissvpntest') then
-                                                                                                                          AAsyncProcess.CommandLine :='ping -c1 swissvpn.net' else
-                                                                                                                                        AAsyncProcess.CommandLine :='ping -c1 yandex.ru';
+                                                                                                                          AAsyncProcess.CommandLine :=SBinDir+'ping -c1 swissvpn.net' else
+                                                                                                                                        AAsyncProcess.CommandLine :=SBinDir+'ping -c1 yandex.ru';
                                      AAsyncProcess.Options := AAsyncProcess.Options + [poUsePipes];
                                      AAsyncProcess.Execute;
                                      while AAsyncProcess.Running do
@@ -783,7 +793,7 @@ if i=1 then
                                                                                                                               else Application.MessageBox(PChar(message65en),PChar(message0ru),0);
                                      If (NoInternet) and (Code_up_ppp)  then  //проверка кол-ва дефолтных маршрутов с одинаковой метрикой
                                                                        begin
-                                                                           Str:='route -n|awk '+chr(39)+'{print $1" "$5}'+chr(39)+'|grep 0.0.0.0';
+                                                                           Str:=SBinDir+'route -n|'+BinDir+'awk '+chr(39)+'{print $1" "$5}'+chr(39)+'|'+BinDir+'grep 0.0.0.0';
                                                                            popen(f,Str,'R');
                                                                            i:=0;
                                                                            str:='';
@@ -1097,7 +1107,7 @@ If not FileExists(UsrSBinDir+'pptp') then
 //проверка vpnmandriva в процессах root, исключение запуска под иными пользователями
   Apid:=FpGetpid;
   Apidroot:=0;
-  popen (f,'ps -u root | grep vpnmandriva | awk '+chr(39)+'{print $1}'+chr(39),'R');
+  popen (f,BinDir+'ps -u root | '+BinDir+'grep vpnmandriva | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R');
   while not eof(f) do
      begin
         readln(f,Apidroot);
@@ -1105,7 +1115,7 @@ If not FileExists(UsrSBinDir+'pptp') then
      end;
   PClose(f);
   nostart:=false;
-  popen (f,'ps -u root | grep vpnmandriva | awk '+chr(39)+'{print $4}'+chr(39),'R');
+  popen (f,BinDir+'ps -u root | '+BinDir+'grep vpnmandriva | '+BinDir+'awk '+chr(39)+'{print $4}'+chr(39),'R');
   If eof(f) or (Apid<>Apidroot) then nostart:=true;
   PClose(f);
   If nostart then
@@ -1135,7 +1145,7 @@ If DirectoryExists(UsrBinDir) then
             If ParamStr(0)<>'/vpnpptp/trunk/vpnmandriva/vpnmandriva' then
                                                                   begin
                                                                       If FileExists(UsrBinDir+'vpnmandriva') and FileExists (MyVpnDir+'vpnmandriva.pm') then ProgramInstalled:=true else ProgramInstalled:=false;
-                                                                      Shell ('cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
+                                                                      Shell (BinDir+'cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
                                                                       MyMemo.Lines.Clear;
                                                                       MyMemo.Lines.Add('package network::vpn::vpnmandriva;');
                                                                       MyMemo.Lines.Add('');
