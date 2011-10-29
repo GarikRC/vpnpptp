@@ -444,7 +444,7 @@ resourcestring
   message143='При низких разрешениях экрана одновременное нажатие клавиши Alt и левой кнопки мыши поможет переместить окно.';
   message144='Отсутствует дефолтный шлюз, и это невозможно исправить автоматически.';
   message145='Укажите вручную сетевой интерфейс и шлюз локальной сети - программа сама сделает его дефолтным.';
-  message146='Конфигуратор не смог сверить настройку шифрования mppe c man pppd из-за неполноты man pppd.';
+ // message146='Конфигуратор не смог сверить настройку шифрования mppe c man pppd из-за неполноты man pppd.';
   message147='Настройте sudo средствами Вашего дистрибутива.';
   message148='Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска.';
   message149='Нажатие левой/правой кнопкой мыши на пустом месте окна изменяет шрифт.';
@@ -466,7 +466,7 @@ resourcestring
   message165='Если remote IP address не совпадает с IP-адресом VPN-сервера, то может потребоваться маршрутизировать его в шлюз локальной сети.';
   message166='Если remote IP address совпадает с IP-адресом VPN-сервера, то эта опция позволит наилучшим способом маршрутизировать VPN-сервер';
   message167='без необходимости иных методов маршрутизации VPN-сервера.';
-  message168='Правильность автоматической настройки конфигуратором шифрования mppe не гарантируется.';
+ // message168='Правильность автоматической настройки конфигуратором шифрования mppe не гарантируется.';
   message169='Вы ввели имя соединения';
   message170='Имени соединения';
   message171='не найдено. Будет предложено создать новое соединение с именем';
@@ -1109,7 +1109,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
-   If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
+  { If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
                     begin
                        popen (f,UsrBinDir+'man pppd|'+BinDir+'grep mppe','R');
                        If eof(f) then
@@ -1120,7 +1120,7 @@ Shell (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                                       Form1.Repaint;
                                    end;
                        PClose(f);
-                    end;
+                    end;}
 If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
           If not FileExists(MyScriptsDir+'peermodify.sh') then
                                    begin
@@ -1332,7 +1332,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
    If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
  Memo_peer.Lines.SaveToFile(EtcPppPeersDir+Edit_peer.Text); //записываем провайдерский профиль подключения
  If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
-                              If FileExists(MyScriptsDir+'peermodify.sh') then //коррекция шифрования в соответствии с man pppd
+                              If FileExists(MyScriptsDir+'peermodify.sh') then //коррекция шифрования в соответствии с strings pppd
                                                                 Shell (BinDir+'sh '+MyScriptsDir+'peermodify.sh '+Edit_peer.Text);
  Shell (BinDir+'chmod 600 '+EtcPppPeersDir+Edit_peer.Text);
  If not DirectoryExists(VarLogDir) then Shell (BinDir+'mkdir -p '+VarLogDir);
@@ -3764,7 +3764,7 @@ var i,N, CountGateway:integer;
     brCount:array[0..9] of integer;
     emCount:array[0..9] of integer;
     nostart:boolean;
-    Apid,Apidroot:tpid;
+    //Apid,Apidroot:tpid;
     PeabodyIpUp, PeabodyIpDown:boolean;
     DopParam:string;
 begin
@@ -4444,6 +4444,7 @@ StartMessage:=true;
                                                                                   If strGateway<>'' then If CountGateway=1 then Shell (SbinDir+'route add default gw '+strGateway+' dev '+strIface);
                                                                              end;
                                                                          end;
+                                        Sleep(5000);
                                    end;
 //повторная проверка дефолтного шлюза
   Memo_gate.Lines.Clear;
