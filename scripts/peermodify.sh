@@ -10,7 +10,7 @@ if [ $# -ne 1 ];then
 	exit 1
 fi
 
-if [ -n "$(man pppd | grep require-mppe)" ];then
+if [ -n "$(/usr/bin/strings /usr/sbin/pppd|grep require-mppe)" ];then
 	cd /etc/ppp/peers
 	sed '/^mppe /d' $1 >.__temp_$1
  
@@ -34,6 +34,3 @@ if [ -n "$(man pppd | grep require-mppe)" ];then
 fi
 
 exit 0
-
-
-
