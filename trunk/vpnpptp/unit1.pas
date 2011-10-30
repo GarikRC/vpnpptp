@@ -835,7 +835,7 @@ If prilozh='vpnpptp' then
      Memo_create.Lines.Add('StartupNotify=false');
    end;
 //Получаем список пользователей для создания иконки на рабочем столе
-  Shell(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep '+uin+' | '+BinDir+'cut -d: -f1 > '+MyTmpDir+'users');
+  Shell(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep '+uin+' | '+UsrBinDir+'cut -d: -f1 > '+MyTmpDir+'users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile(MyTmpDir+'users');
   Shell(BinDir+'rm -f '+MyTmpDir+'users');
@@ -2220,7 +2220,7 @@ If FileExists(MyLibDir+'profiles') then
 DoIconDesktopForAll('ponoff');
 DoIconDesktopForAll('vpnpptp');
 //Получаем список пользователей для автозапуска ponoff при старте системы и организация автозапуска
-  Shell(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep 100 | '+BinDir+'cut -d: -f1 > '+MyTmpDir+'users');
+  Shell(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep 100 | '+UsrBinDir+'cut -d: -f1 > '+MyTmpDir+'users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile(MyTmpDir+'users');
   Shell(BinDir+'rm -f '+MyTmpDir+'users');
@@ -2245,7 +2245,7 @@ DoIconDesktopForAll('vpnpptp');
       end;
       i:=i+1;
     end;
-  Shell(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep 50 | '+BinDir+'cut -d: -f1 > '+MyTmpDir+'users');
+  Shell(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep 50 | '+UsrBinDir+'cut -d: -f1 > '+MyTmpDir+'users');
   Memo_users.Clear;
   Memo_users.Lines.LoadFromFile(MyTmpDir+'users');
   Shell(BinDir+'rm -f '+MyTmpDir+'users');
