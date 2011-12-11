@@ -305,3 +305,7 @@ msgstr "Чорно-біла іконка"
 #: unit1.message70
 msgid "Введите па#209�оль root:"
 msgstr "Введіть пароль root:"
+
+#: unit1.message71
+msgid "Ошибка отоб#209�ажения иконки в т#209�ее. Используйте вместо ponoff ск#209�ипт /usr/bin/vpnlinux."
+msgstr "Помилка відображення іконки в треї. Використовуйте замість ponoff скрипт /usr/bin/vpnlinux."
