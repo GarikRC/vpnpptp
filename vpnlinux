@@ -97,6 +97,7 @@ total_kill_process_with_control () {
 connection_control () {
   i=0;
   IFCONFIG=""
+  sleep 5
   if [ -f /var/run/ppp-$NAME.pid ]
   then
      IFACE=`cat /var/run/ppp-$NAME.pid|grep ppp`

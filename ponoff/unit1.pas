@@ -238,6 +238,7 @@ resourcestring
   message68='Цветная иконка';
   message69='Черно-белая иконка';
   message70='Введите пароль root:';
+  message71='Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux.';
 
 implementation
 
@@ -1098,7 +1099,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   link:byte; //1-link ok, 2-no link, 3-none
-  i,j,h,zero:integer;
+  i,j,h,zero,Xa,Yb:integer;
   str,stri,StrObnull:string;
   FileObnull:textfile;
 begin
@@ -1439,6 +1440,25 @@ If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
 If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
 Application.ProcessMessages;
 TrayIcon1.Show;
+Xa:=0;
+Yb:=0;
+if ubuntu then
+     begin
+        Xa:=Form1.TrayIcon1.GetPosition.X;
+        Yb:=Form1.TrayIcon1.GetPosition.Y;
+        If Xa=0 then if Yb=0 then mysleep(10000);
+        Xa:=Form1.TrayIcon1.GetPosition.X;
+        Yb:=Form1.TrayIcon1.GetPosition.Y;
+        If Xa=0 then if Yb=0 then
+             begin
+                  Timer1.Enabled:=False;
+                  Timer2.Enabled:=False;
+                  Form1.Hide;
+                  Form3.MyMessageBox(message0,message71,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                  Shell(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
+                  halt;
+             end;
+     end;
 Application.ProcessMessages;
 CheckFiles;//проверка наличия необходимых программе файлов
 If not FileExists (MyTmpDir+'DateStart') then DateStart:=0 else
