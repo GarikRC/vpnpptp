@@ -3835,6 +3835,7 @@ begin
                     Form1.Repaint;
                     halt;
                 end;
+If not FileExists(BinDir+'awk') then If FileExists(UsrBinDir+'awk') then Shell('ln -s '+UsrBinDir+'awk'+' '+BinDir+'awk'); //создаем ссылку для awk
 Screen.HintFont.Size:=30;
 Screen.MenuFont.Size:=30;
 if FileSize(MyLibDir+'profiles')=0 then Shell (BinDir+'rm -f '+MyLibDir+'profiles');
