@@ -474,15 +474,15 @@ If (Edit_IPS.Text='') or (Edit_user.Text='') or (Edit_passwd.Text='') then
                     end;
 Application.ShowHint:=false;
 //запись файла /etc/sysconfig/network-scripts/ifcfg-pppN
-Shell(UsrBinDir+'printf "DEVICE=ppp'+IntToStr(Number_PPP_Iface)+'\n" > '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-if not CheckBox_autostart.Checked then Shell(UsrBinDir+'printf "ONBOOT=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell(UsrBinDir+'printf "ONBOOT=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-Shell(UsrBinDir+'printf "METRIC='+Edit_metric.Text+'\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-Shell(UsrBinDir+'printf "TYPE=ADSL\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-if not CheckBox_right.Checked then Shell(UsrBinDir+'printf "USERCTL=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell(UsrBinDir+'printf "USERCTL=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-if not CheckBox_traffic.Checked then Shell(UsrBinDir+'printf "ACCOUNTING=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else Shell(UsrBinDir+'printf "ACCOUNTING=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
-Shell (BinDir+'chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+FpSystem(UsrBinDir+'printf "DEVICE=ppp'+IntToStr(Number_PPP_Iface)+'\n" > '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+if not CheckBox_autostart.Checked then FpSystem(UsrBinDir+'printf "ONBOOT=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else FpSystem(UsrBinDir+'printf "ONBOOT=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+FpSystem(UsrBinDir+'printf "METRIC='+Edit_metric.Text+'\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+FpSystem(UsrBinDir+'printf "TYPE=ADSL\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+if not CheckBox_right.Checked then FpSystem(UsrBinDir+'printf "USERCTL=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else FpSystem(UsrBinDir+'printf "USERCTL=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+if not CheckBox_traffic.Checked then FpSystem(UsrBinDir+'printf "ACCOUNTING=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else FpSystem(UsrBinDir+'printf "ACCOUNTING=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
+FpSystem (BinDir+'chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 //запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
-If not DirectoryExists (EtcPppIpUpDDir) then Shell (BinDir+'mkdir -p '+EtcPppIpUpDDir);
+If not DirectoryExists (EtcPppIpUpDDir) then FpSystem (BinDir+'mkdir -p '+EtcPppIpUpDDir);
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('#!/bin/sh');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
@@ -501,9 +501,9 @@ MyMemo.Lines.Add('     [ -n "$DNS1" ] && '+BinDir+'echo "nameserver $DNS1" >> '+
 MyMemo.Lines.Add('     [ -n "$DNS2" ] && '+BinDir+'echo "nameserver $DNS2" >> '+EtcDir+'resolv.conf');
 MyMemo.Lines.Add('fi');
 MyMemo.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmandriva-ip-up');
-Shell(BinDir+'chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
+FpSystem(BinDir+'chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
 //запись файла /etc/ppp/ip-down.d/vpnmandriva-ip-down
-If not DirectoryExists (EtcPppIpDownDDir) then Shell (BinDir+'mkdir -p '+EtcPppIpDownDDir);
+If not DirectoryExists (EtcPppIpDownDDir) then FpSystem (BinDir+'mkdir -p '+EtcPppIpDownDDir);
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('#!/bin/sh');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
@@ -515,9 +515,9 @@ If FileExists (SBinDir+'service') then MyMemo.Lines.Add(SBinDir+'service network
 If FileExists (UsrSBinDir+'service') then MyMemo.Lines.Add(UsrSBinDir+'service network restart');
 If not FileExists (SBinDir+'service') then if not FileExists (UsrSBinDir+'service') then MyMemo.Lines.Add(EtcInitDDir+' network restart');
 MyMemo.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmandriva-ip-down');
-Shell(BinDir+'chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
+FpSystem(BinDir+'chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
 //запись файла /etc/ppp/peers/pppN
-If not DirectoryExists (EtcPppPeersDir) then Shell (BinDir+'mkdir -p '+EtcPppPeersDir);
+If not DirectoryExists (EtcPppPeersDir) then FpSystem (BinDir+'mkdir -p '+EtcPppPeersDir);
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('unit '+IntToStr(Number_PPP_Iface));
 MyMemo.Lines.Add('noipdefault');
@@ -555,19 +555,19 @@ if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
    If mppe_string<>'mppe ' then MyMemo.Lines.Add(mppe_string);
 If CheckBox_pppd_log.Checked then
                              begin
-                                If not DirectoryExists(MyLogDir) then Shell (BinDir+'mkdir -p '+MyLogDir);
+                                If not DirectoryExists(MyLogDir) then FpSystem (BinDir+'mkdir -p '+MyLogDir);
                                 MyMemo.Lines.Add('debug');
                                 MyMemo.Lines.Add('logfile '+MyLogDir+'vpnmandriva.log');
                              end;
 MyMemo.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
-Shell (BinDir+'chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
+FpSystem (BinDir+'chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 //применение изменений перезапуском net_applet
 popen(f,BinDir+'ps -u root|'+BinDir+'grep net_applet','R');
 if eof(f) then net_applet_root:=false else net_applet_root:=true;
 PClose(f);
 str:='';
 StrUsers:='';
-Shell (UsrBinDir+'killall net_applet');
+FpSystem (UsrBinDir+'killall net_applet');
 if not net_applet_root then
                              begin
                                   popen (f,UsrBinDir+'who | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
@@ -1145,7 +1145,7 @@ If DirectoryExists(UsrBinDir) then
             If ParamStr(0)<>'/vpnpptp/trunk/vpnmandriva/vpnmandriva' then
                                                                   begin
                                                                       If FileExists(UsrBinDir+'vpnmandriva') and FileExists (MyVpnDir+'vpnmandriva.pm') then ProgramInstalled:=true else ProgramInstalled:=false;
-                                                                      Shell (BinDir+'cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
+                                                                      FpSystem (BinDir+'cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
                                                                       MyMemo.Lines.Clear;
                                                                       MyMemo.Lines.Add('package network::vpn::vpnmandriva;');
                                                                       MyMemo.Lines.Add('');
