@@ -46,7 +46,7 @@ implementation
 
 { TFormBalloonMatrix }
 
-uses Unit1;
+uses Unit1,Unitpseudotray;
 
 procedure TFormBalloonMatrix.BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
 var
@@ -55,7 +55,7 @@ var
 begin
      k0:=35;
      k1:=12;
-     k3:=Form1.TrayIcon1.Icon.Width;
+     if EnablePseudoTray then k3:=Widget.Width else k3:=Form1.TrayIcon1.Icon.Width;
      FormBalloonMatrix.Visible:=true;
      Application.ProcessMessages;
      if HintBalloon.Visible then
@@ -82,8 +82,8 @@ begin
                                                                                                     k0:=30;
                                                                                                end;
      LabelText.Caption:=msg_text;
-     X:=Form1.TrayIcon1.GetPosition.X;
-     Y:=Form1.TrayIcon1.GetPosition.Y;
+     if EnablePseudoTray then X:=Widget.Left else X:=Form1.TrayIcon1.GetPosition.X;
+     if EnablePseudoTray then Y:=Widget.Top else Y:=Form1.TrayIcon1.GetPosition.Y;
      max_text_height:=k1*font_size;
      max_text_width:=k0*font_size;
      If Y>(Screen.Height div 2) then B:=Y-max_text_height;
@@ -134,11 +134,23 @@ begin
     FormBalloonMatrix.Parent:=HintBalloon;
     HintBalloonQueueLength:=0;
     i:=0;
-    while (Form1.TrayIcon1.GetPosition.X=0) do
+    if EnablePseudoTray then
     begin
-      sleep (50);
-      inc(i);
-      if i>20 then break;
+      while (Widget.Left=0) do
+      begin
+        sleep (50);
+        inc(i);
+        if i>20 then break;
+      end;
+    end
+    else
+    begin
+      while (Form1.TrayIcon1.GetPosition.X=0) do
+      begin
+        sleep (50);
+        inc(i);
+        if i>20 then break;
+      end;
     end;
 end;
 

@@ -9,7 +9,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms
   { you can add units after this }, Unit1, unitmymessagebox, balloon_matrix,
-  types, sysutils, hint_matrix;
+  types, sysutils, hint_matrix, Unitpseudotray;
 
 {$IFDEF WINDOWS}{$R project1.rc}{$ENDIF}
 
@@ -19,6 +19,8 @@ begin
   Application.Title:=
     'Управление соединением VPN PPTP/L2TP';
   Application.Initialize;
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TWidget, Widget);
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
