@@ -19,7 +19,7 @@ begin
   Application.Title:=
     'Управление соединением VPN PPTP/L2TP';
   Application.Initialize;
-  Application.CreateForm(TForm3, Form3);
+  //Application.CreateForm(TForm3, Form3);
   Application.CreateForm(TWidget, Widget);
   Application.CreateForm(TForm1, Form1);
   Application.Run;

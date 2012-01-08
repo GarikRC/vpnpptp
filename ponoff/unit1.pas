@@ -245,18 +245,6 @@ implementation
 
 uses balloon_matrix, hint_matrix, Unitpseudotray;
 
-function command_result(command:string):string;
-begin
-  popen(f,command,'R');
-  command_result:='';
-  While not eof(f) do
-  begin
-    Readln(f,command_result);
-  end;
-  PClose(f);
-end;
-
-
 function ProgrammRoot(Name:string;DoHalt:boolean):boolean;
 //возвращает истину если программа запущена под root
 //прерывает выполнение если DoHalt истина и программа под root
@@ -1164,6 +1152,7 @@ begin
     Widget.Show;
   end;
   Application.CreateForm(TFormHintMatrix, FormHintMatrix);
+  Application.CreateForm(TForm3, Form3);
   Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
   //проверка ponoff в процессах root, исключение запуска под иными пользователями
   If not ProgrammRoot('ponoff',false) then nostart:=true else nostart:=false;
