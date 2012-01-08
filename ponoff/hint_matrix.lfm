@@ -1,14 +1,14 @@
 object FormHintMatrix: TFormHintMatrix
-  Left = 473
+  Left = 392
   Height = 232
-  Top = 180
+  Top = 364
   Width = 414
   Caption = 'FormHintMatrix'
   ClientHeight = 232
   ClientWidth = 414
   OnClick = FormClick
   OnCreate = FormCreate
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.30.2'
   object Image1: TImage
     Left = 0
     Height = 232

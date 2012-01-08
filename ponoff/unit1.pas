@@ -165,6 +165,7 @@ var
   nostart:boolean;
   DopParam:string;
   Apid:tpid;
+  EnablePseudoTray:boolean;
 
 resourcestring
   message0='Внимание!';
@@ -242,7 +243,19 @@ resourcestring
 
 implementation
 
-uses balloon_matrix,hint_matrix;
+uses balloon_matrix, hint_matrix, Unitpseudotray;
+
+function command_result(command:string):string;
+begin
+  popen(f,command,'R');
+  command_result:='';
+  While not eof(f) do
+  begin
+    Readln(f,command_result);
+  end;
+  PClose(f);
+end;
+
 
 function ProgrammRoot(Name:string;DoHalt:boolean):boolean;
 //возвращает истину если программа запущена под root
@@ -447,22 +460,31 @@ procedure TForm1.IconForTrayPlus;
    wid,hei:integer;
    IconTmp:tIcon;
 begin
+  if EnablePseudoTray then
+  begin
+    Widget.Width:=Widget.Width+5;
+    Widget.Height:=Widget.Height+5;
+    Widget.IniPropStorage1.Save;
+    exit;
+  end;
+
   IconTmp:= TIcon.create;
+  // Здесь ничего не делаем в unity
   wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
   if (wid>100) or (hei>100) then exit;
   CheckVPN;
-  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str)) then
          begin
                If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
                If not Code_up_ppp then IconTmp.Assign(ImageIconDefaultOff.Picture);
-               TrayIcon1.Icon.Assign(IconTmp);
+               if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(IconTmp) else TrayIcon1.Icon.Assign(IconTmp);
          end
   else
        begin
             If Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'on.ico');
             If not Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'off.ico');
-            TrayIcon1.Icon.Assign(IconTmp);
+            if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(IconTmp) else TrayIcon1.Icon.Assign(IconTmp);
        end;
   ImageIconBitmap:= TBitmap.create;
   ImageIconBitmap.Assign(TrayIcon1.Icon);
@@ -479,22 +501,29 @@ procedure TForm1.IconForTrayMinus;
    wid,hei:integer;
    IconTmp:tIcon;
 begin
+  if EnablePseudoTray then
+  begin
+    Widget.Width:=Widget.Width-5;
+    Widget.Height:=Widget.Height-5;
+    Widget.IniPropStorage1.Save;
+    exit;
+  end;
   IconTmp:= TIcon.create;
   wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
   if (wid<3) or (hei<3) then exit;
   CheckVPN;
-  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str)) then
          begin
               If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
               If not Code_up_ppp then IconTmp.Assign(ImageIconDefaultOff.Picture);
-              TrayIcon1.Icon.Assign(IconTmp);
+              if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(IconTmp) else TrayIcon1.Icon.Assign(IconTmp);
           end
             else
                 begin
                      If Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'on.ico');
                      If not Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'off.ico');
-                     TrayIcon1.Icon.Assign(IconTmp);
+                     if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(IconTmp) else TrayIcon1.Icon.Assign(IconTmp);
                 end;
   ImageIconBitmap:= TBitmap.create;
   ImageIconBitmap.Assign(TrayIcon1.Icon);
@@ -528,7 +557,7 @@ begin
                     pclose(f);
          end;
   CheckVPN;
-  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor'))) then
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str)) then
                                                                                 begin
                                                                                      IconTmp:= TIcon.create;
                                                                                      ImageIconBitmap:= TBitmap.create;
@@ -536,7 +565,7 @@ begin
                                                                                      If not Code_up_ppp then IconTmp.Assign(ImageIconDefaultOff.Picture);
                                                                                      ImageIconBitmap.Assign(IconTmp);
                                                                                      ResizeBmp(ImageIconBitmap,wid,hei);
-                                                                                     TrayIcon1.Icon.Assign(ImageIconBitmap);
+                                                                                     if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(ImageIconBitmap) else TrayIcon1.Icon.Assign(ImageIconBitmap);
                                                                                      ImageIconBitmap.Free;
                                                                                      IconTmp.Free;
                                                                                      exit;
@@ -544,6 +573,9 @@ begin
   ImageIconBitmap:= TBitmap.create;
   IconTmp:= TIcon.create;
   IconTmp.LoadFromFile(PathToIcon+NameIcon);
+
+  if EnablePseudoTray then Widget.Image1.Picture.LoadFromFile(PathToIcon+NameIcon);
+
   ImageIconBitmap.Assign(IconTmp);
   ResizeBmp(ImageIconBitmap,wid,hei);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
@@ -573,7 +605,7 @@ begin
                           Form1.Timer1.Enabled:=False;
                           Form1.Timer2.Enabled:=False;
                           Form1.Hide;
-                          Form1.TrayIcon1.Hide;
+                          if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
                           Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                           FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -588,7 +620,7 @@ begin
     If str<>message48 then
                      begin
                           str:=LeftStr(str,Length(str)-2);
-                          Form1.TrayIcon1.Show;
+                          if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
                           MySleep(1000);
                           BalloonMessage (3000,message0,str,AFont);
                           Application.ProcessMessages;
@@ -973,7 +1005,7 @@ If not Code_up_ppp then If link=3 then
                                                               begin
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
-                                                                TrayIcon1.Hide;
+                                                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
                                                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -988,7 +1020,7 @@ If not Code_up_ppp then If link=2 then
                                                               begin
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
-                                                                TrayIcon1.Hide;
+                                                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
                                                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -1103,17 +1135,36 @@ var
   str,stri,StrObnull:string;
   FileObnull:textfile;
 begin
+  with Widget.IniPropStorage1 do
+  begin
+    // Если значение в конфиге пустое, то заполняем по умолчанию
+    if (ReadString ('black_and_white_icon','null')<>false_str)
+       and
+       (ReadString ('black_and_white_icon','null')<>true_str)
+       then StoredValue['black_and_white_icon']:=false_str;     // Таким образом сохраняем значение переменной в конфиг
+    if (ReadString ('Widget','null')<>false_str)
+       and
+       (ReadString ('Widget','null')<>true_str)
+       then StoredValue['Widget']:=false_str;
+    Save;
+  end;
+  if Widget.IniPropStorage1.ReadString ('Widget','null')=true_str then EnablePseudoTray:=true else EnablePseudoTray:=false;
+
   Timer1.Enabled:=False;
   Timer2.Enabled:=False;
   If not ProgrammRoot('ponoff',false) then
                           begin
                                Form1.Hide;
-                               TrayIcon1.Hide;
+                               if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                Application.ProcessMessages;
                           end;
-  Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
+  if EnablePseudoTray then
+  begin
+    TrayIcon1.Visible:=false;
+    Widget.Show;
+  end;
   Application.CreateForm(TFormHintMatrix, FormHintMatrix);
-  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
   //проверка ponoff в процессах root, исключение запуска под иными пользователями
   If not ProgrammRoot('ponoff',false) then nostart:=true else nostart:=false;
   DopParam:=' ';
@@ -1249,7 +1300,7 @@ begin
   MenuItem4.Caption:=message11;
   MenuItem5.Caption:=message39;
   MenuItem6.Caption:=message61;
-  TrayIcon1.BalloonTitle:=message0;
+  //TrayIcon1.BalloonTitle:=message0;
   If Screen.Height<440 then AFont:=6;
   If Screen.Height<=480 then AFont:=6;
   If Screen.Height<550 then If not (Screen.Height<=480) then AFont:=6;
@@ -1263,7 +1314,7 @@ If str='DEFAULT' then
                               Timer1.Enabled:=False;
                               Timer2.Enabled:=False;
                               Form1.Hide;
-                              TrayIcon1.Hide;
+                              if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                               Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                               FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                               halt;
@@ -1273,7 +1324,7 @@ If str='DEFAULT' then
                                                      Timer1.Enabled:=False;
                                                      Timer2.Enabled:=False;
                                                      Form1.Hide;
-                                                     TrayIcon1.Hide;
+                                                     if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                                      Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                      FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                      halt;
@@ -1283,7 +1334,7 @@ If str='DEFAULT' then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 Form1.Hide;
-                                                                TrayIcon1.Hide;
+                                                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message53+' '+message54+' '+message55,'',message33,message36,MyPixmapsDir+'ponoff.png',false,true,true,AFont,Form1.Icon,true,MyLibDir,2);
                                                                 If Form3.Tag=2 then If Form3.ComboBoxProfile.Text<>'' then
                                                                                                   begin
@@ -1298,7 +1349,7 @@ If str='DEFAULT' then
                                                                                                                                      end;
                                                                 Timer1.Enabled:=true;
                                                                 Timer2.Enabled:=true;
-                                                                TrayIcon1.Show;
+                                                                if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
                                                             end;
   If not FileExists(MyTmpDir) then FpSystem (BinDir+'mkdir -p '+MyTmpDir);
   //обеспечение совместимости старого config с новым
@@ -1327,7 +1378,7 @@ If str='DEFAULT' then
             Timer1.Enabled:=False;
             Timer2.Enabled:=False;
             Form1.Hide;
-            TrayIcon1.Hide;
+            if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
             Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
             FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
             halt;
@@ -1338,7 +1389,7 @@ If str='DEFAULT' then
     Timer1.Enabled:=False;
     Timer2.Enabled:=False;
     Form1.Hide;
-    TrayIcon1.Hide;
+    if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
     Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
     FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
     halt;
@@ -1377,11 +1428,11 @@ If str='DEFAULT' then
                                Form1.Timer1.Enabled:=False;
                                Form1.Timer2.Enabled:=False;
                                Form1.Hide;
-                               Form1.TrayIcon1.Hide;
+                               if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                Form3.MyMessageBox(message0,message2,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                Form1.Timer1.Enabled:=true;
                                Form1.Timer2.Enabled:=true;
-                               Form1.TrayIcon1.Show;
+                               if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
                                Application.ProcessMessages;
                             end;
 //проверка ponoff в процессах root, обработка двойного запуска программы
@@ -1419,7 +1470,7 @@ If i>1 then
                                 Timer1.Enabled:=False;
                                 Timer2.Enabled:=False;
                                 Form1.Hide;
-                                TrayIcon1.Hide;
+                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                 Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                 halt;
@@ -1439,15 +1490,15 @@ If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
 If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
 If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
 Application.ProcessMessages;
-TrayIcon1.Show;
+if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
 Xa:=0;
 Yb:=0;
-Xa:=Form1.TrayIcon1.GetPosition.X;
-Yb:=Form1.TrayIcon1.GetPosition.Y;
+if EnablePseudoTray then Xa:=Widget.Left else Xa:=Form1.TrayIcon1.GetPosition.X;
+if EnablePseudoTray then Yb:=Widget.Top else Yb:=Form1.TrayIcon1.GetPosition.Y;
 If (Xa=0) and (Yb=0) and (not (Memo_Config.Lines[27]='autostart-ponoff-yes')) then mysleep(10000);
 If (Xa=0) and (Yb=0) and (Memo_Config.Lines[27]='autostart-ponoff-yes') then mysleep(10000);
-Xa:=Form1.TrayIcon1.GetPosition.X;
-Yb:=Form1.TrayIcon1.GetPosition.Y;
+if EnablePseudoTray then Xa:=Widget.Left else Xa:=Form1.TrayIcon1.GetPosition.X;
+if EnablePseudoTray then Yb:=Widget.Top else Yb:=Form1.TrayIcon1.GetPosition.Y;
 If Xa=0 then if Yb=0 then
      begin
           Timer1.Enabled:=False;
@@ -1479,7 +1530,7 @@ If suse then
                                            Timer1.Enabled:=False;
                                            Timer2.Enabled:=False;
                                            Form1.Hide;
-                                           TrayIcon1.Hide;
+                                           if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                                            Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                            PClose(f);
                                            FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -1545,7 +1596,7 @@ If suse then
                  MenuItem4.Visible:=false;
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
-                 TrayIcon1.Hide;
+                 if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                  Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                  FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
@@ -1555,7 +1606,7 @@ If suse then
                  Form3.MyMessageBox(message0,message5,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
-                 TrayIcon1.Hide;
+                 if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
                  FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
@@ -1579,8 +1630,10 @@ procedure TForm1.ColorIconClick(Sender: TObject);
 begin
   If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
   If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
-  If FileExists(MyLibDir+Memo_Config.Lines[0]+'/nocolor') then FpSystem(BinDir+'rm -f '+MyLibDir+Memo_Config.Lines[0]+'/nocolor') else
-                                                                 FpSystem(BinDir+'touch '+MyLibDir+Memo_Config.Lines[0]+'/nocolor');
+  if  Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str  then  Widget.IniPropStorage1.StoredValue['black_and_white_icon']:=false_str ;
+  if  Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=false_str then  Widget.IniPropStorage1.StoredValue['black_and_white_icon']:=true_str  ;
+  Widget.IniPropStorage1.Save;
+  If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then PopupMenu1.Items[1].Caption:=message68 else PopupMenu1.Items[1].Caption:=message69;
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
@@ -1716,7 +1769,7 @@ end;
 procedure TForm1.MenuItem5Click(Sender: TObject);
 begin
   Application.ProcessMessages;
-  TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
@@ -1737,7 +1790,7 @@ end;
 
 procedure TForm1.MinusClick(Sender: TObject);
 begin
-     IconForTrayMinus;
+  IconForTrayMinus;
 end;
 
 procedure TForm1.PlusClick(Sender: TObject);
@@ -1759,7 +1812,7 @@ var
 begin
   If not FileExists (VarRunVpnpptp+ProfileName) then FpSystem (BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
-  TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
@@ -1973,7 +2026,7 @@ begin
                            end;
   NoConnectMessageShow:=true;
   Application.ProcessMessages;
-  TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
   Application.ProcessMessages;
 end;
 
@@ -1988,13 +2041,13 @@ begin
                                                          ColorIcon.Enabled:=false
                                                                                else
                                                                                   ColorIcon.Enabled:=true;
-  If FileExists (MyLibDir+Memo_Config.Lines[0]+'/nocolor') then ColorIcon.Caption:=message68 else ColorIcon.Caption:=message69;
+  If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then PopupMenu1.Items[1].Caption:=message68 else PopupMenu1.Items[1].Caption:=message69;
   If not FileExists (UsrBinDir+'net_monitor') then begin MenuItem5.Visible:=false; exit;end;
   If not FileExists (UsrBinDir+'vnstat') then begin MenuItem5.Visible:=false; exit;end;
   If Net_MonitorRun then begin MenuItem5.Enabled:=false; exit;end;
   If not Net_MonitorRun then MenuItem5.Enabled:=true;
   Application.ProcessMessages;
-  TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;

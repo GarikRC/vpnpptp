@@ -52,7 +52,7 @@ var
 
 implementation
 
-uses Unit1;
+uses Unit1,Unitpseudotray;
 
 procedure TFormHintMatrix.HintHide;
 begin
@@ -93,8 +93,8 @@ begin
   Align:=alClient;
 
   max_text_width:=0;
-  X:=Form1.TrayIcon1.GetPosition.X;
-  Y:=Form1.TrayIcon1.GetPosition.Y;
+  if EnablePseudoTray then X:=Widget.Left else X:=Form1.TrayIcon1.GetPosition.X;
+  if EnablePseudoTray then Y:=Widget.Top else Y:=Form1.TrayIcon1.GetPosition.Y;
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
     begin
@@ -119,9 +119,9 @@ begin
   FormHintMatrix.Width:=max_text_width;
 
 
-  X:=Form1.TrayIcon1.GetPosition.X;
-  Y:=Form1.TrayIcon1.GetPosition.Y;
-  k4:=Form1.TrayIcon1.Icon.Width;
+  if EnablePseudoTray then X:=Widget.Left else X:=Form1.TrayIcon1.GetPosition.X;
+  if EnablePseudoTray then Y:=Widget.Top else Y:=Form1.TrayIcon1.GetPosition.Y;
+  if EnablePseudoTray then k4:=Widget.Width else k4:=Form1.TrayIcon1.Icon.Width;
 
   If Y>(Screen.Height div 2) then B:=Y-max_text_height;
   If Y<=(Screen.Height div 2) then B:=Y+k4;
@@ -139,8 +139,16 @@ end;
 
 procedure TFormHintMatrix.TimerCloseTimer(Sender: TObject);
 begin
-   If Mouse.CursorPos.X>=Form1.TrayIcon1.GetPosition.X then If Mouse.CursorPos.X<=Form1.TrayIcon1.GetPosition.X+Form1.TrayIcon1.Icon.Width then
+   if EnablePseudoTray then
+   begin
+   If Mouse.CursorPos.X>=Widget.Left then If Mouse.CursorPos.X<=Widget.Left+Widget.Width then
+                            If Mouse.CursorPos.Y>=Widget.Top then If Mouse.CursorPos.Y<=Widget.Top+Widget.Height then exit;
+   end
+   else
+   begin
+     If Mouse.CursorPos.X>=Form1.TrayIcon1.GetPosition.X then If Mouse.CursorPos.X<=Form1.TrayIcon1.GetPosition.X+Form1.TrayIcon1.Icon.Width then
                             If Mouse.CursorPos.Y>=Form1.TrayIcon1.GetPosition.Y then If Mouse.CursorPos.Y<=Form1.TrayIcon1.GetPosition.Y+Form1.TrayIcon1.Icon.Height then exit;
+   end;
    HintHide;
    TimerClose.Enabled:=false;
 end;
