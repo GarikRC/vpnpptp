@@ -2,7 +2,7 @@ Source: vpnpptp-allde
 Section: net
 Priority: optional
 Maintainer: Alex Loginov <loginov.alex.valer@gmail.com>
-Build-Depends: fpc-src >= 2.4.2, fpc >= 2.4.2, lazarus >= 0.9.29, upx
+Build-Depends: fpc-src >= 2.4.4, fpc >= 2.4.4, lazarus >= 0.9.30, upx
 Package: vpnpptp-allde
 Version: 0.3.4
 Description: Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
