@@ -307,5 +307,5 @@ msgid "Введите па#209�оль root:"
 msgstr "Enter root password:"
 
 #: unit1.message71
-msgid "Ошибка отоб#209�ажения иконки в т#209�ее. Используйте вместо ponoff ск#209�ипт /usr/bin/vpnlinux."
-msgstr "Error displaying tray icon. Use script /usr/bin/vpnlinux instead of ponoff."
+msgid "Ошибка отоб#209�ажения иконки в т#209�ее. Используйте вместо ponoff ск#209�ипт /usr/bin/vpnlinux. Автоматическое переключение на виджет."
+msgstr "Error displaying tray icon. Use script /usr/bin/vpnlinux instead of ponoff. Automatic switching to a widget."

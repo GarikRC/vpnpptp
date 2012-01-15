@@ -464,7 +464,7 @@ msgid "Введите пароль root:"
 msgstr ""
 
 #: unit1.message71
-msgid "Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux."
+msgid "Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux. Автоматическое переключение на виджет."
 msgstr ""
 
 #: unit1.message8
