@@ -155,7 +155,6 @@ end;
 
 procedure TFormHintMatrix.FormCreate(Sender: TObject);
 begin
-    if HintSimle=nil then HintSimle:=THintWindow.Create(nil);
     Parent:=HintSimle;
     FormHintMatrix.BorderSpacing.Around:=1;
     Image1.Visible:=false;

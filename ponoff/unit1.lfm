@@ -2127,6 +2127,7 @@ object Form1: TForm1
   }
   OnActivate = FormActivate
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   Position = poScreenCenter
   ShowHint = True
   ShowInTaskBar = stNever
@@ -2401,6 +2402,7 @@ object Form1: TForm1
     top = 56
   end
   object Timer2: TTimer
+    Interval = 5000
     OnTimer = Timer2Timer
     left = 88
     top = 8

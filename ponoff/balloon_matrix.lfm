@@ -33,7 +33,7 @@ object FormBalloonMatrix: TFormBalloonMatrix
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
       Left = 74
-      Height = 18
+      Height = 15
       Top = 4
       Width = 489
       Anchors = [akTop, akLeft, akRight]
@@ -54,8 +54,8 @@ object FormBalloonMatrix: TFormBalloonMatrix
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
       Left = 74
-      Height = 98
-      Top = 25
+      Height = 101
+      Top = 22
       Width = 489
       Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Around = 3

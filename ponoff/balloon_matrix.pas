@@ -130,7 +130,6 @@ procedure TFormBalloonMatrix.FormCreate(Sender: TObject);
 var
    i:integer;
 begin
-    if HintBalloon=nil then HintBalloon:=THintWindow.Create(nil);
     FormBalloonMatrix.Parent:=HintBalloon;
     HintBalloonQueueLength:=0;
     i:=0;
