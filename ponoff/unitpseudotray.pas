@@ -62,8 +62,8 @@ begin
     Moving:=True;
     FormHintMatrix.HintHide;
   end
-  else
-  Form1.TrayIcon1MouseDown(Sender,Button,Shift,X,Y);
+      else
+         Form1.TrayIcon1MouseDown(Sender,Button,Shift,X,Y);
 end;
 
 procedure TWidget.FormCreate(Sender: TObject);
