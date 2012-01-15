@@ -36,6 +36,7 @@ type
     Image1: TImage;
     ImageIconDefaultOn: TImage;
     ImageIconDefaultOff: TImage;
+    Memo_Ponoff_conf_ini: TMemo;
     Memo_General_conf: TMemo;
     Memo_bindutilshost0: TMemo;
     MenuItem5: TMenuItem;
@@ -167,6 +168,7 @@ var
   DopParam:string;
   Apid:tpid;
   EnablePseudoTray:boolean;
+  ErrorShowIcon:boolean;
 
 resourcestring
   message0='Внимание!';
@@ -240,7 +242,7 @@ resourcestring
   message68='Цветная иконка';
   message69='Черно-белая иконка';
   message70='Введите пароль root:';
-  message71='Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux.';
+  message71='Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux. Автоматическое переключение на виджет.';
 
 implementation
 
@@ -262,6 +264,80 @@ begin
      popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name+'| '+BinDir+'grep '+IntToStr(Apid),'R');
      If eof(f) then Result:=false else Result:=true;
      PClose(f);
+end;
+
+procedure RestartPonoff;
+//проверка ponoff в процессах root, исключение запуска под иными пользователями
+begin
+    If not ProgrammRoot('ponoff',false) then nostart:=true else nostart:=false;
+    DopParam:=' ';
+    If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
+    If DopParam=' ' then DopParam:='';
+    If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
+    If ErrorShowIcon then
+                         begin
+                              A_Process.Active:=false;
+                              A_Process.CommandLine :=Paramstr(0)+DopParam;
+                              //A_Process.CommandLine :=UsrBinDir+'ponoff'+DopParam; //для отладки
+                              A_Process.Execute;
+                              halt;
+                              Application.ProcessMessages;
+                         end;
+    If nostart then If FileExists('/usr/lib64/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
+            begin
+                 A_Process.Active:=false;
+                 A_Process.CommandLine :='/usr/lib64/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
+                 A_Process.Execute;
+                 while A_Process.Running do
+                 begin
+                     ProgrammRoot('ponoff',true);
+                     sleep(100);
+                 end;
+                 Application.ProcessMessages;
+            end;
+    If nostart then If FileExists('/usr/lib/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
+               begin
+                    A_Process.Active:=false;
+                    A_Process.CommandLine :='/usr/lib/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
+                    A_Process.Execute;
+                    while A_Process.Running do
+                    begin
+                        ProgrammRoot('ponoff',true);
+                        sleep(100);
+                    end;
+                    Application.ProcessMessages;
+               end;
+    If nostart then If FileExists(UsrBinDir+'beesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через beesu
+           begin
+                A_Process.Active:=false;
+                A_Process.CommandLine :=UsrBinDir+'beesu - '+'"'+Paramstr(0)+DopParam+'"';
+                A_Process.Execute;
+                while A_Process.Running do
+                begin
+                    ProgrammRoot('ponoff',true);
+                    sleep(100);
+                end;
+                Application.ProcessMessages;
+           end;
+    If nostart then If FileExists(UsrBinDir+'gksu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через gksu
+               begin
+                    A_Process.Active:=false;
+                    A_Process.CommandLine :=UsrBinDir+'gksu -g -u root '+'"'+Paramstr(0)+DopParam+'"'+' -m "'+message70+'"';
+                    A_Process.Execute;
+                    while A_Process.Running do
+                    begin
+                        ProgrammRoot('ponoff',true);
+                        sleep(100);
+                    end;
+                    Application.ProcessMessages;
+               end;
+    If not ProgrammRoot('ponoff',false) then
+                  begin
+                       Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                       PClose(f);
+                       FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
+                       halt;
+                  end;
 end;
 
 Procedure DoCountInterface;
@@ -1087,10 +1163,11 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   link:byte; //1-link ok, 2-no link, 3-none
-  i,j,h,zero,Xa,Yb:integer;
+  i,j,h,ii,zero,Xa,Yb:integer;
   str,stri,StrObnull:string;
   FileObnull:textfile;
 begin
+  ErrorShowIcon:=false;
   A_Process := TAsyncProcess.Create(nil);
   AProcessDhclient := TAsyncProcess.Create(nil);
   AProcessNet_Monitor := TAsyncProcess.Create(nil);
@@ -1124,67 +1201,7 @@ begin
   end;
   Application.CreateForm(TFormHintMatrix, FormHintMatrix);
   Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
-  //проверка ponoff в процессах root, исключение запуска под иными пользователями
-  If not ProgrammRoot('ponoff',false) then nostart:=true else nostart:=false;
-  DopParam:=' ';
-  If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
-  If DopParam=' ' then DopParam:='';
-  If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
-  If nostart then If FileExists('/usr/lib64/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
-          begin
-               A_Process.Active:=false;
-               A_Process.CommandLine :='/usr/lib64/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
-               A_Process.Execute;
-               while A_Process.Running do
-               begin
-                   ProgrammRoot('ponoff',true);
-                   sleep(100);
-               end;
-               Application.ProcessMessages;
-          end;
-  If nostart then If FileExists('/usr/lib/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
-             begin
-                  A_Process.Active:=false;
-                  A_Process.CommandLine :='/usr/lib/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
-                  A_Process.Execute;
-                  while A_Process.Running do
-                  begin
-                      ProgrammRoot('ponoff',true);
-                      sleep(100);
-                  end;
-                  Application.ProcessMessages;
-             end;
-  If nostart then If FileExists(UsrBinDir+'beesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через beesu
-         begin
-              A_Process.Active:=false;
-              A_Process.CommandLine :=UsrBinDir+'beesu - '+'"'+Paramstr(0)+DopParam+'"';
-              A_Process.Execute;
-              while A_Process.Running do
-              begin
-                  ProgrammRoot('ponoff',true);
-                  sleep(100);
-              end;
-              Application.ProcessMessages;
-         end;
-  If nostart then If FileExists(UsrBinDir+'gksu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через gksu
-             begin
-                  A_Process.Active:=false;
-                  A_Process.CommandLine :=UsrBinDir+'gksu -g -u root '+'"'+Paramstr(0)+DopParam+'"'+' -m "'+message70+'"';
-                  A_Process.Execute;
-                  while A_Process.Running do
-                  begin
-                      ProgrammRoot('ponoff',true);
-                      sleep(100);
-                  end;
-                  Application.ProcessMessages;
-             end;
-  If not ProgrammRoot('ponoff',false) then
-                begin
-                     Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                     PClose(f);
-                     FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
-                     halt;
-                end;
+  RestartPonoff;
   Timer1.Enabled:=true;
   Timer2.Enabled:=true;
   if FileSize(MyLibDir+'profiles')=0 then FpSystem (BinDir+'rm -f '+MyLibDir+'profiles');
@@ -1452,6 +1469,7 @@ If (Xa=0) and (Yb=0) and (not (Memo_Config.Lines[27]='autostart-ponoff-yes')) th
 If (Xa=0) and (Yb=0) and (Memo_Config.Lines[27]='autostart-ponoff-yes') then mysleep(10000);
 if EnablePseudoTray then Xa:=Widget.Left else Xa:=Form1.TrayIcon1.GetPosition.X;
 if EnablePseudoTray then Yb:=Widget.Top else Yb:=Form1.TrayIcon1.GetPosition.Y;
+//Xa:=0; Yb:=0; //для отладки
 If Xa=0 then if Yb=0 then
      begin
           Timer1.Enabled:=False;
@@ -1459,7 +1477,20 @@ If Xa=0 then if Yb=0 then
           Form1.Hide;
           Form3.MyMessageBox(message0,message71,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
           FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
-          halt;
+          ErrorShowIcon:=true;
+          If not FileExists(MyLibDir+'ponoff.conf.ini') then
+                 begin
+                    FpSystem(UsrBinDir+'printf "'+'[TApplication.Widget]'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                    FpSystem(UsrBinDir+'printf "'+'Widget=true'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                 end;
+          If FileExists(MyLibDir+'ponoff.conf.ini') then
+                           begin
+                              Memo_ponoff_conf_ini.Lines.LoadFromFile(MyLibDir+'ponoff.conf.ini');
+                              For ii:=0 to Memo_ponoff_conf_ini.Lines.Count-1 do
+                                           If Memo_ponoff_conf_ini.Lines[ii]='Widget=false' then Memo_ponoff_conf_ini.Lines[ii]:='Widget=true';
+                              Memo_ponoff_conf_ini.Lines.SaveToFile(MyLibDir+'ponoff.conf.ini');
+                           end;
+          RestartPonoff;
      end;
 Application.ProcessMessages;
 CheckFiles;//проверка наличия необходимых программе файлов

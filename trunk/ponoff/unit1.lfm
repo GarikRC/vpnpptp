@@ -2164,6 +2164,7 @@ object Form1: TForm1
       'Memo_General_conf'
     )
     TabOrder = 2
+    Visible = False
   end
   object Panel1: TPanel
     AnchorSideLeft.Control = Owner
@@ -2342,6 +2343,17 @@ object Form1: TForm1
       }
       Visible = False
     end
+  end
+  object Memo_Ponoff_conf_ini: TMemo
+    Left = 128
+    Height = 53
+    Top = 96
+    Width = 118
+    Lines.Strings = (
+      ''
+    )
+    TabOrder = 4
+    Visible = False
   end
   object TrayIcon1: TTrayIcon
     BalloonTimeout = 0
