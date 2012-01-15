@@ -68,6 +68,7 @@ type
     procedure PlusClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
+    procedure TrayIcon1Click(Sender: TObject);
     procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure TrayIcon1MouseMove(Sender: TObject);
@@ -155,7 +156,6 @@ var
   FlagLengthVpnlog:boolean; //проверен ли размер файла-лога /var/log/vpnlog
   Code_up_ppp:boolean; //существует ли интерфейс pppN
   PppIface:string; //точный интерфейс pppN
-  Net_MonitorRun:boolean; //запущен ли net_monitor
   ProfileName:string; //определяет какое имя соединения использовать
   ProfileStrDefault:string; //имя соединения, используемое по-умолчанию
   TrafficRX, TrafficTX:int64; //общий трафик RX/TX
@@ -264,33 +264,6 @@ begin
      PClose(f);
 end;
 
-procedure KillZombieNet_Monitor;
-//следит за дочерним процессом AProcessNet_Monitor, и если он уже только как зомби, то убирает его
-var
-   find_net_monitor:boolean;
-   str:string;
-begin
-  find_net_monitor:=false;
-  If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then if Net_MonitorRun then
-                    begin
-                         //проверка net_monitor в процессах root, игнорируя зомби
-                         popen(f,BinDir+'ps -u root | '+BinDir+'grep net_monitor | '+BinDir+'awk '+chr(39)+'{print $4$5}'+chr(39),'R');
-                         str:='';
-                         While not eof(f) do
-                              begin
-                                   Readln(f,str);
-                                   If str='net_monitor' then find_net_monitor:=true;
-                              end;
-                         PClose(f);
-                         If not find_net_monitor then
-                                                 begin
-                                                     Net_MonitorRun:=false;
-                                                     AProcessNet_Monitor.WaitOnExit;
-                                                     //AProcessNet_Monitor.Free;
-                                                 end;
-                    end;
-end;
-
 Procedure DoCountInterface;
 //считает максимальное кол-во default
 var
@@ -350,7 +323,6 @@ begin
                              A_Process.Options:=A_Process.Options+[poWaitOnExit];
                              A_Process.CommandLine:=str;
                              A_Process.Execute;
-                             ;
                              Timer1.Enabled:=true;
                              Timer2.Enabled:=true;
                         end;
@@ -372,7 +344,6 @@ begin
                              A_Process.Options:=A_Process.Options+[poWaitOnExit];
                              A_Process.CommandLine:=str;
                              A_Process.Execute;
-                             ;
                              Timer1.Enabled:=true;
                              Timer2.Enabled:=true;
                         end;
@@ -456,7 +427,6 @@ begin
     Widget.IniPropStorage1.Save;
     exit;
   end;
-
   IconTmp:= TIcon.create;
   // Здесь ничего не делаем в unity
   wid:=TrayIcon1.Icon.Width;
@@ -689,7 +659,6 @@ begin
                                                                                                     A_Process.Active:=false;
                                                                                                     A_Process.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                                                                                                     A_Process.Execute;
-                                                                                                    ;
                                                                                                 end;
                           Ifdown(Form1.Memo_Config.Lines[3]);
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
@@ -1097,7 +1066,6 @@ If not Code_up_ppp then If link=1 then
                                                                                                                  A_Process.Execute;
                                                                                                                  while A_Process.Running do
                                                                                                                                          MySleep(30);
-                                                                                                                 ;
                                                                                                              end;
                                                                                                PClose(f);
                                                                                                FpSystem (BinDir+'echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
@@ -1109,7 +1077,6 @@ If not Code_up_ppp then If link=1 then
                                                     Timer1.Enabled:=false;
                                                     Timer2.Enabled:=false;
                                                     AProcessDhclient.WaitOnExit;
-                                                    //AProcessDhclient.Free;
                                                     Timer1.Enabled:=true;
                                                     Timer2.Enabled:=true;
                                                 end;
@@ -1174,7 +1141,6 @@ begin
                    sleep(100);
                end;
                Application.ProcessMessages;
-               ;
           end;
   If nostart then If FileExists('/usr/lib/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
              begin
@@ -1187,7 +1153,6 @@ begin
                       sleep(100);
                   end;
                   Application.ProcessMessages;
-                  ;
              end;
   If nostart then If FileExists(UsrBinDir+'beesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через beesu
          begin
@@ -1200,11 +1165,10 @@ begin
                   sleep(100);
               end;
               Application.ProcessMessages;
-              ;
          end;
   If nostart then If FileExists(UsrBinDir+'gksu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через gksu
              begin
-                  A_Process.Active:=false;; //////
+                  A_Process.Active:=false;
                   A_Process.CommandLine :=UsrBinDir+'gksu -g -u root '+'"'+Paramstr(0)+DopParam+'"'+' -m "'+message70+'"';
                   A_Process.Execute;
                   while A_Process.Running do
@@ -1213,7 +1177,6 @@ begin
                       sleep(100);
                   end;
                   Application.ProcessMessages;
-                  //;
              end;
   If not ProgrammRoot('ponoff',false) then
                 begin
@@ -1276,7 +1239,6 @@ begin
   If StrObnull<>'' then ObnullTX:=StrToInt(StrObnull) else ObnullTX:=0;
   RXSpeed:='0b/s';
   TXSpeed:='0b/s';
-  Net_MonitorRun:=false;
   CountInterface:=1;
   FlagMtu:=false;
   FlagLengthSyslog:=false;
@@ -1292,7 +1254,6 @@ begin
   MenuItem4.Caption:=message11;
   MenuItem5.Caption:=message39;
   MenuItem6.Caption:=message61;
-  //TrayIcon1.BalloonTitle:=message0;
   If Screen.Height<440 then AFont:=6;
   If Screen.Height<=480 then AFont:=6;
   If Screen.Height<550 then If not (Screen.Height<=480) then AFont:=6;
@@ -1563,7 +1524,6 @@ If suse then
                    A_Process.Active:=false;
                    A_Process.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                    A_Process.Execute;
-                   ;
                    For h:=1 to CountInterface do
                                           FpSystem (SBinDir+'route del default');
                    Ifdown(Memo_Config.Lines[3]);
@@ -1657,7 +1617,6 @@ begin
                                                                                        A_Process.Active:=false;
                                                                                        A_Process.CommandLine :=ServiceCommand+NetServiceStr+' restart';
                                                                                        A_Process.Execute;
-                                                                                       ;
                                                                                        Mysleep(3000);
                                                                                   end;
                                         end;
@@ -1682,7 +1641,6 @@ begin
  DoubleRunPonoff:=false;
  Timer1.Enabled:=False;
  Timer2.Enabled:=False;
- KillZombieNet_Monitor;
  FpSystem (UsrBinDir+'killall net_monitor');
  If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   MenuItem2Click(Self);
@@ -1714,7 +1672,6 @@ begin
   DoubleRunPonoff:=false;
   Timer1.Enabled:=False;
   Timer2.Enabled:=False;
-  KillZombieNet_Monitor;
   FpSystem (UsrBinDir+'killall net_monitor');
   If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
   If FileExists(MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.before') then If FileExists(EtcDir+'resolv.conf') then
@@ -1772,12 +1729,11 @@ begin
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
-  If Code_up_ppp then If not Net_MonitorRun then
+  If Code_up_ppp then
              begin
                 AProcessNet_Monitor.Active:=false;
                 AProcessNet_Monitor.CommandLine := UsrBinDir+'net_monitor -i '+PppIface;
                 AProcessNet_Monitor.Execute;
-                Net_MonitorRun:=true;
              end;
 end;
 
@@ -1816,7 +1772,6 @@ begin
   //Проверяем поднялось ли соединение
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-  KillZombieNet_Monitor;
   //определяем скорость, время
   If Code_up_ppp then
             begin
@@ -2029,6 +1984,11 @@ begin
   Application.ProcessMessages;
 end;
 
+procedure TForm1.TrayIcon1Click(Sender: TObject);
+begin
+
+end;
+
 procedure TForm1.TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
@@ -2043,8 +2003,6 @@ begin
   If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then PopupMenu1.Items[1].Caption:=message68 else PopupMenu1.Items[1].Caption:=message69;
   If not FileExists (UsrBinDir+'net_monitor') then begin MenuItem5.Visible:=false; exit;end;
   If not FileExists (UsrBinDir+'vnstat') then begin MenuItem5.Visible:=false; exit;end;
-  If Net_MonitorRun then begin MenuItem5.Enabled:=false; exit;end;
-  If not Net_MonitorRun then MenuItem5.Enabled:=true;
   Application.ProcessMessages;
   if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
   Application.ProcessMessages;
@@ -2064,8 +2022,9 @@ begin
                               end;
                          PClose(f);
                     end;
-  If not find_net_monitor then If not Net_MonitorRun then MenuItem5.Enabled:=true else MenuItem5.Enabled:=false;
+  If not find_net_monitor then MenuItem5.Enabled:=true else MenuItem5.Enabled:=false;
   If not Code_up_ppp then MenuItem5.Enabled:=false;
+  Application.ProcessMessages;
 end;
 
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);

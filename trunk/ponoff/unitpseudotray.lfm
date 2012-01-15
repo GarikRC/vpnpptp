@@ -8,6 +8,7 @@ object Widget: TWidget
   ClientHeight = 50
   ClientWidth = 50
   OnCreate = FormCreate
+  OnMouseDown = Image1MouseDown
   SessionProperties = 'Height;Left;ShowInTaskBar;Top;Width'
   ShowInTaskBar = stNever
   LCLVersion = '0.9.30.2'
