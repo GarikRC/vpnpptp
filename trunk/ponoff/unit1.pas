@@ -57,6 +57,7 @@ type
     procedure ColorIconClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
@@ -139,7 +140,7 @@ var
   RXSpeed,TXSpeed:string;//скорость загрузки/отдачи
   ObnullRX,ObnullTX:integer; //отслеживает кол-во обнулений счетчика RX/TX
   AFont:integer; //шрифт приложения
-  AProcess,AProcessDhclient,AProcessNet_Monitor: TAsyncProcess; //для запуска внешних приложений
+  AProcess,AProcessDhclient,AProcessNet_Monitor,A_Process: TAsyncProcess; //для запуска внешних приложений
   ubuntu:boolean; // используется ли дистрибутив ubuntu
   debian:boolean; // используется ли дистрибутив debian
   fedora:boolean; // используется ли дистрибутив fedora
@@ -285,7 +286,7 @@ begin
                                                  begin
                                                      Net_MonitorRun:=false;
                                                      AProcessNet_Monitor.WaitOnExit;
-                                                     AProcessNet_Monitor.Free;
+                                                     //AProcessNet_Monitor.Free;
                                                  end;
                     end;
 end;
@@ -345,11 +346,11 @@ begin
                         begin
                              Timer1.Enabled:=false;
                              Timer2.Enabled:=false;
-                             AProcess := TAsyncProcess.Create(nil);
-                             AProcess.Options:=AProcess.Options+[poWaitOnExit];
-                             AProcess.CommandLine:=str;
-                             AProcess.Execute;
-                             AProcess.Free;
+                             A_Process.Active:=false;
+                             A_Process.Options:=A_Process.Options+[poWaitOnExit];
+                             A_Process.CommandLine:=str;
+                             A_Process.Execute;
+                             ;
                              Timer1.Enabled:=true;
                              Timer2.Enabled:=true;
                         end;
@@ -367,11 +368,11 @@ begin
                         begin
                              Timer1.Enabled:=false;
                              Timer2.Enabled:=false;
-                             AProcess := TAsyncProcess.Create(nil);
-                             AProcess.Options:=AProcess.Options+[poWaitOnExit];
-                             AProcess.CommandLine:=str;
-                             AProcess.Execute;
-                             AProcess.Free;
+                             A_Process.Active:=false;
+                             A_Process.Options:=A_Process.Options+[poWaitOnExit];
+                             A_Process.CommandLine:=str;
+                             A_Process.Execute;
+                             ;
                              Timer1.Enabled:=true;
                              Timer2.Enabled:=true;
                         end;
@@ -593,7 +594,7 @@ begin
                           Form1.Timer1.Enabled:=False;
                           Form1.Timer2.Enabled:=False;
                           Form1.Hide;
-                          if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                          if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
                           Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                           FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -608,7 +609,7 @@ begin
     If str<>message48 then
                      begin
                           str:=LeftStr(str,Length(str)-2);
-                          if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+                          if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
                           MySleep(1000);
                           BalloonMessage (3000,message0,str,AFont);
                           Application.ProcessMessages;
@@ -685,10 +686,10 @@ begin
                      begin
                          If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networking') or (NetServiceStr='networkmanager') then
                                                                                                 begin
-                                                                                                    AProcess := TAsyncProcess.Create(nil);
-                                                                                                    AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
-                                                                                                    AProcess.Execute;
-                                                                                                    AProcess.Free;
+                                                                                                    A_Process.Active:=false;
+                                                                                                    A_Process.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                                                                                                    A_Process.Execute;
+                                                                                                    ;
                                                                                                 end;
                           Ifdown(Form1.Memo_Config.Lines[3]);
                           If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then Mysleep (3000);
@@ -894,7 +895,7 @@ If not Code_up_ppp then If Memo_Config.Lines[23]='networktest-yes' then
 If not Code_up_ppp then DhclientStart:=false;
 If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' then //старт dhclient
                            begin
-                              AProcessDhclient := TAsyncProcess.Create(nil);
+                              AProcessDhclient.Active:=false;
                               AProcessDhclient.CommandLine :=SBinDir+'dhclient '+Memo_Config.Lines[3];
                               Application.ProcessMessages;
                               If not NoPingIPS then If not NoDNS then If not NoPingGW then
@@ -993,7 +994,7 @@ If not Code_up_ppp then If link=3 then
                                                               begin
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
-                                                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                                                                if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
                                                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -1008,7 +1009,7 @@ If not Code_up_ppp then If link=2 then
                                                               begin
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
-                                                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                                                                if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                                 MenuItem2Click(Self);
                                                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -1091,12 +1092,12 @@ If not Code_up_ppp then If link=1 then
                                                                                               If eof(f) then
                                                                                                             begin
                                                                                                                  FpSystem (ServiceCommand+'xl2tpd stop');
-                                                                                                                 AProcess := TAsyncProcess.Create(nil);
-                                                                                                                 AProcess.CommandLine :=ServiceCommand+'xl2tpd start';
-                                                                                                                 AProcess.Execute;
-                                                                                                                 while AProcess.Running do
+                                                                                                                 A_Process.Active:=false;
+                                                                                                                 A_Process.CommandLine :=ServiceCommand+'xl2tpd start';
+                                                                                                                 A_Process.Execute;
+                                                                                                                 while A_Process.Running do
                                                                                                                                          MySleep(30);
-                                                                                                                 AProcess.Free;
+                                                                                                                 ;
                                                                                                              end;
                                                                                                PClose(f);
                                                                                                FpSystem (BinDir+'echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
@@ -1108,7 +1109,7 @@ If not Code_up_ppp then If link=1 then
                                                     Timer1.Enabled:=false;
                                                     Timer2.Enabled:=false;
                                                     AProcessDhclient.WaitOnExit;
-                                                    AProcessDhclient.Free;
+                                                    //AProcessDhclient.Free;
                                                     Timer1.Enabled:=true;
                                                     Timer2.Enabled:=true;
                                                 end;
@@ -1123,6 +1124,9 @@ var
   str,stri,StrObnull:string;
   FileObnull:textfile;
 begin
+  A_Process := TAsyncProcess.Create(nil);
+  AProcessDhclient := TAsyncProcess.Create(nil);
+  AProcessNet_Monitor := TAsyncProcess.Create(nil);
   with Widget.IniPropStorage1 do
   begin
     // Если значение в конфиге пустое, то заполняем по умолчанию
@@ -1143,7 +1147,7 @@ begin
   If not ProgrammRoot('ponoff',false) then
                           begin
                                Form1.Hide;
-                               if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                               if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                Application.ProcessMessages;
                           end;
   if EnablePseudoTray then
@@ -1152,7 +1156,6 @@ begin
     Widget.Show;
   end;
   Application.CreateForm(TFormHintMatrix, FormHintMatrix);
-  Application.CreateForm(TForm3, Form3);
   Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
   //проверка ponoff в процессах root, исключение запуска под иными пользователями
   If not ProgrammRoot('ponoff',false) then nostart:=true else nostart:=false;
@@ -1162,55 +1165,55 @@ begin
   If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
   If nostart then If FileExists('/usr/lib64/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
           begin
-               AProcess := TAsyncProcess.Create(nil);
-               AProcess.CommandLine :='/usr/lib64/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
-               AProcess.Execute;
-               while AProcess.Running do
+               A_Process.Active:=false;
+               A_Process.CommandLine :='/usr/lib64/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
+               A_Process.Execute;
+               while A_Process.Running do
                begin
                    ProgrammRoot('ponoff',true);
                    sleep(100);
                end;
                Application.ProcessMessages;
-               AProcess.Free;
+               ;
           end;
   If nostart then If FileExists('/usr/lib/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
              begin
-                  AProcess := TAsyncProcess.Create(nil);
-                  AProcess.CommandLine :='/usr/lib/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
-                  AProcess.Execute;
-                  while AProcess.Running do
+                  A_Process.Active:=false;
+                  A_Process.CommandLine :='/usr/lib/kde4/libexec/kdesu -c '+'"'+Paramstr(0)+DopParam+'"'+' -d --noignorebutton';
+                  A_Process.Execute;
+                  while A_Process.Running do
                   begin
                       ProgrammRoot('ponoff',true);
                       sleep(100);
                   end;
                   Application.ProcessMessages;
-                  AProcess.Free;
+                  ;
              end;
   If nostart then If FileExists(UsrBinDir+'beesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через beesu
          begin
-              AProcess := TAsyncProcess.Create(nil);
-              AProcess.CommandLine :=UsrBinDir+'beesu - '+'"'+Paramstr(0)+DopParam+'"';
-              AProcess.Execute;
-              while AProcess.Running do
+              A_Process.Active:=false;
+              A_Process.CommandLine :=UsrBinDir+'beesu - '+'"'+Paramstr(0)+DopParam+'"';
+              A_Process.Execute;
+              while A_Process.Running do
               begin
                   ProgrammRoot('ponoff',true);
                   sleep(100);
               end;
               Application.ProcessMessages;
-              AProcess.Free;
+              ;
          end;
   If nostart then If FileExists(UsrBinDir+'gksu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через gksu
              begin
-                  AProcess := TAsyncProcess.Create(nil);
-                  AProcess.CommandLine :=UsrBinDir+'gksu -g -u root '+'"'+Paramstr(0)+DopParam+'"'+' -m "'+message70+'"';
-                  AProcess.Execute;
-                  while AProcess.Running do
+                  A_Process.Active:=false;; //////
+                  A_Process.CommandLine :=UsrBinDir+'gksu -g -u root '+'"'+Paramstr(0)+DopParam+'"'+' -m "'+message70+'"';
+                  A_Process.Execute;
+                  while A_Process.Running do
                   begin
                       ProgrammRoot('ponoff',true);
                       sleep(100);
                   end;
                   Application.ProcessMessages;
-                  AProcess.Free;
+                  //;
              end;
   If not ProgrammRoot('ponoff',false) then
                 begin
@@ -1303,7 +1306,7 @@ If str='DEFAULT' then
                               Timer1.Enabled:=False;
                               Timer2.Enabled:=False;
                               Form1.Hide;
-                              if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                              if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                               Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                               FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                               halt;
@@ -1313,7 +1316,7 @@ If str='DEFAULT' then
                                                      Timer1.Enabled:=False;
                                                      Timer2.Enabled:=False;
                                                      Form1.Hide;
-                                                     if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                                                     if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                                      Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                      FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                      halt;
@@ -1323,7 +1326,7 @@ If str='DEFAULT' then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 Form1.Hide;
-                                                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                                                                if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message53+' '+message54+' '+message55,'',message33,message36,MyPixmapsDir+'ponoff.png',false,true,true,AFont,Form1.Icon,true,MyLibDir,2);
                                                                 If Form3.Tag=2 then If Form3.ComboBoxProfile.Text<>'' then
                                                                                                   begin
@@ -1338,7 +1341,7 @@ If str='DEFAULT' then
                                                                                                                                      end;
                                                                 Timer1.Enabled:=true;
                                                                 Timer2.Enabled:=true;
-                                                                if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+                                                                if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
                                                             end;
   If not FileExists(MyTmpDir) then FpSystem (BinDir+'mkdir -p '+MyTmpDir);
   //обеспечение совместимости старого config с новым
@@ -1367,7 +1370,7 @@ If str='DEFAULT' then
             Timer1.Enabled:=False;
             Timer2.Enabled:=False;
             Form1.Hide;
-            if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+            if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
             Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
             FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
             halt;
@@ -1378,7 +1381,7 @@ If str='DEFAULT' then
     Timer1.Enabled:=False;
     Timer2.Enabled:=False;
     Form1.Hide;
-    if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+    if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
     Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
     FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
     halt;
@@ -1417,11 +1420,11 @@ If str='DEFAULT' then
                                Form1.Timer1.Enabled:=False;
                                Form1.Timer2.Enabled:=False;
                                Form1.Hide;
-                               if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                               if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                Form3.MyMessageBox(message0,message2,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                Form1.Timer1.Enabled:=true;
                                Form1.Timer2.Enabled:=true;
-                               if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+                               if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
                                Application.ProcessMessages;
                             end;
 //проверка ponoff в процессах root, обработка двойного запуска программы
@@ -1459,7 +1462,7 @@ If i>1 then
                                 Timer1.Enabled:=False;
                                 Timer2.Enabled:=False;
                                 Form1.Hide;
-                                if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                                if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                 Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                 halt;
@@ -1479,7 +1482,7 @@ If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
 If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
 If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
 Application.ProcessMessages;
-if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
 Xa:=0;
 Yb:=0;
 if EnablePseudoTray then Xa:=Widget.Left else Xa:=Form1.TrayIcon1.GetPosition.X;
@@ -1519,7 +1522,7 @@ If suse then
                                            Timer1.Enabled:=False;
                                            Timer2.Enabled:=False;
                                            Form1.Hide;
-                                           if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                                           if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                            Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                            PClose(f);
                                            FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
@@ -1557,10 +1560,10 @@ If suse then
    If Memo_Config.Lines[7]='reconnect-pptp' then link:=1;
    If link=3 then //попытка поднять требуемый интерфейс
                 begin
-                   AProcess := TAsyncProcess.Create(nil);
-                   AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
-                   AProcess.Execute;
-                   AProcess.Free;
+                   A_Process.Active:=false;
+                   A_Process.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                   A_Process.Execute;
+                   ;
                    For h:=1 to CountInterface do
                                           FpSystem (SBinDir+'route del default');
                    Ifdown(Memo_Config.Lines[3]);
@@ -1585,7 +1588,7 @@ If suse then
                  MenuItem4.Visible:=false;
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
-                 if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                  Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                  FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
@@ -1595,7 +1598,7 @@ If suse then
                  Form3.MyMessageBox(message0,message5,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
-                 if EnablePseudoTray then Widget.Hide else Form1.TrayIcon1.Hide;
+                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                  FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
@@ -1608,6 +1611,13 @@ If suse then
                                              end
                                                 else
                                                    Timer1.Interval:=100;
+end;
+
+procedure TForm1.FormDestroy(Sender: TObject);
+begin
+  A_Process.Free;
+  AProcessDhclient.Free;
+  AProcessNet_Monitor.Free;
 end;
 
 procedure TForm1.FormActivate(Sender: TObject);
@@ -1644,10 +1654,10 @@ begin
                                              FpSystem(UsrBinDir+'killall pppd');
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then
                                                                                   begin
-                                                                                       AProcess := TAsyncProcess.Create(nil);
-                                                                                       AProcess.CommandLine :=ServiceCommand+NetServiceStr+' restart';
-                                                                                       AProcess.Execute;
-                                                                                       AProcess.Free;
+                                                                                       A_Process.Active:=false;
+                                                                                       A_Process.CommandLine :=ServiceCommand+NetServiceStr+' restart';
+                                                                                       A_Process.Execute;
+                                                                                       ;
                                                                                        Mysleep(3000);
                                                                                   end;
                                         end;
@@ -1758,13 +1768,13 @@ end;
 procedure TForm1.MenuItem5Click(Sender: TObject);
 begin
   Application.ProcessMessages;
-  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
   If Code_up_ppp then If not Net_MonitorRun then
              begin
-                AProcessNet_Monitor := TAsyncProcess.Create(nil);
+                AProcessNet_Monitor.Active:=false;
                 AProcessNet_Monitor.CommandLine := UsrBinDir+'net_monitor -i '+PppIface;
                 AProcessNet_Monitor.Execute;
                 Net_MonitorRun:=true;
@@ -1801,7 +1811,7 @@ var
 begin
   If not FileExists (VarRunVpnpptp+ProfileName) then FpSystem (BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
-  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
@@ -2015,7 +2025,7 @@ begin
                            end;
   NoConnectMessageShow:=true;
   Application.ProcessMessages;
-  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
   Application.ProcessMessages;
 end;
 
@@ -2036,7 +2046,7 @@ begin
   If Net_MonitorRun then begin MenuItem5.Enabled:=false; exit;end;
   If not Net_MonitorRun then MenuItem5.Enabled:=true;
   Application.ProcessMessages;
-  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else Form1.TrayIcon1.Show;
+  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;

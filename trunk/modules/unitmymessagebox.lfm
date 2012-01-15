@@ -12,7 +12,7 @@ object Form3: TForm3
   ClientWidth = 756
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.30.2'
   object Panel1: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -4236,6 +4236,7 @@ object Form3: TForm3
       BorderSpacing.Bottom = 10
       OnClick = Button1Click
       TabOrder = 1
+      Visible = False
     end
     object Button2: TButton
       AnchorSideLeft.Side = asrBottom
@@ -4250,6 +4251,7 @@ object Form3: TForm3
       BorderSpacing.Bottom = 10
       OnClick = Button2Click
       TabOrder = 2
+      Visible = False
     end
     object Button3: TButton
       AnchorSideLeft.Side = asrBottom
@@ -4266,6 +4268,7 @@ object Form3: TForm3
       BorderSpacing.Bottom = 10
       OnClick = Button3Click
       TabOrder = 3
+      Visible = False
     end
     object Image1: TImage
       AnchorSideLeft.Control = Owner
