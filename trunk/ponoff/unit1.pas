@@ -169,6 +169,12 @@ var
   Apid:tpid;
   EnablePseudoTray:boolean;
   ErrorShowIcon:boolean;
+  ImageIconBitmap:tBitmap;
+  IconTmp:tIcon;
+  TmpBmp: TBitmap;
+  file1, file2: TMemoryStream;
+  //last_mem_size_icon:  integer;
+  tray_status,last_tray:(bw_on,bw_off,col_on,col_off);
 
 resourcestring
   message0='Внимание!';
@@ -434,20 +440,16 @@ End;
 
 function CompareFiles(const FirstFile, SecondFile: string): Boolean;
 //сравнение файлов
-var
-  f1, f2: TMemoryStream;
 begin
   Result := false;
-  f1 := TMemoryStream.Create;
-  f2 := TMemoryStream.Create;
+  file1.Clear;
+  file2.Clear;
   try
-    f1.LoadFromFile(FirstFile);
-    f2.LoadFromFile(SecondFile);
-    if f1.Size = f2.Size then
-           Result := CompareMem(f1.Memory, f2.memory, f1.Size);
+    file1.LoadFromFile(FirstFile);
+    file2.LoadFromFile(SecondFile);
+    if file1.Size = file2.Size then
+           Result := CompareMem(file1.Memory, file2.memory, file1.Size);
   finally
-    f2.Free;
-    f1.Free;
   end
 end;
 
@@ -469,12 +471,13 @@ end;
 procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
 //растягивает картинку
  var
-    TmpBmp: TBitmap;
+    //TmpBmp: TBitmap;
     ARect: TRect;
  begin
    If (Wid=0) or (hei=0) then exit;
    try
-     TmpBmp := TBitmap.Create;
+     //TmpBmp := TBitmap.Create;
+     TmpBmp.Clear;
      try
        TmpBmp.Width  := wid;
        TmpBmp.Height := hei;
@@ -482,7 +485,7 @@ procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
        TmpBmp.Canvas.StretchDraw(ARect, Bitmp);
        bitmp.Assign(TmpBmp);
      finally
-       TmpBmp.Free;
+       //TmpBmp.Free;
      end;
    except
    end;
@@ -492,9 +495,9 @@ procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
 
 procedure TForm1.IconForTrayPlus;
  var
-   ImageIconBitmap:tBitmap;
+   //ImageIconBitmap:tBitmap;
    wid,hei:integer;
-   IconTmp:tIcon;
+   //IconTmp:tIcon;
 begin
   if EnablePseudoTray then
   begin
@@ -503,7 +506,8 @@ begin
     Widget.IniPropStorage1.Save;
     exit;
   end;
-  IconTmp:= TIcon.create;
+  //IconTmp:= TIcon.create;
+  IconTmp.Clear;
   // Здесь ничего не делаем в unity
   wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
@@ -521,20 +525,21 @@ begin
             If not Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'off.ico');
             if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(IconTmp) else TrayIcon1.Icon.Assign(IconTmp);
        end;
-  ImageIconBitmap:= TBitmap.create;
+  //ImageIconBitmap:= TBitmap.create;
+  ImageIconBitmap.Clear;
   ImageIconBitmap.Assign(TrayIcon1.Icon);
   ResizeBmp(ImageIconBitmap,wid+1,hei+1);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
-  ImageIconBitmap.Free;
+  //ImageIconBitmap.Free;
   FpSystem(UsrBinDir+'printf "'+IntToStr(wid+1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
-  IconTmp.Free;
+  //IconTmp.Free;
 end;
 
 procedure TForm1.IconForTrayMinus;
- var
-   ImageIconBitmap:tBitmap;
+var
+   //ImageIconBitmap:tBitmap;
    wid,hei:integer;
-   IconTmp:tIcon;
+   //IconTmp:tIcon;
 begin
   if EnablePseudoTray then
   begin
@@ -543,7 +548,8 @@ begin
     Widget.IniPropStorage1.Save;
     exit;
   end;
-  IconTmp:= TIcon.create;
+  //IconTmp:= TIcon.create;
+  IconTmp.Clear;
   wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
   if (wid<3) or (hei<3) then exit;
@@ -560,23 +566,24 @@ begin
                      If not Code_up_ppp then IconTmp.LoadFromFile(MyDataDir+'off.ico');
                      if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(IconTmp) else TrayIcon1.Icon.Assign(IconTmp);
                 end;
-  ImageIconBitmap:= TBitmap.create;
+  //ImageIconBitmap:= TBitmap.create;
+  ImageIconBitmap.Clear;
   ImageIconBitmap.Assign(TrayIcon1.Icon);
   ResizeBmp(ImageIconBitmap,wid-1,hei-1);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
-  ImageIconBitmap.Free;
+  //ImageIconBitmap.Free;
   FpSystem(UsrBinDir+'printf "'+IntToStr(wid-1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
-  IconTmp.Free;
+  //IconTmp.Free;
 end;
 
 procedure TForm1.LoadIconForTray(PathToIcon,NameIcon:string);
 var
-  ImageIconBitmap:tBitmap;
-  IconTmp:tIcon;
+  //ImageIconBitmap:tBitmap;
+  //IconTmp:tIcon;
   wid,hei:integer;
   str:string;
 begin
-  wid:=TrayIcon1.Icon.Width;
+   wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
   str:='';
   If FileExists(MyLibDir+Memo_config.Lines[0]+'/ponoff.conf') then
@@ -592,30 +599,30 @@ begin
                     pclose(f);
          end;
   CheckVPN;
-  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str)) then
-                                                                                begin
-                                                                                     IconTmp:= TIcon.create;
-                                                                                     ImageIconBitmap:= TBitmap.create;
-                                                                                     If Code_up_ppp then IconTmp.Assign(ImageIconDefaultOn.Picture);
-                                                                                     If not Code_up_ppp then IconTmp.Assign(ImageIconDefaultOff.Picture);
-                                                                                     ImageIconBitmap.Assign(IconTmp);
-                                                                                     ResizeBmp(ImageIconBitmap,wid,hei);
-                                                                                     if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(ImageIconBitmap) else TrayIcon1.Icon.Assign(ImageIconBitmap);
-                                                                                     ImageIconBitmap.Free;
-                                                                                     IconTmp.Free;
-                                                                                     exit;
-                                                                                end;
-  ImageIconBitmap:= TBitmap.create;
-  IconTmp:= TIcon.create;
-  IconTmp.LoadFromFile(PathToIcon+NameIcon);
 
-  if EnablePseudoTray then Widget.Image1.Picture.LoadFromFile(PathToIcon+NameIcon);
+  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str)) then    //
+  begin
+    IconTmp.Clear;
+    ImageIconBitmap.Clear;
+    If Code_up_ppp then begin IconTmp.Assign(ImageIconDefaultOn.Picture); tray_status:=bw_on; end;
+    If not Code_up_ppp then begin IconTmp.Assign(ImageIconDefaultOff.Picture);tray_status:=bw_off; end;
+    ImageIconBitmap.Assign(IconTmp);
+    ResizeBmp(ImageIconBitmap,wid,hei);
+    if EnablePseudoTray then Widget.Image1.Picture.Bitmap.Assign(ImageIconBitmap) else TrayIcon1.Icon.Assign(ImageIconBitmap);
+    last_tray:=tray_status;
+    exit;
+  end;
 
+  if  NameIcon='on.ico' then tray_status:=col_on;
+  if  NameIcon='off.ico' then tray_status:=col_off;
+  if last_tray=tray_status then exit;
+  last_tray:=tray_status;
+  ImageIconBitmap.Clear;
+  IconTmp.Clear;
+  if EnablePseudoTray then Widget.Image1.Picture.LoadFromFile(PathToIcon+NameIcon) else IconTmp.LoadFromFile(PathToIcon+NameIcon);
   ImageIconBitmap.Assign(IconTmp);
   ResizeBmp(ImageIconBitmap,wid,hei);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
-  ImageIconBitmap.Free;
-  IconTmp.Free;
 end;
 
 procedure TForm1.BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
@@ -1168,9 +1175,15 @@ var
   FileObnull:textfile;
 begin
   ErrorShowIcon:=false;
-  A_Process := TAsyncProcess.Create(nil);
-  AProcessDhclient := TAsyncProcess.Create(nil);
-  AProcessNet_Monitor := TAsyncProcess.Create(nil);
+  tray_status:=col_on;
+  A_Process := TAsyncProcess.Create(self);
+  AProcessDhclient := TAsyncProcess.Create(self);
+  AProcessNet_Monitor := TAsyncProcess.Create(self);
+  IconTmp:= TIcon.create;
+  TmpBmp := TBitmap.Create;
+  file1 := TMemoryStream.Create;
+  file2 := TMemoryStream.Create;
+  ImageIconBitmap:= TBitmap.create;
   with Widget.IniPropStorage1 do
   begin
     // Если значение в конфиге пустое, то заполняем по умолчанию
@@ -1609,6 +1622,11 @@ begin
   A_Process.Free;
   AProcessDhclient.Free;
   AProcessNet_Monitor.Free;
+  ImageIconBitmap.Free;
+  IconTmp.Free;
+  TmpBmp.Free;
+  file2.Free;
+  file1.Free;
 end;
 
 procedure TForm1.FormActivate(Sender: TObject);
@@ -1623,7 +1641,16 @@ begin
   if  Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str  then  Widget.IniPropStorage1.StoredValue['black_and_white_icon']:=false_str ;
   if  Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=false_str then  Widget.IniPropStorage1.StoredValue['black_and_white_icon']:=true_str  ;
   Widget.IniPropStorage1.Save;
-  If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then PopupMenu1.Items[1].Caption:=message68 else PopupMenu1.Items[1].Caption:=message69;
+  If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then
+  begin
+    PopupMenu1.Items[1].Caption:=message68;
+    tray_status:=bw_on;
+  end
+  else
+  begin
+    PopupMenu1.Items[1].Caption:=message69;
+    tray_status:=bw_off;
+  end;
 end;
 
 procedure TForm1.MenuItem2Click(Sender: TObject);
