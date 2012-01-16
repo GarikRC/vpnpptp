@@ -46,8 +46,11 @@ begin
   if Button=mbLeft then
   begin
     Moving:=False;
-    if Widget.Left=0 then Widget.Left:=1;
-    if Widget.Top=0 then Widget.Top:=1;
+    if (Widget.Left=0) and (Widget.Top=0) then
+                       begin
+                            Widget.Left:=1;
+                            Widget.Top:=1;
+                       end;
     IniPropStorage1.Save;
   end;
 end;

@@ -57,14 +57,20 @@ uses Unit1,Unitpseudotray;
 procedure TFormHintMatrix.HintHide;
 begin
     HintSimle.Hide;
+    FormHintMatrix.Tag:=0;
 end;
 
 procedure TFormHintMatrix.HintMessage (Connection_1,Status_1,TimeInNet_1,Download_1,Upload_1,Interface_1,IPAddress_1,Gateway_1,DNS1_1,DNS2_1,Connection_2,Status_2,TimeInNet_2,Download_2,Upload_2,Interface_2,IPAddress_2,Gateway_2,DNS1_2,DNS2_2:string;font_size:integer);
+//если Tag=1 значит сообщение показывается, если Tag=0 значит сообщение не показывается
 var
   k4:integer; //размер иконки в трее
   X,Y,A,B:integer;
   max_text_width, max_text_height,i:integer;
 begin
+  If FormHintMatrix.Tag=1 then exit;
+
+  FormHintMatrix.Tag:=1;
+
   FormHintMatrix.TimerClose.Enabled:=true;
 
   LabelConnection.Caption:=Trim(Connection_1);
@@ -160,6 +166,7 @@ begin
     Image1.Visible:=false;
     FormHintMatrix.Color:=$0092FFF8;
     TimerClose.Interval:=1000;
+    FormHintMatrix.Tag:=0;
 end;
 
 procedure TFormHintMatrix.FormClick(Sender: TObject);
