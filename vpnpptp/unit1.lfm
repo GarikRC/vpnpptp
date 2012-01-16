@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 444
   Height = 580
-  Top = 133
+  Top = 77
   Width = 830
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2136,7 +2136,7 @@ object Form1: TForm1
   OnMouseDown = TabSheet1MouseDown
   Position = poDesktopCenter
   ShowHint = True
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.30.2'
   object PageControl1: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner
@@ -3772,20 +3772,20 @@ object Form1: TForm1
           end
           object GroupBox2: TGroupBox
             AnchorSideLeft.Control = GroupBox1
-            AnchorSideTop.Control = Sudo_configure
+            AnchorSideTop.Control = Widget
             AnchorSideTop.Side = asrBottom
             AnchorSideRight.Control = GroupBox1
             AnchorSideRight.Side = asrBottom
             AnchorSideBottom.Control = GroupBox1
             AnchorSideBottom.Side = asrBottom
             Left = 0
-            Height = 85
-            Top = 73
+            Height = 64
+            Top = 94
             Width = 812
             Anchors = [akTop, akLeft, akRight, akBottom]
             BorderSpacing.Top = 5
             Caption = 'Взаимоисключающие для всех соединений настройки'
-            ClientHeight = 70
+            ClientHeight = 49
             ClientWidth = 808
             TabOrder = 3
             OnMouseDown = GroupBox2MouseDown
@@ -3815,6 +3815,29 @@ object Form1: TForm1
               TabOrder = 1
             end
           end
+          object Widget: TCheckBox
+            AnchorSideLeft.Control = GroupBox1
+            AnchorSideTop.Control = Sudo_configure
+            AnchorSideTop.Side = asrBottom
+            AnchorSideBottom.Control = GroupBox1
+            AnchorSideBottom.Side = asrBottom
+            Left = 2
+            Height = 21
+            Top = 68
+            Width = 215
+            BorderSpacing.Left = 2
+            Caption = 'Использовать виджет вместо трея'
+            OnChange = Sudo_configureChange
+            TabOrder = 4
+          end
+        end
+        object Memo_ponoff_conf_ini: TMemo
+          Left = 657
+          Height = 35
+          Top = 147
+          Width = 70
+          TabOrder = 13
+          Visible = False
         end
       end
       object Label44: TLabel

@@ -1267,3 +1267,11 @@ msgstr "For Fedora for VPN OpenL2TP required selinux-policy>=3.9.16-33, otherwis
 #: unit1.message226
 msgid "Введите па#209�оль root:"
 msgstr "Enter root password:"
+
+#: TFORM1.WIDGET.CAPTION
+msgid "Использовать виджет вместо трея"
+msgstr "Use the widget instead of the tray"
+
+#: unit1.message227
+msgid "Эта опция позволяет модулю ponoff использовать виджет вместо трея в качестве альтернативы"
+msgstr "This option allows for ponoff to use the widget instead tray alternatively"

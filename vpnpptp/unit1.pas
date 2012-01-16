@@ -70,6 +70,7 @@ type
     LabelDNS3: TLabel;
     LabelDNS4: TLabel;
     Label_mru: TLabel;
+    Memo_ponoff_conf_ini: TMemo;
     Memo2: TMemo;
     MemoTest: TMemo;
     EditDNSdop3: TEdit;
@@ -154,6 +155,7 @@ type
     routevpnauto: TCheckBox;
     route_IP_remote: TCheckBox;
     Sudo_configure: TCheckBox;
+    Widget: TCheckBox;
     Sudo_ponoff: TCheckBox;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
@@ -525,6 +527,7 @@ resourcestring
   message224='<ОК> - игнорировать это предупреждение и продолжить (рекомендуется). <Отмена> - поправить.';
   message225='Для Fedora для работы VPN OpenL2TP требуется selinux-policy>=3.9.16-33, иначе может не работать. SELinux можно также отключить.';
   message226='Введите пароль root:';
+  message227='Эта опция позволяет модулю ponoff использовать виджет вместо трея в качестве альтернативы';
 
 implementation
 
@@ -908,7 +911,7 @@ end;
 
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
-    i,j:integer;
+    i,j,ii:integer;
     Str,str0, Str1:string;
     flag:boolean;
     FileSudoers,FileAutostartpppd,FileResolvConf,FileProfiles,FileLac:textfile;
@@ -2078,6 +2081,32 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem(BinDir+'cp -f '+EtcX
                                         Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                         FpSystem(BinDir+'chmod 600 '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                      end;
+ //настройка ponoff.conf.ini
+ If Widget.Checked then
+       begin
+           If not FileExists(MyLibDir+'ponoff.conf.ini') then
+                 begin
+                    FpSystem(UsrBinDir+'printf "'+'[TApplication.Widget]'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                    FpSystem(UsrBinDir+'printf "'+'Widget=true'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                 end;
+           If FileExists(MyLibDir+'ponoff.conf.ini') then
+                 begin
+                    Memo_ponoff_conf_ini.Lines.LoadFromFile(MyLibDir+'ponoff.conf.ini');
+                    For ii:=0 to Memo_ponoff_conf_ini.Lines.Count-1 do
+                                 If Memo_ponoff_conf_ini.Lines[ii]='Widget=false' then Memo_ponoff_conf_ini.Lines[ii]:='Widget=true';
+                    Memo_ponoff_conf_ini.Lines.SaveToFile(MyLibDir+'ponoff.conf.ini');
+                 end;
+        end;
+ If not Widget.Checked then
+       begin
+           If FileExists(MyLibDir+'ponoff.conf.ini') then
+                 begin
+                    Memo_ponoff_conf_ini.Lines.LoadFromFile(MyLibDir+'ponoff.conf.ini');
+                    For ii:=0 to Memo_ponoff_conf_ini.Lines.Count-1 do
+                                 If Memo_ponoff_conf_ini.Lines[ii]='Widget=true' then Memo_ponoff_conf_ini.Lines[ii]:='Widget=false';
+                    Memo_ponoff_conf_ini.Lines.SaveToFile(MyLibDir+'ponoff.conf.ini');
+                 end;
+        end;
  //проверка технической возможности поднятия соединения
  EditDNS1ping:=true;
  EditDNS2ping:=true;
@@ -2966,6 +2995,7 @@ begin
                                 If found then If ProfileStrDefault<>'' then FpSystem(BinDir+'rm -f '+MyLibDir+'default/default');
                                 If not FileExists(MyLibDir+'profiles') then If not FileExists(MyLibDir+'default/default') then FpSystem (BinDir+'rm -rf '+MyLibDir+'default');
                                 If not FileExists(MyLibDir+'profiles') then FpSystem (BinDir+'rm -f '+MyLibDir+'general.conf');
+                                If not FileExists(MyLibDir+'profiles') then FpSystem (BinDir+'rm -f '+MyLibDir+'ponoff.conf.ini');
                                 If not FileExists(MyLibDir+'profiles') then If FileExists(EtcDir+'openl2tpd.conf.old') then
                                                                                                                            begin
                                                                                                                                 FpSystem(BinDir+'cp -f '+EtcDir+'openl2tpd.conf.old '+EtcDir+'openl2tpd.conf');
@@ -3475,6 +3505,15 @@ If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
                               end;
                       FpSystem(BinDir+'rm -f '+MyTmpDir+'mii');
                  end;
+//виджет для Ubuntu по-умолчанию
+If not FileExists(MyLibDir+Edit_peer.Text+'/config') then If ubuntu then Widget.Checked:=true;
+//восстановление опции показа виджета
+If FileExists(MyLibDir+'ponoff.conf.ini') then
+         begin
+            popen (f,BinDir+'cat '+MyLibDir+'ponoff.conf.ini|'+BinDir+'grep Widget=true','R');
+               If not eof(f) then Widget.Checked:=true else Widget.Checked:=false;
+            pclose(f);
+         end;
 //wlanN не поддерживается mii-tool
 If not FileExists(MyLibDir+Edit_peer.Text+'/config') then if LeftStr(Edit_eth.Text,4)='wlan' then
                                                                                  begin
@@ -3902,6 +3941,7 @@ PressCreate:=false;
 HintWindowClass := TMyHintWindow;
 Application.HintColor:=$0092FFF8;
 Application.ShowHint := True;
+Widget.Hint:=MakeHint(message227,5);
 TabSheet1.Hint:=MakeHint(message143+' '+message149,5);
 TabSheet2.Hint:=MakeHint(message143+' '+message149,5);
 TabSheet3.Hint:=MakeHint(message143+' '+message149,5);
