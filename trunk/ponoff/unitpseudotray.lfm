@@ -1,22 +1,22 @@
 object Widget: TWidget
-  Left = 1
-  Height = 50
-  Top = 1
-  Width = 50
+  Left = 207
+  Height = 203
+  Top = 132
+  Width = 249
   BorderStyle = bsNone
   Caption = 'Widget'
-  ClientHeight = 50
-  ClientWidth = 50
+  ClientHeight = 203
+  ClientWidth = 249
   OnCreate = FormCreate
   OnMouseDown = Image1MouseDown
   SessionProperties = 'Height;Left;ShowInTaskBar;Top;Width'
   ShowInTaskBar = stNever
-  LCLVersion = '0.9.30.2'
+  LCLVersion = '0.9.30'
   object Image1: TImage
     Left = 0
-    Height = 50
+    Height = 203
     Top = 0
-    Width = 50
+    Width = 249
     Align = alClient
     OnMouseDown = Image1MouseDown
     OnMouseMove = Image1MouseMove
@@ -26,7 +26,7 @@ object Widget: TWidget
   end
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
-    left = 8
-    top = 8
+    left = 80
+    top = 56
   end
 end

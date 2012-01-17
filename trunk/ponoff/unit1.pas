@@ -262,7 +262,7 @@ begin
      If DoHalt then
                 begin
                   popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
-                  If not eof(f) then halt;
+                  If not eof(f) then If not ErrorShowIcon then halt;
                   PClose(f);
                 end;
      Apid:=FpGetpid;
@@ -279,15 +279,7 @@ begin
     If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
     If DopParam=' ' then DopParam:='';
     If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
-    If ErrorShowIcon then
-                         begin
-                              A_Process.Active:=false;
-                              A_Process.CommandLine :=Paramstr(0)+DopParam;
-                              //A_Process.CommandLine :=UsrBinDir+'ponoff'+DopParam; //для отладки
-                              A_Process.Execute;
-                              halt;
-                              Application.ProcessMessages;
-                         end;
+    If ErrorShowIcon then nostart:=true;
     If nostart then If FileExists('/usr/lib64/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
             begin
                  A_Process.Active:=false;
@@ -1166,6 +1158,14 @@ begin
   file1 := TMemoryStream.Create;
   file2 := TMemoryStream.Create;
   ImageIconBitmap:= TBitmap.create;
+  If not FileExists(MyLibDir+'ponoff.conf.ini') then
+                                                begin
+                                                   Widget.Top:=1;
+                                                   Widget.Left:=1;
+                                                   Widget.Width:=40;
+                                                   Widget.Height:=40;
+                                                end;
+  RestartPonoff;
   with Widget.IniPropStorage1 do
   begin
     // Если значение в конфиге пустое, то заполняем по умолчанию
@@ -1196,7 +1196,7 @@ begin
   end;
   Application.CreateForm(TFormHintMatrix, FormHintMatrix);
   Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
-  RestartPonoff;
+  //RestartPonoff;
   Timer1.Enabled:=true;
   Timer2.Enabled:=true;
   if FileSize(MyLibDir+'profiles')=0 then FpSystem (BinDir+'rm -f '+MyLibDir+'profiles');
@@ -1486,6 +1486,7 @@ If Xa=0 then if Yb=0 then
                               Memo_ponoff_conf_ini.Lines.SaveToFile(MyLibDir+'ponoff.conf.ini');
                            end;
           RestartPonoff;
+          halt;
      end;
 Application.ProcessMessages;
 CheckFiles;//проверка наличия необходимых программе файлов

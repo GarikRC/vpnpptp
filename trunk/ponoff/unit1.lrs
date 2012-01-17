@@ -2387,12 +2387,12 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#10'OnActivate'#7#12'FormActivate'#8'OnCreate'#7#10'FormCreate'#9'OnDestro'
   +'y'#7#11'FormDestroy'#8'Position'#7#14'poScreenCenter'#8'ShowHint'#9#13'Show'
-  +'InTaskBar'#7#7'stNever'#10'LCLVersion'#6#8'0.9.30.2'#11'WindowState'#7#11'w'
-  +'sMinimized'#0#5'TMemo'#11'Memo_Config'#4'Left'#2'0'#6'Height'#2'%'#3'Top'#2
-  +#0#5'Width'#2'q'#13'Lines.Strings'#1#6#5'Memo1'#0#8'TabOrder'#2#0#7'Visible'
-  +#8#0#0#5'TMemo'#19'Memo_bindutilshost0'#4'Left'#3#208#0#6'Height'#2'('#3'Top'
-  +#2'X'#5'Width'#3#156#0#13'Lines.Strings'#1#6#19'Memo_bindutilshost0'#0#8'Tab'
-  +'Order'#2#1#7'Visible'#8#0#0#5'TMemo'#17'Memo_General_conf'#4'Left'#3#144#1#6
+  +'InTaskBar'#7#7'stNever'#10'LCLVersion'#6#6'0.9.30'#11'WindowState'#7#11'wsM'
+  +'inimized'#0#5'TMemo'#11'Memo_Config'#4'Left'#2'0'#6'Height'#2'%'#3'Top'#2#0
+  +#5'Width'#2'q'#13'Lines.Strings'#1#6#5'Memo1'#0#8'TabOrder'#2#0#7'Visible'#8
+  +#0#0#5'TMemo'#19'Memo_bindutilshost0'#4'Left'#3#208#0#6'Height'#2'('#3'Top'#2
+  +'X'#5'Width'#3#156#0#13'Lines.Strings'#1#6#19'Memo_bindutilshost0'#0#8'TabOr'
+  +'der'#2#1#7'Visible'#8#0#0#5'TMemo'#17'Memo_General_conf'#4'Left'#3#144#1#6
   +'Height'#2'2'#3'Top'#2#8#5'Width'#2'f'#13'Lines.Strings'#1#6#17'Memo_General'
   +'_conf'#0#8'TabOrder'#2#2#7'Visible'#8#0#0#6'TPanel'#6'Panel1'#22'AnchorSide'
   +'Left.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#5'Owner'#23'AnchorSide'
