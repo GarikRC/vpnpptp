@@ -14,6 +14,8 @@ Source2: vpnmandriva.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: fpc-src >= 2.4.4, fpc >= 2.4.4, lazarus >= 0.9.30, upx
+#раскомментировать при сборке в репозиторий
+#Requires: gksu, pptp-linux, xl2tpd >= 1.2.7, openl2tp
 
 %description
 Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP

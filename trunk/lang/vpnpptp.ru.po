@@ -706,6 +706,10 @@ msgstr ""
 msgid "Укажите вручную сетевой интерфейс и шлюз локальной сети - программа сама сделает его дефолтным."
 msgstr ""
 
+#: unit1.message146
+msgid "Для настройки VPN L2TP требуется версия xl2tpd не ниже 1.2.7. Ваша версия xl2tpd:"
+msgstr ""
+
 #: unit1.message147
 msgid "Настройте sudo средствами Вашего дистрибутива."
 msgstr ""
@@ -796,6 +800,10 @@ msgstr ""
 
 #: unit1.message167
 msgid "без необходимости иных методов маршрутизации VPN-сервера."
+msgstr ""
+
+#: unit1.message168
+msgid "Требуется выбрать тип VPN."
 msgstr ""
 
 #: unit1.message169
@@ -940,7 +948,7 @@ msgid "Не найдено офисное приложение для вывод
 msgstr ""
 
 #: unit1.message20
-msgid "Невозможно настроить VPN PPTP/L2TP/OpenL2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
+msgid "Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux или пакета pptp."
 msgstr ""
 
 #: unit1.message200
@@ -1001,7 +1009,7 @@ msgid "поэтому он не желателен к использованию
 msgstr ""
 
 #: unit1.message213
-msgid "Не установлен пакет openl2tp."
+msgid "Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp."
 msgstr ""
 
 #: unit1.message214
@@ -1386,7 +1394,7 @@ msgid "Невозможно выбрать VPN L2TP, так как не уста
 msgstr ""
 
 #: unit1.message95
-msgid "Соединение будет сконфигурировано по протоколу VPN PPTP."
+msgid "Для работы программы требуется хотя бы один из пакетов: pptp-linux(pptp), xl2tpd, openl2tp, но ни один из них не установлен."
 msgstr ""
 
 #: unit1.message96
