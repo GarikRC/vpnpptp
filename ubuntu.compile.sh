@@ -93,11 +93,11 @@ then
    rm -rf ./build/
    rm -rf ./vpnpptp-src-$NUM_VERSION/
    exit 0
-#else
-#   if [ -f `which upx` ] 
-#   then
-#     upx  -9 ./mymessagebox
-#   fi  
+else
+   if [ -f `which upx` ] 
+   then
+     upx  -9 ./mymessagebox
+   fi  
 fi
 		                                        
 		                                        
@@ -114,11 +114,11 @@ then
    rm -rf ./build/
    rm -rf ./vpnpptp-src-$NUM_VERSION/
    exit 0
-#else
-#if [ -f `which upx` ] 
-#then
-#  upx  -9 ./vpnpptp
-#fi
+else
+if [ -f `which upx` ] 
+then
+  upx  -9 ./vpnpptp
+fi
 fi
 		                                                                                
 		                                                                                
@@ -135,11 +135,11 @@ then
    rm -rf ./build/
    rm -rf ./vpnpptp-src-$NUM_VERSION/
    exit 0
-#else
-#if [ -f `which upx` ] 
-#then
-#   upx  -9 ./ponoff
-#fi
+else
+if [ -f `which upx` ] 
+then
+   upx  -9 ./ponoff
+fi
 fi
 		                                                                                                                        
 		                                                                                                                        
@@ -150,7 +150,7 @@ mkdir -p ./build/usr/bin
 		                                                                                                                        
 cp -f ./vpnpptp-src-$NUM_VERSION/ponoff/ponoff ./build/usr/bin/ponoff
 cp -f ./vpnpptp-src-$NUM_VERSION/vpnpptp/vpnpptp ./build/usr/bin/vpnpptp
-cp -f ./vpnpptp-src-$NUM_VERSION/vpnlinux ./build/usr/bin/vpnpptp
+cp -f ./vpnpptp-src-$NUM_VERSION/vpnlinux ./build/usr/bin/vpnlinux
 		                                                                                                                        
 mkdir -p ./build/usr/share/pixmaps
 		                                                                                                                        
