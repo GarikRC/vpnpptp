@@ -2055,6 +2055,10 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem(BinDir+'cp -f '+EtcX
                  begin
                     FpSystem(UsrBinDir+'printf "'+'[TApplication.Widget]'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
                     FpSystem(UsrBinDir+'printf "'+'Widget=true'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                    FpSystem(UsrBinDir+'printf "'+'Widget_Height=40'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                    FpSystem(UsrBinDir+'printf "'+'Widget_Left=1'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                    FpSystem(UsrBinDir+'printf "'+'Widget_Top=1'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                    FpSystem(UsrBinDir+'printf "'+'Widget_Width=40'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
                  end;
            If FileExists(MyLibDir+'ponoff.conf.ini') then
                  begin
@@ -3889,6 +3893,7 @@ begin
                     halt;
                 end;
 If not FileExists(BinDir+'awk') then If FileExists(UsrBinDir+'awk') then FpSystem('ln -s '+UsrBinDir+'awk'+' '+BinDir+'awk'); //создаем ссылку для awk
+If not FileExists(BinDir+'find') then If FileExists(UsrBinDir+'find') then FpSystem('ln -s '+UsrBinDir+'find'+' '+BinDir+'find'); //создаем ссылку для find
 Screen.HintFont.Size:=30;
 Screen.MenuFont.Size:=30;
 if FileSize(MyLibDir+'profiles')=0 then FpSystem (BinDir+'rm -f '+MyLibDir+'profiles');
