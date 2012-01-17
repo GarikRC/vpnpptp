@@ -185,7 +185,6 @@ type
     procedure DeleteClick(Sender: TObject);
     procedure Edit_peerChange(Sender: TObject);
     procedure etc_hostsChange(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -320,7 +319,7 @@ resourcestring
   message17='Поле "MTU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message18='Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска.';
   message19='Другая такая же программа уже пытается сконфигурировать VPN PPTP/L2TP/OpenL2TP. Нажмите <ОК> для отказа от двойного запуска.';
-  message20='Невозможно настроить VPN PPTP/L2TP/OpenL2TP в связи с отсутствием пакета pptp-linux или пакета pptp.';
+  message20='Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux или пакета pptp.';
   message21='Эта опция позволяет запустить модуль ponoff при старте операционной системы и установить соединение VPN PPTP/L2TP/OpenL2TP автозагрузкой.';
   message22='Невозможно создать ярлык на рабочем столе, так как используется нестандартный идентификатор пользователя и/или локализация.';
   message23='Невозможно создать ярлык на рабочем столе, так как отсутствует файл';
@@ -395,7 +394,7 @@ resourcestring
   message92='Опция no128 отключает 128-битное шифрование mppe.';
   message93='Принудительный рестарт сети';
   message94='Невозможно выбрать VPN L2TP, так как не установлен пакет xl2tpd.';
-  message95='Соединение будет сконфигурировано по протоколу VPN PPTP.';
+  message95='Для работы программы требуется хотя бы один из пакетов: pptp-linux(pptp), xl2tpd, openl2tp, но ни один из них не установлен.';
   message96='Использовать встроенный в демон xl2tpd механизм реконнекта (не рекомендуется если несколько сетевых карт)';
   message97='Дистрибутив определяется автоматически, но если этого не произошло, то выберите наиболее подходящий из списка.';
   message98='Автозапуск интернета при старте системы демоном xl2tpd без графики (не рекомендуется использовать)';
@@ -446,7 +445,7 @@ resourcestring
   message143='При низких разрешениях экрана одновременное нажатие клавиши Alt и левой кнопки мыши поможет переместить окно.';
   message144='Отсутствует дефолтный шлюз, и это невозможно исправить автоматически.';
   message145='Укажите вручную сетевой интерфейс и шлюз локальной сети - программа сама сделает его дефолтным.';
- // message146='Конфигуратор не смог сверить настройку шифрования mppe c man pppd из-за неполноты man pppd.';
+  message146='Для настройки VPN L2TP требуется версия xl2tpd не ниже 1.2.7. Ваша версия xl2tpd:';
   message147='Настройте sudo средствами Вашего дистрибутива.';
   message148='Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска.';
   message149='Нажатие левой/правой кнопкой мыши на пустом месте окна изменяет шрифт.';
@@ -468,7 +467,7 @@ resourcestring
   message165='Если remote IP address не совпадает с IP-адресом VPN-сервера, то может потребоваться маршрутизировать его в шлюз локальной сети.';
   message166='Если remote IP address совпадает с IP-адресом VPN-сервера, то эта опция позволит наилучшим способом маршрутизировать VPN-сервер';
   message167='без необходимости иных методов маршрутизации VPN-сервера.';
- // message168='Правильность автоматической настройки конфигуратором шифрования mppe не гарантируется.';
+  message168='Требуется выбрать тип VPN.';
   message169='Вы ввели имя соединения';
   message170='Имени соединения';
   message171='не найдено. Будет предложено создать новое соединение с именем';
@@ -513,7 +512,7 @@ resourcestring
   message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
   message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
   message212='поэтому он не желателен к использованию.';
-  message213='Не установлен пакет openl2tp.';
+  message213='Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp.';
   message214='Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне';
   message215='Для VPN OpenL2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
   message216='Автозапуск интернета при старте системы демоном openl2tp/openl2tpd без графики (не рекомендуется использовать)';
@@ -1017,26 +1016,6 @@ FpSystem (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Application.ProcessMessages;
                           Form1.Repaint;
                      end;
-   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
-                     begin
-                          Label14.Caption:=message94+' '+message95;
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                          Form3.MyMessageBox(message0,message94+' '+message95,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                          ComboBoxVPN.Text:='VPN PPTP';
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                     end;
-   If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then
-                     begin
-                          Label14.Caption:=message213+' '+message95;
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                          Form3.MyMessageBox(message0,message213+' '+message95,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                          ComboBoxVPN.Text:='VPN PPTP';
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                     end;
    If StartMessage then If Sudo_ponoff.Checked then If not Sudo then
                        begin
                           Label14.Caption:=message57;
@@ -1112,19 +1091,7 @@ FpSystem (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
-  { If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
-                    begin
-                       popen (f,UsrBinDir+'man pppd|'+BinDir+'grep mppe','R');
-                       If eof(f) then
-                                   begin
-                                      Label14.Caption:=message146+' '+message168;
-                                      Form3.MyMessageBox(message0,message146+' '+message168,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                      Application.ProcessMessages;
-                                      Form1.Repaint;
-                                   end;
-                       PClose(f);
-                    end;}
-If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
+   If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
           If not FileExists(MyScriptsDir+'peermodify.sh') then
                                    begin
                                       Label14.Caption:=message102+MyScriptsDir+'peermodify.sh';
@@ -2820,27 +2787,33 @@ end;
 
 procedure TForm1.ComboBoxVPNChange(Sender: TObject);
 var
-   StrBefore:string;
    Str:string;
    Problem:boolean;
    FindModule_l2tp_ppp,FindModule_pppol2tp:boolean;
    openl2tp,pppol2tp_so:boolean;
 begin
-  StrBefore:='VPN PPTP';
   Problem:=false;
   FindModule_l2tp_ppp:=false;
   FindModule_pppol2tp:=false;
   If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
   Application.ProcessMessages;
   Form1.Repaint;
+  If ComboBoxVPN.Text='VPN PPTP' then If not FileExists(UsrSBinDir+'pptp') then
+                                     begin
+                                        Form3.MyMessageBox(message0,message20,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                        ComboBoxVPN.Text:='';
+                                        If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
+                                        exit;
+                                     end;
   If ComboBoxVPN.Text='VPN PPTP' then exit;
   If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
                                                                               begin
                                                                                    Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                                                                   ComboBoxVPN.Text:=StrBefore;
-                                                                                   Label1.Caption:=message99;
+                                                                                   ComboBoxVPN.Text:='';
+                                                                                   If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
                                                                                    exit;
                                                                               end;
+  If ComboBoxVPN.Text='VPN L2TP' then exit;
   str:=message219+' ';
   pppol2tp_so:=false;
   openl2tp:=false;
@@ -2908,10 +2881,10 @@ begin
                                          end;
   If Problem then
                  begin
-                      ComboBoxVPN.Text:=StrBefore;
-                      Label1.Caption:=message99;
+                      ComboBoxVPN.Text:='';
                       Form3.MyMessageBox(message0,LeftStr(str,Length(str)-1),'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                  end;
+  If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then Label1.Caption:=message100 else Label1.Caption:=message99;
 end;
 
 procedure TForm1.ComboBoxVPNKeyDown(Sender: TObject; var Key: Word;
@@ -3058,11 +3031,6 @@ begin
                        end;
 end;
 
-procedure TForm1.FormActivate(Sender: TObject);
-begin
-   If Form1.Visible then if Edit_IPS.Visible then Edit_IPS.SetFocus;
-end;
-
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
      CheckVPN;
@@ -3206,7 +3174,7 @@ var
    j:byte; //точка в написании шлюза
    a,b,c,d:string; //a.b.c.d-это шлюз
    FileResolv_conf:textfile;
-   str,str1:string;
+   str,str1,str0:string;
    x,code:integer;
 begin
  y:=false;
@@ -3218,7 +3186,6 @@ begin
                          begin
                              Form3.MyMessageBox(message0,message169+' '+Edit_peer.Text+', '+message186,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                              Edit_peer.Text:='';
-                             If Edit_peer.Visible then Edit_peer.SetFocus;
                              Application.ProcessMessages;
                              Form1.Repaint;
                              exit;
@@ -3264,6 +3231,60 @@ if (Edit_IPS.Text='') or (Edit_peer.Text='') or (Edit_user.Text='') or (Edit_pas
                                 Form1.Repaint;
                                 exit;
                             end;
+//проверка версии xl2tpd
+str:='';
+str0:='';
+If ComboBoxVPN.Text='VPN L2TP' then
+               begin
+                  popen (f,UsrSBinDir+'xl2tpd -v','R');
+                  While not eof(f) do
+                      readln(f,str);
+                  PClose(f);
+                  if str<>'' then str:=RightStr(str,5);
+                  if str<>'' then
+                                 begin
+                                    for i:=1 to Length(str) do
+                                        if str[i]<>'.' then str0:=str0+str[i];
+                                    Val(str0,x,code);
+                                    if code=0 then if x<127 then
+                                                   begin
+                                                       Form3.MyMessageBox(message0,message146+str+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                       Application.ProcessMessages;
+                                                       Form1.Repaint;
+                                                       exit;
+                                                   end;
+                                 end;
+               end;
+//запрет на невыбор типа VPN
+If ComboBoxVPN.Text='' then
+                           begin
+                              Form3.MyMessageBox(message0,message168,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                              Application.ProcessMessages;
+                              Form1.Repaint;
+                              exit;
+                           end;
+//запрет на выбор типа VPN при отсутствии требующегося для его работы пакета
+If ComboBoxVPN.Text='VPN PPTP' then If not FileExists(UsrSBinDir+'pptp') then
+                                   begin
+                                      Form3.MyMessageBox(message0,message20,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                      Application.ProcessMessages;
+                                      Form1.Repaint;
+                                      exit;
+                                   end;
+If ComboBoxVPN.Text='VPN L2TP' then if not FileExists (UsrSBinDir+'xl2tpd') then
+                                  begin
+                                       Form3.MyMessageBox(message0,message94,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                       Application.ProcessMessages;
+                                       Form1.Repaint;
+                                       exit;
+                                  end;
+If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (UsrSBinDir+'openl2tpd') then
+                                begin
+                                     Form3.MyMessageBox(message0,message213,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                     Application.ProcessMessages;
+                                     Form1.Repaint;
+                                     exit;
+                                end;
 //проверка выбора дистрибутива
 if ComboBoxDistr.Text=message151 then
                             begin
@@ -3310,7 +3331,6 @@ if not y then
                 Button_next1.Visible:=False;
                 Button_next2.Visible:=True;
               end;
-If Edit_eth.Visible then Edit_eth.SetFocus;
 If ComboBoxDistr.Text='Ubuntu '+message150 then begin ubuntu:=true;debian:=false;suse:=false;mandriva:=false;fedora:=false;end;
 If ComboBoxDistr.Text='Debian '+message150 then begin debian:=true;ubuntu:=false;suse:=false;mandriva:=false;fedora:=false;end;
 If ComboBoxDistr.Text='Fedora '+message150 then begin fedora:=true;debian:=false;ubuntu:=false;suse:=false;mandriva:=false;end;
@@ -3487,11 +3507,7 @@ if y then
                           TabSheet2.TabVisible:= True;
                           Application.ProcessMessages;
                           Form1.Repaint;
-                          if (Form3.Tag=3) or (Form3.Tag=0) then
-                                                                begin
-                                                                     If Edit_eth.Visible then if Edit_eth.Enabled then Edit_eth.SetFocus;
-                                                                     exit;
-                                                                end;
+                          if (Form3.Tag=3) or (Form3.Tag=0) then exit;
                     end;
 //проверка поддержки mii-tool
 If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
@@ -3790,7 +3806,6 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
  TabSheet3.TabVisible:= True;
  Button_next2.Visible:=False;
  ButtonHelp.Visible:=false;
- If Mii_tool_no.Visible then Mii_tool_no.SetFocus;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -3803,7 +3818,6 @@ var i,N, CountGateway:integer;
     brCount:array[0..9] of integer;
     emCount:array[0..9] of integer;
     nostart:boolean;
-    //Apid,Apidroot:tpid;
     PeabodyIpUp, PeabodyIpDown:boolean;
     DopParam:string;
 begin
@@ -4134,7 +4148,13 @@ PageControl1.ShowTabs:=false;
                      Form3.MyMessageBox(message0,message193+' '+EtcPppDir+'ip-down'+'. '+message194+' '+message195,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                      halt;
                   end;
- If not FileExists(MyTmpDir) then FpSystem (BinDir+'mkdir -p '+MyTmpDir);
+ //проверка зависимостей-плагинов
+ If not FileExists(UsrSBinDir+'pptp') then if not FileExists (UsrSBinDir+'xl2tpd') then if not FileExists (UsrSBinDir+'openl2tpd') then
+                                    begin
+                                       Form3.MyMessageBox(message0,message95,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                       halt;
+                                    end;
+  If not FileExists(MyTmpDir) then FpSystem (BinDir+'mkdir -p '+MyTmpDir);
  CountInterface:=1;
  DoCountInterface;
  //обеспечение совместимости старого general.conf с новым
@@ -4386,15 +4406,9 @@ If NetServiceStr='none' then
                                                          Form1.Repaint;
                                                        end;
 //проверка установлен ли пакет Sudo
- If FileExists (UsrBinDir+'sudo') then Sudo:=true else Sudo:=false;
- FpSystem(BinDir+'rm -f '+MyLibDir+'ip-down');
- FpSystem(BinDir+'rm -f '+MyLibDir+Edit_peer.Text+'-ip-down');
- If not FileExists(UsrSBinDir+'pptp') then
-                                    begin
-                                       Form3.MyMessageBox(message0,message20,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                       Application.ProcessMessages;
-                                       Form1.Repaint;
-                                    end;
+  If FileExists (UsrBinDir+'sudo') then Sudo:=true else Sudo:=false;
+  FpSystem(BinDir+'rm -f '+MyLibDir+'ip-down');
+  FpSystem(BinDir+'rm -f '+MyLibDir+Edit_peer.Text+'-ip-down');
   TabSheet1.TabVisible:= True;
   TabSheet2.TabVisible:= False;
   TabSheet3.TabVisible:= False;
@@ -4403,8 +4417,8 @@ If NetServiceStr='none' then
   Button_create.Visible:=False;
   Button_next1.Visible:=True;
   Button_next2.Visible:=False;
-If FileExists (UsrBinDir+'host') then BindUtils:=true else BindUtils:=false;
-StartMessage:=true;
+  If FileExists (UsrBinDir+'host') then BindUtils:=true else BindUtils:=false;
+  StartMessage:=true;
 //определяем текущий шлюз, и если нет дефолтного шлюза, то перезапускаем сеть
   FpSystem(SBinDir+'ip r|'+BinDir+'grep default|'+BinDir+'awk '+ chr(39)+'{print $3}'+chr(39)+' > '+MyTmpDir+'gate');
   FpSystem(UsrBinDir+'printf "none" >> '+MyTmpDir+'gate');

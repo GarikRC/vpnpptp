@@ -648,10 +648,6 @@ msgstr "This option allows to run the program ponoff on start operating system a
 msgid "Невозможно выб#209�ать VPN L2TP, так как не установлен пакет xl2tpd."
 msgstr "Unable to select VPN L2TP, so as not installed xl2tpd."
 
-#: unit1.message95
-msgid "Соединение будет сконфигу#209�и#209�овано по п#209�отоколу VPN PPTP."
-msgstr "The connection will be configured on the protocol VPN PPTP."
-
 #: unit1.message96
 msgid "Использовать вст#209�оенный в демон xl2tpd механизм #209�еконнекта (не #209�екомендуется если несколько сетевых ка#209�т)"
 msgstr "Use internak mechanism of xl2tpd daemon for reconnect (not useful if more than one network interface controller)"
@@ -855,8 +851,8 @@ msgid "Вести подробный лог pppd в /var/log/ppp/vpnlog"
 msgstr "pppd detailed log on /var/log/ppp/vpnlog"
 
 #: unit1.message20
-msgid "Невозможно наст#209�оить VPN PPTP/L2TP/OpenL2TP в связи с отсутствием пакета pptp-linux или пакета pptp."
-msgstr "Unable find pptp-linux package or pptp package. VPN PPTP/L2TP/OpenL2TP can not be configured."
+msgid "Невозможно наст#209�оить VPN PPTP в связи с отсутствием пакета pptp-linux или пакета pptp."
+msgstr "Unable find pptp-linux package or pptp package. VPN PPTP can not be configured."
 
 #: unit1.message97
 msgid "Дист#209�ибутив оп#209�еделяется автоматически, но если этого не п#209�оизошло, то выбе#209�ите наиболее подходящий из списка."
@@ -969,14 +965,6 @@ msgstr "If the remote IP address matches with the IP-address of the VPN-server, 
 #: unit1.message167
 msgid "без необходимости иных методов ма#209�ш#209�утизации VPN-се#209�ве#209�а."
 msgstr "without the necessary other methods of routing VPN-server."
-
-#: unit1.message146
-msgid "Конфигу#209�ато#209� не смог све#209�ить наст#209�ойку шиф#209�ования mppe c man pppd из-за неполноты man pppd."
-msgstr "Configurator could not verify the setting encryption mppe from man pppd, because man pppd is incomplete."
-
-#: unit1.message168
-msgid "П#209�авильность автоматической наст#209�ойки конфигу#209�ато#209�ом шиф#209�ования mppe не га#209�анти#209�уется."
-msgstr "The correctness of the automatic settings encryption mppe can not be guaranteed."
 
 #: unit1.message37
 msgid "Ма#209�ш#209�утизи#209�уйте VPN-се#209�ве#209� всегда, к#209�оме случаев если его ма#209�ш#209�утизация в силу #209�азличных п#209�ичин не т#209�ебуется."
@@ -1275,3 +1263,19 @@ msgstr "Use the widget instead of the tray"
 #: unit1.message227
 msgid "Эта опция позволяет модулю ponoff использовать виджет вместо трея в качестве альтернативы"
 msgstr "This option allows for ponoff to use the widget instead tray alternatively"
+
+#: unit1.message146
+msgid "Для настройки VPN L2TP требуется версия xl2tpd не ниже 1.2.7. Ваша версия xl2tpd:"
+msgstr "To configure the VPN L2TP requires version xl2tpd not below 1.2.7. Your version xl2tpd:"
+
+#: unit1.message95
+msgid "Для работы программы требуется хотя бы один из пакетов: pptp-linux(pptp), xl2tpd, openl2tp, но ни один из них не установлен."
+msgstr "The program requires at least one of the packages: pptp-linux (pptp), xl2tpd, openl2tp, but none of them is not installed."
+
+#: unit1.message213
+msgid "Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp."
+msgstr "Unable to select VPN OpenL2TP, so as not installed openl2tp."
+
+#: unit1.message168
+msgid "Требуется выбрать тип VPN."
+msgstr "You must select the type of VPN."

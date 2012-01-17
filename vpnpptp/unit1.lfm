@@ -2130,7 +2130,6 @@ object Form1: TForm1
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
-  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnMouseDown = TabSheet1MouseDown
@@ -2147,11 +2146,11 @@ object Form1: TForm1
     Height = 534
     Top = 1
     Width = 828
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 10
     BorderSpacing.Around = 1
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
