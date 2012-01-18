@@ -2131,7 +2131,7 @@ object Form1: TForm1
   Position = poScreenCenter
   ShowHint = True
   ShowInTaskBar = stNever
-  LCLVersion = '0.9.30'
+  LCLVersion = '0.9.30.2'
   WindowState = wsMinimized
   object Memo_Config: TMemo
     Left = 48
@@ -2343,17 +2343,6 @@ object Form1: TForm1
       }
       Visible = False
     end
-  end
-  object Memo_Ponoff_conf_ini: TMemo
-    Left = 128
-    Height = 53
-    Top = 96
-    Width = 118
-    Lines.Strings = (
-      ''
-    )
-    TabOrder = 4
-    Visible = False
   end
   object TrayIcon1: TTrayIcon
     BalloonTimeout = 0

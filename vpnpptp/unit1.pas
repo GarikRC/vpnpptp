@@ -27,7 +27,7 @@ uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
   UnitMyMessageBox, AsyncProcess, StdCtrls, ExtCtrls, ComCtrls, unix,
   Translations, Menus, Unit2, Process, Typinfo, Gettext, BaseUnix, types,
-  LCLProc, Buttons;
+  LCLProc, Buttons, IniPropStorage;
 
 type
 
@@ -63,6 +63,7 @@ type
     EditDNS3: TEdit;
     EditDNS4: TEdit;
     Edit_mru: TEdit;
+    IniPropStorage1: TIniPropStorage;
     Label13: TLabel;
     Label14: TLabel;
     Label44: TLabel;
@@ -70,7 +71,6 @@ type
     LabelDNS3: TLabel;
     LabelDNS4: TLabel;
     Label_mru: TLabel;
-    Memo_ponoff_conf_ini: TMemo;
     Memo2: TMemo;
     MemoTest: TMemo;
     EditDNSdop3: TEdit;
@@ -910,7 +910,7 @@ end;
 
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
-    i,j,ii:integer;
+    i,j:integer;
     Str,str0, Str1:string;
     flag:boolean;
     FileSudoers,FileAutostartpppd,FileResolvConf,FileProfiles,FileLac:textfile;
@@ -2049,33 +2049,31 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem(BinDir+'cp -f '+EtcX
                                         FpSystem(BinDir+'chmod 600 '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf');
                                      end;
  //настройка ponoff.conf.ini
+ IniPropStorage1.IniFileName:=MyLibDir+'ponoff.conf.ini';
+ IniPropStorage1.IniSection:='TApplication.Widget';
  If Widget.Checked then
        begin
            If not FileExists(MyLibDir+'ponoff.conf.ini') then
                  begin
-                    FpSystem(UsrBinDir+'printf "'+'[TApplication.Widget]'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
-                    FpSystem(UsrBinDir+'printf "'+'Widget=true'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
-                    FpSystem(UsrBinDir+'printf "'+'Widget_Height=40'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
-                    FpSystem(UsrBinDir+'printf "'+'Widget_Left=1'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
-                    FpSystem(UsrBinDir+'printf "'+'Widget_Top=1'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
-                    FpSystem(UsrBinDir+'printf "'+'Widget_Width=40'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
+                    IniPropStorage1.StoredValue['Widget']:='true';
+                    IniPropStorage1.StoredValue['Widget_Height']:='40';
+                    IniPropStorage1.StoredValue['Widget_Left']:='1';
+                    IniPropStorage1.StoredValue['Widget_Top']:='1';
+                    IniPropStorage1.StoredValue['Widget_Width']:='40';
+                    IniPropStorage1.Save;
                  end;
            If FileExists(MyLibDir+'ponoff.conf.ini') then
                  begin
-                    Memo_ponoff_conf_ini.Lines.LoadFromFile(MyLibDir+'ponoff.conf.ini');
-                    For ii:=0 to Memo_ponoff_conf_ini.Lines.Count-1 do
-                                 If Memo_ponoff_conf_ini.Lines[ii]='Widget=false' then Memo_ponoff_conf_ini.Lines[ii]:='Widget=true';
-                    Memo_ponoff_conf_ini.Lines.SaveToFile(MyLibDir+'ponoff.conf.ini');
+                    IniPropStorage1.StoredValue['Widget']:='true';
+                    IniPropStorage1.Save;
                  end;
         end;
  If not Widget.Checked then
        begin
            If FileExists(MyLibDir+'ponoff.conf.ini') then
                  begin
-                    Memo_ponoff_conf_ini.Lines.LoadFromFile(MyLibDir+'ponoff.conf.ini');
-                    For ii:=0 to Memo_ponoff_conf_ini.Lines.Count-1 do
-                                 If Memo_ponoff_conf_ini.Lines[ii]='Widget=true' then Memo_ponoff_conf_ini.Lines[ii]:='Widget=false';
-                    Memo_ponoff_conf_ini.Lines.SaveToFile(MyLibDir+'ponoff.conf.ini');
+                    IniPropStorage1.StoredValue['Widget']:='false';
+                    IniPropStorage1.Save;
                  end;
         end;
  //проверка технической возможности поднятия соединения
@@ -2326,7 +2324,7 @@ DoIconDesktopForAll('vpnpptp');
                                                         end;
                                        CloseFile(FileProfiles);
                                     end;
- //сброс конфига для ponoff
+ //сброс конфига для ponoff (для совместимости с предыдущими версиями)
   FpSystem(BinDir+'rm -f '+MyLibDir+Edit_peer.Text+'/ponoff.conf');
   FpSystem(BinDir+'rm -f '+MyLibDir+Edit_peer.Text+'/nocolor');
  //обработка соединения по-умолчанию
@@ -3528,12 +3526,9 @@ If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
 //виджет для Ubuntu по-умолчанию
 If not FileExists(MyLibDir+Edit_peer.Text+'/config') then If ubuntu then Widget.Checked:=true;
 //восстановление опции показа виджета
-If FileExists(MyLibDir+'ponoff.conf.ini') then
-         begin
-            popen (f,BinDir+'cat '+MyLibDir+'ponoff.conf.ini|'+BinDir+'grep Widget=true','R');
-               If not eof(f) then Widget.Checked:=true else Widget.Checked:=false;
-            pclose(f);
-         end;
+IniPropStorage1.IniFileName:=MyLibDir+'ponoff.conf.ini';
+IniPropStorage1.IniSection:='TApplication.Widget';
+If FileExists(MyLibDir+'ponoff.conf.ini') then If IniPropStorage1.ReadString ('Widget','null')='true' then  Widget.Checked:=true else Widget.Checked:=false;
 //wlanN не поддерживается mii-tool
 If not FileExists(MyLibDir+Edit_peer.Text+'/config') then if LeftStr(Edit_eth.Text,4)='wlan' then
                                                                                  begin
