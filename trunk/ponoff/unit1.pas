@@ -36,7 +36,6 @@ type
     Image1: TImage;
     ImageIconDefaultOn: TImage;
     ImageIconDefaultOff: TImage;
-    Memo_Ponoff_conf_ini: TMemo;
     Memo_General_conf: TMemo;
     Memo_bindutilshost0: TMemo;
     MenuItem5: TMenuItem;
@@ -514,7 +513,12 @@ begin
   ImageIconBitmap.Assign(TrayIcon1.Icon);
   ResizeBmp(ImageIconBitmap,wid+1,hei+1);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
-  FpSystem(UsrBinDir+'printf "'+IntToStr(wid+1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
+  If Widget.IniPropStorage1.ReadString ('Widget','null')=false_str then
+         begin
+              Widget.IniPropStorage1.StoredValue['icon_height']:=IntToStr(wid+1);
+              Widget.IniPropStorage1.StoredValue['icon_width']:=IntToStr(wid+1);
+              Widget.IniPropStorage1.Save;
+         end;
 end;
 
 procedure TForm1.IconForTrayMinus;
@@ -549,29 +553,26 @@ begin
   ImageIconBitmap.Assign(TrayIcon1.Icon);
   ResizeBmp(ImageIconBitmap,wid-1,hei-1);
   TrayIcon1.Icon.Assign(ImageIconBitmap);
-  FpSystem(UsrBinDir+'printf "'+IntToStr(wid-1)+'\n" > '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf');
+  If Widget.IniPropStorage1.ReadString ('Widget','null')=false_str then
+         begin
+              Widget.IniPropStorage1.StoredValue['icon_height']:=IntToStr(wid-1);
+              Widget.IniPropStorage1.StoredValue['icon_width']:=IntToStr(wid-1);
+              Widget.IniPropStorage1.Save;
+         end;
 end;
 
 procedure TForm1.LoadIconForTray(PathToIcon,NameIcon:string);
 var
   wid,hei:integer;
-  str:string;
 begin
-   wid:=TrayIcon1.Icon.Width;
+  wid:=TrayIcon1.Icon.Width;
   hei:=TrayIcon1.Icon.Height;
-  str:='';
-  If FileExists(MyLibDir+Memo_config.Lines[0]+'/ponoff.conf') then
+  If FileExists(MyLibDir+'/ponoff.conf.ini') then If Widget.IniPropStorage1.ReadString ('Widget','null')=false_str then
          begin
-              popen(f,BinDir+'cat '+MyLibDir+Memo_config.Lines[0]+'/ponoff.conf','R');
-              while not eof(f) do
-                    Readln(f,str);
-                    if str<>'' then
-                               begin
-                                    wid:=StrToInt(str);
-                                    hei:=StrToInt(str);
-                               end;
-                    pclose(f);
+              If (Widget.IniPropStorage1.ReadString ('icon_height','0'))<>'0' then hei:=StrToInt(Widget.IniPropStorage1.ReadString ('icon_height','0'));
+              If (Widget.IniPropStorage1.ReadString ('icon_width','0'))<>'0' then wid:=StrToInt(Widget.IniPropStorage1.ReadString ('icon_width','0'));
          end;
+
   CheckVPN;
 
   If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico') or (Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str)) then
@@ -1144,10 +1145,12 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   link:byte; //1-link ok, 2-no link, 3-none
-  i,j,h,ii,zero,Xa,Yb:integer;
+  i,j,h,zero,Xa,Yb:integer;
   str,stri,StrObnull:string;
   FileObnull:textfile;
 begin
+  Widget.IniPropStorage1.IniFileName:=MyLibDir+'ponoff.conf.ini';
+  Widget.IniPropStorage1.IniSection:='TApplication.Widget';
   ErrorShowIcon:=false;
   tray_status:=col_on;
   A_Process := TAsyncProcess.Create(self);
@@ -1473,18 +1476,8 @@ If Xa=0 then if Yb=0 then
           Form3.MyMessageBox(message0,message71,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
           FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
           ErrorShowIcon:=true;
-          If not FileExists(MyLibDir+'ponoff.conf.ini') then
-                 begin
-                    FpSystem(UsrBinDir+'printf "'+'[TApplication.Widget]'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
-                    FpSystem(UsrBinDir+'printf "'+'Widget=true'+'\n" >> '+MyLibDir+'ponoff.conf.ini');
-                 end;
-          If FileExists(MyLibDir+'ponoff.conf.ini') then
-                           begin
-                              Memo_ponoff_conf_ini.Lines.LoadFromFile(MyLibDir+'ponoff.conf.ini');
-                              For ii:=0 to Memo_ponoff_conf_ini.Lines.Count-1 do
-                                           If Memo_ponoff_conf_ini.Lines[ii]='Widget=false' then Memo_ponoff_conf_ini.Lines[ii]:='Widget=true';
-                              Memo_ponoff_conf_ini.Lines.SaveToFile(MyLibDir+'ponoff.conf.ini');
-                           end;
+          Widget.IniPropStorage1.StoredValue['Widget']:='true';
+          Widget.IniPropStorage1.Save;
           RestartPonoff;
           halt;
      end;

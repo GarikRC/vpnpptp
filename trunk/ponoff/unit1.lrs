@@ -2387,12 +2387,12 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#10'OnActivate'#7#12'FormActivate'#8'OnCreate'#7#10'FormCreate'#9'OnDestro'
   +'y'#7#11'FormDestroy'#8'Position'#7#14'poScreenCenter'#8'ShowHint'#9#13'Show'
-  +'InTaskBar'#7#7'stNever'#10'LCLVersion'#6#6'0.9.30'#11'WindowState'#7#11'wsM'
-  +'inimized'#0#5'TMemo'#11'Memo_Config'#4'Left'#2'0'#6'Height'#2'%'#3'Top'#2#0
-  +#5'Width'#2'q'#13'Lines.Strings'#1#6#5'Memo1'#0#8'TabOrder'#2#0#7'Visible'#8
-  +#0#0#5'TMemo'#19'Memo_bindutilshost0'#4'Left'#3#208#0#6'Height'#2'('#3'Top'#2
-  +'X'#5'Width'#3#156#0#13'Lines.Strings'#1#6#19'Memo_bindutilshost0'#0#8'TabOr'
-  +'der'#2#1#7'Visible'#8#0#0#5'TMemo'#17'Memo_General_conf'#4'Left'#3#144#1#6
+  +'InTaskBar'#7#7'stNever'#10'LCLVersion'#6#8'0.9.30.2'#11'WindowState'#7#11'w'
+  +'sMinimized'#0#5'TMemo'#11'Memo_Config'#4'Left'#2'0'#6'Height'#2'%'#3'Top'#2
+  +#0#5'Width'#2'q'#13'Lines.Strings'#1#6#5'Memo1'#0#8'TabOrder'#2#0#7'Visible'
+  +#8#0#0#5'TMemo'#19'Memo_bindutilshost0'#4'Left'#3#208#0#6'Height'#2'('#3'Top'
+  +#2'X'#5'Width'#3#156#0#13'Lines.Strings'#1#6#19'Memo_bindutilshost0'#0#8'Tab'
+  +'Order'#2#1#7'Visible'#8#0#0#5'TMemo'#17'Memo_General_conf'#4'Left'#3#144#1#6
   +'Height'#2'2'#3'Top'#2#8#5'Width'#2'f'#13'Lines.Strings'#1#6#17'Memo_General'
   +'_conf'#0#8'TabOrder'#2#2#7'Visible'#8#0#0#6'TPanel'#6'Panel1'#22'AnchorSide'
   +'Left.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#5'Owner'#23'AnchorSide'
@@ -2600,24 +2600,22 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#219#241#219#219#219#235#215#215#215#255#215#215#215#255#215#215#215#255#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
-  +#0#0#0#0#0#0#0#0#0#0#7'Visible'#8#0#0#0#5'TMemo'#20'Memo_Ponoff_conf_ini'#4
-  +'Left'#3#128#0#6'Height'#2'5'#3'Top'#2'`'#5'Width'#2'v'#13'Lines.Strings'#1#6
-  +#0#0#8'TabOrder'#2#4#7'Visible'#8#0#0#9'TTrayIcon'#9'TrayIcon1'#14'BalloonTi'
-  +'meout'#2#0#9'PopUpMenu'#7#10'PopupMenu1'#7'Visible'#9#7'OnClick'#7#14'TrayI'
-  +'con1Click'#11'OnMouseDown'#7#18'TrayIcon1MouseDown'#11'OnMouseMove'#7#18'Tr'
-  +'ayIcon1MouseMove'#4'left'#2' '#3'top'#2#8#0#0#10'TPopupMenu'#10'PopupMenu1'
-  +#4'left'#2' '#3'top'#2'8'#0#9'TMenuItem'#9'MenuItem6'#7'Caption'#6#5'Money'#7
-  +'Enabled'#8#7'OnClick'#7#14'MenuItem6Click'#0#0#9'TMenuItem'#9'ColorIcon'#7
-  +'Caption'#6#9'ColorIcon'#7'OnClick'#7#14'ColorIconClick'#0#0#9'TMenuItem'#5
-  +'Minus'#7'Caption'#6#5'Minus'#7'OnClick'#7#10'MinusClick'#0#0#9'TMenuItem'#4
-  +'Plus'#7'Caption'#6#4'Plus'#7'OnClick'#7#9'PlusClick'#0#0#9'TMenuItem'#9'Men'
-  +'uItem5'#7'Caption'#6#4'Look'#7'OnClick'#7#14'MenuItem5Click'#0#0#9'TMenuIte'
-  +'m'#9'MenuItem1'#7'Caption'#6#2'On'#7'Visible'#8#7'OnClick'#7#14'MenuItem1Cl'
-  +'ick'#0#0#9'TMenuItem'#9'MenuItem2'#7'Caption'#6#3'Off'#7'Visible'#8#7'OnCli'
-  +'ck'#7#14'MenuItem2Click'#0#0#9'TMenuItem'#9'MenuItem4'#7'Caption'#6#8'Exit_'
-  +'bad'#7'OnClick'#7#14'MenuItem4Click'#0#0#9'TMenuItem'#9'MenuItem3'#7'Captio'
-  +'n'#6#9'Exit_well'#7'OnClick'#7#14'MenuItem3Click'#0#0#0#6'TTimer'#6'Timer1'
-  +#8'Interval'#3' N'#7'OnTimer'#7#11'Timer1Timer'#4'left'#2'X'#3'top'#2'8'#0#0
-  +#6'TTimer'#6'Timer2'#8'Interval'#3#208#7#7'OnTimer'#7#11'Timer2Timer'#4'left'
-  +#2'X'#3'top'#2#8#0#0#0
+  +#0#0#0#0#0#0#0#0#0#0#7'Visible'#8#0#0#0#9'TTrayIcon'#9'TrayIcon1'#14'Balloon'
+  +'Timeout'#2#0#9'PopUpMenu'#7#10'PopupMenu1'#7'Visible'#9#7'OnClick'#7#14'Tra'
+  +'yIcon1Click'#11'OnMouseDown'#7#18'TrayIcon1MouseDown'#11'OnMouseMove'#7#18
+  +'TrayIcon1MouseMove'#4'left'#2' '#3'top'#2#8#0#0#10'TPopupMenu'#10'PopupMenu'
+  +'1'#4'left'#2' '#3'top'#2'8'#0#9'TMenuItem'#9'MenuItem6'#7'Caption'#6#5'Mone'
+  +'y'#7'Enabled'#8#7'OnClick'#7#14'MenuItem6Click'#0#0#9'TMenuItem'#9'ColorIco'
+  +'n'#7'Caption'#6#9'ColorIcon'#7'OnClick'#7#14'ColorIconClick'#0#0#9'TMenuIte'
+  +'m'#5'Minus'#7'Caption'#6#5'Minus'#7'OnClick'#7#10'MinusClick'#0#0#9'TMenuIt'
+  +'em'#4'Plus'#7'Caption'#6#4'Plus'#7'OnClick'#7#9'PlusClick'#0#0#9'TMenuItem'
+  +#9'MenuItem5'#7'Caption'#6#4'Look'#7'OnClick'#7#14'MenuItem5Click'#0#0#9'TMe'
+  +'nuItem'#9'MenuItem1'#7'Caption'#6#2'On'#7'Visible'#8#7'OnClick'#7#14'MenuIt'
+  +'em1Click'#0#0#9'TMenuItem'#9'MenuItem2'#7'Caption'#6#3'Off'#7'Visible'#8#7
+  +'OnClick'#7#14'MenuItem2Click'#0#0#9'TMenuItem'#9'MenuItem4'#7'Caption'#6#8
+  +'Exit_bad'#7'OnClick'#7#14'MenuItem4Click'#0#0#9'TMenuItem'#9'MenuItem3'#7'C'
+  +'aption'#6#9'Exit_well'#7'OnClick'#7#14'MenuItem3Click'#0#0#0#6'TTimer'#6'Ti'
+  +'mer1'#8'Interval'#3' N'#7'OnTimer'#7#11'Timer1Timer'#4'left'#2'X'#3'top'#2
+  +'8'#0#0#6'TTimer'#6'Timer2'#8'Interval'#3#208#7#7'OnTimer'#7#11'Timer2Timer'
+  +#4'left'#2'X'#3'top'#2#8#0#0#0
 ]);
