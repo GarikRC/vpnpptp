@@ -1,18 +1,18 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TFormBalloonMatrix','FORMDATA',[
-  'TPF0'#18'TFormBalloonMatrix'#17'FormBalloonMatrix'#4'Left'#3#167#1#6'Height'
-  +#2#127#3'Top'#3#231#1#5'Width'#3'7'#2#7'Caption'#6#17'FormBalloonMatrix'#12
-  +'ClientHeight'#2#127#11'ClientWidth'#3'7'#2#7'OnClick'#7#9'FormClick'#8'OnCr'
-  +'eate'#7#10'FormCreate'#10'LCLVersion'#6#8'0.9.30.2'#0#6'TPanel'#6'Panel1'#4
-  +'Left'#2#0#6'Height'#2#127#3'Top'#2#0#5'Width'#3'7'#2#5'Align'#7#8'alClient'
+  'TPF0'#18'TFormBalloonMatrix'#17'FormBalloonMatrix'#4'Left'#3'W'#2#6'Height'#2
+  +#127#3'Top'#3#215#1#5'Width'#3'7'#2#7'Caption'#6#17'FormBalloonMatrix'#12'Cl'
+  +'ientHeight'#2#127#11'ClientWidth'#3'7'#2#7'OnClick'#7#9'FormClick'#8'OnCrea'
+  +'te'#7#10'FormCreate'#10'LCLVersion'#6#8'0.9.30.2'#0#6'TPanel'#6'Panel1'#4'L'
+  +'eft'#2#0#6'Height'#2#127#3'Top'#2#0#5'Width'#3'7'#2#5'Align'#7#8'alClient'
   +#12'ClientHeight'#2#127#11'ClientWidth'#3'7'#2#8'TabOrder'#2#0#0#6'TImage'#15
   +'ImageBackground'#4'Left'#2#1#6'Height'#2'}'#3'Top'#2#1#5'Width'#3'5'#2#5'Al'
   +'ign'#7#8'alClient'#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#0#0#0#6'TLab'
   +'el'#10'LabelTitle'#22'AnchorSideLeft.Control'#7#6'Image1'#19'AnchorSideLeft'
   +'.Side'#7#9'asrBottom'#21'AnchorSideTop.Control'#7#6'Panel1'#23'AnchorSideRi'
   +'ght.Control'#7#6'Panel1'#20'AnchorSideRight.Side'#7#9'asrBottom'#4'Left'#2
-  +'J'#6'Height'#2#15#3'Top'#2#4#5'Width'#3#233#1#7'Anchors'#11#5'akTop'#6'akLe'
+  +'J'#6'Height'#2#18#3'Top'#2#4#5'Width'#3#233#1#7'Anchors'#11#5'akTop'#6'akLe'
   +'ft'#7'akRight'#0#18'BorderSpacing.Left'#2#3#17'BorderSpacing.Top'#2#3#19'Bo'
   +'rderSpacing.Right'#2#3#7'Caption'#6#10'LabelTitle'#11'ParentColor'#8#8'Word'
   +'Wrap'#9#0#0#6'TLabel'#9'LabelText'#22'AnchorSideLeft.Control'#7#6'Image1'#19
@@ -20,7 +20,7 @@ LazarusResources.Add('TFormBalloonMatrix','FORMDATA',[
   +'le'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#6'P'
   +'anel1'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBottom.Control'
   +#7#6'Panel1'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2'J'#6'Height'
-  +#2'e'#3'Top'#2#22#5'Width'#3#233#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRigh'
+  +#2'b'#3'Top'#2#25#5'Width'#3#233#1#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRigh'
   +'t'#8'akBottom'#0#20'BorderSpacing.Around'#2#3#7'Caption'#6#9'LabelText'#11
   +'ParentColor'#8#8'WordWrap'#9#0#0#6'TImage'#6'Image1'#22'AnchorSideLeft.Cont'
   +'rol'#7#6'Panel1'#21'AnchorSideTop.Control'#7#6'Panel1'#18'AnchorSideTop.Sid'

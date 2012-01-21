@@ -1,24 +1,25 @@
 object Widget: TWidget
-  Left = 207
+  Left = 752
   Height = 203
-  Top = 132
+  Top = 158
   Width = 249
   BorderStyle = bsNone
   Caption = 'Widget'
   ClientHeight = 203
   ClientWidth = 249
   OnCreate = FormCreate
-  OnMouseDown = Image1MouseDown
+  OnMouseDown = WidgetMouseDown
+  OnWindowStateChange = FormWindowStateChange
   SessionProperties = 'Height;Left;ShowInTaskBar;Top;Width'
   ShowInTaskBar = stNever
-  LCLVersion = '0.9.30'
+  LCLVersion = '0.9.30.2'
   object Image1: TImage
     Left = 0
     Height = 203
     Top = 0
     Width = 249
     Align = alClient
-    OnMouseDown = Image1MouseDown
+    OnMouseDown = WidgetMouseDown
     OnMouseMove = Image1MouseMove
     OnMouseUp = Image1MouseUp
     PopupMenu = Form1.PopupMenu1

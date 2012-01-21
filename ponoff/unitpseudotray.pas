@@ -15,10 +15,11 @@ type
   TWidget = class(TForm)
     Image1: TImage;
     IniPropStorage1: TIniPropStorage;
+    procedure FormWindowStateChange(Sender: TObject);
     procedure Image1MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
-    procedure Image1MouseDown(Sender: TObject; Button: TMouseButton;
+    procedure WidgetMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure Image1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
       );
@@ -55,7 +56,12 @@ begin
   end;
 end;
 
-procedure TWidget.Image1MouseDown(Sender: TObject;
+procedure TWidget.FormWindowStateChange(Sender: TObject);
+begin
+  If widget.windowstate=wsMinimized then widget.windowstate:=wsnormal;
+end;
+
+procedure TWidget.WidgetMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   if Button=mbLeft then
@@ -68,7 +74,7 @@ begin
     FormHintMatrix.HintHide;
   end
       else
-         Form1.TrayIcon1MouseDown(Sender,Button,Shift,X,Y);
+         Form1.TrayIconAndWidgetMouseDown(Sender,Button,Shift,X,Y);
 end;
 
 procedure TWidget.FormCreate(Sender: TObject);

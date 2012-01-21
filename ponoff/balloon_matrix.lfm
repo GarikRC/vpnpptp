@@ -1,7 +1,7 @@
 object FormBalloonMatrix: TFormBalloonMatrix
-  Left = 423
+  Left = 599
   Height = 127
-  Top = 487
+  Top = 471
   Width = 567
   Caption = 'FormBalloonMatrix'
   ClientHeight = 127
@@ -33,7 +33,7 @@ object FormBalloonMatrix: TFormBalloonMatrix
       AnchorSideRight.Control = Panel1
       AnchorSideRight.Side = asrBottom
       Left = 74
-      Height = 15
+      Height = 18
       Top = 4
       Width = 489
       Anchors = [akTop, akLeft, akRight]
@@ -54,8 +54,8 @@ object FormBalloonMatrix: TFormBalloonMatrix
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
       Left = 74
-      Height = 101
-      Top = 22
+      Height = 98
+      Top = 25
       Width = 489
       Anchors = [akTop, akLeft, akRight, akBottom]
       BorderSpacing.Around = 3

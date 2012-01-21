@@ -1,9 +1,9 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TForm1','FORMDATA',[
-  'TPF0'#6'TForm1'#5'Form1'#4'Left'#3#215#1#6'Height'#3#153#0#3'Top'#3#134#0#5
-  +'Width'#3#21#2#13'ActiveControl'#7#11'Memo_Config'#11'BorderIcons'#11#12'biS'
-  +'ystemMenu'#0#7'Caption'#6#6'ponoff'#12'ClientHeight'#3#153#0#11'ClientWidth'
+  'TPF0'#6'TForm1'#5'Form1'#4'Left'#3#150#2#6'Height'#3#153#0#3'Top'#3'X'#1#5'W'
+  +'idth'#3#21#2#13'ActiveControl'#7#11'Memo_Config'#11'BorderIcons'#11#12'biSy'
+  +'stemMenu'#0#7'Caption'#6#6'ponoff'#12'ClientHeight'#3#153#0#11'ClientWidth'
   +#3#21#2#9'Icon.Data'#10'B'#8#1#0'>'#8#1#0#0#0#1#0#1#0#128#128#0#0#1#0' '#0'('
   +#8#1#0#22#0#0#0'('#0#0#0#128#0#0#0#0#1#0#0#1#0' '#0#0#0#0#0#0#0#1#0'd'#0#0#0
   +'d'#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
@@ -2601,21 +2601,21 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#7'Visible'#8#0#0#0#9'TTrayIcon'#9'TrayIcon1'#14'Balloon'
-  +'Timeout'#2#0#9'PopUpMenu'#7#10'PopupMenu1'#7'Visible'#9#7'OnClick'#7#14'Tra'
-  +'yIcon1Click'#11'OnMouseDown'#7#18'TrayIcon1MouseDown'#11'OnMouseMove'#7#18
-  +'TrayIcon1MouseMove'#4'left'#2' '#3'top'#2#8#0#0#10'TPopupMenu'#10'PopupMenu'
-  +'1'#4'left'#2' '#3'top'#2'8'#0#9'TMenuItem'#9'MenuItem6'#7'Caption'#6#5'Mone'
-  +'y'#7'Enabled'#8#7'OnClick'#7#14'MenuItem6Click'#0#0#9'TMenuItem'#9'ColorIco'
-  +'n'#7'Caption'#6#9'ColorIcon'#7'OnClick'#7#14'ColorIconClick'#0#0#9'TMenuIte'
-  +'m'#5'Minus'#7'Caption'#6#5'Minus'#7'OnClick'#7#10'MinusClick'#0#0#9'TMenuIt'
-  +'em'#4'Plus'#7'Caption'#6#4'Plus'#7'OnClick'#7#9'PlusClick'#0#0#9'TMenuItem'
-  +#9'MenuItem5'#7'Caption'#6#4'Look'#7'OnClick'#7#14'MenuItem5Click'#0#0#9'TMe'
-  +'nuItem'#9'MenuItem1'#7'Caption'#6#2'On'#7'Visible'#8#7'OnClick'#7#14'MenuIt'
-  +'em1Click'#0#0#9'TMenuItem'#9'MenuItem2'#7'Caption'#6#3'Off'#7'Visible'#8#7
-  +'OnClick'#7#14'MenuItem2Click'#0#0#9'TMenuItem'#9'MenuItem4'#7'Caption'#6#8
-  +'Exit_bad'#7'OnClick'#7#14'MenuItem4Click'#0#0#9'TMenuItem'#9'MenuItem3'#7'C'
-  +'aption'#6#9'Exit_well'#7'OnClick'#7#14'MenuItem3Click'#0#0#0#6'TTimer'#6'Ti'
-  +'mer1'#8'Interval'#3' N'#7'OnTimer'#7#11'Timer1Timer'#4'left'#2'X'#3'top'#2
-  +'8'#0#0#6'TTimer'#6'Timer2'#8'Interval'#3#208#7#7'OnTimer'#7#11'Timer2Timer'
-  +#4'left'#2'X'#3'top'#2#8#0#0#0
+  +'Timeout'#2#0#9'PopUpMenu'#7#10'PopupMenu1'#7'OnClick'#7#14'TrayIcon1Click'
+  +#11'OnMouseDown'#7#18'TrayIcon1MouseDown'#11'OnMouseMove'#7#18'TrayIcon1Mous'
+  +'eMove'#4'left'#2' '#3'top'#2#8#0#0#10'TPopupMenu'#10'PopupMenu1'#4'left'#2
+  +' '#3'top'#2'8'#0#9'TMenuItem'#9'MenuItem6'#7'Caption'#6#5'Money'#7'Enabled'
+  +#8#7'OnClick'#7#14'MenuItem6Click'#0#0#9'TMenuItem'#9'ColorIcon'#7'Caption'#6
+  +#9'ColorIcon'#7'OnClick'#7#14'ColorIconClick'#0#0#9'TMenuItem'#5'Minus'#7'Ca'
+  +'ption'#6#5'Minus'#7'OnClick'#7#10'MinusClick'#0#0#9'TMenuItem'#4'Plus'#7'Ca'
+  +'ption'#6#4'Plus'#7'OnClick'#7#9'PlusClick'#0#0#9'TMenuItem'#9'MenuItem5'#7
+  +'Caption'#6#4'Look'#7'OnClick'#7#14'MenuItem5Click'#0#0#9'TMenuItem'#9'MenuI'
+  +'tem1'#7'Caption'#6#2'On'#7'Visible'#8#7'OnClick'#7#14'MenuItem1Click'#0#0#9
+  +'TMenuItem'#9'MenuItem2'#7'Caption'#6#3'Off'#7'Visible'#8#7'OnClick'#7#14'Me'
+  +'nuItem2Click'#0#0#9'TMenuItem'#9'MenuItem4'#7'Caption'#6#8'Exit_bad'#7'OnCl'
+  +'ick'#7#14'MenuItem4Click'#0#0#9'TMenuItem'#9'MenuItem3'#7'Caption'#6#9'Exit'
+  +'_well'#7'OnClick'#7#14'MenuItem3Click'#0#0#0#6'TTimer'#6'Timer1'#8'Interval'
+  +#3' N'#7'OnTimer'#7#11'Timer1Timer'#4'left'#2'X'#3'top'#2'8'#0#0#6'TTimer'#6
+  +'Timer2'#8'Interval'#3#208#7#7'OnTimer'#7#11'Timer2Timer'#4'left'#2'X'#3'top'
+  +#2#8#0#0#0
 ]);

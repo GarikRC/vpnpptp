@@ -1,8 +1,8 @@
 object Form3: TForm3
   AnchorSideBottom.Side = asrBottom
-  Left = 367
+  Left = 441
   Height = 152
-  Top = 175
+  Top = 451
   Width = 756
   ActiveControl = Panel1
   BorderIcons = [biSystemMenu]

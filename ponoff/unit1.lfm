@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 471
+  Left = 662
   Height = 153
-  Top = 134
+  Top = 344
   Width = 533
   ActiveControl = Memo_Config
   BorderIcons = [biSystemMenu]
@@ -2347,7 +2347,6 @@ object Form1: TForm1
   object TrayIcon1: TTrayIcon
     BalloonTimeout = 0
     PopUpMenu = PopupMenu1
-    Visible = True
     OnClick = TrayIcon1Click
     OnMouseDown = TrayIcon1MouseDown
     OnMouseMove = TrayIcon1MouseMove
