@@ -2403,7 +2403,6 @@ object Form1: TForm1
     top = 56
   end
   object Timer2: TTimer
-    Interval = 2000
     OnTimer = Timer2Timer
     left = 88
     top = 8

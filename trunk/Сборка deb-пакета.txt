@@ -11,6 +11,8 @@
              sh ubuntu.compile.sh i386 lib 0.2.9 i386
              или
              sh ubuntu.compile.sh x86_64 lib64 0.2.9 amd64
+             или
+             sh ubuntu.compile.sh x86_64 lib 0.2.9 amd64
 3) собранный пакет появится в этой же папке.
 
 Примечания:
