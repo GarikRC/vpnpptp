@@ -81,7 +81,6 @@ type
     procedure IconForTrayMinus;
     procedure Ifdown (Iface:string);
     procedure Ifup (Iface:string);
-    procedure TrayIconAndWidgetMouseDown;
   private
     { private declarations }
   public
@@ -479,42 +478,6 @@ procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
  end;
 
 { TForm1 }
-
-procedure TForm1.TrayIconAndWidgetMouseDown;
- var
-   find_net_monitor:boolean;
-   str:string;
-begin
-  If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico')) then
-                                                         ColorIcon.Enabled:=false
-                                                                               else
-                                                                                  ColorIcon.Enabled:=true;
-  If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then PopupMenu1.Items[1].Caption:=message68 else PopupMenu1.Items[1].Caption:=message69;
-  If not FileExists (UsrBinDir+'net_monitor') then begin MenuItem5.Visible:=false; exit;end;
-  If not FileExists (UsrBinDir+'vnstat') then begin MenuItem5.Visible:=false; exit;end;
-  Application.ProcessMessages;
-  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
-  Application.ProcessMessages;
-  //Проверяем поднялось ли соединение
-  CheckVPN;
-  If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
-  find_net_monitor:=false;
-  If Code_up_ppp then If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then
-                    begin
-                         //проверка net_monitor в процессах root, игнорируя зомби
-                         popen(f,BinDir+'ps -u root | '+BinDir+'grep net_monitor | '+BinDir+'awk '+chr(39)+'{print $4$5}'+chr(39),'R');
-                         str:='';
-                         While not eof(f) do
-                              begin
-                                   Readln(f,str);
-                                   If str='net_monitor' then find_net_monitor:=true;
-                              end;
-                         PClose(f);
-                    end;
-  If not find_net_monitor then MenuItem5.Enabled:=true else MenuItem5.Enabled:=false;
-  If not Code_up_ppp then MenuItem5.Enabled:=false;
-  Application.ProcessMessages;
-end;
 
 procedure TForm1.IconForTrayPlus;
  var
@@ -1823,8 +1786,39 @@ begin
 end;
 
 procedure TForm1.PopupMenu1Popup(Sender: TObject);
+var
+  find_net_monitor:boolean;
+  str:string;
 begin
-  TrayIconAndWidgetMouseDown;
+ If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico')) then
+                                                        ColorIcon.Enabled:=false
+                                                                              else
+                                                                                 ColorIcon.Enabled:=true;
+ If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then PopupMenu1.Items[1].Caption:=message68 else PopupMenu1.Items[1].Caption:=message69;
+ If not FileExists (UsrBinDir+'net_monitor') then begin MenuItem5.Visible:=false; exit;end;
+ If not FileExists (UsrBinDir+'vnstat') then begin MenuItem5.Visible:=false; exit;end;
+ Application.ProcessMessages;
+ if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
+ Application.ProcessMessages;
+ //Проверяем поднялось ли соединение
+ CheckVPN;
+ If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
+ find_net_monitor:=false;
+ If Code_up_ppp then If FileExists (UsrBinDir+'net_monitor') then if FileExists (UsrBinDir+'vnstat') then
+                   begin
+                        //проверка net_monitor в процессах root, игнорируя зомби
+                        popen(f,BinDir+'ps -u root | '+BinDir+'grep net_monitor | '+BinDir+'awk '+chr(39)+'{print $4$5}'+chr(39),'R');
+                        str:='';
+                        While not eof(f) do
+                             begin
+                                  Readln(f,str);
+                                  If str='net_monitor' then find_net_monitor:=true;
+                             end;
+                        PClose(f);
+                   end;
+ If not find_net_monitor then MenuItem5.Enabled:=true else MenuItem5.Enabled:=false;
+ If not Code_up_ppp then MenuItem5.Enabled:=false;
+ Application.ProcessMessages;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
