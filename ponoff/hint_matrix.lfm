@@ -1,7 +1,7 @@
 object FormHintMatrix: TFormHintMatrix
-  Left = 896
+  Left = 867
   Height = 232
-  Top = 575
+  Top = 340
   Width = 414
   Caption = 'FormHintMatrix'
   ClientHeight = 232

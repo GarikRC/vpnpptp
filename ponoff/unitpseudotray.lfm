@@ -1,7 +1,7 @@
 object Widget: TWidget
-  Left = 752
+  Left = 964
   Height = 203
-  Top = 158
+  Top = 105
   Width = 249
   BorderStyle = bsNone
   Caption = 'Widget'
