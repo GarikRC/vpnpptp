@@ -1,4 +1,4 @@
-%define rel 1
+%define rel 2
 
 Summary: Tools for setup and control VPN via PPTP/L2TP/OpenL2TP
 Name: vpnpptp-allde
@@ -13,7 +13,7 @@ Source1: vpnpptp.pm
 Source2: vpnmandriva.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: fpc-src >= 2.4.4, fpc >= 2.4.4, lazarus >= 0.9.30, upx
+BuildRequires: fpc-src >= 2.4.4, fpc >= 2.4.4, lazarus >= 0.9.30
 #раскомментировать при сборке в репозиторий
 #Requires: gksu, pptp-linux, xl2tpd >= 1.2.7, openl2tp
 
