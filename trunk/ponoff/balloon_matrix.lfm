@@ -1,7 +1,7 @@
 object FormBalloonMatrix: TFormBalloonMatrix
-  Left = 599
+  Left = 412
   Height = 127
-  Top = 471
+  Top = 452
   Width = 567
   Caption = 'FormBalloonMatrix'
   ClientHeight = 127

@@ -66,11 +66,10 @@ type
     procedure MenuItem6Click(Sender: TObject);
     procedure MinusClick(Sender: TObject);
     procedure PlusClick(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
     procedure TrayIcon1Click(Sender: TObject);
-    procedure TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure TrayIcon1MouseMove(Sender: TObject);
     procedure BalloonMessage (time_of_show_msec:integer;msg_title,msg_text:string;font_size:integer);
     procedure CheckFiles;
@@ -82,7 +81,7 @@ type
     procedure IconForTrayMinus;
     procedure Ifdown (Iface:string);
     procedure Ifup (Iface:string);
-    procedure TrayIconAndWidgetMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure TrayIconAndWidgetMouseDown;
   private
     { private declarations }
   public
@@ -481,12 +480,11 @@ procedure ResizeBmp(bitmp: TBitmap; wid, hei: Integer);
 
 { TForm1 }
 
-procedure TForm1.TrayIconAndWidgetMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TForm1.TrayIconAndWidgetMouseDown;
  var
    find_net_monitor:boolean;
    str:string;
 begin
-  If Button=MBLEFT then exit;
   If (not FileExists (MyDataDir+'off.ico')) or (not FileExists (MyDataDir+'on.ico')) then
                                                          ColorIcon.Enabled:=false
                                                                                else
@@ -1237,7 +1235,6 @@ begin
   end;
   Application.CreateForm(TFormHintMatrix, FormHintMatrix);
   Application.CreateForm(TFormBalloonMatrix, FormBalloonMatrix);
-  //RestartPonoff;
   Timer1.Enabled:=true;
   Timer2.Enabled:=true;
   if FileSize(MyLibDir+'profiles')=0 then FpSystem (BinDir+'rm -f '+MyLibDir+'profiles');
@@ -1825,6 +1822,11 @@ begin
   IconForTrayPlus;
 end;
 
+procedure TForm1.PopupMenu1Popup(Sender: TObject);
+begin
+  TrayIconAndWidgetMouseDown;
+end;
+
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   MenuItem1Click(Self);
@@ -2066,12 +2068,6 @@ end;
 procedure TForm1.TrayIcon1Click(Sender: TObject);
 begin
 
-end;
-
-procedure TForm1.TrayIcon1MouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  TrayIconAndWidgetMouseDown(Self,Button,Shift,X,Y);
 end;
 
 procedure TForm1.TrayIcon1MouseMove(Sender: TObject);
