@@ -527,6 +527,7 @@ resourcestring
   message225='Для Fedora для работы VPN OpenL2TP требуется selinux-policy>=3.9.16-33, иначе может не работать. SELinux можно также отключить.';
   message226='Введите пароль root:';
   message227='Эта опция позволяет модулю ponoff использовать виджет вместо трея в качестве альтернативы';
+  message228='Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot.';
 
 implementation
 
@@ -803,8 +804,8 @@ begin
   Memo_create.Lines.Add('Terminal=false');
   Memo_create.Lines.Add('Type=Application');
   Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
-  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
-  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
+//  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
+//  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
   Memo_create.Lines.Add('X-KDE-autostart-after=kdesktop');
   Memo_create.Lines.Add('StartupNotify=false');
 end;
@@ -831,8 +832,8 @@ If prilozh='vpnpptp' then
      Memo_create.Lines.Add('Terminal=false');
      Memo_create.Lines.Add('Type=Application');
      Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
-     If not Sudo_configure.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
-     If not Sudo_configure.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
+//     If not Sudo_configure.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
+//     If not Sudo_configure.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
      Memo_create.Lines.Add('X-KDE-autostart-after=kdesktop');
      Memo_create.Lines.Add('StartupNotify=false');
    end;
@@ -3827,6 +3828,19 @@ begin
   If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
   If DopParam=' ' then DopParam:='';
   If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
+  If nostart then If FileExists('/usr/bin/xroot') then If FileExists(Paramstr(0)) then //запускаем vpnpptp с правами root через xroot
+          begin
+               AProcess := TAsyncProcess.Create(nil);
+               AProcess.CommandLine :='/usr/bin/xroot auto '+'"'+Paramstr(0)+DopParam+'"';
+               AProcess.Execute;
+               while AProcess.Running do
+               begin
+                   ProgrammRoot('vpnpptp',true);
+                   sleep(100);
+               end;
+               Application.ProcessMessages;
+               AProcess.Free;
+          end;
   If nostart then If FileExists('/usr/lib64/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем vpnpptp с правами root через kdesu
           begin
                AProcess := TAsyncProcess.Create(nil);
@@ -3879,6 +3893,14 @@ begin
                   Application.ProcessMessages;
                   AProcess.Free;
              end;
+  If not ProgrammRoot('vpnpptp',false) then
+     If (not FileExists('/usr/bin/xroot')) and (not FileExists('/usr/lib64/kde4/libexec/kdesu')) and (not FileExists('/usr/lib/kde4/libexec/kdesu'))
+          and (not FileExists(UsrBinDir+'beesu')) and (not FileExists(UsrBinDir+'gksu')) then
+                begin
+                    Form3.MyMessageBox(message0,message228,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                    Application.ProcessMessages;
+                    Form1.Repaint;
+                end;
   If not ProgrammRoot('vpnpptp',false) then
                 begin
                     If mandriva then Form3.MyMessageBox(message0,message18+' '+message107,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3)

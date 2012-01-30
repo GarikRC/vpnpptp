@@ -49,8 +49,6 @@ Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/Open
 Icon=/usr/share/pixmaps/ponoff.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
-X-KDE-SubstituteUID=true
-X-KDE-Username=root
 X-KDE-autostart-after=kdesktop
 StartupNotify=false
 EOF
@@ -74,8 +72,6 @@ Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/vpnpptp.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
-X-KDE-SubstituteUID=true
-X-KDE-Username=root
 StartupNotify=false
 EOF
 chmod 0644 ./build/usr/share/applications/vpnpptp.desktop

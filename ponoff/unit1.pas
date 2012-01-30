@@ -246,6 +246,7 @@ resourcestring
   message69='Черно-белая иконка';
   message70='Введите пароль root:';
   message71='Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux. Автоматическое переключение на виджет.';
+  message72='Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot.';
 
 implementation
 
@@ -278,6 +279,18 @@ begin
     If DopParam=' ' then DopParam:='';
     If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
     If ErrorShowIcon then nostart:=true;
+    If nostart then If FileExists('/usr/bin/xroot') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через xroot
+            begin
+                 A_Process.Active:=false;
+                 A_Process.CommandLine :='/usr/bin/xroot auto '+'"'+Paramstr(0)+DopParam+'"';
+                 A_Process.Execute;
+                 while A_Process.Running do
+                 begin
+                     ProgrammRoot('ponoff',true);
+                     sleep(100);
+                 end;
+                 Application.ProcessMessages;
+            end;
     If nostart then If FileExists('/usr/lib64/kde4/libexec/kdesu') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через kdesu
             begin
                  A_Process.Active:=false;
@@ -327,9 +340,22 @@ begin
                     Application.ProcessMessages;
                end;
     If not ProgrammRoot('ponoff',false) then
+       If (not FileExists('/usr/bin/xroot')) and (not FileExists('/usr/lib64/kde4/libexec/kdesu')) and (not FileExists('/usr/lib/kde4/libexec/kdesu'))
+            and (not FileExists(UsrBinDir+'beesu')) and (not FileExists(UsrBinDir+'gksu')) then
                   begin
+                      Form1.Timer1.Enabled:=False;
+                      Form1.Timer2.Enabled:=False;
+                      Form1.Hide;
+                      Widget.Hide;
+                      Form3.MyMessageBox(message0,message72,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                  end;
+    If not ProgrammRoot('ponoff',false) then
+                  begin
+                       Form1.Timer1.Enabled:=False;
+                       Form1.Timer2.Enabled:=False;
+                       Form1.Hide;
+                       Widget.Hide;
                        Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                       PClose(f);
                        FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                        halt;
                   end;
@@ -621,6 +647,7 @@ begin
                           Form1.Timer1.Enabled:=False;
                           Form1.Timer2.Enabled:=False;
                           Form1.Hide;
+                          Widget.Hide;
                           if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
                           Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);

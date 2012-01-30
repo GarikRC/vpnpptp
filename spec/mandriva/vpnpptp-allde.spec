@@ -15,7 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: fpc-src >= 2.4.4, fpc >= 2.4.4, lazarus >= 0.9.30
 #раскомментировать при сборке в репозиторий
-#Requires: gksu, pptp-linux, xl2tpd >= 1.2.7, openl2tp
+#Requires: xroot, pptp-linux, xl2tpd >= 1.2.7, openl2tp
 
 %description
 Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
@@ -74,8 +74,6 @@ Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/Open
 Icon=/usr/share/pixmaps/ponoff.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
-X-KDE-SubstituteUID=true
-X-KDE-Username=root
 X-KDE-autostart-after=kdesktop
 StartupNotify=false
 EOF
@@ -101,8 +99,6 @@ Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/vpnpptp.png
 Type=Application
 Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
-X-KDE-SubstituteUID=true
-X-KDE-Username=root
 StartupNotify=false
 EOF
 install -m 0644 vpnpptp.desktop \

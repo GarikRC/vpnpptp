@@ -1279,3 +1279,7 @@ msgstr "Unable to select VPN OpenL2TP, so as not installed openl2tp."
 #: unit1.message168
 msgid "Требуется выбрать тип VPN."
 msgstr "You must select the type of VPN."
+
+#: unit1.message228
+msgid "Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot."
+msgstr "To run as root, you need something: xroot/kdesu/gksu/beesu. It is recommended to install the package xroot."
