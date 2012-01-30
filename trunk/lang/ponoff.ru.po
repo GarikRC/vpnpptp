@@ -467,6 +467,10 @@ msgstr ""
 msgid "Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux. Автоматическое переключение на виджет."
 msgstr ""
 
+#: unit1.message72
+msgid "Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot."
+msgstr ""
+
 #: unit1.message8
 msgid "отсутствует"
 msgstr ""

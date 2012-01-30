@@ -25,4 +25,4 @@
 В файле control должна быть пустая строчка в его конце.
 
 В файл control при сборке в репозиторий стоит добавить строку:
-Depends: gksu, pptp-linux, xl2tpd (>= 1.2.7), openl2tp
+Depends: pptp-linux, xl2tpd (>= 1.2.7), openl2tp, xroot
