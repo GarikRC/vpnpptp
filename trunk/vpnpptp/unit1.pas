@@ -264,6 +264,7 @@ var
   link_on_desktop:boolean; //создался ли ярлык на рабочем столе
   StartKoli4estvo:int64; //сколько последних строк лога просматривать в тестовом запуске
   str_date:string; //дата-метка в логе для поиска
+  z_num:integer; //считает сколько строк в тестовом запуске уже выведено на экран
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -703,14 +704,13 @@ while not eof(f) do
                       MemoTest.Lines.Add(str);
                  end;
 pclose(f);
-Memo_create.Clear;
-Memo_create.Lines.Clear;
 k:=0;
 For i:=0 to MemoTest.Lines.Count-1 do
         if Trim(MemoTest.Lines[i])=Trim(str_date) then k:=i;
-for i:=k to MemoTest.Lines.Count-1 do
+for i:=k+z_num to MemoTest.Lines.Count-1 do
          begin
            Memo_create.Lines.Add(MemoTest.Lines[i]);
+           z_num:=z_num+1;
            Application.ProcessMessages;
            Form1.Repaint;
          end;
@@ -2571,6 +2571,7 @@ var
  MtuUsed:string;
  FileSizeStart:int64;
 begin
+ z_num:=0;
  Form3.MyMessageBox(message0,message108+' '+message11,message123,message124,message125,MyPixmapsDir+'vpnpptp.png',true,true,true,AFont,Form1.Icon,false,MyLibDir,1);
  Application.ProcessMessages;
  Form1.Repaint;
