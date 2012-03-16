@@ -282,7 +282,7 @@ begin
     If nostart then If FileExists('/usr/bin/xroot') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через xroot
             begin
                  A_Process.Active:=false;
-                 A_Process.CommandLine :='/usr/bin/xroot auto '+'"'+Paramstr(0)+DopParam+'"';
+                 A_Process.CommandLine :='/usr/bin/xroot '+'"'+Paramstr(0)+DopParam+'" auto_su_sudo';
                  A_Process.Execute;
                  while A_Process.Running do
                  begin
@@ -347,6 +347,7 @@ begin
                       Form1.Timer2.Enabled:=False;
                       Form1.Hide;
                       Widget.Hide;
+                      Form1.TrayIcon1.Hide;
                       Form3.MyMessageBox(message0,message72,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                   end;
     If not ProgrammRoot('ponoff',false) then
@@ -355,6 +356,7 @@ begin
                        Form1.Timer2.Enabled:=False;
                        Form1.Hide;
                        Widget.Hide;
+                       Form1.TrayIcon1.Hide;
                        Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                        FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                        halt;
@@ -2120,7 +2122,7 @@ begin
                   min:=0;
                   sec:=0;
              end;
-  Time:=IntToStr(hour)+' '+message30+' '+IntToStr(min)+' '+message31+' '+IntToStr(sec)+' '+message32;
+  If (hour>=0) and (min>=0) and (sec>=0) then Time:=IntToStr(hour)+' '+message30+' '+IntToStr(min)+' '+message31+' '+IntToStr(sec)+' '+message32 else Time:='?';
   PppIface:='';
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
