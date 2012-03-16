@@ -3832,7 +3832,7 @@ begin
   If nostart then If FileExists('/usr/bin/xroot') then If FileExists(Paramstr(0)) then //запускаем vpnpptp с правами root через xroot
           begin
                AProcess := TAsyncProcess.Create(nil);
-               AProcess.CommandLine :='/usr/bin/xroot auto '+'"'+Paramstr(0)+DopParam+'"';
+               AProcess.CommandLine :='/usr/bin/xroot '+'"'+Paramstr(0)+DopParam+'" auto_su_sudo';
                AProcess.Execute;
                while AProcess.Running do
                begin
