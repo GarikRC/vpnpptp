@@ -1,0 +1,279 @@
+#!/bin/sh
+
+# Автор - ism c unixforum.org и freepascal.ru Иванов Станислав.
+
+DIRECTORY="/var/lib/vpnpptp"
+PROFILES="$DIRECTORY/profiles"
+NAME=$1
+
+#русский язык
+MES0RU="Только пользователь с правами root может запускать скрипт"
+MES1RU="Имя соединения"
+MES2RU="не найдено."
+MES3RU="Создайте соединение с помощью конфигуратора vpnpptp."
+MES4RU="Передайте скрипту"
+MES5RU="в качестве параметра имя соединения, которое необходимо установить, или stop для остановки всех соединений VPN PPTP/L2TP/OpenL2TP."
+MES6RU="Устанавливается соединение VPN"
+MES7RU="Останавливаются все соединения VPN PPTP/L2TP/OpenL2TP"
+MES8RU="Ошибка определения типа VPN (PPTP/L2TP/OpenL2TP) для соединения с именем"
+MES9RU="Процессы"
+MES10RU="Завершаются все процессы"
+MES11RU="Все процессы"
+MES12RU="не установлено."
+MES13RU="Соединение VPN"
+MES14RU="Завершено."
+MES15RU="установлено."
+MES16RU="убиты принудительно. Возможно требуется рестарт сети."
+MES17RU="успешно завершен."
+MES18RU="Интернет работает."
+MES19RU="Проверяется интернет через пинг внешнего сайта"
+MES20RU="Интернет не работает."
+MES21RU="Ожидание появления VPN (максимум 10 секунд) ..."
+MES22RU="Истекли 10 секунд ожидания" 
+
+#английский язык
+MES0EN="Only a user with root privileges can run the script"
+MES1EN="Connection name"
+MES2EN="not found."
+MES3EN="Create a connection with help configurator vpnpptp."
+MES4EN="Give to script"
+MES5EN="as a parameter name for the connection that you want to connect, or stop for stopping all connections VPN PPTP/L2TP/OpenL2TP."
+MES6EN="Connecting VPN"
+MES7EN="Stop all connections VPN PPTP/L2TP/OpenL2TP"
+MES8EN="Error of the determination type of VPN (PPTP/L2TP/OpenL2TP) for connection with name"
+MES9EN="Processes"  
+MES10EN="Terminates all processes"
+MES11EN="All processes"
+MES12EN="not established."
+MES13EN="Connection VPN"
+MES14EN="Completed."
+MES15EN="established."
+MES16EN="killed forcibly. You may need to restart the network."
+MES17EN="stopped correctly."
+MES18EN="Internet is working."
+MES19EN="Checked Internet with help ping external website"
+MES20EN="Internet does not work."
+MES21EN="Waiting for the establishment of VPN (10 seconds are maximum) ..."
+MES22EN="10 seconds of waiting finished"
+
+kill_process_with_control () {
+pid=`ps -A |grep --word-regexp $1| awk '{print $1}'`
+ if [ -n "$pid" ]
+   then 
+     echo $MES10EN $1
+     echo $MES10RU $1
+     killall $1
+     sleep 1
+     i=0
+     pid=`ps -A |grep --word-regexp $1| awk '{print $1}'`
+     while [ -n "$pid" ]
+     do
+        pid=`ps -A |grep --word-regexp $1| awk '{print $1}'`
+        sleep 1
+        if [ 10 -lt $i -a -n "$pid" ]
+         then
+           killall -9 $1
+           echo $MES9EN $1 $MES16EN
+           echo $MES9RU $1 $MES16RU
+           break
+        fi
+        if [ -z "$pid" ]
+         then
+           echo $MES11EN $1 $MES17EN
+           echo $MES11RU $1 $MES17RU
+           break
+        fi
+        let i=i+1
+     done
+  fi
+  return 0
+}
+
+total_kill_process_with_control () {
+  kill_process_with_control pppd
+  kill_process_with_control xl2tpd
+  if [ -f $DIRECTORY/default/openl2tp-stop ]
+  then
+    $DIRECTORY/default/openl2tp-stop
+  fi
+  kill_process_with_control openl2tp
+  kill_process_with_control openl2tpd
+  sleep 1
+  return 0
+}
+
+ping_control () {
+  WAIT_TIME=$1
+  PING_COUNT=$2
+  DEST=$3
+  echo $MES19EN $DEST
+  echo $MES19RU $DEST
+  PING=`ping -w $WAIT_TIME -c $PING_COUNT -s 1000 $DEST |grep received | awk -F, '{print $2}' |awk '{print $1}'`
+  if [ "$PING" = "$PING_COUNT" ]
+  then
+    return 0
+  fi
+  if [ $PING -lt $PING_COUNT -a  $PING -ne 0 ]
+  then
+    return 0
+  fi
+  return 1
+}
+
+connection_control () {
+  echo # Перевод строки
+  DEST=yandex.ru
+  PING_COUNT=10
+  WAIT_TIME=3
+  PING=0
+  IFACE=""
+  i=11;
+  IFCONFIG=""
+  sleep 1
+  if [ -f /var/run/ppp-$NAME.pid ]
+  then
+    IFACE=`cat /var/run/ppp-$NAME.pid|grep ppp`
+    if [ "$IFACE" != "" ]
+    then
+      IFCONFIG=`ifconfig $IFACE`
+    fi
+  fi
+  while [ "$IFCONFIG" = "" ]
+  do 
+    sleep 1
+    i=`expr $i - 1`
+    echo $MES21EN $i
+    echo $MES21RU $i
+    if [ -f /var/run/ppp-$NAME.pid ]
+    then
+      IFACE=`cat /var/run/ppp-$NAME.pid|grep ppp`
+      if [ "$IFACE" != "" ]
+      then
+        IFCONFIG=`ifconfig $IFACE`
+      fi
+    fi
+    if [ $i -eq 0 ]
+    then
+      echo $MES22EN
+      echo $MES22RU
+      break
+    fi
+  done
+  if [ "$IFCONFIG" = "" ]
+  then
+    echo $MES13EN $TYPE $MES12EN
+    echo $MES13RU $TYPE $MES12RU
+  else
+    # Если интерфейс появился то пингуем
+    echo $MES13EN $TYPE $MES15EN
+    echo $MES13RU $TYPE $MES15RU
+    ifconfig $IFACE
+    ping_control $WAIT_TIME $PING_COUNT $DEST
+    if [ $? -ne 0 ]
+    then
+      # Если нет пинга
+      echo $MES20EN
+      echo $MES20RU
+    else 
+      echo $MES18EN
+      echo $MES18RU
+    fi
+  fi
+  return 0
+}
+
+USER=`whoami`
+if [ "$USER" != "root" ]
+then
+   echo $MES0EN $0
+   echo $MES0RU $0
+   echo $MES4EN $0 $MES5EN
+   echo $MES4RU $0 $MES5RU
+   echo $MES14EN
+   echo $MES14RU
+   exit 1
+fi
+
+if [ "$NAME" = "" ]
+then
+    echo $MES4EN $0 $MES5EN
+    echo $MES4RU $0 $MES5RU
+    echo $MES14EN
+    echo $MES14RU
+    exit 1
+fi
+
+if [ "$NAME" = "stop" ]
+then
+   echo $MES7EN
+   echo $MES7RU
+   total_kill_process_with_control
+   echo $MES14EN
+   echo $MES14RU
+   exit 0
+fi
+
+NAME0=`cat $PROFILES|grep -x $NAME`
+if [ "$NAME0" != $NAME ]
+then
+    echo $MES1EN $NAME $MES2EN $MES3EN
+    echo $MES1RU $NAME $MES2RU $MES3RU
+    echo $MES14EN
+    echo $MES14RU
+    exit 1
+fi
+
+TYPE0=`cat $DIRECTORY/$NAME/config|grep -x pptp`
+if [ "$TYPE0" = "pptp" ]
+then
+    TYPE="PPTP"
+fi
+TYPE0=`cat $DIRECTORY/$NAME/config|grep -x openl2tp`
+if [ "$TYPE0" = "openl2tp" ]
+then
+    TYPE="OpenL2TP"
+fi
+TYPE0=`cat $DIRECTORY/$NAME/config|grep -x l2tp`
+if [ "$TYPE0" = "l2tp" ]
+then
+    TYPE="L2TP"
+fi
+
+if [ "$TYPE" = "" ]
+then
+   echo $MES8EN $NAME
+   echo $MES8RU $NAME
+   echo $MES14EN
+   echo $MES14RU
+   exit 1
+fi
+if [ "$TYPE" = "PPTP" ]
+then
+   echo $MES6EN $TYPE
+   echo $MES6RU $TYPE
+   total_kill_process_with_control
+   pppd call $NAME && connection_control
+fi
+
+if [ "$TYPE" = "L2TP" ]
+then
+   echo $MES6EN $TYPE
+   echo $MES6RU $TYPE
+   total_kill_process_with_control
+   /etc/init.d/xl2tpd restart
+   sleep 1
+   echo "c $NAME" > /var/run/xl2tpd/l2tp-control && connection_control
+fi
+
+if [ "$TYPE" = "OpenL2TP" ]
+then
+   echo $MES6EN $TYPE
+   echo $MES6RU $TYPE
+   total_kill_process_with_control
+   $DIRECTORY/$NAME/openl2tp-start && connection_control
+fi
+
+echo $MES14EN
+echo $MES14RU
+
+exit 0
