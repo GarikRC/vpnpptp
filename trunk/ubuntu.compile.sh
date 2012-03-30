@@ -11,10 +11,10 @@ LAZARUS_ARCH=$1
 LIBDIRPART=$2
 NUM_VERSION=$3
 ARCH=$4
-LAZARUS_LIB=/usr/$LIBDIRPART/lazarus/lcl/units/$LAZARUS_ARCH-linux
-LAZARUS_LIB_PKG=/usr/$LIBDIRPART/lazarus/packages/units/$LAZARUS_ARCH-linux
-LAZARUS_LIB_COMP=/usr/$LIBDIRPART/lazarus/components/synedit/units/$LAZARUS_ARCH-linux
-LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/ideintf/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB=/usr/$LIBDIRPART/lazarus/*/lcl/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_PKG=/usr/$LIBDIRPART/lazarus/*/packages/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_COMP=/usr/$LIBDIRPART/lazarus/*/components/synedit/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/*/ideintf/units/$LAZARUS_ARCH-linux
 
 if [ -z "$(env | grep USER=root)" ];then
     echo "You're not the root!"
