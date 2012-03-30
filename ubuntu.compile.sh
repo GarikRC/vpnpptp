@@ -11,10 +11,10 @@ LAZARUS_ARCH=$1
 LIBDIRPART=$2
 NUM_VERSION=$3
 ARCH=$4
-LAZARUS_LIB=/usr/$LIBDIRPART/lazarus/*/lcl/units/$LAZARUS_ARCH-linux
-LAZARUS_LIB_PKG=/usr/$LIBDIRPART/lazarus/*/packages/units/$LAZARUS_ARCH-linux
-LAZARUS_LIB_COMP=/usr/$LIBDIRPART/lazarus/*/components/synedit/units/$LAZARUS_ARCH-linux
-LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/*/ideintf/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB=/usr/$LIBDIRPART/lazarus/lcl/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_PKG=/usr/$LIBDIRPART/lazarus/packages/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_COMP=/usr/$LIBDIRPART/lazarus/components/synedit/units/$LAZARUS_ARCH-linux
+LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/ideintf/units/$LAZARUS_ARCH-linux
 
 if [ -z "$(env | grep USER=root)" ];then
     echo "You're not the root!"
@@ -122,7 +122,21 @@ then
    rm -rf ./vpnpptp-src-$NUM_VERSION/
    exit 0
 fi
-		                                                                                                                        
+
+cd ..
+cd ..
+cd ./vpnpptp-src-$NUM_VERSION/vpnmandriva/
+
+$FPC -MObjFPC -C -Xs -Scgi -Os -O3 -XX -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP -Fu$LAZARUS_LIB_IDEINTF -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./vpnmandriva/ -Fu. -ovpnmandriva -dLCL -dLCLgtk2 vpnmandriva.pas		                                                                                
+if [ ! -f ./vpnmandriva ]
+then
+   echo "Compillation vpnmandriva error!"
+   cd ..
+   cd ..
+   rm -rf ./build/
+   rm -rf ./vpnpptp-src-$NUM_VERSION/
+   exit 0
+fi		                                                                                                                        
 		                                                                                                                        
 cd ..
 cd ..
@@ -131,6 +145,7 @@ mkdir -p ./build/usr/bin
 		                                                                                                                        
 cp -f ./vpnpptp-src-$NUM_VERSION/ponoff/ponoff ./build/usr/bin/ponoff
 cp -f ./vpnpptp-src-$NUM_VERSION/vpnpptp/vpnpptp ./build/usr/bin/vpnpptp
+cp -f ./vpnpptp-src-$NUM_VERSION/vpnmandriva/vpnmandriva ./build/usr/bin/vpnmandriva
 cp -f ./vpnpptp-src-$NUM_VERSION/vpnlinux ./build/usr/bin/vpnlinux
 		                                                                                                                        
 mkdir -p ./build/usr/share/pixmaps
@@ -157,4 +172,6 @@ dpkg -b ./build/ vpnpptp-allde-$NUM_VERSION-$ARCH.deb
 		                                                                                                                        
 rm -rf ./build/
 rm -rf ./vpnpptp-src-$NUM_VERSION/
+
+alien --to-rpm ./vpnpptp-allde-$NUM_VERSION-$ARCH.deb --bump=0
 		                                                                                                                        

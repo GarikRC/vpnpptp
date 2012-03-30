@@ -650,7 +650,7 @@ msgstr "Unable to select VPN L2TP, so as not installed xl2tpd."
 
 #: unit1.message96
 msgid "Использовать вст#209�оенный в демон xl2tpd механизм #209�еконнекта (не #209�екомендуется если несколько сетевых ка#209�т)"
-msgstr "Use internak mechanism of xl2tpd daemon for reconnect (not useful if more than one network interface controller)"
+msgstr "Use internal mechanism of xl2tpd daemon for reconnect (not useful if more than one network interface controller)"
 
 #: unit1.message98
 msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном xl2tpd без г#209�афики (не #209�екомендуется использовать)"
