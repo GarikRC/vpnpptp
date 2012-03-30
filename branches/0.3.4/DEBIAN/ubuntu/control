@@ -1,0 +1,12 @@
+Source: vpnpptp-allde
+Section: net
+Priority: optional
+Maintainer: Alex Loginov <loginov.alex.valer@gmail.com>
+Build-Depends: fpc-source >= 2.4.4, fpc >= 2.4.4, lazarus >= 0.9.30
+Package: vpnpptp-allde
+Version: 0.3.4
+Description: Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
+ Инструмент для легкого и быстрого подключения и управления соединением VPN через PPTP/L2TP/OpenL2TP
+ Інструмент для легкого і швидкого підключення і керування з'єднанням VPN через PPTP/L2TP/OpenL2TP
+Homepage: http://code.google.com/p/vpnpptp/
+Installed-Size: 15000
