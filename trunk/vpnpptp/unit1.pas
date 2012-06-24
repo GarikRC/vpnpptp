@@ -344,7 +344,7 @@ resourcestring
   message41='Проверка показала, что маршруты через DHCP не приходят, или настройка не требуется.';
   message42='Получение маршрутов через DHCP будет отменено, так как маршруты через DHCP не приходят, или настройка не требуется.';
   message43='VPN-сервер не пингуется. Устраните проблему и заново запустите конфигуратор.';
-  message44='Шлюз локальной сети не пингуется или теряются пакеты. Устраните проблему и заново запустите конфигуратор.';
+  message44='Шлюз локальной сети не пингуется или теряются пакеты. Но это не всегда влияет на поднятие VPN.';
   message45='Пингуется VPN-сервер. Ожидайте...';
   message46='Определяется IP-адрес VPN-сервера через команду ping. Ожидайте...';
   message47='Пингуется шлюз локальной сети. Ожидайте...';
@@ -438,7 +438,7 @@ resourcestring
   message135='Эта кнопка настраивает (перенастраивает) соединение';
   message136='Эта кнопка позволяет изменить предложенные по умолчанию или дополнить опции демона pppd';
   message137='Эта кнопка позволяет проверить правильно ли было настроено соединение';
-  message138='Для VPN L2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
+  message138='Для VPN L2TP/OpenL2TP шифрование mppe как правило не используется, оно используется только для VPN PPTP, но запрета нет.';
   message139='Иногда может помочь принудительный рестарт сети.';
   message140='В Вашем дистрибутиве не используется shorewall, поэтому его настройка не требуется.';
   message141='В Вашем дистрибутиве получение маршрутов через DHCP настроено по-умолчанию, или оно настраивается средствами Вашего дистрибутива.';
@@ -515,7 +515,7 @@ resourcestring
   message212='поэтому он не желателен к использованию.';
   message213='Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp.';
   message214='Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне';
-  message215='Для VPN OpenL2TP шифрование mppe не используется, оно используется только для VPN PPTP.';
+  message215='Отсутствует файл /etc/resolv.conf. Файл /etc/resolv.conf был создан автоматически. Правильность дальнейшей настройки VPN не гарантируется.';
   message216='Автозапуск интернета при старте системы демоном openl2tp/openl2tpd без графики (не рекомендуется использовать)';
   message217='Использовать встроенный в демон openl2tp/openl2tpd механизм реконнекта (не рекомендуется если несколько сетевых карт)';
   message218='Рекомендуется использовать с pppd/xl2tpd/openl2tp/openl2tpd-реконнектом.';
@@ -525,7 +525,7 @@ resourcestring
   message222='Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp.';
   message223='Не найден скрипт';
   message224='<ОК> - игнорировать это предупреждение и продолжить (рекомендуется). <Отмена> - поправить.';
-  message225='Для Fedora для работы VPN OpenL2TP требуется selinux-policy>=3.9.16-33, иначе может не работать. SELinux можно также отключить.';
+  message225='В Fedora если не работает, то может потребоваться настройка SELinux. SELinux можно также отключить.';
   message226='Введите пароль root:';
   message227='Эта опция позволяет модулю ponoff использовать виджет вместо трея в качестве альтернативы';
   message228='Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot.';
@@ -1834,23 +1834,26 @@ If suse then if not Autostartpppd.Checked then
  if EditDNS3.Text<>'none' then if EditDNS4.Text<>'none' then N:=2;
  if (EditDNS3.Text='none') or (EditDNS4.Text='none') then N:=1;
  if EditDNS3.Text='none' then if EditDNS4.Text='none' then N:=0;
- AssignFile (FileResolvConf,EtcDir+'resolv.conf');
- reset (FileResolvConf);
- If not (EditDNS3.Text='81.176.72.82') and not (EditDNS3.Text='81.176.72.83') and not (EditDNS4.Text='81.176.72.82') and not (EditDNS4.Text='81.176.72.83') then
- While not eof (FileResolvConf) do
-     begin
-        readln(FileResolvConf, str);
-        if LeftStr(str,11)<>'nameserver ' then FpSystem(UsrBinDir+'printf "'+str+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
-        if LeftStr(str,11)='nameserver ' then i:=i+1;
-        if LeftStr(str,11)='nameserver ' then if not endprint then
-                                       begin
-                                            if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then FpSystem (UsrBinDir+'printf "nameserver '+EditDNS3.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
-                                            if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then FpSystem (UsrBinDir+'printf "nameserver '+EditDNS4.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
-                                            endprint:=true;
-                                       end;
-        if LeftStr(str,11)='nameserver ' then if i>N then FpSystem(UsrBinDir+'printf "'+str+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
-     end;
-   closefile(FileResolvConf);
+ If FileExists(EtcDir+'resolv.conf') then
+    begin
+       AssignFile (FileResolvConf,EtcDir+'resolv.conf');
+       reset (FileResolvConf);
+       If not (EditDNS3.Text='81.176.72.82') and not (EditDNS3.Text='81.176.72.83') and not (EditDNS4.Text='81.176.72.82') and not (EditDNS4.Text='81.176.72.83') then
+       While not eof (FileResolvConf) do
+           begin
+              readln(FileResolvConf, str);
+              if LeftStr(str,11)<>'nameserver ' then FpSystem(UsrBinDir+'printf "'+str+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
+              if LeftStr(str,11)='nameserver ' then i:=i+1;
+              if LeftStr(str,11)='nameserver ' then if not endprint then
+                                             begin
+                                                  if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then FpSystem (UsrBinDir+'printf "nameserver '+EditDNS3.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
+                                                  if EditDNS4.Text<>'' then if EditDNS4.Text<>'none' then FpSystem (UsrBinDir+'printf "nameserver '+EditDNS4.Text+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
+                                                  endprint:=true;
+                                             end;
+              if LeftStr(str,11)='nameserver ' then if i>N then FpSystem(UsrBinDir+'printf "'+str+'\n" >> '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
+           end;
+         closefile(FileResolvConf);
+    end;
    If ((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') or (EditDNS4.Text='81.176.72.82') or (EditDNS4.Text='81.176.72.83')) then
      begin
         if EditDNS3.Text<>'' then if EditDNS3.Text<>'none' then if (EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83') then
@@ -2353,7 +2356,7 @@ DoIconDesktopForAll('vpnpptp');
             Application.ProcessMessages;
             Form1.Repaint;
           end;
- If fedora then if (ComboBoxVPN.Text='VPN OpenL2TP') then //предупреждение о SELinux в Fedora с VPN OpenL2TP
+ If fedora then //предупреждение о SELinux в Fedora
                                   begin
                                        Label14.Caption:=message225;
                                        Application.ProcessMessages;
@@ -2683,6 +2686,7 @@ begin
                                                                 If Code_up_ppp then
                                                                    begin
                                                                      popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39),'R');
+                                                                     if eof(f) then popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep mtu |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39),'R');
                                                                      While not eof(f) do
                                                                         begin
                                                                           Readln (f,MtuUsed);
@@ -3303,27 +3307,14 @@ If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
 If ComboBoxVPN.Text='VPN OpenL2TP' then Autostartpppd.Caption:=message216;
 If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
 If ComboBoxVPN.Text='VPN OpenL2TP' then pppnotdefault.Caption:=message214;
-If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_required.Enabled:=false; CheckBox_required.Checked:=false; StartMessage:=true; end;
-If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_stateless.Enabled:=false; CheckBox_stateless.Checked:=false; StartMessage:=true; end;
-If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_no40.Enabled:=false; CheckBox_no40.Checked:=false; StartMessage:=true; end;
-If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_no56.Enabled:=false; CheckBox_no56.Checked:=false; StartMessage:=true; end;
-If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then begin StartMessage:=false; CheckBox_no128.Enabled:=false; CheckBox_no128.Checked:=false; StartMessage:=true; end;
-If ComboBoxVPN.Text='VPN L2TP' then
-                         begin
-                              CheckBox_required.Hint:=MakeHint(message138,5);
-                              CheckBox_stateless.Hint:=MakeHint(message138,5);
-                              CheckBox_no40.Hint:=MakeHint(message138,5);
-                              CheckBox_no56.Hint:=MakeHint(message138,5);
-                              CheckBox_no128.Hint:=MakeHint(message138,5);
-                         end;
-If ComboBoxVPN.Text='VPN OpenL2TP' then
-                         begin
-                              CheckBox_required.Hint:=MakeHint(message215,5);
-                              CheckBox_stateless.Hint:=MakeHint(message215,5);
-                              CheckBox_no40.Hint:=MakeHint(message215,5);
-                              CheckBox_no56.Hint:=MakeHint(message215,5);
-                              CheckBox_no128.Hint:=MakeHint(message215,5);
-                         end;
+If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then
+               begin
+                  CheckBox_required.Hint:=MakeHint(message79+' '+message88+' '+message138,5);
+                  CheckBox_stateless.Hint:=MakeHint(message89+' '+message88+' '+message138,5);
+                  CheckBox_no40.Hint:=MakeHint(message90+' '+message88+' '+message138,5);
+                  CheckBox_no56.Hint:=MakeHint(message91+' '+message88+' '+message138,5);
+                  CheckBox_no128.Hint:=MakeHint(message92+' '+message88+' '+message138,5);
+               end;
 if not y then
               begin
                 TabSheet1.TabVisible:= False;
@@ -3417,6 +3408,13 @@ If not y then IPS:=true else IPS:=false;
                              Form1.Repaint;
                            end;
   //определяем DNSA, DNSB и DNSdopC
+  If not FileExists(EtcDir+'resolv.conf') then
+                                          begin
+                                               FpSystem (UsrBinDir+'printf "nameserver 127.0.0.1'+'\n" >> '+EtcDir+'resolv.conf');
+                                               Form3.MyMessageBox(message0,message215,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                               Application.ProcessMessages;
+                                               Form1.Repaint;
+                                          end;
   If LeftStr(Memo_gate.Lines[0],3)='ppp' then
                                          begin
                                               DNSA:='none';
@@ -3436,7 +3434,7 @@ If not y then IPS:=true else IPS:=false;
                                          end;
                                       closefile(FileResolv_conf);
                                     end;
-  If DNSA='none' then if DNSB='none' then
+  If DNSA='none' then if DNSB='none' then If FileExists(EtcDir+'resolv.conf') then
                            begin
                              DNS_auto:=false;
                              If IPS then Form3.MyMessageBox(message0,message66+' '+message197,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);

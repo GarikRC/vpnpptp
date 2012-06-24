@@ -762,7 +762,7 @@ var
     Str_networktest, Str_RemoteIPaddress:string;
     FindRemoteIPaddress:boolean;
     RealPppIface, RealPppIfaceDefault:string;
-    none:boolean;
+    none,errorPtP:boolean;
 begin
   NewIPS:=true;
   NoPingIPS:=false;
@@ -838,6 +838,7 @@ MtuUsed:='';
 If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked') then
    begin
      popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39),'R');
+     if eof (f) then popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep mtu |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39),'R');
      While not eof(f) do
         begin
           Readln (f,MtuUsed);
@@ -850,19 +851,26 @@ If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked
              FpSystem(BinDir+'touch '+MyTmpDir+'mtu.checked');
              Application.ProcessMessages;
         end;
-        FlagMtu:=true;
+     FlagMtu:=true;
    end;
 //обработка случая когда RemoteIPaddress совпадается с ip-адресом самого vpn-сервера
 If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                If FileExists(MyLibDir+Memo_Config.Lines[0]+'/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                             if Memo_config.Lines[21]='IPS-no' then
                                       begin
+                                         errorPtP:=false;
                                          popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep P-t-P|'+BinDir+'awk '+chr(39)+'{print $3}'+chr(39),'R');
+                                         if eof(f) then
+                                                   begin
+                                                     errorPtP:=true;
+                                                     popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep destination|'+BinDir+'awk '+chr(39)+'{print $6}'+chr(39),'R');
+                                                   end;
                                          if not eof(f) then
                                                                                  begin
                                                                                     While not eof(f) do
                                                                                           readln(f, Str_RemoteIPaddress);
-                                                                                    RemoteIPaddress:=RightStr(Str_RemoteIPaddress,Length(Str_RemoteIPaddress)-6);
+                                                                                    If not errorPtP then RemoteIPaddress:=RightStr(Str_RemoteIPaddress,Length(Str_RemoteIPaddress)-6)
+                                                                                                         else RemoteIPaddress:=Str_RemoteIPaddress;
                                                                                     Memo_bindutilshost0.Lines.LoadFromFile(MyLibDir+Memo_Config.Lines[0]+'/hosts');
                                                                                     FindRemoteIPaddress:=false;
                                                                                     For i:=0 to Memo_bindutilshost0.Lines.Count-1 do
@@ -1861,6 +1869,8 @@ var
   Str:string;
   TV : timeval;
   DNS3,DNS4:string;
+  x:int64;
+  code,i:integer;
 begin
   If not FileExists (VarRunVpnpptp+ProfileName) then FpSystem (BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
@@ -1879,25 +1889,39 @@ begin
   //определяем скорость, время
   If Code_up_ppp then
             begin
-                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep RX|'+BinDir+'grep bytes|'+BinDir+'awk '+chr(39)+'{print $2}'+chr(39),'R');
-                RXbyte1:='0';
+                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep RX|'+BinDir+'grep bytes','R');
+                RXbyte1:='';
                 While not eof(f) do
                    begin
-                     Readln (f,RXbyte1);
+                     Readln (f,str);
+                     i:=pos('bytes',str);
+                     for i:=pos('bytes',str)+6 to length(str) do
+                             begin
+                                if str[i]=' ' then break;
+                                RXbyte1:=RXbyte1+str[i];
+                             end;
                    end;
                 PClose(f);
                 If RXbyte1='' then RXbyte1:='0';
-                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep TX|'+BinDir+'grep bytes|'+BinDir+'awk '+chr(39)+'{print $6}'+chr(39),'R');
-                TXbyte1:='0';
+                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep TX|'+BinDir+'grep bytes','R');
+                TXbyte1:='';
                 While not eof(f) do
                    begin
-                     Readln (f,TXbyte1);
+                     Readln (f,str);
+                     i:=pos('bytes',str);
+                     for i:=pos('bytes',str)+6 to length(str) do
+                             begin
+                                if str[i]=' ' then break;
+                                TXbyte1:=TXbyte1+str[i];
+                             end;
                    end;
                 PClose(f);
                 If TXbyte1='' then TXbyte1:='0';
-                If RXbyte1<>'0' then Delete(RXbyte1,1,6);
-                If TXbyte1<>'0' then Delete(TXbyte1,1,6);
             end;
+  Val(TXbyte1,x,code);
+  If code<>0 then TXbyte1:='0';
+  Val(RXbyte1,x,code);
+  If code<>0 then RXbyte1:='0';
   If MaxSpeed<>0 then If Code_up_ppp then
           begin
                 if StrToInt64(RXbyte1)-StrToInt64(RXbyte0)>MaxSpeed then
@@ -2171,6 +2195,17 @@ begin
                                                  RemoteIPaddress0:=RightStr(Str_RemoteIPaddress0,Length(Str_RemoteIPaddress0)-6);
                                             end;
                           PClose(f);
+                      If RemoteIPaddress0='-' then
+                             begin
+                             popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep destination|'+BinDir+'awk '+chr(39)+'{print $6}'+chr(39),'R');
+                             if not eof(f) then
+                                               begin
+                                                    While not eof(f) do
+                                                          readln(f, Str_RemoteIPaddress0);
+                                                    RemoteIPaddress0:=Str_RemoteIPaddress0;
+                                               end;
+                             PClose(f);
+                             end;
                      end;
   If RemoteIPaddress0='' then RemoteIPaddress0:='-';
   //определяем IP_Address0
@@ -2186,6 +2221,17 @@ begin
                                                  IPaddress0:=RightStr(Str_IPaddress0,Length(Str_IPaddress0)-5);
                                             end;
                           PClose(f);
+                          If IPaddress0='-' then
+                                 begin
+                                 popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep inet|'+BinDir+'awk '+chr(39)+'{print $2}'+chr(39),'R');
+                                 if not eof(f) then
+                                                   begin
+                                                        While not eof(f) do
+                                                              readln(f, Str_IPaddress0);
+                                                        IPaddress0:=Str_IPaddress0;
+                                                   end;
+                                 PClose(f);
+                                 end;
                      end;
   If IPaddress0='' then IPaddress0:='-';
   //определение dns, на которых поднято vpn

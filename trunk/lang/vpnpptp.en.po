@@ -364,8 +364,8 @@ msgid "VPN-се#209�ве#209� не пингуется. Уст#209�анит
 msgstr "VPN-server is not pinged. Correct the problem and start configurator again."
 
 #: unit1.message44
-msgid "Шлюз локальной сети не пингуется или те#209�яются пакеты. Уст#209�аните п#209�облему и заново запустите конфигу#209�ато#209�."
-msgstr "The local network gateway in not pinged or the packets are lost. Correct the problem and start configurator again."
+msgid "Шлюз локальной сети не пингуется или теряются пакеты. Но это не всегда влияет на поднятие VPN."
+msgstr "The local network gateway in not pinged or the packets are lost. But it is not always affect for the raising of VPN."
 
 #: unit1.message45
 msgid "Пингуется VPN-се#209�ве#209�. Ожидайте..."
@@ -821,10 +821,6 @@ msgstr "This button allows you to change the defaults or to add options daemon p
 msgid "Эта кнопка позволяет п#209�ове#209�ить п#209�авильно ли было наст#209�оено соединение"
 msgstr "This button allows you to check the connection settings with help test"
 
-#: unit1.message138
-msgid "Для VPN L2TP шиф#209�ование mppe не используется, оно используется только для VPN PPTP."
-msgstr "For VPN L2TP encryption mppe is not used, it is used only for VPN PPTP."
-
 #: unit1.message140
 msgid "В Вашем дист#209�ибутиве не используется shorewall, поэтому его наст#209�ойка не т#209�ебуется."
 msgstr "Your distribution is not used shorewall, so its configure is not required."
@@ -1208,9 +1204,9 @@ msgstr "Google Public DNS: 8.8.8.8 and 8.8.4.4. OpenDNS: 208.67.222.222 and 208.
 msgid "Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне"
 msgstr "Do not change default gateway, VPN OpenL2TP running in the background"
 
-#: unit1.message215
-msgid "Для VPN OpenL2TP шифрование mppe не используется, оно используется только для VPN PPTP."
-msgstr "For VPN OpenL2TP encryption mppe is not used, it is used only for VPN PPTP."
+#: unit1.message138
+msgid "Для VPN L2TP/OpenL2TP шифрование mppe как правило не используется, оно используется только для VPN PPTP, но запрета нет."
+msgstr "For VPN L2TP/OpenL2TP encryption mppe usually is not used, it is used only for VPN PPTP, but there is no ban."
 
 #: unit1.message216
 msgid "Автозапуск инте#209�нета п#209�и ста#209�те системы демоном openl2tp/openl2tpd без г#209�афики (не #209�екомендуется использовать)"
@@ -1249,8 +1245,8 @@ msgid "<ОК> - игно#209�и#209�овать это п#209�едуп#209�
 msgstr "<OK> - ignore this warning and continue (recommended). <Cancel> - Correct."
 
 #: unit1.message225
-msgid "Для Fedora для #209�аботы VPN OpenL2TP т#209�ебуется selinux-policy>=3.9.16-33, иначе может не #209�аботать. SELinux можно также отключить."
-msgstr "For Fedora for VPN OpenL2TP required selinux-policy>=3.9.16-33, otherwise it can not work. You can also disable SELinux."
+msgid "В Fedora если не работает, то может потребоваться настройка SELinux. SELinux можно также отключить."
+msgstr "In Fedora, if not working, you may need to configure SELinux. You can also disable SELinux."
 
 #: unit1.message226
 msgid "Введите па#209�оль root:"
@@ -1283,3 +1279,7 @@ msgstr "You must select the type of VPN."
 #: unit1.message228
 msgid "Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot."
 msgstr "To run as root, you need something: xroot/kdesu/gksu/beesu. It is recommended to install the package xroot."
+
+#: unit1.message215
+msgid "Отсутствует файл /etc/resolv.conf. Файл /etc/resolv.conf был создан автоматически. Правильность дальнейшей настройки VPN не гарантируется."
+msgstr "No file /etc/resolv.conf. File /etc/resolv.conf has been created automatically. The correctness of further configure the VPN can not be guaranteed."
