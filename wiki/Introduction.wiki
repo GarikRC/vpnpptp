@@ -4,20 +4,11 @@
 
 Реализация: Lazarus + FPC.
 
-Пакеты для Mandriva лежат здесь (репозитории Mandriva и/или Edumandriva):
-
-ftp://ftp.mandriva.ru/mandriva/
-ftp://ftp.linuxcenter.ru/pub/Mandriva/EduMandriva/educontrib
-
-Пакеты для Fedora лежат здесь (репозиторий Russian Fedora):
-
-http://mirror.yandex.ru/fedora/russianfedora/russianfedora/free/fedora/
-
-Пакеты для различных дистрибутивов (на сайте проекта):
+Пакеты для многих дистрибутивов есть в репозиториях различных дистрибутивов и на сайте проекта:
 
 http://code.google.com/p/vpnpptp/downloads/list
 
-Пакет входит в дистрибутивы: дистрибутивы Edumandriva, Mandriva, Rosa, MagOS, MiniOS, КСоНоМи, PCLinuxOS Russian Community Edition, Сиалия. Также пакет используется в PCLinuxOS, Ubuntu, Debian, openSUSE, Fedora, Mageia.
+Пакет входит в дистрибутивы: дистрибутивы Edumandriva, Mandriva (иногда), Rosa, MagOS, MiniOS, КСоНоМи, PCLinuxOS Russian Community Edition, Сиалия, Linux Mint Russian Edition от Lazarus, CruduX, Ubuntu от Ruben. Также пакет используется в PCLinuxOS, Ubuntu, Debian, openSUSE, Fedora, Mageia.
 
 Программа представлена в версиях пакетов:
 

@@ -108,7 +108,7 @@ begin
      (FormHintMatrix.Components[i] as TControl).Font.Size:=font_size;
     end;
 
-  if not HintSimle.Visible then  HintSimle.ActivateHint(rect(X,Y,X,Y),''); // заставляем элементы принято свои размеры  для правильных рассчетов
+  if not HintSimle.Visible then  HintSimle.ActivateHint(rect(X,Y,X,Y),''); // заставляем элементы принять свои размеры  для правильных рассчетов
 
   for i:=0 to FormHintMatrix.ComponentCount-2 do
   begin
