@@ -252,6 +252,26 @@ implementation
 
 uses balloon_matrix, hint_matrix, Unitpseudotray;
 
+function MyStrToInt(Str:string):integer;
+var
+  x:integer;
+  code:integer;
+begin
+  Val(str,x,code);
+  if code<>0 then Result:=0 else Result:=StrToInt(str);
+  x:=x+0;
+end;
+
+function MyStrToInt64(Str:string):int64;
+var
+  x:int64;
+  code:integer;
+begin
+  Val(str,x,code);
+  if code<>0 then Result:=0 else Result:=StrToInt64(str);
+  x:=x+0;
+end;
+
 function ProgrammRoot(Name:string;DoHalt:boolean):boolean;
 //возвращает истину если программа запущена под root
 //прерывает выполнение если DoHalt истина и программа под root
@@ -596,8 +616,8 @@ begin
   hei:=TrayIcon1.Icon.Height;
   If FileExists(MyLibDir+'/ponoff.conf.ini') then If Widget.IniPropStorage1.ReadString ('Widget','null')=false_str then
          begin
-              If (Widget.IniPropStorage1.ReadString ('icon_height','0'))<>'0' then hei:=StrToInt(Widget.IniPropStorage1.ReadString ('icon_height','0'));
-              If (Widget.IniPropStorage1.ReadString ('icon_width','0'))<>'0' then wid:=StrToInt(Widget.IniPropStorage1.ReadString ('icon_width','0'));
+              If (Widget.IniPropStorage1.ReadString ('icon_height','0'))<>'0' then hei:=MyStrToInt(Widget.IniPropStorage1.ReadString ('icon_height','0'));
+              If (Widget.IniPropStorage1.ReadString ('icon_width','0'))<>'0' then wid:=MyStrToInt(Widget.IniPropStorage1.ReadString ('icon_width','0'));
          end;
 
   CheckVPN;
@@ -845,7 +865,7 @@ If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked
         end;
      PClose(f);
      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
-     If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
+     If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1460 then
         begin
              BalloonMessage (3000,message0,message43+' '+MtuUsed+' '+message44,AFont);
              FpSystem(BinDir+'touch '+MyTmpDir+'mtu.checked');
@@ -970,7 +990,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                                                       begin
                                                            if fedora then FpSystem(UsrBinDir+'killall dhclient');
                                                           AProcessDhclient.Execute;
-                                                           Mysleep(StrToInt(Memo_Config.Lines[5]) div 3);
+                                                           Mysleep(MyStrToInt(Memo_Config.Lines[5]) div 3);
                                                            Application.ProcessMessages;
                                                       end;
                                 DhclientStart:=true;
@@ -983,7 +1003,7 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                                    PClose(f);
                                    if none then
                                       begin
-                                         Mysleep(StrToInt(Memo_Config.Lines[5]) div 3);
+                                         Mysleep(MyStrToInt(Memo_Config.Lines[5]) div 3);
                                          none:=false;
                                          popen (f,SBinDir+'ip r|'+BinDir+'grep '+Memo_Config.Lines[3],'R');
                                          If eof(f) then none:=true;
@@ -1046,7 +1066,7 @@ If Code_up_ppp then If link<>1 then //когда связи по факту не
                                  exit;
                                end;
 
-If Code_up_ppp then Timer1.Interval:=StrToInt64(Memo_Config.Lines[4]) else Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
+If Code_up_ppp then Timer1.Interval:=MyStrToInt64(Memo_Config.Lines[4]) else Timer1.Interval:=MyStrToInt64(Memo_Config.Lines[5]);
 If Code_up_ppp then If Timer1.Interval=0 then Timer1.Interval:=1000;
 
 If not Code_up_ppp then If link=3 then
@@ -1276,7 +1296,7 @@ begin
                                                      readln(FileObnull, StrObnull);
                                           closefile (FileObnull);
                                      end;
-  If StrObnull<>'' then ObnullRX:=StrToInt(StrObnull) else ObnullRX:=0;
+  If StrObnull<>'' then ObnullRX:=MyStrToInt(StrObnull) else ObnullRX:=0;
   StrObnull:='';
   If FileExists(MyTmpDir+'ObnullTX') then
                                      begin
@@ -1286,7 +1306,7 @@ begin
                                                      readln(FileObnull, StrObnull);
                                           closefile (FileObnull);
                                      end;
-  If StrObnull<>'' then ObnullTX:=StrToInt(StrObnull) else ObnullTX:=0;
+  If StrObnull<>'' then ObnullTX:=MyStrToInt(StrObnull) else ObnullTX:=0;
   RXSpeed:='0b/s';
   TXSpeed:='0b/s';
   CountInterface:=1;
@@ -1397,7 +1417,7 @@ If str='DEFAULT' then
     FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
     halt;
    end;
-   if Memo_General_conf.Lines[3]<>'none' then AFont:=StrToInt(Memo_General_conf.Lines[3]);
+   if Memo_General_conf.Lines[3]<>'none' then AFont:=MyStrToInt(Memo_General_conf.Lines[3]);
    If Memo_General_conf.Lines[4]='ubuntu' then ubuntu:=true;
    If Memo_General_conf.Lines[4]='debian' then debian:=true;
    If Memo_General_conf.Lines[4]='fedora' then fedora:=true;
@@ -1483,7 +1503,7 @@ If i>1 then
                     While not eof(f) do
                         begin
                             Readln (f,str);
-                            If str<>'' then If str<>IntToStr(Apid) then FpKill(StrToInt(str),9);
+                            If str<>'' then If str<>IntToStr(Apid) then FpKill(MyStrToInt(str),9);
                         end;
                PClose(f);
             end;
@@ -1527,7 +1547,7 @@ If not FileExists (MyTmpDir+'DateStart') then DateStart:=0 else
                                                  readln(FileDateStart, str);
                                             end;
                                             closefile (FileDateStart);
-                                            If str<>'' then DateStart:=StrToInt(str) else DateStart:=0;
+                                            If str<>'' then DateStart:=MyStrToInt(str) else DateStart:=0;
                                        end;
 //учитывание особенностей openSUSE
 If suse then
@@ -1617,7 +1637,7 @@ If suse then
                  FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
-  Timer1.Interval:=StrToInt64(Memo_Config.Lines[5]);
+  Timer1.Interval:=MyStrToInt64(Memo_Config.Lines[5]);
   MenuItem2Click(Self);//на всякий случай отключаем вдруг созданное ppp
   If Memo_Config.Lines[7]='reconnect-pptp' then
                                              begin
@@ -1869,8 +1889,7 @@ var
   Str:string;
   TV : timeval;
   DNS3,DNS4:string;
-  x:int64;
-  code,i:integer;
+  i:integer;
 begin
   If not FileExists (VarRunVpnpptp+ProfileName) then FpSystem (BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
@@ -1918,13 +1937,9 @@ begin
                 PClose(f);
                 If TXbyte1='' then TXbyte1:='0';
             end;
-  Val(TXbyte1,x,code);
-  If code<>0 then TXbyte1:='0';
-  Val(RXbyte1,x,code);
-  If code<>0 then RXbyte1:='0';
   If MaxSpeed<>0 then If Code_up_ppp then
           begin
-                if StrToInt64(RXbyte1)-StrToInt64(RXbyte0)>MaxSpeed then
+                if MyStrToInt64(RXbyte1)-MyStrToInt64(RXbyte0)>MaxSpeed then
                                                begin
                                                     LimitRX:=LimitRX+1;
                                                     if LimitRX=3 then
@@ -1933,7 +1948,7 @@ begin
                                                                           LimitRX:=0;
                                                                      end;
                                                end else LimitRX:=0;
-                 if StrToInt64(TXbyte1)-StrToInt64(TXbyte0)>MaxSpeed then
+                 if MyStrToInt64(TXbyte1)-MyStrToInt64(TXbyte0)>MaxSpeed then
                                                begin
                                                     LimitTX:=LimitTX+1;
                                                     if LimitTX=3 then
@@ -1945,14 +1960,14 @@ begin
           end;
   If Code_up_ppp then
         begin
-          TrafficRX:=StrToInt64(RXbyte1);
-          If StrToInt64(RXbyte1)-StrToInt64(RXbyte0)<0 then
+          TrafficRX:=MyStrToInt64(RXbyte1);
+          If MyStrToInt64(RXbyte1)-MyStrToInt64(RXbyte0)<0 then
                                                        begin
                                                             ObnullRX:=ObnullRX+1;
                                                             FpSystem (UsrBinDir+'printf "'+IntToStr(ObnullRX)+'\n" > '+MyTmpDir+'ObnullRX');
                                                        end;
-          TrafficTX:=StrToInt64(TXbyte1);
-          If StrToInt64(TXbyte1)-StrToInt64(TXbyte0)<0 then
+          TrafficTX:=MyStrToInt64(TXbyte1);
+          If MyStrToInt64(TXbyte1)-MyStrToInt64(TXbyte0)<0 then
                                                        begin
                                                             ObnullTX:=ObnullTX+1;
                                                             FpSystem (UsrBinDir+'printf "'+IntToStr(ObnullTX)+'\n" > '+MyTmpDir+'ObnullTX');
@@ -1971,9 +1986,9 @@ begin
                     FpSystem (BinDir+'rm -f '+MyTmpDir+'ObnullRX');
                     FpSystem (BinDir+'rm -f '+MyTmpDir+'ObnullTX');
                 end;
-  If (StrToInt64(RXbyte1)-StrToInt64(RXbyte0))>=0 then RXSpeed:=IntToStr(StrToInt64(RXbyte1)-StrToInt64(RXbyte0)) else RXSpeed:='-';
+  If (MyStrToInt64(RXbyte1)-MyStrToInt64(RXbyte0))>=0 then RXSpeed:=IntToStr(MyStrToInt64(RXbyte1)-MyStrToInt64(RXbyte0)) else RXSpeed:='-';
   If RXSpeed='' then RXSpeed:='0';
-  If (StrToInt64(TXbyte1)-StrToInt64(TXbyte0))>=0 then TXSpeed:=IntToStr(StrToInt64(TXbyte1)-StrToInt64(TXbyte0)) else TXSpeed:='-';
+  If (MyStrToInt64(TXbyte1)-MyStrToInt64(TXbyte0))>=0 then TXSpeed:=IntToStr(MyStrToInt64(TXbyte1)-MyStrToInt64(TXbyte0)) else TXSpeed:='-';
   If TXSpeed='' then TXSpeed:='0';
   RXbyte0:=RXbyte1;
   TXbyte0:=TXbyte1;
@@ -1985,14 +2000,14 @@ begin
   DoSpeedCount:=true;
   If RXSpeed<>'-' then
      begin
-        If StrToInt64(RXSpeed)>1048576 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1048576)+' MiB/s'
-              else If StrToInt64(RXSpeed)>1024 then RXSpeed:=IntToStr(StrToInt64(RXSpeed) div 1024)+' KiB/s'
+        If MyStrToInt64(RXSpeed)>1048576 then RXSpeed:=IntToStr(MyStrToInt64(RXSpeed) div 1048576)+' MiB/s'
+              else If MyStrToInt64(RXSpeed)>1024 then RXSpeed:=IntToStr(MyStrToInt64(RXSpeed) div 1024)+' KiB/s'
                                                                              else RXSpeed:=RXSpeed+' b/s';
      end;
   If TXSpeed<>'-' then
      begin
-        If StrToInt64(TXSpeed)>1048576 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1048576)+' MiB/s'
-              else If StrToInt64(TXSpeed)>1024 then TXSpeed:=IntToStr(StrToInt64(TXSpeed) div 1024)+' KiB/s'
+        If MyStrToInt64(TXSpeed)>1048576 then TXSpeed:=IntToStr(MyStrToInt64(TXSpeed) div 1048576)+' MiB/s'
+              else If MyStrToInt64(TXSpeed)>1024 then TXSpeed:=IntToStr(MyStrToInt64(TXSpeed) div 1024)+' KiB/s'
                                                                              else TXSpeed:=TXSpeed+' b/s';
      end;
   If Code_up_ppp then If DateStart=0 then
@@ -2161,7 +2176,7 @@ begin
                                                      readln(FileObnull, StrObnull);
                                           closefile (FileObnull);
                                      end;
-  If StrObnull<>'' then ObnullRX:=StrToInt(StrObnull) else ObnullRX:=0;
+  If StrObnull<>'' then ObnullRX:=MyStrToInt(StrObnull) else ObnullRX:=0;
   StrObnull:='';
   If FileExists(MyTmpDir+'ObnullTX') then
                                      begin
@@ -2171,9 +2186,9 @@ begin
                                                      readln(FileObnull, StrObnull);
                                           closefile (FileObnull);
                                      end;
-  If StrObnull<>'' then ObnullTX:=StrToInt(StrObnull) else ObnullTX:=0;
-  TrafficRX:=StrToInt64(RXbyte1)+4294967296*ObnullRX;
-  TrafficTX:=StrToInt64(TXbyte1)+4294967296*ObnullTX;
+  If StrObnull<>'' then ObnullTX:=MyStrToInt(StrObnull) else ObnullTX:=0;
+  TrafficRX:=MyStrToInt64(RXbyte1)+4294967296*ObnullRX;
+  TrafficTX:=MyStrToInt64(TXbyte1)+4294967296*ObnullTX;
   If TrafficRX>=1073741824 then RX:=FloatToStr(Round(TrafficRX/1073741824*1000)/1000)+' GiB'
                           else If TrafficRX>=1048576 then RX:=FloatToStr(Round(TrafficRX/1048576*1000)/1000)+' MiB'
                                                     else If TrafficRX>=1024 then RX:=FloatToStr(Round(TrafficRX/1024*1000)/1000)+' KiB'
