@@ -93,7 +93,6 @@ type
     Memo_ip_IPS: TMemo;
     Metka: TLabel;
     Memo_config: TMemo;
-    Memo_shorewall: TMemo;
     CheckBox_desktop: TCheckBox;
     CheckBox_no40: TCheckBox;
     CheckBox_no56: TCheckBox;
@@ -532,6 +531,26 @@ resourcestring
 
 implementation
 
+function MyStrToInt(Str:string):integer;
+var
+  x:integer;
+  code:integer;
+begin
+  Val(str,x,code);
+  if code<>0 then Result:=0 else Result:=StrToInt(str);
+  x:=x+0;
+end;
+
+function MyStrToInt64(Str:string):int64;
+var
+  x:int64;
+  code:integer;
+begin
+  Val(str,x,code);
+  if code<>0 then Result:=0 else Result:=StrToInt64(str);
+  x:=x+0;
+end;
+
 function ProgrammRoot(Name:string;DoHalt:boolean):boolean;
 //возвращает истину если программа запущена под root
 //прерывает выполнение если DoHalt истина и программа под root
@@ -912,7 +931,7 @@ end;
 procedure TForm1.Button_createClick(Sender: TObject);
 var mppe_string:string;
     i,j:integer;
-    Str,str0, Str1:string;
+    Str,str0:string;
     flag:boolean;
     FileSudoers,FileAutostartpppd,FileResolvConf,FileProfiles,FileLac:textfile;
     FlagAutostartPonoff:boolean;
@@ -1134,7 +1153,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                         end;
  If not FileExists(EtcDir+'dhclient-exit-hooks.old') then FpSystem(BinDir+'cp -f '+EtcDir+'dhclient.conf '+EtcDir+'dhclient.conf.old');
  if not FileExists(EtcDir+'dhclient-exit-hooks.old') then FpSystem(BinDir+'cp -f '+EtcDir+'dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks.old');
- If dhcp_route.Checked then If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
+ If dhcp_route.Checked then
                        begin
                           if FileExists(MyScriptsDir+'dhclient.conf') then FpSystem(BinDir+'cp -f '+MyScriptsDir+'dhclient.conf '+EtcDir+'dhclient.conf');
                           if FileExists(MyScriptsDir+'dhclient-exit-hooks') then FpSystem(BinDir+'cp -f '+MyScriptsDir+'dhclient-exit-hooks '+EtcDir+'dhclient-exit-hooks');
@@ -1197,20 +1216,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                           if FileExists(EtcShorewallDir+'interfaces') then
                                                                      begin
                                                                         FpSystem(BinDir+'cp -f '+EtcShorewallDir+'interfaces '+EtcShorewallDir+'interfaces.old');
-                                                                        Memo_shorewall.Lines.Clear;
-                                                                        Memo_shorewall.Lines.LoadFromFile(EtcShorewallDir+'interfaces');
-                                                                        i:=0;
-                                                                        Repeat
-                                                                        i:=i+1;
-                                                                        until LeftStr(Memo_shorewall.Lines[i], 10)='#LAST LINE';
-                                                                        Str:=Memo_shorewall.Lines[i];
-                                                                        FpSystem(BinDir+'rm -f '+EtcShorewallDir+'interfaces');
-                                                                        Memo_shorewall.Lines[0]:='# vpnpptp changed this config';
-                                                                        For i:=0 to i-1 do
-                                                                        begin
-                                                                              Str1:=UsrBinDir+'printf "'+Memo_shorewall.Lines[i]+'\n" >> '+EtcShorewallDir+'interfaces';
-                                                                              FpSystem (Str1);
-                                                                        end;
+                                                                        FpSystem(UsrBinDir+'printf "# vpnpptp changed this config\n" >> '+EtcShorewallDir+'interfaces');
                                                                         FpSystem(UsrBinDir+'printf "net    ppp0    detect\n" >> '+EtcShorewallDir+'interfaces');
                                                                         FpSystem(UsrBinDir+'printf "net    ppp1    detect\n" >> '+EtcShorewallDir+'interfaces');
                                                                         FpSystem(UsrBinDir+'printf "net    ppp2    detect\n" >> '+EtcShorewallDir+'interfaces');
@@ -1221,8 +1227,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                                                         FpSystem(UsrBinDir+'printf "net    ppp7    detect\n" >> '+EtcShorewallDir+'interfaces');
                                                                         FpSystem(UsrBinDir+'printf "net    ppp8    detect\n" >> '+EtcShorewallDir+'interfaces');
                                                                         FpSystem(UsrBinDir+'printf "net    ppp9    detect\n" >> '+EtcShorewallDir+'interfaces');
-                                                                        Str:=UsrBinDir+'printf "'+Str+'\n" >> '+EtcShorewallDir+'interfaces';
-                                                                        FpSystem (Str);
+                                                                        FpSystem(UsrBinDir+'printf "# vpnpptp changed this config\n" >> '+EtcShorewallDir+'interfaces');
                                                                         FpSystem (ServiceCommand+'shorewall restart');
                                                                         FpSystem (BinDir+'chmod 600 '+EtcShorewallDir+'interfaces');
                                                                      end;
@@ -2693,7 +2698,7 @@ begin
                                                                         end;
                                                                      PClose(f);
                                                                      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
-                                                                     If MtuUsed<>'' then If StrToInt(MtuUsed)>1460 then
+                                                                     If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1460 then
                                                                              FpSystem(UsrBinDir+'printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> '+VarLogDir+'vpnlog');
                                                                      FlagMtu:=true;
                                                                    end;
@@ -2703,7 +2708,7 @@ begin
                                              end;
      end;
 end;
- if Form3.Tag=1 then AProcess.Free;
+// if Form3.Tag=1 then AProcess.Free;
 end;
 
 procedure TForm1.Autostart_ponoffChange(Sender: TObject);
@@ -3210,7 +3215,7 @@ begin
               Form1.Repaint;
               exit;
             end;
-    if (StrToInt(Edit_MaxTime.Text)<5) or (StrToInt(Edit_MaxTime.Text)>255) then
+    if (MyStrToInt(Edit_MaxTime.Text)<5) or (MyStrToInt(Edit_MaxTime.Text)>255) then
              begin
                Form3.MyMessageBox(message0,message8,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                Edit_MaxTime.Text:='10';
@@ -3223,7 +3228,7 @@ y:=false;
     if  Length(Edit_MinTime.Text)>1 then if Edit_MinTime.Text[1]='0' then Edit_MinTime.Text:='0';
     for i:=1 to Length(Edit_MinTime.Text) do
         if not (Edit_MinTime.Text[i] in ['0'..'9']) then y:=true;
-    if y or (Edit_MinTime.Text='') or (StrToInt(Edit_MinTime.Text)>255) or (Length(Edit_MinTime.Text)>3) then
+    if y or (Edit_MinTime.Text='') or (MyStrToInt(Edit_MinTime.Text)>255) or (Length(Edit_MinTime.Text)>3) then
             begin
               Form3.MyMessageBox(message0,message10,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
               Edit_MinTime.Text:='3';
@@ -3360,11 +3365,11 @@ if code<>0 then y:=true;
 Val(d,x,code);
 if code<>0 then y:=true;
 //каждый октет (или квадрант) может принимать значение от 0 до 255, итого 256 значений
-If not y then if not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
-If not y then if not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
-If not y then if not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
-If not y then if not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
-If not y then if not y then Form1.Edit_IPS.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+If not y then if not ((MyStrToInt(a)>=0) and (MyStrToInt(a)<=255)) then y:=true;
+If not y then if not ((MyStrToInt(b)>=0) and (MyStrToInt(b)<=255)) then y:=true;
+If not y then if not ((MyStrToInt(c)>=0) and (MyStrToInt(c)<=255)) then y:=true;
+If not y then if not ((MyStrToInt(d)>=0) and (MyStrToInt(d)<=255)) then y:=true;
+If not y then if not y then Form1.Edit_IPS.Text:=IntToStr(MyStrToInt(a))+'.'+IntToStr(MyStrToInt(b))+'.'+IntToStr(MyStrToInt(c))+'.'+IntToStr(MyStrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
 If not y then IPS:=true else IPS:=false;
 //определяем шлюз по умолчанию
   FpSystem(SBinDir+'ip r|'+BinDir+'grep default|'+BinDir+'awk '+ chr(39)+'{print $3}'+chr(39)+' > '+MyTmpDir+'gate');
@@ -3408,13 +3413,6 @@ If not y then IPS:=true else IPS:=false;
                              Form1.Repaint;
                            end;
   //определяем DNSA, DNSB и DNSdopC
-  If not FileExists(EtcDir+'resolv.conf') then
-                                          begin
-                                               FpSystem (UsrBinDir+'printf "nameserver 127.0.0.1'+'\n" >> '+EtcDir+'resolv.conf');
-                                               Form3.MyMessageBox(message0,message215,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                               Application.ProcessMessages;
-                                               Form1.Repaint;
-                                          end;
   If LeftStr(Memo_gate.Lines[0],3)='ppp' then
                                          begin
                                               DNSA:='none';
@@ -3442,6 +3440,14 @@ If not y then IPS:=true else IPS:=false;
                              Application.ProcessMessages;
                              Form1.Repaint;
                            end;
+  If not FileExists(EtcDir+'resolv.conf') then
+                                          begin
+                                               FpSystem (UsrBinDir+'printf "nameserver 127.0.0.1'+'\n" >> '+EtcDir+'resolv.conf');
+                                               Form3.MyMessageBox(message0,message215,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                               DNSA:='127.0.0.1';
+                                               Application.ProcessMessages;
+                                               Form1.Repaint;
+                                          end;
   EditDNS1.Text:=DNSA;
   EditDNS2.Text:=DNSB;
   DNSC:=DNSA;
@@ -3585,10 +3591,10 @@ If y then
            exit;
          end;
 //каждый октет (или квадрант) может принимать значение от 0 до 255, итого 256 значений
-If not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
-If not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
-If not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
-If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
+If not ((MyStrToInt(a)>=0) and (MyStrToInt(a)<=255)) then y:=true;
+If not ((MyStrToInt(b)>=0) and (MyStrToInt(b)<=255)) then y:=true;
+If not ((MyStrToInt(c)>=0) and (MyStrToInt(c)<=255)) then y:=true;
+If not ((MyStrToInt(d)>=0) and (MyStrToInt(d)<=255)) then y:=true;
 If y then
          begin
            Form3.MyMessageBox(message0,message16,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
@@ -3597,7 +3603,7 @@ If y then
            Form1.Repaint;
            exit;
          end;
- Edit_gate.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+ Edit_gate.Text:=IntToStr(MyStrToInt(a))+'.'+IntToStr(MyStrToInt(b))+'.'+IntToStr(MyStrToInt(c))+'.'+IntToStr(MyStrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
 //проверка корректности ввода EditDNS3
 If Length(EditDNS3.Text)>15 then //15-макс.длина шлюза 255.255.255.255
                     begin
@@ -3641,10 +3647,10 @@ If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
 //каждый октет (или квадрант) может принимать значение от 0 до 255, итого 256 значений
 if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
 begin
-If not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
-If not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
-If not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
-If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
+If not ((MyStrToInt(a)>=0) and (MyStrToInt(a)<=255)) then y:=true;
+If not ((MyStrToInt(b)>=0) and (MyStrToInt(b)<=255)) then y:=true;
+If not ((MyStrToInt(c)>=0) and (MyStrToInt(c)<=255)) then y:=true;
+If not ((MyStrToInt(d)>=0) and (MyStrToInt(d)<=255)) then y:=true;
 end;
 If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
          begin
@@ -3654,7 +3660,7 @@ If y then if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then
            Form1.Repaint;
            exit;
          end;
-if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then EditDNS3.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+if EditDNS3.Text<>'none' then if EditDNS3.Text<>'' then EditDNS3.Text:=IntToStr(MyStrToInt(a))+'.'+IntToStr(MyStrToInt(b))+'.'+IntToStr(MyStrToInt(c))+'.'+IntToStr(MyStrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
 //проверка корректности ввода EditDNS4
 If Length(EditDNS4.Text)>15 then //15-макс.длина шлюза 255.255.255.255
                     begin
@@ -3698,10 +3704,10 @@ If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
 //каждый октет (или квадрант) может принимать значение от 0 до 255, итого 256 значений
 if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
 begin
-If not ((StrToInt(a)>=0) and (StrToInt(a)<=255)) then y:=true;
-If not ((StrToInt(b)>=0) and (StrToInt(b)<=255)) then y:=true;
-If not ((StrToInt(c)>=0) and (StrToInt(c)<=255)) then y:=true;
-If not ((StrToInt(d)>=0) and (StrToInt(d)<=255)) then y:=true;
+If not ((MyStrToInt(a)>=0) and (MyStrToInt(a)<=255)) then y:=true;
+If not ((MyStrToInt(b)>=0) and (MyStrToInt(b)<=255)) then y:=true;
+If not ((MyStrToInt(c)>=0) and (MyStrToInt(c)<=255)) then y:=true;
+If not ((MyStrToInt(d)>=0) and (MyStrToInt(d)<=255)) then y:=true;
 end;
 If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
          begin
@@ -3712,7 +3718,7 @@ If y then if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then
            exit;
          end;
 Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont, MyLibDir, EtcPppPeersDir);
-if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then EditDNS4.Text:=IntToStr(StrToInt(a))+'.'+IntToStr(StrToInt(b))+'.'+IntToStr(StrToInt(c))+'.'+IntToStr(StrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
+if EditDNS4.Text<>'none' then if EditDNS4.Text<>'' then EditDNS4.Text:=IntToStr(MyStrToInt(a))+'.'+IntToStr(MyStrToInt(b))+'.'+IntToStr(MyStrToInt(c))+'.'+IntToStr(MyStrToInt(d)); //сократятся лишние нули, введенные в начале любого из октетов (или квадрантов)
 If ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if ((EditDNS4.Text='none') or (EditDNS4.Text='')) then
                            begin
                              If not Unit2.Form2.CheckBoxusepeerdns.Checked then
@@ -3741,7 +3747,7 @@ begin
                                         Form1.Repaint;
                                         exit;
                                       end;
-If (StrToInt(Edit_mtu.Text)>1500) or (StrToInt(Edit_mtu.Text)<576) then
+If (MyStrToInt(Edit_mtu.Text)>1500) or (MyStrToInt(Edit_mtu.Text)<576) then
                                       begin
                                         Form3.MyMessageBox(message0,message17,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                         Edit_mtu.Clear;
@@ -3761,7 +3767,7 @@ begin
                                         Form1.Repaint;
                                         exit;
                                       end;
-  If (StrToInt(Edit_mru.Text)>1500) or (StrToInt(Edit_mru.Text)<576) then
+  If (MyStrToInt(Edit_mru.Text)>1500) or (MyStrToInt(Edit_mru.Text)<576) then
                                       begin
                                         Form3.MyMessageBox(message0,message104,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                         Edit_mru.Clear;
@@ -3783,7 +3789,7 @@ If (ComboBoxVPN.Text='VPN OpenL2TP') then
                                    Autostartpppd.Checked:=false;
                                    StartMessage:=true;
                                end;
-If Edit_mtu.Text<>'' then if (StrToInt(Edit_mtu.Text)>1460) then
+If Edit_mtu.Text<>'' then if (MyStrToInt(Edit_mtu.Text)>1460) then
                                       begin
                                         Form3.MyMessageBox(message0,message118+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir,2);
                                         if (Form3.Tag=3) or (Form3.Tag=0) then begin Application.ProcessMessages; Form1.Repaint; exit; end;
@@ -3805,6 +3811,7 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
  TabSheet3.TabVisible:= True;
  Button_next2.Visible:=False;
  ButtonHelp.Visible:=false;
+ x:=x+0;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -4195,7 +4202,7 @@ PageControl1.ShowTabs:=false;
           If Memo_config.Lines[0]='shorewall-yes' then CheckBox_shorewall.Checked:=true else CheckBox_shorewall.Checked:=false;
           If Memo_config.Lines[1]='sudo-yes' then Sudo_ponoff.Checked:=true else Sudo_ponoff.Checked:=false;
           If Memo_config.Lines[2]='sudo-configure-yes' then Sudo_configure.Checked:=true else Sudo_configure.Checked:=false;
-          If Memo_config.Lines[3]<>'none' then AFont:=StrToInt(Memo_config.Lines[3]);
+          If Memo_config.Lines[3]<>'none' then AFont:=MyStrToInt(Memo_config.Lines[3]);
           If Memo_config.Lines[4]='ubuntu' then ComboBoxDistr.Text:='Ubuntu '+message150;
           If Memo_config.Lines[4]='debian' then ComboBoxDistr.Text:='Debian '+message150;
           If Memo_config.Lines[4]='fedora' then ComboBoxDistr.Text:='Fedora '+message150;
