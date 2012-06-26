@@ -746,7 +746,7 @@ if i=1 then
                                      Application.ProcessMessages;
                                      AStringList := TStringList.Create;
                                      AAsyncProcess := TAsyncProcess.Create(nil);
-                                     If (Edit_IPS.Text='connect.swissvpn.net') and (Edit_user.Text='swissvpntest') and (Edit_passwd.Text='swissvpntest') then
+                                     If (Edit_IPS.Text='connect.lb.swissvpn.net') and (Edit_user.Text='swissvpntest') and (Edit_passwd.Text='swissvpntest') then
                                                                                                                           AAsyncProcess.CommandLine :=SBinDir+'ping -c1 swissvpn.net' else
                                                                                                                                         AAsyncProcess.CommandLine :=SBinDir+'ping -c1 yandex.ru';
                                      AAsyncProcess.Options := AAsyncProcess.Options + [poUsePipes];
@@ -1206,7 +1206,7 @@ If Button=mbmiddle then if ButtonMiddle then
                         end;
  If Button=mbmiddle then if not ButtonMiddle then
                          begin
-                             Edit_IPS.Text:='connect.swissvpn.net';
+                             Edit_IPS.Text:='connect.lb.swissvpn.net';
                              Edit_user.Text:='swissvpntest';
                              Edit_passwd.Text:='swissvpntest';
                              ButtonMiddle:=true;
