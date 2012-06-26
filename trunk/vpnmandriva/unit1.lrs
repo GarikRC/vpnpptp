@@ -2717,30 +2717,30 @@ LazarusResources.Add('TMyForm','FORMDATA',[
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0
   +#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#0#8
   +'OnCreate'#7#10'FormCreate'#11'OnMouseDown'#7#18'TabSheet1MouseDown'#8'Posit'
-  +'ion'#7#15'poDesktopCenter'#8'ShowHint'#9#10'LCLVersion'#6#6'0.9.29'#0#6'TPa'
-  +'nel'#7'MyPanel'#22'AnchorSideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Cont'
-  +'rol'#7#5'Owner'#23'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideRight.S'
-  +'ide'#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBo'
-  +'ttom.Side'#7#9'asrBottom'#4'Left'#2#0#6'Height'#3'D'#2#3'Top'#2#0#5'Width'#3
-  +'0'#3#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#12'ClientHei'
-  +'ght'#3'D'#2#11'ClientWidth'#3'0'#3#8'TabOrder'#2#0#11'OnMouseDown'#7#18'Tab'
-  +'Sheet1MouseDown'#0#6'TLabel'#9'Label_IPS'#22'AnchorSideLeft.Control'#7#10'L'
-  +'abel_peer'#21'AnchorSideTop.Control'#7#10'Label_peer'#18'AnchorSideTop.Side'
-  +#7#9'asrBottom'#23'AnchorSideRight.Control'#7#10'Label_peer'#20'AnchorSideRi'
-  +'ght.Side'#7#9'asrBottom'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2
-  +'L'#6'Height'#2#14#3'Top'#2'K'#5'Width'#2#8#7'Anchors'#11#5'akTop'#7'akRight'
-  +#0#17'BorderSpacing.Top'#2#30#7'Caption'#6#1'B'#11'ParentColor'#8#14'ParentS'
-  +'howHint'#8#8'ShowHint'#9#11'OnMouseDown'#7#18'TabSheet1MouseDown'#0#0#6'TLa'
-  +'bel'#10'Label_user'#22'AnchorSideLeft.Control'#7#9'Label_IPS'#21'AnchorSide'
-  +'Top.Control'#7#9'Label_IPS'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'Anchor'
-  +'SideRight.Control'#7#9'Label_IPS'#20'AnchorSideRight.Side'#7#9'asrBottom'#21
-  +'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2'K'#6'Height'#2#14#3'Top'#2
-  +'w'#5'Width'#2#9#7'Anchors'#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'#2
-  +#30#7'Caption'#6#1'C'#11'ParentColor'#8#11'OnMouseDown'#7#18'TabSheet1MouseD'
-  +'own'#0#0#6'TLabel'#10'Label_pswd'#22'AnchorSideLeft.Control'#7#10'Label_use'
-  +'r'#21'AnchorSideTop.Control'#7#10'Label_user'#18'AnchorSideTop.Side'#7#9'as'
-  +'rBottom'#23'AnchorSideRight.Control'#7#10'Label_user'#20'AnchorSideRight.Si'
-  +'de'#7#9'asrBottom'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2'K'#6
+  +'ion'#7#15'poDesktopCenter'#8'ShowHint'#9#10'LCLVersion'#6#8'0.9.30.4'#0#6'T'
+  +'Panel'#7'MyPanel'#22'AnchorSideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Co'
+  +'ntrol'#7#5'Owner'#23'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideRight'
+  +'.Side'#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSide'
+  +'Bottom.Side'#7#9'asrBottom'#4'Left'#2#0#6'Height'#3'D'#2#3'Top'#2#0#5'Width'
+  +#3'0'#3#7'Anchors'#11#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#12'ClientH'
+  +'eight'#3'D'#2#11'ClientWidth'#3'0'#3#8'TabOrder'#2#0#11'OnMouseDown'#7#18'T'
+  +'abSheet1MouseDown'#0#6'TLabel'#9'Label_IPS'#22'AnchorSideLeft.Control'#7#10
+  +'Label_peer'#21'AnchorSideTop.Control'#7#10'Label_peer'#18'AnchorSideTop.Sid'
+  +'e'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#10'Label_peer'#20'AnchorSid'
+  +'eRight.Side'#7#9'asrBottom'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'
+  +#2'L'#6'Height'#2#14#3'Top'#2'K'#5'Width'#2#8#7'Anchors'#11#5'akTop'#7'akRig'
+  +'ht'#0#17'BorderSpacing.Top'#2#30#7'Caption'#6#1'B'#11'ParentColor'#8#14'Par'
+  +'entShowHint'#8#8'ShowHint'#9#11'OnMouseDown'#7#18'TabSheet1MouseDown'#0#0#6
+  +'TLabel'#10'Label_user'#22'AnchorSideLeft.Control'#7#9'Label_IPS'#21'AnchorS'
+  +'ideTop.Control'#7#9'Label_IPS'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'Anc'
+  +'horSideRight.Control'#7#9'Label_IPS'#20'AnchorSideRight.Side'#7#9'asrBottom'
+  +#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2'K'#6'Height'#2#14#3'Top'
+  +#2'w'#5'Width'#2#9#7'Anchors'#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'
+  +#2#30#7'Caption'#6#1'C'#11'ParentColor'#8#11'OnMouseDown'#7#18'TabSheet1Mous'
+  +'eDown'#0#0#6'TLabel'#10'Label_pswd'#22'AnchorSideLeft.Control'#7#10'Label_u'
+  +'ser'#21'AnchorSideTop.Control'#7#10'Label_user'#18'AnchorSideTop.Side'#7#9
+  +'asrBottom'#23'AnchorSideRight.Control'#7#10'Label_user'#20'AnchorSideRight.'
+  +'Side'#7#9'asrBottom'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2'K'#6
   +'Height'#2#14#3'Top'#3#163#0#5'Width'#2#9#7'Anchors'#11#5'akTop'#7'akRight'#0
   +#17'BorderSpacing.Top'#2#30#7'Caption'#6#1'D'#11'ParentColor'#8#11'OnMouseDo'
   +'wn'#7#18'TabSheet1MouseDown'#0#0#6'TLabel'#10'Label_peer'#22'AnchorSideLeft'
