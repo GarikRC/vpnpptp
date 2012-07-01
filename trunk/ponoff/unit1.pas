@@ -1184,7 +1184,7 @@ If not Code_up_ppp then If link=1 then
                                                                                                PClose(f);
                                                                                                FpSystem (BinDir+'echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
                                                                                           end;
-                                                       If Memo_Config.Lines[39]='openl2tp' then FpSystem(BinDir+'sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
+                                                       If Memo_Config.Lines[39]='openl2tp' then FpSystem(BinDir+'bash '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
                                                    end;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then
                                                 begin
@@ -1699,7 +1699,7 @@ begin
      readln(f,str);
      If str<>'' then If (LeftStr(str,4)='pppd') then
                                         begin
-                                             If Memo_Config.Lines[39]<>'openl2tp' then If FileExists(MyLibDir+'default/openl2tp-stop') then FpSystem(BinDir+'sh '+MyLibDir+'default/openl2tp-stop');
+                                             If Memo_Config.Lines[39]<>'openl2tp' then If FileExists(MyLibDir+'default/openl2tp-stop') then FpSystem(BinDir+'bash '+MyLibDir+'default/openl2tp-stop');
                                              FpSystem(UsrBinDir+'killall pppd');
                                              If (NetServiceStr='network-manager') or (NetServiceStr='NetworkManager') or (NetServiceStr='networkmanager') then
                                                                                   begin
@@ -1716,7 +1716,7 @@ begin
                                       FpSystem (ServiceCommand+'xl2tpd stop');
                                       FpSystem (UsrBinDir+'killall xl2tpd');
                                  end;
- If Memo_Config.Lines[39]='openl2tp' then FpSystem(BinDir+'sh '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-stop');
+ If Memo_Config.Lines[39]='openl2tp' then FpSystem(BinDir+'bash '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-stop');
  FpSystem(UsrBinDir+'killall openl2tpd');
  FpSystem(UsrBinDir+'killall openl2tp');
  FpSystem(UsrBinDir+'killall l2tpd');
