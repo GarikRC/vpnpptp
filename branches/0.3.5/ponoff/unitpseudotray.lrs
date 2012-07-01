@@ -1,0 +1,15 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TWidget','FORMDATA',[
+  'TPF0'#7'TWidget'#6'Widget'#4'Left'#3#196#3#6'Height'#3#203#0#3'Top'#2'i'#5'W'
+  +'idth'#3#249#0#11'BorderStyle'#7#6'bsNone'#7'Caption'#6#6'Widget'#12'ClientH'
+  +'eight'#3#203#0#11'ClientWidth'#3#249#0#8'OnCreate'#7#10'FormCreate'#11'OnMo'
+  +'useDown'#7#15'WidgetMouseDown'#19'OnWindowStateChange'#7#21'FormWindowState'
+  +'Change'#17'SessionProperties'#6'#Height;Left;ShowInTaskBar;Top;Width'#13'Sh'
+  +'owInTaskBar'#7#7'stNever'#10'LCLVersion'#6#8'0.9.30.2'#0#6'TImage'#6'Image1'
+  +#4'Left'#2#0#6'Height'#3#203#0#3'Top'#2#0#5'Width'#3#249#0#5'Align'#7#8'alCl'
+  +'ient'#11'OnMouseDown'#7#15'WidgetMouseDown'#11'OnMouseMove'#7#15'Image1Mous'
+  +'eMove'#9'OnMouseUp'#7#13'Image1MouseUp'#9'PopupMenu'#7#16'Form1.PopupMenu1'
+  +#7'Stretch'#9#0#0#15'TIniPropStorage'#15'IniPropStorage1'#12'StoredValues'#14
+  +#0#4'left'#2'P'#3'top'#2'8'#0#0#0
+]);
