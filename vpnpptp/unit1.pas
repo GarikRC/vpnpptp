@@ -1309,7 +1309,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
  Memo_peer.Lines.SaveToFile(EtcPppPeersDir+Edit_peer.Text); //записываем провайдерский профиль подключения
  If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
                               If FileExists(MyScriptsDir+'peermodify.sh') then //коррекция шифрования в соответствии с strings pppd
-                                                                FpSystem (BinDir+'sh '+MyScriptsDir+'peermodify.sh '+Edit_peer.Text);
+                                                                FpSystem (BinDir+'bash '+MyScriptsDir+'peermodify.sh '+Edit_peer.Text);
  FpSystem (BinDir+'chmod 600 '+EtcPppPeersDir+Edit_peer.Text);
  If not DirectoryExists(VarLogDir) then FpSystem (BinDir+'mkdir -p '+VarLogDir);
 //удаляем временные, старые файлы и ссылки
@@ -1333,7 +1333,7 @@ If fedora then
  begin
     If not FileExists(EtcPppDir+'ip-up.local.old') then FpSystem (BinDir+'cp -f '+EtcPppDir+'ip-up.local '+EtcPppDir+'ip-up.local.old');
     FpSystem(BinDir+'rm -f '+EtcPppDir+'ip-up.local');
-    FpSystem(BinDir+'echo "#!/bin/sh" > '+EtcPppDir+'ip-up.local');
+    FpSystem(BinDir+'echo "#!/bin/bash" > '+EtcPppDir+'ip-up.local');
     FpSystem(BinDir+'echo "if [ -d /etc/ppp/ip-up.d/ -a -x /usr/bin/run-parts ]; then" >> '+EtcPppDir+'ip-up.local');
     FpSystem(BinDir+'echo "    /usr/bin/run-parts /etc/ppp/ip-up.d/" >> '+EtcPppDir+'ip-up.local');
     FpSystem(BinDir+'echo "fi" >> '+EtcPppDir+'ip-up.local');
@@ -1343,7 +1343,7 @@ If fedora then
  If not DirectoryExists(EtcPppIpUpDDir) then FpSystem (BinDir+'mkdir -p '+EtcPppIpUpDDir);
  FpSystem(BinDir+'rm -f '+EtcPppIpUpDDir+Edit_peer.Text+'-ip-up');
  Memo_ip_up.Clear;
- Memo_ip_up.Lines.Add('#!/bin/sh');
+ Memo_ip_up.Lines.Add('#!/bin/bash');
  Memo_ip_up.Lines.Add('if [ ! -f '+UsrBinDir+'ponoff ]');
  Memo_ip_up.Lines.Add('then');
  Memo_ip_up.Lines.Add('     exit 0');
@@ -1437,7 +1437,7 @@ If fedora then
                                         end;
  If route_IP_remote.Checked then
                                 Memo_ip_up.Lines.Add (SBinDir+'route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
- Memo_ip_up.Lines.Add(BinDir+'echo "#!/bin/sh" > '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
+ Memo_ip_up.Lines.Add(BinDir+'echo "#!/bin/bash" > '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
  Memo_ip_up.Lines.Add('export >> '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
  Memo_ip_up.Lines.Add(BinDir+'echo "'+EtcPppIpDownLDir+'$LINKNAME-ip-down" >> '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
  Memo_ip_up.Lines.Add(BinDir+'chmod +x '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
@@ -1459,7 +1459,7 @@ If fedora then
 begin
    If not FileExists(EtcPppDir+'ip-down.local.old') then FpSystem (BinDir+'cp -f '+EtcPppDir+'ip-down.local '+EtcPppDir+'ip-down.local.old');
    FpSystem(BinDir+'rm -f '+EtcPppDir+'ip-down.local');
-   FpSystem(BinDir+'echo "#!/bin/sh" > '+EtcPppDir+'ip-down.local');
+   FpSystem(BinDir+'echo "#!/bin/bash" > '+EtcPppDir+'ip-down.local');
    FpSystem(BinDir+'echo "if [ -d /etc/ppp/ip-down.d/ -a -x /usr/bin/run-parts ]; then" >> '+EtcPppDir+'ip-down.local');
    FpSystem(BinDir+'echo "    /usr/bin/run-parts /etc/ppp/ip-down.d/" >> '+EtcPppDir+'ip-down.local');
    FpSystem(BinDir+'echo "fi" >> '+EtcPppDir+'ip-down.local');
@@ -1471,7 +1471,7 @@ end;
  FpSystem(BinDir+'rm -f '+EtcPppIpDownDDir+Edit_peer.Text+'-ip-down');
  FpSystem(BinDir+'rm -f '+EtcPppIpDownLDir+Edit_peer.Text+'-ip-down');
  Memo_ip_down.Clear;
- Memo_ip_down.Lines.Add('#!/bin/sh');
+ Memo_ip_down.Lines.Add('#!/bin/bash');
  Memo_ip_down.Lines.Add('if [ ! -f '+UsrBinDir+'ponoff ]');
  Memo_ip_down.Lines.Add('then');
  Memo_ip_down.Lines.Add('     exit 0');
@@ -1796,7 +1796,7 @@ If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN PPTP' then
                                                                   FpSystem (BinDir+'rm -f '+EtcInitDDir+'after.local');
                                                              end;
                    FpSystem (BinDir+'touch '+EtcInitDDir+'after.local');
-                   FpSystem (UsrBinDir+'printf "#!/bin/sh\n" >> '+EtcInitDDir+'after.local');
+                   FpSystem (UsrBinDir+'printf "#!/bin/bash\n" >> '+EtcInitDDir+'after.local');
                    FpSystem (UsrBinDir+'printf "pppd call '+Edit_peer.Text+'\n" >> '+EtcInitDDir+'after.local');
                    FpSystem (BinDir+'chmod +x '+EtcInitDDir+'after.local');
                 end;
@@ -1808,7 +1808,7 @@ If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN L2TP' then
                                                                   FpSystem (BinDir+'rm -f '+EtcInitDDir+'after.local');
                                                              end;
                    FpSystem (BinDir+'touch '+EtcInitDDir+'after.local');
-                   FpSystem (UsrBinDir+'printf "#!/bin/sh\n" >> '+EtcInitDDir+'after.local');
+                   FpSystem (UsrBinDir+'printf "#!/bin/bash\n" >> '+EtcInitDDir+'after.local');
                    FpSystem (UsrBinDir+'printf "'+ServiceCommand+'xl2tpd restart\n" >> '+EtcInitDDir+'after.local');
                    FpSystem (BinDir+'chmod +x '+EtcInitDDir+'after.local');
                 end;
@@ -1820,7 +1820,7 @@ If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN OpenL2TP' th
                                                                   FpSystem (BinDir+'rm -f '+EtcInitDDir+'after.local');
                                                              end;
                    FpSystem (BinDir+'touch '+EtcInitDDir+'after.local');
-                   FpSystem (UsrBinDir+'printf "#!/bin/sh\n" >> '+EtcInitDDir+'after.local');
+                   FpSystem (UsrBinDir+'printf "#!/bin/bash\n" >> '+EtcInitDDir+'after.local');
                    FpSystem (UsrBinDir+'printf "'+MyLibDir+Edit_peer.Text+'/openl2tp-start\n" >> '+EtcInitDDir+'after.local');
                    FpSystem (BinDir+'chmod +x '+EtcInitDDir+'after.local');
                 end;
@@ -1970,7 +1970,7 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem(BinDir+'cp -f '+EtcX
                                      begin
                                           //создание скрипта включения для VPN OpenL2TP
                                           Memo2.Clear;
-                                          Memo2.Lines.Add('#!/bin/sh');
+                                          Memo2.Lines.Add('#!/bin/bash');
                                           Memo2.Lines.Add(BinDir+'echo "call '+Edit_peer.Text+'" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add(UsrBinDir+'killall xl2tpd');
                                           Memo2.Lines.Add(BinDir+'cp -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf '+EtcDir+'openl2tpd.conf');
@@ -1994,7 +1994,7 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem(BinDir+'cp -f '+EtcX
                                           FpSystem(BinDir+'chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           //создание скрипта отключения для VPN OpenL2TP
                                           Memo2.Clear;
-                                          Memo2.Lines.Add('#!/bin/sh');
+                                          Memo2.Lines.Add('#!/bin/bash');
                                           Memo2.Lines.Add(BinDir+'echo "#Clear config file" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add(BinDir+'rm -f '+EtcDir+'openl2tpd.conf');
                                           If FileExists(EtcInitDDir+'openl2tp') then
@@ -2652,9 +2652,9 @@ begin
                                         If not Pppd_log.Checked then Memo_create.Lines.Add (message109+' VPN OpenL2TP ('+VarLogDir+'vpnlog)');
                                         If Pppd_log.Checked then if Form3.Tag=1 then FpSystem(UsrBinDir+'printf "'+message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+VarLogDir+'vpnlog');
                                         If not Pppd_log.Checked then if Form3.Tag=1 then Memo_create.Lines.Add (message111+' '+UsrBinDir+'ponoff '+Edit_peer.Text);
-                                        If Pppd_log.Checked then if Form3.Tag=2 then FpSystem(UsrBinDir+'printf "'+message111+' '+BinDir+'sh '+MyLibDir+Edit_peer.Text+'/openl2tp-start\n" >> '+VarLogDir+'vpnlog');
-                                        If not Pppd_log.Checked then If Form3.Tag=2 then Memo_create.Lines.Add (message111+' '+BinDir+'sh '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
-                                        if Form3.Tag=2 then FpSystem (BinDir+'sh '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
+                                        If Pppd_log.Checked then if Form3.Tag=2 then FpSystem(UsrBinDir+'printf "'+message111+' '+BinDir+'bash '+MyLibDir+Edit_peer.Text+'/openl2tp-start\n" >> '+VarLogDir+'vpnlog');
+                                        If not Pppd_log.Checked then If Form3.Tag=2 then Memo_create.Lines.Add (message111+' '+BinDir+'bash '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
+                                        if Form3.Tag=2 then FpSystem (BinDir+'bash '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                     end;
 If not Pppd_log.Checked then Memo_create.Lines.Add (message110);
 Memo_create.Hint:=message109;
@@ -3443,8 +3443,12 @@ If not y then IPS:=true else IPS:=false;
   If not FileExists(EtcDir+'resolv.conf') then
                                           begin
                                                FpSystem (UsrBinDir+'printf "nameserver 127.0.0.1'+'\n" >> '+EtcDir+'resolv.conf');
+                                               FpSystem (UsrBinDir+'printf "nameserver 8.8.8.8'+'\n" >> '+EtcDir+'resolv.conf');
+                                               FpSystem (UsrBinDir+'printf "nameserver 8.8.4.4'+'\n" >> '+EtcDir+'resolv.conf');
                                                Form3.MyMessageBox(message0,message215,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
                                                DNSA:='127.0.0.1';
+                                               DNSB:='8.8.8.8';
+                                               DNSdopC:='8.8.4.4';
                                                Application.ProcessMessages;
                                                Form1.Repaint;
                                           end;
@@ -4234,7 +4238,7 @@ PageControl1.ShowTabs:=false;
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                             FpSystem(UsrBinDir+'killall ponoff');
-                                            If FileExists(MyLibDir+'default/openl2tp-stop') then FpSystem(BinDir+'sh '+MyLibDir+'default/openl2tp-stop');
+                                            If FileExists(MyLibDir+'default/openl2tp-stop') then FpSystem(BinDir+'bash '+MyLibDir+'default/openl2tp-stop');
                                             FpSystem(UsrBinDir+'killall pppd');
                                             FpSystem(ServiceCommand+'xl2tpd stop');
                                             FpSystem(UsrBinDir+'killall xl2tpd');
@@ -4246,7 +4250,7 @@ PageControl1.ShowTabs:=false;
                                             if ComboBoxDistr.Text<>message151 then ComboBoxDistr.Enabled:=false;
                                           end;
  FpSystem (UsrBinDir+'killall ponoff');
- If FileExists(MyLibDir+'default/openl2tp-stop') then FpSystem(BinDir+'sh '+MyLibDir+'default/openl2tp-stop');
+ If FileExists(MyLibDir+'default/openl2tp-stop') then FpSystem(BinDir+'bash '+MyLibDir+'default/openl2tp-stop');
  FpSystem (UsrBinDir+'killall pppd');
  FpSystem (ServiceCommand+'xl2tpd stop');
  FpSystem (UsrBinDir+'killall xl2tpd');

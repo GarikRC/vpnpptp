@@ -8,7 +8,7 @@
 
 3) для Fedora конфигуратор vpnpptp всегда выводит предупреждение о возможной необходимости настройки SELinux,
 
-4) если отсутствует файл /etc/resolv.conf, то конфигуратор vpnpptp создает его сам и заносит в него nameserver 127.0.0.1, о чем выводится предупреждение,
+4) если отсутствует файл /etc/resolv.conf, то конфигуратор vpnpptp создает его сам и заносит в него nameserver 127.0.0.1 и Google Public DNS, о чем выводится предупреждение,
 
 5) для VPN L2TP/OpenL2TP теперь разрешен выбор шифрования mppe,
 
@@ -16,7 +16,9 @@
 
 7) исправлено падение конфигуратора vpnpptp при настройке файервола в Mageia,
 
-8) в vpnmandriva адрес connect.swissvpn.net изменен на адрес connect.lb.swissvpn.net.
+8) в vpnmandriva адрес connect.swissvpn.net изменен на адрес connect.lb.swissvpn.net,
+
+9) sh заменен везде на bash.
 
 Примечания:
 

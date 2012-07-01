@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$(env | grep USER=root)" ];then
 	echo "You're not the root!"

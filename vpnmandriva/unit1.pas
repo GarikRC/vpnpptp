@@ -484,7 +484,7 @@ FpSystem (BinDir+'chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 //запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
 If not DirectoryExists (EtcPppIpUpDDir) then FpSystem (BinDir+'mkdir -p '+EtcPppIpUpDDir);
 MyMemo.Lines.Clear;
-MyMemo.Lines.Add('#!/bin/sh');
+MyMemo.Lines.Add('#!/bin/bash');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
 MyMemo.Lines.Add('then');
 MyMemo.Lines.Add('exit 0');
@@ -505,7 +505,7 @@ FpSystem(BinDir+'chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
 //запись файла /etc/ppp/ip-down.d/vpnmandriva-ip-down
 If not DirectoryExists (EtcPppIpDownDDir) then FpSystem (BinDir+'mkdir -p '+EtcPppIpDownDDir);
 MyMemo.Lines.Clear;
-MyMemo.Lines.Add('#!/bin/sh');
+MyMemo.Lines.Add('#!/bin/bash');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
 MyMemo.Lines.Add('then');
 MyMemo.Lines.Add('exit 0');
