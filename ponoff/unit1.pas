@@ -281,8 +281,9 @@ var
 begin
      If DoHalt then
                 begin
-                  popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
-                  If not eof(f) then If not ErrorShowIcon then halt;
+                  //popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
+                  popen (f,BinDir+'ps -u root |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+BinDir+'grep -x '+Name,'R');
+                  If not eof(f) then halt;
                   PClose(f);
                 end;
      Apid:=FpGetpid;
