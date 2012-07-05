@@ -2128,7 +2128,7 @@ object Form2: TForm2
   OnCreate = FormCreate
   Position = poMainFormCenter
   ShowHint = True
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.30.4'
   object Label1: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
@@ -2356,5 +2356,13 @@ object Form2: TForm2
     Width = 103
     Caption = 'default-mru'
     TabOrder = 23
+  end
+  object CheckBoxdump: TCheckBox
+    Left = 280
+    Height = 21
+    Top = 176
+    Width = 60
+    Caption = 'dump'
+    TabOrder = 24
   end
 end

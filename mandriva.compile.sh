@@ -13,18 +13,18 @@ LAZARUS_LIB_IDEINTF=/usr/$LIBDIRPART/lazarus/ideintf/units/$LAZARUS_ARCH-linux
 
 cd ./modules
 
-$FPC -MObjFPC -C -Xs -Scgi -Os -O3 -XX -vewnhi -l -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.lpr
+$FPC -MObjFPC -C -Xs -Scgi -Os -O3 -XX -vewnhi -l -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./modules/ -Fu. -omymessagebox -dLCL -dLCLgtk2 MyMessageBox.pas
 echo $LAZARUS_ARCH
  
 cd ..
 cd ./vpnpptp
   
-$FPC -MObjFPC -C -Xs -Scgi -Os -O3 -XX -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP -Fu$LAZARUS_LIB_IDEINTF -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 project1.pas
+$FPC -MObjFPC -C -Xs -Scgi -Os -O3 -XX -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB_COMP -Fu$LAZARUS_LIB_IDEINTF -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./vpnpptp/ -Fu. -ovpnpptp -dLCL -dLCLgtk2 vpnpptp.pas
     
 cd ..
 cd ./ponoff
     
-$FPC -MObjFPC -C -Xs -Scgi -Os -O3 -XX -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./ponoff/ -Fu. -oponoff -dLCL -dLCLgtk2 project1.pas
+$FPC -MObjFPC -C -Xs -Scgi -Os -O3 -XX -vewnhi -l -Fu../modules -Fu$LAZARUS_LIB -Fu$LAZARUS_LIB/gtk2 -Fu$LAZARUS_LIB_PKG -Fu./ponoff/ -Fu. -oponoff -dLCL -dLCLgtk2 ponoff.pas
       
 cd ..
 cd ./vpnmandriva

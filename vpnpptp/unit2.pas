@@ -19,6 +19,7 @@ type
     CheckBoxpersist: TCheckBox;
     CheckBoxpassive: TCheckBox;
     CheckBoxauth: TCheckBox;
+    CheckBoxdump: TCheckBox;
     CheckBoxreplacedefaultroute: TCheckBox;
     CheckBoxnodetach: TCheckBox;
     CheckBoxreceiveall: TCheckBox;
@@ -109,6 +110,7 @@ If FileExists (LibDir+str_peer+'/config') then if FileExists (PeersDir+str_peer)
                                               If str='noaccomp' then CheckBoxnoaccomp.Checked:=true;
                                               If str='noipv6' then CheckBoxnoipv6.Checked:=true;
                                               If str='receive-all' then CheckBoxreceiveall.Checked:=true;
+                                              If str='dump' then CheckBoxdump.Checked:=true;
                                               If str='nodetach' then CheckBoxnodetach.Checked:=true;
                                               If str='replacedefaultroute' then CheckBoxreplacedefaultroute.Checked:=true;
                                               If str='auth' then CheckBoxauth.Checked:=true;

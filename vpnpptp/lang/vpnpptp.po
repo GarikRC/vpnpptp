@@ -383,6 +383,10 @@ msgstr ""
 msgid "defaultroute"
 msgstr ""
 
+#: TFORM2.CHECKBOXDUMP.CAPTION
+msgid "dump"
+msgstr ""
+
 #: TFORM2.CHECKBOXLOCK.CAPTION
 msgid "lock"
 msgstr ""
@@ -500,7 +504,7 @@ msgid "Отсутствуют некритичные файлы: "
 msgstr ""
 
 #: unit1.message102
-msgid "Шифрование mppe может быть настроено неверно, так как отсутствует файл: "
+msgid "Шифрование mppe может быть настроено неверно, так как отсутствуют: "
 msgstr ""
 
 #: unit1.message103
@@ -569,7 +573,7 @@ msgid "Значения MTU, MRU должны быть заданы вручну
 msgstr ""
 
 #: unit1.message118
-msgid "Рекомендуется значение MTU 1460 байт."
+msgid "Рекомендуется значение MTU 1460 или 1472 байт."
 msgstr ""
 
 #: unit1.message119
@@ -1060,8 +1064,36 @@ msgstr ""
 msgid "Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot."
 msgstr ""
 
+#: unit1.message229
+msgid "Чтобы использовать шифрование mppe, Вы должны быть аутентифицированы с помощью MS-CHAP или MS-CHAPv2."
+msgstr ""
+
 #: unit1.message23
 msgid "Невозможно создать ярлык на рабочем столе, так как отсутствует файл"
+msgstr ""
+
+#: unit1.message230
+msgid "\"Refuse\" означает \"запретить\"! Нельзя запретить все виды аутентификации!"
+msgstr ""
+
+#: unit1.message231
+msgid "Если выбрать опцию required для шифрования mppe, то нельзя выбрать опцию refuse-mschap одновременно с опцией refuse-mschap-v2, запретив MS-CHAP и MS-CHAPv2."
+msgstr ""
+
+#: unit1.message232
+msgid "Нельзя требовать шифрования mppe опцией required и при этом одновременно запретить все доступные типы шифрования."
+msgstr ""
+
+#: unit1.message233
+msgid "Иногда требуется добавить опцию stateless, но часто она уже используется по-умолчанию."
+msgstr ""
+
+#: unit1.message234
+msgid "Шифрование mppe может быть настроено неверно, так как не удалось свериться с man pppd и отсутствует"
+msgstr ""
+
+#: unit1.message235
+msgid "Не найден модуль ppp_mppe, необходимый для работы mppe."
 msgstr ""
 
 #: unit1.message24
@@ -1345,7 +1377,7 @@ msgid "Скрыть пароль"
 msgstr ""
 
 #: unit1.message88
-msgid "Часто используется шифрование трафика mppe с 128-битным шифрованием - это одновременный выбор required, stateless, no40, no56."
+msgid "Часто используется шифрование трафика mppe с 128-битным шифрованием - это одновременный выбор required, no40, no56 (если опция no56 есть в pppd)."
 msgstr ""
 
 #: unit1.message89
