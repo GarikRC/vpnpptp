@@ -172,6 +172,7 @@ var
   TmpBmp: TBitmap;
   file1, file2: TMemoryStream;
   tray_status,last_tray:(bw_on,bw_off,col_on,col_off);
+  error_rx_tx:boolean;//ошибка определения RX/TX
 
 resourcestring
   message0='Внимание!';
@@ -865,7 +866,7 @@ If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked
         end;
      PClose(f);
      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
-     If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1460 then
+     If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1472 then
         begin
              BalloonMessage (3000,message0,message43+' '+MtuUsed+' '+message44,AFont);
              FpSystem(BinDir+'touch '+MyTmpDir+'mtu.checked');
@@ -1889,7 +1890,7 @@ var
   Str:string;
   TV : timeval;
   DNS3,DNS4:string;
-  i:integer;
+  error_proc_net_dev:boolean;
 begin
   If not FileExists (VarRunVpnpptp+ProfileName) then FpSystem (BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
@@ -1906,37 +1907,66 @@ begin
   CheckVPN;
   If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
   //определяем скорость, время
-  If Code_up_ppp then
+  error_proc_net_dev:=false;
+  error_rx_tx:=false;
+  If Code_up_ppp then If FileExists('/proc/net/dev') then
             begin
-                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep RX|'+BinDir+'grep bytes','R');
-                RXbyte1:='';
+                str:='';
+                popen (f,BinDir+'cat /proc/net/dev | '+BinDir+'grep '+PppIface+' | '+BinDir+'awk '+ chr(39)+'{print $1}'+chr(39),'R');
                 While not eof(f) do
-                   begin
-                     Readln (f,str);
-                     i:=pos('bytes',str);
-                     for i:=pos('bytes',str)+6 to length(str) do
-                             begin
-                                if str[i]=' ' then break;
-                                RXbyte1:=RXbyte1+str[i];
-                             end;
-                   end;
-                PClose(f);
-                If RXbyte1='' then RXbyte1:='0';
-                popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep TX|'+BinDir+'grep bytes','R');
-                TXbyte1:='';
-                While not eof(f) do
-                   begin
-                     Readln (f,str);
-                     i:=pos('bytes',str);
-                     for i:=pos('bytes',str)+6 to length(str) do
-                             begin
-                                if str[i]=' ' then break;
-                                TXbyte1:=TXbyte1+str[i];
-                             end;
-                   end;
-                PClose(f);
-                If TXbyte1='' then TXbyte1:='0';
+                                   begin
+                                     Readln (f,str);
+                                   end;
+                 PClose(f);
+                 If str<>PppIface+':' then error_proc_net_dev:=true;
+                 RXbyte1:='';
+                 If error_proc_net_dev then
+                                 begin
+                                     str:='';
+                                     popen (f,BinDir+'cat /proc/net/dev | '+BinDir+'grep '+PppIface+' | '+BinDir+'awk '+ chr(39)+'{print $1}'+chr(39)+' | '+UsrBinDir+'cut -d ":" --fields=2','R');
+                                     While not eof(f) do
+                                                        begin
+                                                          Readln (f,str);
+                                                        end;
+                                     PClose(f);
+                                     RXbyte1:=str;
+                                     str:='';
+                                     popen (f,BinDir+'cat /proc/net/dev | '+BinDir+'grep '+PppIface+' | '+BinDir+'awk '+ chr(39)+'{print $9}'+chr(39),'R');
+                                     While not eof(f) do
+                                                        begin
+                                                          Readln (f,str);
+                                                        end;
+                                     PClose(f);
+                                     TXbyte1:=str;
+                                 end;
+                 If not error_proc_net_dev then
+                                 begin
+                                     str:='';
+                                     popen (f,BinDir+'cat /proc/net/dev | '+BinDir+'grep '+PppIface+' | '+BinDir+'awk '+ chr(39)+'{print $2}'+chr(39),'R');
+                                     While not eof(f) do
+                                                        begin
+                                                          Readln (f,str);
+                                                        end;
+                                     PClose(f);
+                                     RXbyte1:=str;
+                                     str:='';
+                                     popen (f,BinDir+'cat /proc/net/dev | '+BinDir+'grep '+PppIface+' | '+BinDir+'awk '+ chr(39)+'{print $10}'+chr(39),'R');
+                                     While not eof(f) do
+                                                        begin
+                                                          Readln (f,str);
+                                                        end;
+                                     PClose(f);
+                                     TXbyte1:=str;
+                                 end;
+                 If RXbyte1='' then begin error_rx_tx:=true; RXbyte1:='0';end;
+                 If TXbyte1='' then begin error_rx_tx:=true; TXbyte1:='0';end;
             end;
+  If Code_up_ppp then If not FileExists('/proc/net/dev') then
+                              begin
+                                  error_rx_tx:=true;
+                                  RXbyte1:='0';
+                                  TXbyte1:='0';
+                              end;
   If MaxSpeed<>0 then If Code_up_ppp then
           begin
                 if MyStrToInt64(RXbyte1)-MyStrToInt64(RXbyte0)>MaxSpeed then
@@ -2267,32 +2297,32 @@ begin
   If Memo_Config.Lines[39]='pptp' then strVPN:='VPN PPTP';
   If Memo_Config.Lines[39]='l2tp' then strVPN:='VPN L2TP';
   If Memo_Config.Lines[39]='openl2tp' then strVPN:='VPN OpenL2TP';
-                                        If Code_up_ppp then
-                                                       begin
-                                                            ConnectionInfo:=Trim(Memo_Config.Lines[0]);
-                                                            StatusInfo:=Trim(message7+' ('+strVPN+')');
-                                                            TimeInNetInfo:=Trim(Time);
-                                                            DownloadInfo:=Trim(RX+' ('+RXSpeed+')');
-                                                            UploadInfo:=Trim(TX+' ('+TXSpeed+')');
-                                                            InterfaceInfo:=Trim(PppIface);
-                                                            IPAddressInfo:=Trim(IPaddress0);
-                                                            GatewayInfo:=Trim(RemoteIPaddress0);
-                                                            DNS1Info:=Trim(DNS3);
-                                                            DNS2Info:=Trim(DNS4);
-                                                       end
-                                                            else
-                                                                begin
-                                                                    ConnectionInfo:=Trim(Memo_Config.Lines[0]);
-                                                                    StatusInfo:=Trim(message8+' ('+strVPN+')');
-                                                                    TimeInNetInfo:='-';
-                                                                    DownloadInfo:='-';
-                                                                    UploadInfo:='-';
-                                                                    InterfaceInfo:='-';
-                                                                    IPAddressInfo:='-';
-                                                                    GatewayInfo:='-';
-                                                                    DNS1Info:='-';
-                                                                    DNS2Info:='-';
-                                                                end;
+  If Code_up_ppp then
+                 begin
+                      ConnectionInfo:=Trim(Memo_Config.Lines[0]);
+                      StatusInfo:=Trim(message7+' ('+strVPN+')');
+                      TimeInNetInfo:=Trim(Time);
+                      If not error_rx_tx then DownloadInfo:=Trim(RX+' ('+RXSpeed+')') else DownloadInfo:='?';
+                      If not error_rx_tx then UploadInfo:=Trim(TX+' ('+TXSpeed+')') else  UploadInfo:='?';
+                      InterfaceInfo:=Trim(PppIface);
+                      IPAddressInfo:=Trim(IPaddress0);
+                      GatewayInfo:=Trim(RemoteIPaddress0);
+                      DNS1Info:=Trim(DNS3);
+                      DNS2Info:=Trim(DNS4);
+                 end
+                      else
+                          begin
+                              ConnectionInfo:=Trim(Memo_Config.Lines[0]);
+                              StatusInfo:=Trim(message8+' ('+strVPN+')');
+                              TimeInNetInfo:='-';
+                              DownloadInfo:='-';
+                              UploadInfo:='-';
+                              InterfaceInfo:='-';
+                              IPAddressInfo:='-';
+                              GatewayInfo:='-';
+                              DNS1Info:='-';
+                              DNS2Info:='-';
+                          end;
   FormHintMatrix.HintMessage(message6+':',message22,message29,message27,message28,message60,message59,message58,'DNS1:','DNS2:',ConnectionInfo,StatusInfo,TimeInNetInfo,DownloadInfo,UploadInfo,InterfaceInfo,IPAddressInfo,GatewayInfo,DNS1Info,DNS2Info,AFont);
   Application.ProcessMessages;
 end;

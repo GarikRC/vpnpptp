@@ -12,7 +12,7 @@ object Form3: TForm3
   ClientWidth = 756
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '0.9.30.2'
+  LCLVersion = '0.9.30.4'
   object Panel1: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner

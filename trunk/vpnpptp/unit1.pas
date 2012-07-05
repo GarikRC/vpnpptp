@@ -175,7 +175,17 @@ type
     procedure Button_moreClick(Sender: TObject);
     procedure Button_next1Click(Sender: TObject);
     procedure Button_next2Click(Sender: TObject);
+    procedure CheckBox_no128Change(Sender: TObject);
+    procedure CheckBox_no40Change(Sender: TObject);
+    procedure CheckBox_no56Change(Sender: TObject);
+    procedure CheckBox_rchapChange(Sender: TObject);
+    procedure CheckBox_reapChange(Sender: TObject);
+    procedure CheckBox_requiredChange(Sender: TObject);
+    procedure CheckBox_rmschapChange(Sender: TObject);
+    procedure CheckBox_rmschapv2Change(Sender: TObject);
+    procedure CheckBox_rpapChange(Sender: TObject);
     procedure CheckBox_shorewallChange(Sender: TObject);
+    procedure CheckBox_statelessChange(Sender: TObject);
     procedure ComboBoxDistrKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure ComboBoxVPNChange(Sender: TObject);
@@ -254,7 +264,7 @@ var
   NetServiceStr:string; //какой сервис управляет сетью
   ServiceCommand:string; //команда service или /etc/init.d/, или другая команда
   DhclientStartGood:boolean; //false если dhclient стартанул неудачно или не стартовал вообще
-  f: text;//текстовый поток
+  f,f0: text;//текстовый поток
   Code_up_ppp:boolean; //существует ли интерфейс pppN
   PppIface:string; //точный интерфейс pppN
   ProfileName:string; //определяет какое имя соединения использовать
@@ -264,6 +274,9 @@ var
   StartKoli4estvo:int64; //сколько последних строк лога просматривать в тестовом запуске
   str_date:string; //дата-метка в логе для поиска
   z_num:integer; //считает сколько строк в тестовом запуске уже выведено на экран
+  no_resolv_conf:boolean; //существует ли файл /etc/resolv.conf
+  error_man_pppd:boolean; //если нет в man про pppd
+  default_mppe:boolean; //настройка mppe опциями по-умолчанию
 
 const
   Config_n=47;//определяет сколько строк (кол-во) в файле config программы максимально уже существует, считая от 1, а не от 0
@@ -387,7 +400,7 @@ resourcestring
   message85='DNS1-сервер до поднятия VPN не пингуется или теряются пакеты, но пингуется DNS2-сервер до поднятия VPN, поэтому будут тормоза.';
   message86='Показать пароль';
   message87='Скрыть пароль';
-  message88='Часто используется шифрование трафика mppe с 128-битным шифрованием - это одновременный выбор required, stateless, no40, no56.';
+  message88='Часто используется шифрование трафика mppe с 128-битным шифрованием - это одновременный выбор required, no40, no56 (если опция no56 есть в pppd).';
   message89='Опция stateless пытается реализовать шифрование mppe в режиме без поддержки состояний.';
   message90='Опция no40 отключает 40-битное шифрование mppe.';
   message91='Опция no56 отключает 56-битное шифрование mppe.';
@@ -401,7 +414,7 @@ resourcestring
   message99='I) Введите адрес VPN-сервера... (например, vpn.internet.beeline.ru)';
   message100='I) Введите адрес VPN-сервера... (например, tp.internet.beeline.ru)';
   message101='Отсутствуют некритичные файлы: ';
-  message102='Шифрование mppe может быть настроено неверно, так как отсутствует файл: ';
+  message102='Шифрование mppe может быть настроено неверно, так как отсутствуют: ';
   message103='Настройка VPN PPTP/L2TP/OpenL2TP';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message105='Обнаружено, что VPN PPTP/L2TP/OpenL2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP/OpenL2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
@@ -417,7 +430,7 @@ resourcestring
   message115='Его установка необязательна, но она ускорит механизм определения IP-адреса VPN-сервера, и быстрее соединится.';
   message116='Так как использование /etc/hosts является методом программной маршрутизации VPN-сервера, дополнительным к основному, то выбор будет исправлен.';
   message117='Значения MTU, MRU должны быть заданы вручную, так как выбрана опция default-mru.';
-  message118='Рекомендуется значение MTU 1460 байт.';
+  message118='Рекомендуется значение MTU 1460 или 1472 байт.';
   message119='Так как значения MTU, MRU не заданы вручную, то рекомендуется отключить опцию default-mru.';
   message120='<ОК> - игнорировать это предупреждение и продолжить. <Отмена> - поправить.';
   message121='Не установлен пакет bind-utils.';
@@ -528,6 +541,13 @@ resourcestring
   message226='Введите пароль root:';
   message227='Эта опция позволяет модулю ponoff использовать виджет вместо трея в качестве альтернативы';
   message228='Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot.';
+  message229='Чтобы использовать шифрование mppe, Вы должны быть аутентифицированы с помощью MS-CHAP или MS-CHAPv2.';
+  message230='"Refuse" означает "запретить"! Нельзя запретить все виды аутентификации!';
+  message231='Если выбрать опцию required для шифрования mppe, то нельзя выбрать опцию refuse-mschap одновременно с опцией refuse-mschap-v2, запретив MS-CHAP и MS-CHAPv2.';
+  message232='Нельзя требовать шифрования mppe опцией required и при этом одновременно запретить все доступные типы шифрования.';
+  message233='Иногда требуется добавить опцию stateless, но часто она уже используется по-умолчанию.';
+  message234='Шифрование mppe может быть настроено неверно, так как не удалось свериться с man pppd и отсутствует';
+  message235='Не найден модуль ppp_mppe, необходимый для работы mppe.';
 
 implementation
 
@@ -745,7 +765,6 @@ begin
     If not FileExists(MyPixmapsDir+'vpnpptp.png') then str:=str+MyPixmapsDir+'vpnpptp.png, ';
     If not FileExists(MyScriptsDir+'dhclient-exit-hooks') then str:=str+MyScriptsDir+'dhclient-exit-hooks, ';
     If not FileExists(MyScriptsDir+'dhclient.conf') then str:=str+MyScriptsDir+'dhclient.conf, ';
-    If not FileExists(MyScriptsDir+'peermodify.sh') then str:=str+MyScriptsDir+'peermodify.sh, ';
     If FallbackLang='ru' then
                      begin
                           If not FileExists(MyLangDir+'vpnpptp.ru.po') then str:=str+MyLangDir+'vpnpptp.ru.po, ';
@@ -823,8 +842,6 @@ begin
   Memo_create.Lines.Add('Terminal=false');
   Memo_create.Lines.Add('Type=Application');
   Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
-//  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
-//  If not Sudo_ponoff.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
   Memo_create.Lines.Add('X-KDE-autostart-after=kdesktop');
   Memo_create.Lines.Add('StartupNotify=false');
 end;
@@ -851,8 +868,6 @@ If prilozh='vpnpptp' then
      Memo_create.Lines.Add('Terminal=false');
      Memo_create.Lines.Add('Type=Application');
      Memo_create.Lines.Add('Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop');
-//     If not Sudo_configure.Checked then Memo_create.Lines.Add('X-KDE-SubstituteUID=true');
-//     If not Sudo_configure.Checked then Memo_create.Lines.Add('X-KDE-Username=root');
      Memo_create.Lines.Add('X-KDE-autostart-after=kdesktop');
      Memo_create.Lines.Add('StartupNotify=false');
    end;
@@ -1111,14 +1126,6 @@ FpSystem (SBinDir+'route add default gw '+Edit_gate.Text+' dev '+Edit_eth.Text);
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
-   If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
-          If not FileExists(MyScriptsDir+'peermodify.sh') then
-                                   begin
-                                      Label14.Caption:=message102+MyScriptsDir+'peermodify.sh';
-                                      Form3.MyMessageBox(message0,message102+MyScriptsDir+'peermodify.sh','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                      Application.ProcessMessages;
-                                      Form1.Repaint;
-                                   end;
 Button_more.Visible:=false;
 Button_create.Enabled:=false;
 Button_exit.Enabled:=false;
@@ -1270,6 +1277,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
  If Unit2.Form2.CheckBoxnoaccomp.Checked then Memo_peer.Lines.Add('noaccomp');
  If Unit2.Form2.CheckBoxnoipv6.Checked then Memo_peer.Lines.Add('noipv6');
  If Unit2.Form2.CheckBoxreceiveall.Checked then Memo_peer.Lines.Add('receive-all');
+ If Unit2.Form2.CheckBoxdump.Checked then Memo_peer.Lines.Add('dump');
  If Unit2.Form2.CheckBoxnodetach.Checked then Memo_peer.Lines.Add('nodetach');
  If Unit2.Form2.CheckBoxreplacedefaultroute.Checked then Memo_peer.Lines.Add('replacedefaultroute');
  If Unit2.Form2.CheckBoxauth.Checked then Memo_peer.Lines.Add('auth');
@@ -1289,27 +1297,51 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
  If Edit_mtu.Text <> '' then Memo_peer.Lines.Add('mtu '+Edit_mtu.Text);
  If Edit_mru.Text <> '' then Memo_peer.Lines.Add('mru '+Edit_mru.Text);
 //Разбираемся с аутентификацией
-   If CheckBox_rmschap.Checked then Memo_peer.Lines.Add(CheckBox_rmschap.Caption);
-   If CheckBox_reap.Checked then Memo_peer.Lines.Add(CheckBox_reap.Caption);
-   If CheckBox_rchap.Checked then Memo_peer.Lines.Add(CheckBox_rchap.Caption);
-   If CheckBox_rpap.Checked then Memo_peer.Lines.Add(CheckBox_rpap.Caption);
-   If CheckBox_rmschapv2.Checked then Memo_peer.Lines.Add(CheckBox_rmschapv2.Caption);
+ If CheckBox_rmschap.Checked then Memo_peer.Lines.Add(CheckBox_rmschap.Caption);
+ If CheckBox_reap.Checked then Memo_peer.Lines.Add(CheckBox_reap.Caption);
+ If CheckBox_rchap.Checked then Memo_peer.Lines.Add(CheckBox_rchap.Caption);
+ If CheckBox_rpap.Checked then Memo_peer.Lines.Add(CheckBox_rpap.Caption);
+ If CheckBox_rmschapv2.Checked then Memo_peer.Lines.Add(CheckBox_rmschapv2.Caption);
 //Разбираемся с шифрованием
-   mppe_string:='mppe ';
-   if CheckBox_required.Checked then mppe_string:=mppe_string+CheckBox_required.Caption;
-      if CheckBox_required.Checked then if CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
-   if CheckBox_stateless.Checked then mppe_string:=mppe_string+CheckBox_stateless.Caption;
-      if CheckBox_stateless.Checked then if CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
-   if CheckBox_no40.Checked then mppe_string:=mppe_string+CheckBox_no40.Caption;
-      if CheckBox_no40.Checked then if CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
-   if CheckBox_no56.Checked then mppe_string:=mppe_string+CheckBox_no56.Caption;
-      if CheckBox_no56.Checked then if CheckBox_no128.Checked then mppe_string:=mppe_string+',';
-   if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
-   If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
+ If CheckBox_required.Checked then
+                    begin
+                       If not FileExists(UsrBinDir+'strings') then If not FileExists(UsrBinDir+'man') then If (CheckBox_required.Checked) or (CheckBox_stateless.Checked) or (CheckBox_no40.Checked) or (CheckBox_no56.Checked) or (CheckBox_no128.Checked) then
+                                                                                                      begin
+                                                                                                           Label14.Caption:=message102+' '+UsrBinDir+'strings, '+UsrBinDir+'man.';
+                                                                                                           Form3.MyMessageBox(message0,message102+' '+UsrBinDir+'strings, '+UsrBinDir+'man.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                                                           Application.ProcessMessages;
+                                                                                                           Form1.Repaint;
+                                                                                                      end;
+                       if error_man_pppd then
+                                          begin
+                                               Label14.Caption:=message234+' '+UsrBinDir+'strings.';
+                                               Form3.MyMessageBox(message0,message234+' '+UsrBinDir+'strings.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                               Application.ProcessMessages;
+                                               Form1.Repaint;
+                                          end;
+                       if default_mppe then
+                               begin
+                                   mppe_string:='mppe ';
+                                   if CheckBox_required.Checked then mppe_string:=mppe_string+CheckBox_required.Caption;
+                                      if CheckBox_required.Checked then if CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+                                   if CheckBox_stateless.Checked then mppe_string:=mppe_string+CheckBox_stateless.Caption;
+                                      if CheckBox_stateless.Checked then if CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+                                   if CheckBox_no40.Checked then mppe_string:=mppe_string+CheckBox_no40.Caption;
+                                      if CheckBox_no40.Checked then if CheckBox_no56.Checked or CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+                                   if CheckBox_no56.Checked then mppe_string:=mppe_string+CheckBox_no56.Caption;
+                                      if CheckBox_no56.Checked then if CheckBox_no128.Checked then mppe_string:=mppe_string+',';
+                                   if CheckBox_no128.Checked then mppe_string:=mppe_string+CheckBox_no128.Caption;
+                                   If mppe_string<>'mppe ' then Memo_peer.Lines.Add(mppe_string);
+                               end
+                                  else
+                                     begin
+                                        If not CheckBox_no40.Checked then Memo_peer.Lines.Add('require-mppe-40');
+                                        //If not CheckBox_no56.Checked then Memo_peer.Lines.Add('require-mppe-56'); //для наглядности
+                                        If not CheckBox_no128.Checked then Memo_peer.Lines.Add('require-mppe-128');
+                                        If CheckBox_stateless.Checked then Memo_peer.Lines.Add('nomppe-stateful');
+                                     end;
+                    end;
  Memo_peer.Lines.SaveToFile(EtcPppPeersDir+Edit_peer.Text); //записываем провайдерский профиль подключения
- If CheckBox_required.Checked or CheckBox_stateless.Checked or CheckBox_no40.Checked or CheckBox_no56.Checked or CheckBox_no128.Checked then
-                              If FileExists(MyScriptsDir+'peermodify.sh') then //коррекция шифрования в соответствии с strings pppd
-                                                                FpSystem (BinDir+'bash '+MyScriptsDir+'peermodify.sh '+Edit_peer.Text);
  FpSystem (BinDir+'chmod 600 '+EtcPppPeersDir+Edit_peer.Text);
  If not DirectoryExists(VarLogDir) then FpSystem (BinDir+'mkdir -p '+VarLogDir);
 //удаляем временные, старые файлы и ссылки
@@ -1548,7 +1580,7 @@ end;
                                               FpSystem(UsrBinDir+'printf "stateless-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If CheckBox_no40.Checked then FpSystem(UsrBinDir+'printf "no40-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               FpSystem(UsrBinDir+'printf "no40-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
- If CheckBox_no56.Checked then FpSystem(UsrBinDir+'printf "no56-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
+ If (CheckBox_no56.Checked) and (CheckBox_no56.Visible) then FpSystem(UsrBinDir+'printf "no56-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
                                               FpSystem(UsrBinDir+'printf "no56-no\n" >> '+MyLibDir+Edit_peer.Text+'/config');
   FpSystem(UsrBinDir+'printf "none\n" >> '+MyLibDir+Edit_peer.Text+'/config');
  If CheckBox_desktop.Checked then FpSystem(UsrBinDir+'printf "link-desktop-yes\n" >> '+MyLibDir+Edit_peer.Text+'/config') else
@@ -2107,7 +2139,7 @@ If EditDNS1.Text<>'' then if EditDNS1.Text<>'none' then
      FpSystem(BinDir+'rm -f '+MyTmpDir+'networktest');
   end;
    //тест EditDNS2-сервера
-If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then
+If EditDNS2.Text<>'' then if EditDNS2.Text<>'none' then If not no_resolv_conf then
   begin
      If EditDNS2.Text='127.0.0.1' then Ifup('lo');
      FpSystem(BinDir+'rm -f '+MyTmpDir+'networktest');
@@ -2698,7 +2730,7 @@ begin
                                                                         end;
                                                                      PClose(f);
                                                                      If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
-                                                                     If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1460 then
+                                                                     If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1472 then
                                                                              FpSystem(UsrBinDir+'printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> '+VarLogDir+'vpnlog');
                                                                      FlagMtu:=true;
                                                                    end;
@@ -2708,7 +2740,7 @@ begin
                                              end;
      end;
 end;
-// if Form3.Tag=1 then AProcess.Free;
+   if Form3.Tag=1 then AProcess.Free;
 end;
 
 procedure TForm1.Autostart_ponoffChange(Sender: TObject);
@@ -2788,6 +2820,11 @@ begin
                                              end;
    Application.ProcessMessages;
    Form1.Repaint;
+end;
+
+procedure TForm1.CheckBox_statelessChange(Sender: TObject);
+begin
+   If CheckBox_stateless.Checked then CheckBox_required.Checked:=true;
 end;
 
 procedure TForm1.ComboBoxDistrKeyDown(Sender: TObject; var Key: Word;
@@ -3191,6 +3228,24 @@ var
    x,code:integer;
 begin
  y:=false;
+ default_mppe:=true;
+ PClose(f);
+ error_man_pppd:=false;
+ PClose(f);
+ If FileExists(UsrBinDir+'strings') then popen (f,UsrBinDir+'strings '+UsrSbinDir+'pppd | '+BinDir+'grep require-mppe','R');
+ If not FileExists(UsrBinDir+'strings') then If FileExists(UsrBinDir+'man') then
+                                                                               begin
+                                                                                    popen (f,UsrBinDir+'man pppd','R');
+                                                                                    If not eof(f) then begin PClose(f);popen (f,UsrBinDir+'man pppd | '+BinDir+'grep require-mppe','R');end else begin PClose(f);error_man_pppd:=true;end;
+                                                                               end;
+ if not eof(f) then default_mppe:=false;
+ //default_mppe:=true;//для проверки при отладке
+ if not default_mppe then
+                begin
+                    CheckBox_no56.Visible:=false;
+                    CheckBox_no56.Checked:=true;
+                end;
+ Pclose(f);
 //проверка корректности имени соединения
   str:=Edit_peer.Text;
   str:=UTF8UpperCase(str);
@@ -3314,11 +3369,11 @@ If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
 If ComboBoxVPN.Text='VPN OpenL2TP' then pppnotdefault.Caption:=message214;
 If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then
                begin
-                  CheckBox_required.Hint:=MakeHint(message79+' '+message88+' '+message138,5);
-                  CheckBox_stateless.Hint:=MakeHint(message89+' '+message88+' '+message138,5);
-                  CheckBox_no40.Hint:=MakeHint(message90+' '+message88+' '+message138,5);
-                  CheckBox_no56.Hint:=MakeHint(message91+' '+message88+' '+message138,5);
-                  CheckBox_no128.Hint:=MakeHint(message92+' '+message88+' '+message138,5);
+                  CheckBox_required.Hint:=MakeHint(message79+' '+message88+' '+message233+' '+message138,5);
+                  CheckBox_stateless.Hint:=MakeHint(message89+' '+message88+' '+message233+' '+message138,5);
+                  CheckBox_no40.Hint:=MakeHint(message90+' '+message88+' '+message233+' '+message138,5);
+                  CheckBox_no56.Hint:=MakeHint(message91+' '+message88+' '+message233+' '+message138,5);
+                  CheckBox_no128.Hint:=MakeHint(message92+' '+message88+' '+message233+' '+message138,5);
                end;
 if not y then
               begin
@@ -3442,6 +3497,7 @@ If not y then IPS:=true else IPS:=false;
                            end;
   If not FileExists(EtcDir+'resolv.conf') then
                                           begin
+                                               no_resolv_conf:=true;
                                                FpSystem (UsrBinDir+'printf "nameserver 127.0.0.1'+'\n" >> '+EtcDir+'resolv.conf');
                                                FpSystem (UsrBinDir+'printf "nameserver 8.8.8.8'+'\n" >> '+EtcDir+'resolv.conf');
                                                FpSystem (UsrBinDir+'printf "nameserver 8.8.4.4'+'\n" >> '+EtcDir+'resolv.conf');
@@ -3740,7 +3796,7 @@ If ((EditDNS3.Text='none') or (EditDNS3.Text='')) then if ((EditDNS4.Text='none'
                            end;
 If EditDNS3.Text='' then EditDNS3.Text:='none';
 If EditDNS4.Text='' then EditDNS4.Text:='none';
-//проверка ввода mtu, разрешен диапазон [576..1500], рекомендуется 1460
+//проверка ввода mtu, разрешен диапазон [576..1500], рекомендуется 1472
 For i:=1 to Length(Edit_mtu.Text) do
 begin
    if not (Edit_mtu.Text[i] in ['0'..'9']) then
@@ -3780,6 +3836,21 @@ begin
                                         exit;
                                       end;
 end;
+//проверка модуля ppp_mppe
+If CheckBox_required.Checked then
+                                begin
+                                     FpSystem(SBinDir+'modprobe -r ppp_mppe');
+                                     FpSystem(SBinDir+'modprobe ppp_mppe');
+                                     popen(f,SBinDir+'lsmod | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39)+'|'+BinDir+'grep ppp_mppe','R');
+                                     if eof(f) then
+                                                   begin
+                                                        Form3.MyMessageBox(message0,message235,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                        //CheckBox_required.Checked:=false;
+                                                        Application.ProcessMessages;
+                                                        Form1.Repaint;
+                                                   end;
+                                     pclose(f);
+                                end;
 Unit2.Form2.Obrabotka(Edit_peer.Text, more, AFont, MyLibDir, EtcPppPeersDir);
 If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then
                                begin
@@ -3793,7 +3864,7 @@ If (ComboBoxVPN.Text='VPN OpenL2TP') then
                                    Autostartpppd.Checked:=false;
                                    StartMessage:=true;
                                end;
-If Edit_mtu.Text<>'' then if (MyStrToInt(Edit_mtu.Text)>1460) then
+If Edit_mtu.Text<>'' then if (MyStrToInt(Edit_mtu.Text)>1472) then
                                       begin
                                         Form3.MyMessageBox(message0,message118+' '+message120,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir,2);
                                         if (Form3.Tag=3) or (Form3.Tag=0) then begin Application.ProcessMessages; Form1.Repaint; exit; end;
@@ -3816,6 +3887,155 @@ If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaul
  Button_next2.Visible:=False;
  ButtonHelp.Visible:=false;
  x:=x+0;
+end;
+
+procedure TForm1.CheckBox_no128Change(Sender: TObject);
+begin
+   If CheckBox_no128.Checked then CheckBox_required.Checked:=true;
+   //проверка корректности задания шифрования mppe
+   If (CheckBox_required.Checked) and (CheckBox_no40.Checked) and (CheckBox_no56.Checked) and (CheckBox_no128.Checked) then
+                                                              begin
+                                                                   Form3.MyMessageBox(message0,message232,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                   CheckBox_no128.Checked:=false;
+                                                                   Application.ProcessMessages;
+                                                                   Form1.Repaint;
+                                                                   exit;
+                                                              end;
+end;
+
+procedure TForm1.CheckBox_no40Change(Sender: TObject);
+begin
+    If CheckBox_no40.Checked then CheckBox_required.Checked:=true;
+    //проверка корректности задания шифрования mppe
+    If (CheckBox_required.Checked) and (CheckBox_no40.Checked) and (CheckBox_no56.Checked) and (CheckBox_no128.Checked) then
+                                                               begin
+                                                                    Form3.MyMessageBox(message0,message232,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                    CheckBox_no40.Checked:=false;
+                                                                    Application.ProcessMessages;
+                                                                    Form1.Repaint;
+                                                                    exit;
+                                                               end;
+end;
+
+procedure TForm1.CheckBox_no56Change(Sender: TObject);
+begin
+    If CheckBox_no56.Checked then If CheckBox_no56.Visible then CheckBox_required.Checked:=true;
+    //проверка корректности задания шифрования mppe
+    If (CheckBox_required.Checked) and (CheckBox_no40.Checked) and (CheckBox_no56.Checked) and (CheckBox_no128.Checked) then
+                                                               begin
+                                                                    Form3.MyMessageBox(message0,message232,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                    CheckBox_no56.Checked:=false;
+                                                                    Application.ProcessMessages;
+                                                                    Form1.Repaint;
+                                                                    exit;
+                                                               end;
+end;
+
+procedure TForm1.CheckBox_rchapChange(Sender: TObject);
+begin
+  If (CheckBox_rchap.Checked) and (CheckBox_reap.Checked) and (CheckBox_rmschap.Checked) and (CheckBox_rpap.Checked) and (CheckBox_rmschapv2.Checked) then
+            begin
+              If StartMessage then Form3.MyMessageBox(message0,message230,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+              CheckBox_rchap.Checked:=false;
+              CheckBox_reap.Checked:=false;
+              CheckBox_rmschap.Checked:=false;
+              CheckBox_rpap.Checked:=false;
+              CheckBox_rmschapv2.Checked:=false;
+              Application.ProcessMessages;
+              Form1.Repaint;
+            end;
+end;
+
+procedure TForm1.CheckBox_reapChange(Sender: TObject);
+begin
+  If (CheckBox_rchap.Checked) and (CheckBox_reap.Checked) and (CheckBox_rmschap.Checked) and (CheckBox_rpap.Checked) and (CheckBox_rmschapv2.Checked) then
+            begin
+              If StartMessage then Form3.MyMessageBox(message0,message230,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+              CheckBox_rchap.Checked:=false;
+              CheckBox_reap.Checked:=false;
+              CheckBox_rmschap.Checked:=false;
+              CheckBox_rpap.Checked:=false;
+              CheckBox_rmschapv2.Checked:=false;
+              Application.ProcessMessages;
+              Form1.Repaint;
+            end;
+end;
+
+procedure TForm1.CheckBox_requiredChange(Sender: TObject);
+begin
+   If not CheckBox_required.Checked then
+                  begin
+                      CheckBox_stateless.Checked:=false;
+                      CheckBox_no40.Checked:=false;
+                      If CheckBox_no56.Visible then CheckBox_no56.Checked:=false;
+                      CheckBox_no128.Checked:=false;
+                  end;
+   If CheckBox_rmschapv2.Checked then If CheckBox_rmschap.Checked then If CheckBox_required.Checked then
+                                                                  begin
+                                                                       If StartMessage then Form3.MyMessageBox(message0,message229+' '+message231,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                       CheckBox_required.Checked:=false;
+                                                                       Application.ProcessMessages;
+                                                                       Form1.Repaint;
+                                                                  end;
+end;
+
+procedure TForm1.CheckBox_rmschapChange(Sender: TObject);
+begin
+   If CheckBox_rmschapv2.Checked then If CheckBox_rmschap.Checked then If CheckBox_required.Checked then
+                                                                   begin
+                                                                        If StartMessage then Form3.MyMessageBox(message0,message229+' '+message231,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                        CheckBox_rmschap.Checked:=false;
+                                                                        Application.ProcessMessages;
+                                                                        Form1.Repaint;
+                                                                   end;
+   If (CheckBox_rchap.Checked) and (CheckBox_reap.Checked) and (CheckBox_rmschap.Checked) and (CheckBox_rpap.Checked) and (CheckBox_rmschapv2.Checked) then
+             begin
+               If StartMessage then Form3.MyMessageBox(message0,message230,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+               CheckBox_rchap.Checked:=false;
+               CheckBox_reap.Checked:=false;
+               CheckBox_rmschap.Checked:=false;
+               CheckBox_rpap.Checked:=false;
+               CheckBox_rmschapv2.Checked:=false;
+               Application.ProcessMessages;
+               Form1.Repaint;
+             end;
+end;
+
+procedure TForm1.CheckBox_rmschapv2Change(Sender: TObject);
+begin
+   If CheckBox_rmschapv2.Checked then If CheckBox_rmschap.Checked then If CheckBox_required.Checked then
+                                                                   begin
+                                                                        If StartMessage then Form3.MyMessageBox(message0,message229+' '+message231,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                        CheckBox_rmschapv2.Checked:=false;
+                                                                        Application.ProcessMessages;
+                                                                        Form1.Repaint;
+                                                                   end;
+   If (CheckBox_rchap.Checked) and (CheckBox_reap.Checked) and (CheckBox_rmschap.Checked) and (CheckBox_rpap.Checked) and (CheckBox_rmschapv2.Checked) then
+             begin
+               If StartMessage then Form3.MyMessageBox(message0,message230,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+               CheckBox_rchap.Checked:=false;
+               CheckBox_reap.Checked:=false;
+               CheckBox_rmschap.Checked:=false;
+               CheckBox_rpap.Checked:=false;
+               CheckBox_rmschapv2.Checked:=false;
+               Application.ProcessMessages;
+               Form1.Repaint;
+             end;
+end;
+
+procedure TForm1.CheckBox_rpapChange(Sender: TObject);
+begin
+   If (CheckBox_rchap.Checked) and (CheckBox_reap.Checked) and (CheckBox_rmschap.Checked) and (CheckBox_rpap.Checked) and (CheckBox_rmschapv2.Checked) then
+             begin
+               If StartMessage then Form3.MyMessageBox(message0,message230,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+               CheckBox_rchap.Checked:=false;
+               CheckBox_reap.Checked:=false;
+               CheckBox_rmschap.Checked:=false;
+               CheckBox_rpap.Checked:=false;
+               CheckBox_rmschapv2.Checked:=false;
+               Application.ProcessMessages;
+               Form1.Repaint;
+             end;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -4065,11 +4285,11 @@ CheckBox_reap.Hint:=MakeHint(message70+' '+message55,6);
 CheckBox_rmschap.Hint:=MakeHint(message72+' '+message55,6);
 CheckBox_rpap.Hint:=MakeHint(message77+' '+message55,6);
 CheckBox_rmschapv2.Hint:=MakeHint(message78+' '+message55,6);
-CheckBox_required.Hint:=MakeHint(message79+' '+message88,6);
-CheckBox_stateless.Hint:=MakeHint(message89+' '+message88,6);
-CheckBox_no40.Hint:=MakeHint(message90+' '+message88,6);
-CheckBox_no56.Hint:=MakeHint(message91+' '+message88,6);
-CheckBox_no128.Hint:=MakeHint(message92+' '+message88,6);
+CheckBox_required.Hint:=MakeHint(message79+' '+message88+' '+message233,6);
+CheckBox_stateless.Hint:=MakeHint(message89+' '+message88+' '+message233,6);
+CheckBox_no40.Hint:=MakeHint(message90+' '+message88+' '+message233,6);
+CheckBox_no56.Hint:=MakeHint(message91+' '+message88+' '+message233,6);
+CheckBox_no128.Hint:=MakeHint(message92+' '+message88+' '+message233,6);
 Mii_tool_no.Hint:=MakeHint(message30,6);
 Reconnect_pptp.Hint:=MakeHint(message31+' '+message212+' '+message106,7);
 Pppd_log.Hint:=MakeHint(message32,5);
@@ -4617,12 +4837,13 @@ end;
 initialization
 
   {$I unit1.lrs}
+  no_resolv_conf:=false;
   If Paramcount=0 then ProfileName:='';
   If Paramcount>0 then ProfileName:=Paramstr(1);
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
   If FallbackLang='be' then FallbackLang:='ru';
-//  FallbackLang:='en'; //просто для проверки при отладке
+  //FallbackLang:='en'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
                                POFileName:= MyLangDir+'vpnpptp.ru.po';
