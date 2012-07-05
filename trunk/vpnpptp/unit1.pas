@@ -579,7 +579,8 @@ var
 begin
      If DoHalt then
                 begin
-                  popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
+                  //popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
+                  popen (f,BinDir+'ps -u root |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+BinDir+'grep -x '+Name,'R');
                   If not eof(f) then halt;
                   PClose(f);
                 end;
@@ -2619,8 +2620,16 @@ begin
  ButtonTest.Enabled:=false;
  if Form3.Tag=1 then begin Application.ProcessMessages; Form1.Repaint; AProcess := TAsyncProcess.Create(nil); end;
  Memo_create.Clear;
- if Form3.Tag=1 then AProcess.CommandLine := UsrBinDir+'ponoff '+Edit_peer.Text;
+ if Form3.Tag=1 then
+                    begin
+                         //AProcess.CommandLine := UsrBinDir+'ponoff '+Edit_peer.Text;
+                         FpSystem(UsrBinDir+'printf "'+'#!'+BinDir+'bash'+'\n" > '+MyTmpDir+'ponoff.sh');
+                         FpSystem(UsrBinDir+'printf "'+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+MyTmpDir+'ponoff.sh');
+                         FpSystem(BinDir+'chmod a+x '+MyTmpDir+'ponoff.sh');
+                         AProcess.CommandLine := BinDir+'bash '+MyTmpDir+'ponoff.sh';
+                    end;
  if Form3.Tag=1 then AProcess.Execute;
+ FpSystem(BinDir+'rm -f '+MyTmpDir+'ponoff.sh');
  if Form3.Tag=2 then if dhcp_route.Checked then if not DhclientStartGood then
                                     begin
                                         if fedora then FpSystem(UsrBinDir+'killall dhclient');
@@ -2799,6 +2808,7 @@ begin
   Timer1.Enabled:=false;
   CheckVPN;
   If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message122,'',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+  FpSystem(BinDir+'rm -f '+MyTmpDir+'ponoff.sh');
   halt;
 end;
 
@@ -4487,7 +4497,7 @@ PageControl1.ShowTabs:=false;
  Form1.tmpnostart.Clear;
  If FileExists(MyTmpDir+'tmpnostart') then tmpnostart.Lines.LoadFromFile(MyTmpDir+'tmpnostart');
  FpSystem(BinDir+'rm -f '+MyTmpDir+'tmpnostart');
- If LeftStr(tmpnostart.Lines[0],7)='vpnpptp' then if LeftStr(tmpnostart.Lines[1],7)='vpnpptp' then
+ If (LeftStr(tmpnostart.Lines[0],7)='vpnpptp') and (LeftStr(tmpnostart.Lines[0],13)<>'vpnpptp_setup') then if (LeftStr(tmpnostart.Lines[1],7)='vpnpptp') and (LeftStr(tmpnostart.Lines[1],13)<>'vpnpptp_setup') then
                                                                                                      begin
                                                                                                        //двойной запуск
                                                                                                        Form3.MyMessageBox(message0,message19,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);

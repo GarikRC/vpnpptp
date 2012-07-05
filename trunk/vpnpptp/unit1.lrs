@@ -2866,9 +2866,9 @@ LazarusResources.Add('TForm1','FORMDATA',[
   +'eft.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#5'Owner'#23'AnchorSideR'
   +'ight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorS'
   +'ideBottom.Control'#7#11'Button_exit'#4'Left'#2#1#6'Height'#3#22#2#3'Top'#2#1
-  +#5'Width'#3'<'#3#10'ActivePage'#7#9'TabSheet2'#7'Anchors'#11#5'akTop'#6'akLe'
+  +#5'Width'#3'<'#3#10'ActivePage'#7#9'TabSheet1'#7'Anchors'#11#5'akTop'#6'akLe'
   +'ft'#7'akRight'#8'akBottom'#0#20'BorderSpacing.Bottom'#2#10#20'BorderSpacing'
-  +'.Around'#2#1#8'TabIndex'#2#1#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'#18
+  +'.Around'#2#1#8'TabIndex'#2#0#8'TabOrder'#2#0#0#9'TTabSheet'#9'TabSheet1'#18
   +'AnchorSideTop.Side'#7#9'asrCenter'#24'AnchorSideBottom.Control'#7#12'PageCo'
   +'ntrol1'#21'AnchorSideBottom.Side'#7#9'asrBottom'#7'Caption'#6#10#208#173#209
   +#130#208#176#208#191' 1'#12'ClientHeight'#3#251#1#11'ClientWidth'#3':'#3#11
