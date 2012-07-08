@@ -1310,3 +1310,11 @@ msgstr "Encryption mppe may be configured incorrectly, because it is not able to
 #: unit1.message235
 msgid "Не найден модуль ppp_mppe, необходимый для работы mppe."
 msgstr "Module ppp_mppe can not be found, what is necessary for mppe."
+
+#: unit1.message236
+msgid "Настраивается трей..."
+msgstr "Configuring system tray..."
+
+#: unit1.message237
+msgid "Пожалуйста, перезагрузите самостоятельно компьютер, чтобы ponoff мог использовать трей."
+msgstr "Please reboot computer independently, so that the ponoff can use the system tray."

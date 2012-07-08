@@ -300,7 +300,18 @@ begin
     If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
     If DopParam=' ' then DopParam:='';
     If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
-    If ErrorShowIcon then nostart:=true;
+    If ErrorShowIcon then If not nostart then
+               begin
+                    A_Process.Active:=false;
+                    A_Process.CommandLine :=Paramstr(0)+DopParam;
+                    A_Process.Execute;
+                    while A_Process.Running do
+                    begin
+                        ProgrammRoot('ponoff',true);
+                        sleep(100);
+                    end;
+                    Application.ProcessMessages;
+               end;
     If nostart then If FileExists('/usr/bin/xroot') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через xroot
             begin
                  A_Process.Active:=false;
