@@ -548,8 +548,24 @@ resourcestring
   message233='Иногда требуется добавить опцию stateless, но часто она уже используется по-умолчанию.';
   message234='Шифрование mppe может быть настроено неверно, так как не удалось свериться с man pppd и отсутствует';
   message235='Не найден модуль ppp_mppe, необходимый для работы mppe.';
+  message236='Настраивается трей...';
+  message237='Пожалуйста, перезагрузите самостоятельно компьютер, чтобы ponoff мог использовать трей.';
 
 implementation
+
+function ForkStartProgram (path:string;param1:string):longint;
+var
+  child_pid:longint;
+begin
+  child_pid:=FpFork;
+  ForkStartProgram:=child_pid; // Возвращаем результат fork
+  if child_pid<0 then exit; //error
+  if child_pid=0 then
+                  begin
+                    fpsignal (SIGHUP,signalhandler(SIG_IGN)); // Отцепляем подчиненный процесс
+                    fpexeclp (path,[param1]);
+                  end;
+end;
 
 function MyStrToInt(Str:string):integer;
 var
@@ -955,7 +971,7 @@ var mppe_string:string;
     endprint:boolean;
     N:byte;
     exit0find,found,foundlac:boolean;
-    Children:boolean;
+    Children,need_restart:boolean;
 begin
 FlagAutostartPonoff:=false;
 StartMessage:=true;
@@ -1342,6 +1358,38 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                         If CheckBox_stateless.Checked then Memo_peer.Lines.Add('nomppe-stateful');
                                      end;
                     end;
+ //разбирается с whitelist в Unity
+  Label14.Caption:=message236;
+  Application.ProcessMessages;
+  Form1.Repaint;
+  need_restart:=false;
+  FpSystem(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep '+'50'+' | '+UsrBinDir+'cut -d: -f1 > '+MyTmpDir+'users');
+  FpSystem(BinDir+'cat '+EtcDir+'passwd | '+BinDir+'grep '+'100'+' | '+UsrBinDir+'cut -d: -f1 >> '+MyTmpDir+'users');
+  Memo_users.Clear;
+  Memo_users.Lines.LoadFromFile(MyTmpDir+'users');
+  FpSystem(BinDir+'rm -f '+MyTmpDir+'users');
+  i:=0;
+   while Memo_users.Lines.Count > i do
+    begin
+      if DirectoryExists('/home/'+Memo_users.Lines[i]+'/') then
+      begin
+          popen(f,'su '+Memo_users.Lines[i]+' --login -p -c "'+MyScriptsDir+'whitelist.sh ponoff"','R');
+              while not eof(f) do
+                  begin
+                    str:='';
+                    Readln(f,str);
+                    if pos('was added in whitelist',str) >0 then need_restart:=true;
+                  end;
+          pclose(f);
+      end;
+      i:=i+1;
+    end;
+  if need_restart then if not Widget.Checked then
+                      begin
+                           Form3.MyMessageBox(message0,message237,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                           Application.ProcessMessages;
+                           Form1.Repaint;
+                      end;
  Memo_peer.Lines.SaveToFile(EtcPppPeersDir+Edit_peer.Text); //записываем провайдерский профиль подключения
  FpSystem (BinDir+'chmod 600 '+EtcPppPeersDir+Edit_peer.Text);
  If not DirectoryExists(VarLogDir) then FpSystem (BinDir+'mkdir -p '+VarLogDir);
@@ -2618,18 +2666,9 @@ begin
  Form1.Repaint;
  if (Form3.Tag=3) or (Form3.Tag=0) then begin Application.ProcessMessages; Form1.Repaint; exit; end;
  ButtonTest.Enabled:=false;
- if Form3.Tag=1 then begin Application.ProcessMessages; Form1.Repaint; AProcess := TAsyncProcess.Create(nil); end;
+ if Form3.Tag=1 then begin Application.ProcessMessages; Form1.Repaint; end;
  Memo_create.Clear;
- if Form3.Tag=1 then
-                    begin
-                         //AProcess.CommandLine := UsrBinDir+'ponoff '+Edit_peer.Text;
-                         FpSystem(UsrBinDir+'printf "'+'#!'+BinDir+'bash'+'\n" > '+MyTmpDir+'ponoff.sh');
-                         FpSystem(UsrBinDir+'printf "'+UsrBinDir+'ponoff '+Edit_peer.Text+'\n" >> '+MyTmpDir+'ponoff.sh');
-                         FpSystem(BinDir+'chmod a+x '+MyTmpDir+'ponoff.sh');
-                         AProcess.CommandLine := BinDir+'bash '+MyTmpDir+'ponoff.sh';
-                    end;
- if Form3.Tag=1 then AProcess.Execute;
- FpSystem(BinDir+'rm -f '+MyTmpDir+'ponoff.sh');
+ if Form3.Tag=1 then ForkStartProgram (UsrBinDir+'ponoff',Edit_peer.Text);
  if Form3.Tag=2 then if dhcp_route.Checked then if not DhclientStartGood then
                                     begin
                                         if fedora then FpSystem(UsrBinDir+'killall dhclient');
@@ -2749,7 +2788,6 @@ begin
                                              end;
      end;
 end;
-   if Form3.Tag=1 then AProcess.Free;
 end;
 
 procedure TForm1.Autostart_ponoffChange(Sender: TObject);
@@ -2808,7 +2846,6 @@ begin
   Timer1.Enabled:=false;
   CheckVPN;
   If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message122,'',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-  FpSystem(BinDir+'rm -f '+MyTmpDir+'ponoff.sh');
   halt;
 end;
 
@@ -3600,7 +3637,7 @@ If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
                       FpSystem(BinDir+'rm -f '+MyTmpDir+'mii');
                  end;
 //виджет для Ubuntu по-умолчанию
-If not FileExists(MyLibDir+Edit_peer.Text+'/config') then If ubuntu then Widget.Checked:=true;
+//If not FileExists(MyLibDir+Edit_peer.Text+'/config') then If ubuntu then Widget.Checked:=true;
 //восстановление опции показа виджета
 IniPropStorage1.IniFileName:=MyLibDir+'ponoff.conf.ini';
 IniPropStorage1.IniSection:='TApplication.Widget';

@@ -1,10 +1,10 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TForm1','FORMDATA',[
-  'TPF0'#6'TForm1'#5'Form1'#4'Left'#3#160#1#6'Height'#3'D'#2#3'Top'#2#0#5'Width'
-  +#3'>'#3#18'HorzScrollBar.Page'#3#25#3#21'HorzScrollBar.Visible'#8#18'VertScr'
-  +'ollBar.Page'#3#28#2#21'VertScrollBar.Visible'#8#13'ActiveControl'#7#12'Page'
-  +'Control1'#7'Caption'#6')'#208#157#208#176#209#129#209#130#209#128#208#190
+  'TPF0'#6'TForm1'#5'Form1'#4'Left'#3#173#1#6'Height'#3'D'#2#3'Top'#2'L'#5'Widt'
+  +'h'#3'>'#3#18'HorzScrollBar.Page'#3#25#3#21'HorzScrollBar.Visible'#8#18'Vert'
+  +'ScrollBar.Page'#3#28#2#21'VertScrollBar.Visible'#8#13'ActiveControl'#7#12'P'
+  +'ageControl1'#7'Caption'#6')'#208#157#208#176#209#129#209#130#209#128#208#190
   +#208#185#208#186#208#176' VPN PPTP/L2TP/OpenL2TP'#12'ClientHeight'#3'D'#2#11
   +'ClientWidth'#3'>'#3#11'Font.Height'#2#246#9'Font.Name'#6#4'Sans'#9'Icon.Dat'
   +'a'#10'B'#8#1#0'>'#8#1#0#0#0#1#0#1#0#128#128#0#0#1#0' '#0'('#8#1#0#22#0#0#0
