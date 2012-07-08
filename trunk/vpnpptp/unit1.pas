@@ -1358,7 +1358,7 @@ If Reconnect_pptp.Checked then If Edit_MinTime.Text='0' then
                                         If CheckBox_stateless.Checked then Memo_peer.Lines.Add('nomppe-stateful');
                                      end;
                     end;
- //разбирается с whitelist в Unity
+ //разбираемся с whitelist в Unity
   Label14.Caption:=message236;
   Application.ProcessMessages;
   Form1.Repaint;
