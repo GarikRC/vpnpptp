@@ -2469,7 +2469,7 @@ DoIconDesktopForAll('vpnpptp');
  Application.ShowHint:=true;
  Application.ProcessMessages;
  Form1.Repaint;
- if not(FileExists('/bin/ip')) then FpSystem(BinDir+'ln -s '+SBinDir+'ip /bin/ip');
+ if not(FileExists(BinDir+'ip')) then FpSystem(BinDir+'ln -s '+SBinDir+'ip /bin/ip');
  FpSystem(BinDir+'rm -f '+EtcDir+'resolv.conf.old');
 end;
 
@@ -3276,14 +3276,13 @@ var
 begin
  y:=false;
  default_mppe:=true;
- PClose(f);
  error_man_pppd:=false;
- PClose(f);
  If FileExists(UsrBinDir+'strings') then popen (f,UsrBinDir+'strings '+UsrSbinDir+'pppd | '+BinDir+'grep require-mppe','R');
  If not FileExists(UsrBinDir+'strings') then If FileExists(UsrBinDir+'man') then
                                                                                begin
-                                                                                    popen (f,UsrBinDir+'man pppd','R');
-                                                                                    If not eof(f) then begin PClose(f);popen (f,UsrBinDir+'man pppd | '+BinDir+'grep require-mppe','R');end else begin PClose(f);error_man_pppd:=true;end;
+                                                                                    popen (f0,UsrBinDir+'man pppd','R');
+                                                                                    If not eof(f0) then popen (f,UsrBinDir+'man pppd | '+BinDir+'grep require-mppe','R') else error_man_pppd:=true;
+                                                                                    pclose(f0);
                                                                                end;
  if not eof(f) then default_mppe:=false;
  //default_mppe:=true;//для проверки при отладке
@@ -4188,6 +4187,7 @@ begin
                 end;
 If not FileExists(BinDir+'awk') then If FileExists(UsrBinDir+'awk') then FpSystem('ln -s '+UsrBinDir+'awk'+' '+BinDir+'awk'); //создаем ссылку для awk
 If not FileExists(BinDir+'find') then If FileExists(UsrBinDir+'find') then FpSystem('ln -s '+UsrBinDir+'find'+' '+BinDir+'find'); //создаем ссылку для find
+If not FileExists(UsrBinDir+'man') then If FileExists(BinDir+'man') then FpSystem('ln -s '+BinDir+'man'+' '+UsrBinDir+'man'); //создаем ссылку для man
 Screen.HintFont.Size:=30;
 Screen.MenuFont.Size:=30;
 if FileSize(MyLibDir+'profiles')=0 then FpSystem (BinDir+'rm -f '+MyLibDir+'profiles');
