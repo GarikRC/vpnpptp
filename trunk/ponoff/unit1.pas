@@ -1179,6 +1179,7 @@ If not Code_up_ppp then If link=1 then
                                                                           FpSystem (SBinDir+'route del default');
                                                       FpSystem (SBinDir+'route add default gw '+Memo_Config.Lines[2]+' dev '+Memo_Config.Lines[3]);
                                                       DoubleRunPonoff:=false;
+                                                      FpSystem (SBinDir+'modprobe ppp_generic');
                                                       If Memo_Config.Lines[39]='pptp' then
                                                                                     FpSystem (UsrSBinDir+'pppd call '+Memo_Config.Lines[0]);
                                                       If Memo_Config.Lines[39]='l2tp' then
