@@ -595,7 +595,6 @@ var
 begin
      If DoHalt then
                 begin
-                  //popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
                   popen (f,BinDir+'ps -u root |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+BinDir+'grep -x '+Name,'R');
                   If not eof(f) then halt;
                   PClose(f);
@@ -2770,14 +2769,13 @@ begin
                                                                 MtuUsed:='';
                                                                 If Code_up_ppp then
                                                                    begin
-                                                                     popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39),'R');
-                                                                     if eof(f) then popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep mtu |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39),'R');
+                                                                     popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39)+'|'+UsrBinDir+'cut -d ":" --fields=2','R');
+                                                                     if eof(f) then begin PClose(f); popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep mtu |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39),'R');end;
                                                                      While not eof(f) do
                                                                         begin
                                                                           Readln (f,MtuUsed);
                                                                         end;
                                                                      PClose(f);
-                                                                     If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
                                                                      If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1472 then
                                                                              FpSystem(UsrBinDir+'printf "'+'vpnpptp: '+message163+' '+MtuUsed+' '+message164+'\n" >> '+VarLogDir+'vpnlog');
                                                                      FlagMtu:=true;
@@ -3635,8 +3633,6 @@ If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
                               end;
                       FpSystem(BinDir+'rm -f '+MyTmpDir+'mii');
                  end;
-//виджет для Ubuntu по-умолчанию
-//If not FileExists(MyLibDir+Edit_peer.Text+'/config') then If ubuntu then Widget.Checked:=true;
 //восстановление опции показа виджета
 IniPropStorage1.IniFileName:=MyLibDir+'ponoff.conf.ini';
 IniPropStorage1.IniSection:='TApplication.Widget';
@@ -3891,7 +3887,7 @@ If CheckBox_required.Checked then
                                      if eof(f) then
                                                    begin
                                                         Form3.MyMessageBox(message0,message235,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
-                                                        //CheckBox_required.Checked:=false;
+                                                        //CheckBox_required.Checked:=false; //на будущее
                                                         Application.ProcessMessages;
                                                         Form1.Repaint;
                                                    end;

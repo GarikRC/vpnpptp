@@ -281,7 +281,6 @@ var
 begin
      If DoHalt then
                 begin
-                  //popen (f,BinDir+'ps -u root |'+BinDir+'grep '+Name,'R');
                   popen (f,BinDir+'ps -u root |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+BinDir+'grep -x '+Name,'R');
                   If not eof(f) then halt;
                   PClose(f);
@@ -870,14 +869,13 @@ If not Code_up_ppp then FlagMtu:=false;
 MtuUsed:='';
 If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked') then
    begin
-     popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39),'R');
-     if eof (f) then popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep mtu |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39),'R');
+     popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39)+'|'+UsrBinDir+'cut -d ":" --fields=2','R');
+     if eof (f) then begin PClose(f); popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep mtu |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39),'R');end;
      While not eof(f) do
         begin
           Readln (f,MtuUsed);
         end;
      PClose(f);
-     If MtuUsed<>'' then If Length(MtuUsed)>=4 then MtuUsed:=RightStr(MtuUsed,Length(MtuUsed)-4);
      If MtuUsed<>'' then If MyStrToInt(MtuUsed)>1472 then
         begin
              BalloonMessage (3000,message0,message43+' '+MtuUsed+' '+message44,AFont);
@@ -896,6 +894,7 @@ If Code_up_ppp then If Memo_Config.Lines[46]<>'route-IP-remote-yes' then
                                          if eof(f) then
                                                    begin
                                                      errorPtP:=true;
+                                                     PClose(f);
                                                      popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep destination|'+BinDir+'awk '+chr(39)+'{print $6}'+chr(39),'R');
                                                    end;
                                          if not eof(f) then
@@ -1037,12 +1036,12 @@ If not Code_up_ppp then If link=1 then If Memo_Config.Lines[9]='dhcp-route-yes' 
                If FileExists(MyLibDir+Memo_Config.Lines[0]+'/hosts') then If Memo_config.Lines[22]='routevpnauto-yes' then
                        if Memo_config.Lines[21]='IPS-no' then
                                      begin
-                                             Application.ProcessMessages;
-                                             popen (f,Str,'R');
-                                             Application.ProcessMessages;
-                                             If eof(f) then If not BindUtils then
-                                                                                NoPingIPS:=true;
-                                             If eof(f) then If BindUtils then
+                                              Application.ProcessMessages;
+                                              popen (f,Str,'R');
+                                              Application.ProcessMessages;
+                                              If eof(f) then If not BindUtils then
+                                                                            NoPingIPS:=true;
+                                              If eof(f) then If BindUtils then
                                                                             NoDNS:=true;
                                               Memo_bindutilshost0.Lines.LoadFromFile(MyLibDir+Memo_Config.Lines[0]+'/hosts');
                                               While not eof(f) do
