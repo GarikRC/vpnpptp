@@ -32,7 +32,7 @@
 
 15) разрешен одновременный запуск с vpnpptp_setup,
 
-16) в ponoff добавлен modbrobe ppp_generic перед поднятием VPN.
+16) в ponoff добавлен modbrobe ppp_generic перед поднятием VPN, иначе бывает ругается на отсутствие /dev/ppp, без которого VPN не поднимется.
 
 Примечания:
 
@@ -47,3 +47,13 @@
  логин: swissvpntest
 
  пароль: swissvpntest
+
+На VPN-сервере, доступном через внешку (http://www.usaip.eu/en/free_vpn.php), были протестированы: VPN PPTP, VPN L2TP, VPN OpenL2TP, VPN PPTP+mppe, VPN L2TP+mppe, VPN OpenL2TP+mppe:
+
+ vpn-сервер: vpn15.usaip.eu
+
+ логин: demo
+
+ пароль: demo
+
+Повторить тесты можно на VmWare Player при настройке сети NAT.
