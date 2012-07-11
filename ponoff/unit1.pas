@@ -1238,6 +1238,7 @@ begin
                                                    Widget.Height:=40;
                                                 end;
   RestartPonoff;
+  If not DirectoryExists(MyLibDir) then FpSystem (BinDir+'mkdir -p '+MyLibDir);
   with Widget.IniPropStorage1 do
   begin
     // Если значение в конфиге пустое, то заполняем по умолчанию
