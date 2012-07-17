@@ -8,7 +8,7 @@
 
 http://code.google.com/p/vpnpptp/downloads/list
 
-Пакет входит в дистрибутивы: дистрибутивы Edumandriva, Mandriva (иногда), Rosa, MagOS, MiniOS, КСоНоМи, PCLinuxOS Russian Community Edition, Сиалия, Linux Mint Russian Edition от Lazarus, CruduX, Ubuntu от Ruben. Также пакет используется в PCLinuxOS, Ubuntu, Debian, openSUSE, Fedora, Mageia.
+Пакет входит в дистрибутивы: дистрибутивы Edumandriva, Mandriva (иногда), Rosa, MagOS, MiniOS, КСоНоМи, PCLinuxOS Russian Community Edition, Сиалия, Linux Mint Russian Edition от Lazarus, CruduX, Ubuntu от Ruben. Также пакет используется в PCLinuxOS, Ubuntu, Debian, openSUSE, Fedora, Mageia, Kubuntu.
 
 Программа представлена в версиях пакетов:
 
