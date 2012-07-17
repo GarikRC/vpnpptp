@@ -3861,9 +3861,9 @@ object Form1: TForm1
         AnchorSideBottom.Control = TabSheet4
         AnchorSideBottom.Side = asrBottom
         Left = 3
-        Height = 491
+        Height = 501
         Top = 3
-        Width = 814
+        Width = 820
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Around = 3
         BorderStyle = bsNone

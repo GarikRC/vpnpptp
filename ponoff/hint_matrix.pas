@@ -17,6 +17,8 @@ type
     LabelConnection: TLabel;
     LabelDNS2: TLabel;
     LabelConnectionInfo: TLabel;
+    LabelMTUInfo: TLabel;
+    LabelMTU: TLabel;
     LabelStatusInfo: TLabel;
     LabelTimeInNetInfo: TLabel;
     LabelDownloadInfo: TLabel;
@@ -37,7 +39,7 @@ type
     TimerClose: TTimer;
     procedure FormClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure HintMessage (Connection_1,Status_1,TimeInNet_1,Download_1,Upload_1,Interface_1,IPAddress_1,Gateway_1,DNS1_1,DNS2_1,Connection_2,Status_2,TimeInNet_2,Download_2,Upload_2,Interface_2,IPAddress_2,Gateway_2,DNS1_2,DNS2_2:string;font_size:integer);
+    procedure HintMessage (Connection_1,Status_1,TimeInNet_1,Download_1,Upload_1,Interface_1,IPAddress_1,Gateway_1,DNS1_1,DNS2_1,MTU_1,Connection_2,Status_2,TimeInNet_2,Download_2,Upload_2,Interface_2,IPAddress_2,Gateway_2,DNS1_2,DNS2_2,MTU_2:string;font_size:integer);
     procedure HintHide;
     procedure TimerCloseTimer(Sender: TObject);
   private
@@ -60,7 +62,7 @@ begin
     FormHintMatrix.Tag:=0;
 end;
 
-procedure TFormHintMatrix.HintMessage (Connection_1,Status_1,TimeInNet_1,Download_1,Upload_1,Interface_1,IPAddress_1,Gateway_1,DNS1_1,DNS2_1,Connection_2,Status_2,TimeInNet_2,Download_2,Upload_2,Interface_2,IPAddress_2,Gateway_2,DNS1_2,DNS2_2:string;font_size:integer);
+procedure TFormHintMatrix.HintMessage (Connection_1,Status_1,TimeInNet_1,Download_1,Upload_1,Interface_1,IPAddress_1,Gateway_1,DNS1_1,DNS2_1,MTU_1,Connection_2,Status_2,TimeInNet_2,Download_2,Upload_2,Interface_2,IPAddress_2,Gateway_2,DNS1_2,DNS2_2,MTU_2:string;font_size:integer);
 //если Tag=1 значит сообщение показывается, если Tag=0 значит сообщение не показывается
 var
   k4:integer; //размер иконки в трее
@@ -83,6 +85,7 @@ begin
   LabelGateway.Caption:=Trim(Gateway_1);
   LabelDNS1.Caption:=Trim(DNS1_1);
   LabelDNS2.Caption:=Trim(DNS2_1);
+  LabelMTU.Caption:=Trim(MTU_1);
 
   LabelConnectionInfo.Caption:=Trim(Connection_2);
   LabelStatusInfo.Caption:=Trim(Status_2);
@@ -94,6 +97,7 @@ begin
   LabelGatewayInfo.Caption:=Trim(Gateway_2);
   LabelDNS1Info.Caption:=Trim(DNS1_2);
   LabelDNS2Info.Caption:=Trim(DNS2_2);
+  LabelMTUInfo.Caption:=Trim(MTU_2);
 
   Visible:=true;
   Align:=alClient;
@@ -119,7 +123,7 @@ begin
    (FormHintMatrix.Components[i] as TControl).OnClick:=FormHintMatrix.OnClick;
   end;
 
-  max_text_height:=LabelDNS2.Height+LabelDNS2.Top+3;
+  max_text_height:=LabelMTU.Height+LabelMTU.Top+3;
   max_text_width:=max_text_width+6;
   FormHintMatrix.Height:=max_text_height;
   FormHintMatrix.Width:=max_text_width;

@@ -31,7 +31,7 @@ type
     procedure ComboBoxProfileKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
-    procedure MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string;NumberDefault:byte);
+    procedure MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string);
   private
     { private declarations }
   public
@@ -46,7 +46,7 @@ implementation
 
 { TForm3 }
 
-Procedure TForm3.MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string;NumberDefault:byte);
+Procedure TForm3.MyMessageBox (mess0,mess1,mess2,mess3,mess4,filepic:string;a,b,c:boolean;FontSize:integer;Icon0:TIcon;ComboBoxProfileVisible:boolean;MyLibDir0:string);
 //заголовок, текст сообщения, текст 1-ой кнопки, текст 2-ой кнопки, текст 3-ей кнопки,
 //файл изображения, видимость 1-ой кнопки, видимость 2-ой кнопки, видимость 3-ей кнопки, шрифт, иконка в заголовке
 //видимость ComboBoxProfile, директория библиотек, номер кнопки дефолтной (1,2,3)
@@ -114,26 +114,6 @@ begin
    Form3.Width:=670;
    Form3.Font.Size:=FontSize;
    Application.ProcessMessages;
-{   Form3.Show;
-   If Form3.Visible then
-                begin
-                     If NumberDefault=1 then if Form3.Button1.Visible then
-                                                                      begin
-                                                                           Form3.Button1.Default:=true;
-                                                                           Form3.Button1.SetFocus;
-                                                                      end;
-                     If NumberDefault=2 then if Form3.Button2.Visible then
-                                                                      begin
-                                                                           Form3.Button2.Default:=true;
-                                                                           Form3.Button2.SetFocus;
-                                                                      end;
-                     If NumberDefault=3 then if Form3.Button3.Visible then
-                                                                      begin
-                                                                           Form3.Button3.Default:=true;
-                                                                           Form3.Button3.SetFocus;
-                                                                      end;
-                end;
-   Form3.Hide;}
    Form3.ShowModal;
    ComboBoxProfile.Visible:=false;
    ComboBoxProfile.Items.Clear;

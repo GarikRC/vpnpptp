@@ -146,6 +146,14 @@ msgstr ""
 msgid "LabelIPAddressInfo"
 msgstr ""
 
+#: TFORMHINTMATRIX.LABELMTU.CAPTION
+msgid "LabelMTU"
+msgstr ""
+
+#: TFORMHINTMATRIX.LABELMTUINFO.CAPTION
+msgid "LabelMTUInfo"
+msgstr ""
+
 #: TFORMHINTMATRIX.LABELSTATUS.CAPTION
 msgid "LabelStatus"
 msgstr ""

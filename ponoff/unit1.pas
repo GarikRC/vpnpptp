@@ -173,6 +173,7 @@ var
   file1, file2: TMemoryStream;
   tray_status,last_tray:(bw_on,bw_off,col_on,col_off);
   error_rx_tx:boolean;//ошибка определения RX/TX
+  MtuUsed:string;//значение mtu
 
 resourcestring
   message0='Внимание!';
@@ -380,7 +381,7 @@ begin
                       Form1.Hide;
                       Widget.Hide;
                       Form1.TrayIcon1.Hide;
-                      Form3.MyMessageBox(message0,message72,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                      Form3.MyMessageBox(message0,message72,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                   end;
     If not ProgrammRoot('ponoff',false) then
                   begin
@@ -389,7 +390,7 @@ begin
                        Form1.Hide;
                        Widget.Hide;
                        Form1.TrayIcon1.Hide;
-                       Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                       Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                        FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                        halt;
                   end;
@@ -684,7 +685,7 @@ begin
                           Widget.Hide;
                           if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
-                          Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                          Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                           FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                           halt;
                      end;
@@ -790,7 +791,7 @@ procedure TForm1.MenuItem1Click(Sender: TObject);
 var
     i,h:integer;
     link:byte;//1-link ok, 2-no link, 3-none, 4-еще не определено
-    str,MtuUsed:string;
+    str:string;
     Str_networktest, Str_RemoteIPaddress:string;
     FindRemoteIPaddress:boolean;
     RealPppIface, RealPppIfaceDefault:string;
@@ -866,9 +867,9 @@ If Code_up_ppp then If FileExists (MyLibDir+Memo_Config.Lines[0]+'/resolv.conf.a
 If not Code_up_ppp then If Memo_Config.Lines[41]='etc-hosts-yes' then ClearEtc_hosts;
 //Проверяем используемое mtu
 If not Code_up_ppp then FlagMtu:=false;
-MtuUsed:='';
 If Code_up_ppp then If not FlagMtu then If not FileExists (MyTmpDir+'mtu.checked') then
    begin
+     MtuUsed:='';
      popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep MTU |'+BinDir+'awk '+ chr(39)+'{print $6}'+chr(39)+'|'+UsrBinDir+'cut -d ":" --fields=2','R');
      if eof (f) then begin PClose(f); popen (f,SBinDir+'ifconfig '+PppIface+'|'+BinDir+'grep mtu |'+BinDir+'awk '+ chr(39)+'{print $4}'+chr(39),'R');end;
      While not eof(f) do
@@ -1090,7 +1091,7 @@ If not Code_up_ppp then If link=3 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                                 MenuItem2Click(Self);
                                                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
@@ -1105,7 +1106,7 @@ If not Code_up_ppp then If link=2 then
                                                                 Timer1.Enabled:=False;
                                                                 Timer2.Enabled:=False;
                                                                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                                Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                                 MenuItem2Click(Self);
                                                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
@@ -1352,7 +1353,7 @@ If str='DEFAULT' then
                               Timer2.Enabled:=False;
                               Form1.Hide;
                               if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                              Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                              Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                               FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                               halt;
                            end;
@@ -1362,7 +1363,7 @@ If str='DEFAULT' then
                                                      Timer2.Enabled:=False;
                                                      Form1.Hide;
                                                      if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                                                     Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                                     Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                      FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                                      halt;
                                                    end;
@@ -1372,7 +1373,7 @@ If str='DEFAULT' then
                                                                 Timer2.Enabled:=False;
                                                                 Form1.Hide;
                                                                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                                                                Form3.MyMessageBox(message0,message53+' '+message54+' '+message55,'',message33,message36,MyPixmapsDir+'ponoff.png',false,true,true,AFont,Form1.Icon,true,MyLibDir,2);
+                                                                Form3.MyMessageBox(message0,message53+' '+message54+' '+message55,'',message33,message36,MyPixmapsDir+'ponoff.png',false,true,true,AFont,Form1.Icon,true,MyLibDir);
                                                                 If Form3.Tag=2 then If Form3.ComboBoxProfile.Text<>'' then
                                                                                                   begin
                                                                                                         ProfileName:=Form3.ComboBoxProfile.Text;
@@ -1416,7 +1417,7 @@ If str='DEFAULT' then
             Timer2.Enabled:=False;
             Form1.Hide;
             if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-            Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+            Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
             FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
             halt;
            end;
@@ -1427,7 +1428,7 @@ If str='DEFAULT' then
     Timer2.Enabled:=False;
     Form1.Hide;
     if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+    Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
     FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
     halt;
    end;
@@ -1466,7 +1467,7 @@ If str='DEFAULT' then
                                Form1.Timer2.Enabled:=False;
                                Form1.Hide;
                                if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                               Form3.MyMessageBox(message0,message2,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                               Form3.MyMessageBox(message0,message2,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                Form1.Timer1.Enabled:=true;
                                Form1.Timer2.Enabled:=true;
                                if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
@@ -1508,7 +1509,7 @@ If i>1 then
                                 Timer2.Enabled:=False;
                                 Form1.Hide;
                                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                                Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                 FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                 halt;
                              end;
@@ -1542,7 +1543,7 @@ If Xa=0 then if Yb=0 then
           Timer1.Enabled:=False;
           Timer2.Enabled:=False;
           Form1.Hide;
-          Form3.MyMessageBox(message0,message71,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+          Form3.MyMessageBox(message0,message71,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
           FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
           ErrorShowIcon:=true;
           Widget.IniPropStorage1.StoredValue['Widget']:='true';
@@ -1573,7 +1574,7 @@ If suse then
                                            Timer2.Enabled:=False;
                                            Form1.Hide;
                                            if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                                           Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                                           Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                            PClose(f);
                                            FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                                            halt;
@@ -1638,13 +1639,13 @@ If suse then
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                 Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                 Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                  FpSystem(BinDir+'rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
    if link=2 then
                 begin
-                 Form3.MyMessageBox(message0,message5,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+                 Form3.MyMessageBox(message0,message5,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
@@ -1843,7 +1844,7 @@ end;
 procedure TForm1.MenuItem6Click(Sender: TObject);
 begin
   If Form3.Visible then exit;
-  Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir,3);
+  Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
 end;
 
 procedure TForm1.MinusClick(Sender: TObject);
@@ -2186,7 +2187,7 @@ var
   Str_RemoteIPaddress0,RemoteIPaddress0,Str_IPaddress0,IPaddress0:string;
   DNS3,DNS4:string;
   FileObnull:textfile;
-  ConnectionInfo,StatusInfo,TimeInNetInfo,DownloadInfo,UploadInfo,InterfaceInfo,IPAddressInfo,GatewayInfo,DNS1Info,DNS2Info:string;
+  ConnectionInfo,StatusInfo,TimeInNetInfo,DownloadInfo,UploadInfo,InterfaceInfo,IPAddressInfo,GatewayInfo,DNS1Info,DNS2Info, MtuInfo:string;
 begin
   If FormHintMatrix.Tag=1 then exit;
   SecondsPastRun:=0;
@@ -2322,6 +2323,8 @@ begin
                       GatewayInfo:=Trim(RemoteIPaddress0);
                       DNS1Info:=Trim(DNS3);
                       DNS2Info:=Trim(DNS4);
+                      MTUInfo:=Trim(MtuUsed);
+                      If MTUInfo='' then MTUInfo:='?';
                  end
                       else
                           begin
@@ -2335,8 +2338,9 @@ begin
                               GatewayInfo:='-';
                               DNS1Info:='-';
                               DNS2Info:='-';
+                              MTUInfo:='-';
                           end;
-  FormHintMatrix.HintMessage(message6+':',message22,message29,message27,message28,message60,message59,message58,'DNS1:','DNS2:',ConnectionInfo,StatusInfo,TimeInNetInfo,DownloadInfo,UploadInfo,InterfaceInfo,IPAddressInfo,GatewayInfo,DNS1Info,DNS2Info,AFont);
+  FormHintMatrix.HintMessage(message6+':',message22,message29,message27,message28,message60,message59,message58,'DNS1:','DNS2:','MTU:',ConnectionInfo,StatusInfo,TimeInNetInfo,DownloadInfo,UploadInfo,InterfaceInfo,IPAddressInfo,GatewayInfo,DNS1Info,DNS2Info,MTUInfo,AFont);
   Application.ProcessMessages;
 end;
 
@@ -2347,6 +2351,7 @@ initialization
   NoConnectMessageShow:=false;
   ProfileName:='';
   ProfileStrDefault:='';
+  MtuUsed:='';
   If Paramcount=0 then if FileExists(MyLibDir+'default/default') then
                               begin
                                    popen(f,BinDir+'cat '+MyLibDir+'default/default','R');

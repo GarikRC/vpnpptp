@@ -90,7 +90,11 @@ begin
      If Y<=(Screen.Height div 2) then B:=Y+k3;
      If X>(Screen.Width div 2) then A:=X-max_text_width;
      If X<=(Screen.Width div 2) then A:=X+k3;
+     HintBalloon.Repaint;
+     FormBalloonMatrix.Repaint;
      HintBalloon.ActivateHint(rect(A,B,A+max_text_width,B+max_text_height),'');
+     HintBalloon.Repaint;
+     FormBalloonMatrix.Repaint;
      Application.ProcessMessages;
      FormBalloonMatrix.TimerClose.Interval:=time_of_show_msec;
      FormBalloonMatrix.TimerClose.Enabled:=true;
