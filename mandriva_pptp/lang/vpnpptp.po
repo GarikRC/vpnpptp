@@ -232,10 +232,6 @@ msgstr ""
 msgid "(используйте эту опцию, если только без нее не работает, или об этом попросит сама программа)"
 msgstr ""
 
-#: TFORM1.LABEL46.CAPTION
-msgid "         "
-msgstr ""
-
 #: TFORM1.LABEL5.CAPTION
 msgid "/sbin/route add -net [ip] netmask [маска] gw [шлюз] dev [устройство]"
 msgstr ""
@@ -297,6 +293,11 @@ msgstr ""
 msgid "Пользователь:"
 msgstr ""
 
+#: TFORM1.METKA.CAPTION
+msgctxt "TFORM1.METKA.CAPTION"
+msgid "         "
+msgstr ""
+
 #: TFORM1.MII_TOOL_NO.CAPTION
 msgid "Не контролировать state сетевого кабеля"
 msgstr ""
@@ -307,6 +308,10 @@ msgstr ""
 
 #: TFORM1.RECONNECT_PPTP.CAPTION
 msgid "Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)"
+msgstr ""
+
+#: TFORM1.REQUIRE_MPPE_128.CAPTION
+msgid "require-mppe-128"
 msgstr ""
 
 #: TFORM1.TABSHEET1.CAPTION

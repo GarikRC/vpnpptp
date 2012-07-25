@@ -1,14 +1,16 @@
-=======
-VPNPPTP
-=======
+=============
+Mandriva VPN PPTP
+=============
 
-Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
+Tools for easy and quick setup and control MS VPN via PPTP
 
--------
+For setup run MCC and then use Network tools drakconnect
+For control use ponoff tools
+
 License
 -------
 
-VPNPPTP is licensed under the GPLv2.
+Mandriva VPN PPTP is licensed under the GPLv2.
 
 This tool is distributed with the following open source software::
 
