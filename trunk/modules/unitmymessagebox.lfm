@@ -1,8 +1,8 @@
 object Form3: TForm3
   AnchorSideBottom.Side = asrBottom
-  Left = 347
+  Left = 568
   Height = 152
-  Top = 275
+  Top = 214
   Width = 756
   ActiveControl = Panel1
   BorderIcons = [biSystemMenu]
@@ -4214,7 +4214,7 @@ object Form3: TForm3
     end
     object ComboBoxProfile: TComboBox
       Left = 136
-      Height = 27
+      Height = 21
       Top = 116
       Width = 424
       ItemHeight = 0

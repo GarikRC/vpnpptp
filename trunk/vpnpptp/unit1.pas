@@ -1156,7 +1156,7 @@ Application.ShowHint:=false;
 If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 If FileExists (EtcDir+'hosts.old') then FpSystem (BinDir+'cp -f '+EtcDir+'hosts.old '+EtcDir+'hosts');
 FpSystem(BinDir+'rm -f '+MyLibDir+Edit_peer.Text+'/hosts');
-FpSystem(BinDir+'rm -rf /opt/vpnpptp');
+//FpSystem(BinDir+'rm -rf /opt/vpnpptp');
 if FileExists(EtcPppDir+'options.pptp.old') then //для совместимости с пред.версиями
                                    begin
                                       FpSystem(BinDir+'cp -f '+EtcPppDir+'options.pptp.old '+EtcPppDir+'options.pptp');
