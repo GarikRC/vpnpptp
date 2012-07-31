@@ -1,8 +1,6 @@
-{ This is an automatically generated lazarus resource file }
-
 LazarusResources.Add('TForm3','FORMDATA',[
   'TPF0'#6'TForm3'#5'Form3'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#3
-  +'['#1#6'Height'#3#152#0#3'Top'#3#19#1#5'Width'#3#244#2#13'ActiveControl'#7#6
+  +'8'#2#6'Height'#3#152#0#3'Top'#3#214#0#5'Width'#3#244#2#13'ActiveControl'#7#6
   +'Panel1'#11'BorderIcons'#11#12'biSystemMenu'#0#11'BorderStyle'#7#8'bsSingle'
   +#7'Caption'#6#5'Form3'#12'ClientHeight'#3#152#0#11'ClientWidth'#3#244#2#8'On'
   +'Create'#7#10'FormCreate'#8'Position'#7#15'poDesktopCenter'#10'LCLVersion'#6
@@ -5515,7 +5513,7 @@ LazarusResources.Add('TForm3','FORMDATA',[
   +#136#0#6'Height'#2'i'#3'Top'#2#11#5'Width'#3'f'#2#7'Anchors'#11#5'akTop'#6'a'
   +'kLeft'#7'akRight'#8'akBottom'#0#17'BorderSpacing.Top'#2#10#19'BorderSpacing'
   +'.Right'#2#5#11'ParentColor'#8#8'WordWrap'#9#0#0#9'TComboBox'#15'ComboBoxPro'
-  +'file'#4'Left'#3#136#0#6'Height'#2#27#3'Top'#2't'#5'Width'#3#168#1#10'ItemHe'
+  +'file'#4'Left'#3#136#0#6'Height'#2#21#3'Top'#2't'#5'Width'#3#168#1#10'ItemHe'
   +'ight'#2#0#9'OnKeyDown'#7#22'ComboBoxProfileKeyDown'#5'Style'#7#8'csSimple'#8
   +'TabOrder'#2#0#7'Visible'#8#0#0#7'TButton'#7'Button1'#19'AnchorSideLeft.Side'
   +#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.'
