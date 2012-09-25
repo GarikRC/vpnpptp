@@ -3290,7 +3290,8 @@ begin
                                                                                     If not eof(f0) then popen (f,UsrBinDir+'man pppd | '+BinDir+'grep require-mppe','R') else error_man_pppd:=true;
                                                                                     pclose(f0);
                                                                                end;
- if not eof(f) then default_mppe:=false;
+ If FileExists(UsrBinDir+'strings') or FileExists(UsrBinDir+'man') then
+                               if not eof(f) then default_mppe:=false;
  //default_mppe:=true;//для проверки при отладке
  if not default_mppe then
                 begin
