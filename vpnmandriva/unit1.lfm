@@ -1,7 +1,7 @@
 object MyForm: TMyForm
-  Left = 206
+  Left = 448
   Height = 580
-  Top = 96
+  Top = 127
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2152,15 +2152,15 @@ object MyForm: TMyForm
     TabOrder = 0
     OnMouseDown = TabSheet1MouseDown
     object Label_IPS: TLabel
-      AnchorSideLeft.Control = Label_peer
-      AnchorSideTop.Control = Label_peer
+      AnchorSideLeft.Control = Label_iface
+      AnchorSideTop.Control = Label_iface
       AnchorSideTop.Side = asrBottom
-      AnchorSideRight.Control = Label_peer
+      AnchorSideRight.Control = Label_iface
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 76
-      Height = 14
-      Top = 75
+      Height = 12
+      Top = 73
       Width = 8
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 30
@@ -2178,8 +2178,8 @@ object MyForm: TMyForm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 75
-      Height = 14
-      Top = 119
+      Height = 12
+      Top = 115
       Width = 9
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 30
@@ -2195,8 +2195,8 @@ object MyForm: TMyForm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 75
-      Height = 14
-      Top = 163
+      Height = 12
+      Top = 157
       Width = 9
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 30
@@ -2204,13 +2204,13 @@ object MyForm: TMyForm
       ParentColor = False
       OnMouseDown = TabSheet1MouseDown
     end
-    object Label_peer: TLabel
+    object Label_iface: TLabel
       AnchorSideLeft.Control = MyPanel
       AnchorSideTop.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 76
-      Height = 14
+      Height = 12
       Top = 31
       Width = 8
       BorderSpacing.Left = 75
@@ -2227,8 +2227,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 72
+      Height = 17
+      Top = 71
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2237,21 +2237,22 @@ object MyForm: TMyForm
       ShowHint = True
       TabOrder = 1
     end
-    object Edit_peer: TEdit
-      AnchorSideLeft.Control = Label_peer
+    object Edit_iface: TEdit
+      AnchorSideLeft.Control = Label_iface
       AnchorSideLeft.Side = asrBottom
-      AnchorSideTop.Control = Label_peer
+      AnchorSideTop.Control = Label_iface
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 28
+      Height = 17
+      Top = 29
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
       MaxLength = 15
       TabOrder = 0
+      Visible = False
     end
     object Edit_user: TEdit
       AnchorSideLeft.Control = Label_user
@@ -2261,8 +2262,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 116
+      Height = 17
+      Top = 113
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2277,8 +2278,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 160
+      Height = 17
+      Top = 155
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2292,9 +2293,9 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = CheckBox_reap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_reap
-      Left = 579
-      Height = 14
-      Top = 255
+      Left = 582
+      Height = 12
+      Top = 244
       Width = 8
       Anchors = [akLeft, akBottom]
       BorderSpacing.Top = 30
@@ -2309,8 +2310,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 719
-      Height = 14
-      Top = 255
+      Height = 12
+      Top = 244
       Width = 88
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 30
@@ -2323,12 +2324,13 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = CheckBox_rmschap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rmschap
-      Left = 579
-      Height = 21
-      Top = 311
-      Width = 88
+      Left = 582
+      Height = 26
+      Top = 308
+      Width = 86
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-chap'
+      OnChange = CheckBox_rchapChange
       TabOrder = 12
     end
     object CheckBox_reap: TCheckBox
@@ -2336,12 +2338,13 @@ object MyForm: TMyForm
       AnchorSideTop.Control = Label_auth
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rpap
-      Left = 579
-      Height = 21
-      Top = 269
-      Width = 82
+      Left = 582
+      Height = 26
+      Top = 256
+      Width = 81
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-eap'
+      OnChange = CheckBox_reapChange
       TabOrder = 10
     end
     object CheckBox_rmschap: TCheckBox
@@ -2349,12 +2352,13 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_rchap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rmschapv2
-      Left = 579
-      Height = 21
-      Top = 332
-      Width = 104
+      Left = 582
+      Height = 26
+      Top = 334
+      Width = 101
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-mschap'
+      OnChange = CheckBox_rmschapChange
       TabOrder = 13
     end
     object CheckBox_stateless: TCheckBox
@@ -2363,10 +2367,11 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 719
-      Height = 21
-      Top = 290
-      Width = 70
+      Height = 26
+      Top = 282
+      Width = 71
       Caption = 'stateless'
+      OnChange = CheckBox_statelessChange
       TabOrder = 16
     end
     object CheckBox_no40: TCheckBox
@@ -2375,10 +2380,11 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 719
-      Height = 21
-      Top = 311
-      Width = 51
+      Height = 26
+      Top = 308
+      Width = 52
       Caption = 'no40'
+      OnChange = CheckBox_no40Change
       TabOrder = 17
     end
     object CheckBox_no56: TCheckBox
@@ -2387,10 +2393,11 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 719
-      Height = 21
-      Top = 332
-      Width = 50
+      Height = 26
+      Top = 334
+      Width = 52
       Caption = 'no56'
+      OnChange = CheckBox_no56Change
       TabOrder = 18
     end
     object CheckBox_required: TCheckBox
@@ -2399,10 +2406,11 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 719
-      Height = 21
-      Top = 269
-      Width = 69
+      Height = 26
+      Top = 256
+      Width = 68
       Caption = 'required'
+      OnChange = CheckBox_requiredChange
       TabOrder = 15
     end
     object CheckBox_no128: TCheckBox
@@ -2411,10 +2419,11 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Side = asrBottom
       Left = 719
-      Height = 21
-      Top = 353
-      Width = 57
+      Height = 26
+      Top = 360
+      Width = 58
       Caption = 'no128'
+      OnChange = CheckBox_no128Change
       TabOrder = 19
     end
     object CheckBox_rpap: TCheckBox
@@ -2422,12 +2431,13 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_reap
       AnchorSideTop.Side = asrBottom
       AnchorSideBottom.Control = CheckBox_rchap
-      Left = 579
-      Height = 21
-      Top = 290
-      Width = 82
+      Left = 582
+      Height = 26
+      Top = 282
+      Width = 81
       Anchors = [akLeft, akBottom]
       Caption = 'refuse-pap'
+      OnChange = CheckBox_rpapChange
       TabOrder = 11
     end
     object CheckBox_rmschapv2: TCheckBox
@@ -2436,13 +2446,14 @@ object MyForm: TMyForm
       AnchorSideRight.Control = CheckBox_no128
       AnchorSideBottom.Control = CheckBox_no128
       AnchorSideBottom.Side = asrBottom
-      Left = 579
-      Height = 21
-      Top = 353
-      Width = 120
+      Left = 582
+      Height = 26
+      Top = 360
+      Width = 117
       Anchors = [akRight, akBottom]
       BorderSpacing.Right = 20
       Caption = 'refuse-mschap-v2'
+      OnChange = CheckBox_rmschapv2Change
       TabOrder = 14
     end
     object CheckBox_right: TCheckBox
@@ -2450,9 +2461,9 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_pppd_log
       AnchorSideTop.Side = asrBottom
       Left = 11
-      Height = 21
-      Top = 276
-      Width = 26
+      Height = 26
+      Top = 270
+      Width = 31
       BorderSpacing.Left = 10
       Caption = 'J'
       TabOrder = 6
@@ -2462,9 +2473,9 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_right
       AnchorSideTop.Side = asrBottom
       Left = 11
-      Height = 21
-      Top = 297
-      Width = 31
+      Height = 26
+      Top = 296
+      Width = 36
       BorderSpacing.Left = 10
       Caption = 'H'
       TabOrder = 7
@@ -2474,9 +2485,9 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_nobuffer
       AnchorSideTop.Side = asrBottom
       Left = 11
-      Height = 21
-      Top = 339
-      Width = 26
+      Height = 26
+      Top = 348
+      Width = 31
       BorderSpacing.Left = 10
       Caption = 'J'
       OnChange = CheckBox_trafficChange
@@ -2488,10 +2499,10 @@ object MyForm: TMyForm
       AnchorSideTop.Side = asrBottom
       AnchorSideRight.Control = Label_pswd
       AnchorSideRight.Side = asrBottom
-      Left = 77
-      Height = 14
-      Top = 207
-      Width = 7
+      Left = 76
+      Height = 12
+      Top = 199
+      Width = 8
       Anchors = [akTop, akRight]
       BorderSpacing.Top = 30
       Caption = 'E'
@@ -2506,8 +2517,8 @@ object MyForm: TMyForm
       AnchorSideRight.Control = MyPanel
       AnchorSideRight.Side = asrBottom
       Left = 92
-      Height = 21
-      Top = 204
+      Height = 17
+      Top = 197
       Width = 715
       Anchors = [akTop, akLeft, akRight]
       BorderSpacing.Around = 8
@@ -2516,9 +2527,9 @@ object MyForm: TMyForm
     end
     object MyMemo: TMemo
       Left = 0
-      Height = 35
+      Height = 36
       Top = 0
-      Width = 35
+      Width = 36
       Lines.Strings = (
         ''
       )
@@ -2530,9 +2541,9 @@ object MyForm: TMyForm
       AnchorSideTop.Control = CheckBox_autostart
       AnchorSideTop.Side = asrBottom
       Left = 11
-      Height = 21
-      Top = 318
-      Width = 26
+      Height = 26
+      Top = 322
+      Width = 31
       BorderSpacing.Left = 10
       Caption = 'I'
       Checked = True
@@ -2545,10 +2556,10 @@ object MyForm: TMyForm
       AnchorSideRight.Side = asrBottom
       AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
-      Left = 658
-      Height = 138
-      Top = 433
-      Width = 149
+      Left = 656
+      Height = 137
+      Top = 434
+      Width = 151
       Anchors = [akRight, akBottom]
       AutoSize = True
       BorderSpacing.Around = 8
@@ -4614,9 +4625,9 @@ object MyForm: TMyForm
       AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
       Left = 9
-      Height = 138
-      Top = 433
-      Width = 150
+      Height = 137
+      Top = 434
+      Width = 152
       Anchors = [akLeft, akBottom]
       AutoSize = True
       BorderSpacing.Around = 8
@@ -9196,9 +9207,9 @@ object MyForm: TMyForm
       AnchorSideTop.Control = Edit_metric
       AnchorSideTop.Side = asrBottom
       Left = 11
-      Height = 21
-      Top = 255
-      Width = 29
+      Height = 26
+      Top = 244
+      Width = 34
       BorderSpacing.Left = 10
       BorderSpacing.Top = 30
       Caption = 'F'
@@ -9210,10 +9221,10 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = MyPanel
       AnchorSideLeft.Side = asrCenter
       AnchorSideBottom.Control = Label_www
-      Left = 376
-      Height = 14
-      Top = 535
-      Width = 65
+      Left = 378
+      Height = 12
+      Top = 539
+      Width = 60
       Anchors = [akLeft, akBottom]
       BorderSpacing.Around = 8
       Caption = 'Label_wait'
@@ -9230,10 +9241,10 @@ object MyForm: TMyForm
       AnchorSideLeft.Side = asrCenter
       AnchorSideBottom.Control = MyPanel
       AnchorSideBottom.Side = asrBottom
-      Left = 300
-      Height = 14
-      Top = 557
-      Width = 216
+      Left = 308
+      Height = 12
+      Top = 559
+      Width = 200
       Anchors = [akLeft, akBottom]
       BorderSpacing.Around = 8
       Caption = 'http://code.google.com/p/vpnpptp/'
@@ -9249,10 +9260,10 @@ object MyForm: TMyForm
       AnchorSideLeft.Control = MyPanel
       AnchorSideLeft.Side = asrCenter
       AnchorSideBottom.Control = Label_wait
-      Left = 372
-      Height = 14
-      Top = 513
-      Width = 73
+      Left = 375
+      Height = 12
+      Top = 519
+      Width = 67
       Anchors = [akLeft, akBottom]
       BorderSpacing.Around = 8
       Caption = 'Label_timer'
@@ -9263,6 +9274,24 @@ object MyForm: TMyForm
       ParentFont = False
       ParentShowHint = False
       Visible = False
+    end
+    object ComboBox_iface: TComboBox
+      AnchorSideLeft.Control = Label_iface
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Edit_iface
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = MyPanel
+      AnchorSideRight.Side = asrBottom
+      Left = 92
+      Height = 27
+      Top = 24
+      Width = 715
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Around = 8
+      ItemHeight = 0
+      OnChange = ComboBox_ifaceChange
+      Style = csDropDownList
+      TabOrder = 23
     end
   end
   object MyTimer: TTimer
