@@ -13,8 +13,9 @@ type
   { TFormDop }
 
   TFormDop = class(TForm)
+    ButtonOK: TButton;
     MemoDop: TMemo;
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure ButtonOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { private declarations }
@@ -30,10 +31,10 @@ implementation
 
 { TFormDop }
 
-procedure TFormDop.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+procedure TFormDop.ButtonOKClick(Sender: TObject);
 begin
-  //If MemoDop.Text<>'' then
-  MemoDop.Lines.SaveToFile(FileRoute);
+    MemoDop.Lines.SaveToFile(FileRoute);
+    Close;
 end;
 
 procedure TFormDop.FormShow(Sender: TObject);
