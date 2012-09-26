@@ -25,14 +25,16 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, LResources,
-  StdCtrls, ExtCtrls, ComCtrls, unix, Menus, Buttons, AsyncProcess, Process,
-  Typinfo, Gettext, BaseUnix, types;
+  StdCtrls, ExtCtrls, ComCtrls, unix, Menus, Buttons, AsyncProcess,
+  Process, Typinfo, Gettext, BaseUnix, types, Unit2;
 
 type
 
   { TMyForm }
 
   TMyForm = class(TForm)
+    Button_after_up: TButton;
+    Button_after_down: TButton;
     Button_create: TBitBtn;
     Button_exit: TBitBtn;
     CheckBox_autostart: TCheckBox;
@@ -53,9 +55,13 @@ type
     ComboBox_iface: TComboBox;
     Edit_IPS: TEdit;
     Edit_metric: TEdit;
+    Edit_mtu: TEdit;
+    Edit_mru: TEdit;
     Edit_passwd: TEdit;
     Edit_iface: TEdit;
     Edit_user: TEdit;
+    Label_mtu: TLabel;
+    Label_mru: TLabel;
     MyImage: TImage;
     Label_wait: TLabel;
     Label_mppe: TLabel;
@@ -70,6 +76,8 @@ type
     MyMemo: TMemo;
     MyPanel: TPanel;
     MyTimer: TTimer;
+    procedure Button_after_upClick(Sender: TObject);
+    procedure Button_after_downClick(Sender: TObject);
     procedure Button_createClick(Sender: TObject);
     procedure Button_exitClick(Sender: TObject);
     procedure CheckBox_no128Change(Sender: TObject);
@@ -84,10 +92,14 @@ type
     procedure CheckBox_statelessChange(Sender: TObject);
     procedure CheckBox_trafficChange(Sender: TObject);
     procedure ComboBox_ifaceChange(Sender: TObject);
+    procedure Edit_metricChange(Sender: TObject);
+    procedure Edit_mruChange(Sender: TObject);
+    procedure Edit_mtuChange(Sender: TObject);
     procedure Edit_passwdChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure MyImageMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure MyPanelResize(Sender: TObject);
     procedure TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure MyTimerStartTimer(Sender: TObject);
@@ -137,6 +149,7 @@ const
   MyVpnDir='/usr/lib/libDrakX/network/vpn/';
   EtcDir='/etc/';
   VarRunDir='/var/run/';
+  MyDataDir='/usr/share/vpnmandriva/';
 
   message0ru='Внимание!';
   message1ru='Поля "Провайдер (IP или имя)", "Пользователь (логин)", "Пароль" обязательны к заполнению.';
@@ -222,6 +235,10 @@ const
   message81ru='Иногда требуется добавить опцию stateless, но часто она уже используется по-умолчанию.';
   message82ru='Шифрование mppe может быть настроено неверно, так как не удалось свериться с man pppd и отсутствует';
   message93ru='Не найден модуль ppp_mppe, необходимый для работы mppe.';
+  message118ru='Рекомендуется значение MTU/MRU 1460 или 1472 байт.';
+  message129ru='Значения MTU/MRU можно не вводить, тогда провайдер пришлет их сам (но не всегда).';
+  message130ru='Выполнить команды после поднятия VPN';
+  message131ru='Выполнить команды после опускания VPN';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
@@ -307,6 +324,10 @@ const
   message81uk='Iнодi потребується добавити опцію stateless, но часто вона вже iспользуеться за умовчанням.';
   message82uk='Шифрування mppe може бути налаштоване невiрно, так як не вдалося звіритися з man pppd та вiдсутнє';
   message93uk='Не знайден модуль ppp_mppe, необхiдний для роботы mppe.';
+  message118uk='Рекомендується значення MTU/MRU 1460 або 1472 байт.';
+  message129uk='Значення MTU/MRU можна не вводити, тоді провайдер надішле їхній сам (але не завжди).';
+  message130uk='Виконати команди після підняття VPN';
+  message131uk='Виконати команди після опускання VPN';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -392,6 +413,10 @@ const
   message81en='Sometimes you must add the option stateless, but often it is used by default.';
   message82en='Encryption mppe may be configured incorrectly, because it is not able to consult with man pppd, and missing';
   message93en='Module ppp_mppe can not be found, what is necessary for mppe.';
+  message118en='It is recommended MTU/MRU of 1460 or 1472 bytes.';
+  message129en='The values of the MTU/MRU can''t write, then the IPS will send them (but not always).';
+  message130en='Run commands after connecting VPN';
+  message131en='Run commands after disconnecting VPN';
 
 implementation
 
@@ -520,7 +545,7 @@ if not CheckBox_right.Checked then FpSystem(UsrBinDir+'printf "USERCTL=no\n" >> 
 if not CheckBox_traffic.Checked then FpSystem(UsrBinDir+'printf "ACCOUNTING=no\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface)) else FpSystem(UsrBinDir+'printf "ACCOUNTING=yes\n" >> '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 FpSystem (BinDir+'chmod a+x '+IfcfgDir+'ifcfg-ppp'+IntToStr(Number_PPP_Iface));
 //запись файла /etc/ppp/ip-up.d/vpnmandriva-ip-up
-If not DirectoryExists (EtcPppIpUpDDir) then FpSystem (BinDir+'mkdir -p '+EtcPppIpUpDDir);
+If not DirectoryExists (EtcPppIpUpDDir) then FpSystem (BinDir+'mkdir -p '+LeftStr(EtcPppIpUpDDir,Length(EtcPppIpUpDDir)-1));
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('#!/bin/bash');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
@@ -540,21 +565,24 @@ MyMemo.Lines.Add('     [ -n "$DNS2" ] && '+BinDir+'echo "nameserver $DNS2" >> '+
 MyMemo.Lines.Add('fi');
 MyMemo.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmandriva-ip-up');
 FpSystem(BinDir+'chmod a+x '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
+//дописываем
+If FileExists (MyDataDir+'up-'+Edit_iface.Text) then
+                                  FpSystem('cat '+MyDataDir+'up-'+Edit_iface.Text+' >> '+EtcPppIpUpDDir+'vpnmandriva-ip-up');
 //запись файла /etc/ppp/ip-down.d/vpnmandriva-ip-down
-If not DirectoryExists (EtcPppIpDownDDir) then FpSystem (BinDir+'mkdir -p '+EtcPppIpDownDDir);
+If not DirectoryExists (EtcPppIpDownDDir) then FpSystem (BinDir+'mkdir -p '+LeftStr(EtcPppIpDownDDir,Length(EtcPppIpDownDDir)-1));
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('#!/bin/bash');
 MyMemo.Lines.Add('if [ ! $LINKNAME = "vpnmandriva" ]');
 MyMemo.Lines.Add('then');
 MyMemo.Lines.Add('exit 0');
 MyMemo.Lines.Add('fi');
-If FileExists (SBinDir+'service') then MyMemo.Lines.Add(SBinDir+'service network restart');
-If FileExists (UsrSBinDir+'service') then MyMemo.Lines.Add(UsrSBinDir+'service network restart');
-If not FileExists (SBinDir+'service') then if not FileExists (UsrSBinDir+'service') then MyMemo.Lines.Add(EtcInitDDir+' network restart');
 MyMemo.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmandriva-ip-down');
 FpSystem(BinDir+'chmod a+x '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
+//дописываем
+If FileExists (MyDataDir+'down-'+Edit_iface.Text) then
+                                  FpSystem('cat '+MyDataDir+'down-'+Edit_iface.Text+' >> '+EtcPppIpDownDDir+'vpnmandriva-ip-down');
 //запись файла /etc/ppp/peers/pppN
-If not DirectoryExists (EtcPppPeersDir) then FpSystem (BinDir+'mkdir -p '+EtcPppPeersDir);
+If not DirectoryExists (EtcPppPeersDir) then FpSystem (BinDir+'mkdir -p '+LeftStr(EtcPppPeersDir,Length(EtcPppPeersDir)-1));
 MyMemo.Lines.Clear;
 MyMemo.Lines.Add('unit '+IntToStr(Number_PPP_Iface));
 MyMemo.Lines.Add('noipdefault');
@@ -632,10 +660,12 @@ If CheckBox_required.Checked then
                                 end;
 If CheckBox_pppd_log.Checked then
                              begin
-                               If not DirectoryExists(MyLogDir) then FpSystem (BinDir+'mkdir -p '+MyLogDir);
+                               If not DirectoryExists(MyLogDir) then FpSystem (BinDir+'mkdir -p '+LeftStr(MyLogDir,Length(MyLogDir)-1));
                                 MyMemo.Lines.Add('debug');
                                 MyMemo.Lines.Add('logfile '+MyLogDir+'vpnmandriva.log');
                              end;
+If Edit_mtu.Text <> '' then MyMemo.Lines.Add('mtu '+Edit_mtu.Text);
+If Edit_mru.Text <> '' then MyMemo.Lines.Add('mru '+Edit_mru.Text);
 MyMemo.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 FpSystem (BinDir+'chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 //применение изменений перезапуском net_applet
@@ -818,6 +848,8 @@ if i=1 then
                                      Label_metric.Enabled:=false;
                                      Label_auth.Enabled:=false;
                                      Label_mppe.Enabled:=false;
+                                     Label_mtu.Enabled:=false;
+                                     Label_mru.Enabled:=false;
                                      MyImage.Visible:=false;
                                      Label_wait.Visible:=true;
                                      Label_www.Visible:=true;
@@ -848,6 +880,8 @@ if i=1 then
                                      Label_metric.Enabled:=true;
                                      Label_auth.Enabled:=true;
                                      Label_mppe.Enabled:=true;
+                                     Label_mtu.Enabled:=true;
+                                     Label_mru.Enabled:=true;
                                      MyImage.Visible:=true;
                                      Label_wait.Visible:=false;
                                      Label_www.Visible:=false;
@@ -901,6 +935,31 @@ Application.ShowHint:=true;
 Application.ProcessMessages;
 end;
 
+procedure TMyForm.Button_after_upClick(Sender: TObject);
+begin
+  Unit2.FormDop.Position:=poMainFormCenter;
+  Unit2.FormDop.Width:=MyForm.Width div 2;
+  Unit2.FormDop.Height:=MyForm.Height div 2;
+  FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
+  Unit2.FormDop.FileRoute:=MyDataDir+'up-'+Edit_iface.Text;
+  If FallbackLang='ru' then FormDop.Caption:=message130ru else
+                                    If FallbackLang='uk' then FormDop.Caption:=message130uk
+                                                                     else FormDop.Caption:=message130en;
+  Unit2.FormDop.ShowModal;
+end;
+
+procedure TMyForm.Button_after_downClick(Sender: TObject);
+begin
+  Unit2.FormDop.Position:=poMainFormCenter;
+  Unit2.FormDop.Width:=MyForm.Width div 2;
+  Unit2.FormDop.Height:=MyForm.Height div 2;
+  FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
+  Unit2.FormDop.FileRoute:=MyDataDir+'down-'+Edit_iface.Text;
+  If FallbackLang='ru' then FormDop.Caption:=message131ru else
+                                    If FallbackLang='uk' then FormDop.Caption:=message131uk
+                                                                     else FormDop.Caption:=message131en;
+  Unit2.FormDop.ShowModal;
+end;
 
 procedure TMyForm.Button_exitClick(Sender: TObject);
 begin
@@ -1194,8 +1253,25 @@ begin
                                         CheckBox_no40.Checked:=false;
                                         CheckBox_no56.Checked:=false;
                                         CheckBox_no128.Checked:=false;
+                                        Edit_mtu.Text:='1460';
+                                        Edit_mru.Text:='1460';
+                                        Edit_metric.Text:='1';
                                         exit;
                                      end;
+  //восстанавливаем mtu
+  str:='';
+  popen (f,'cat /etc/ppp/peers/'+Edit_iface.Text+'|grep mtu|awk '+chr(39)+'{print $2}'+chr(39),'R');
+  while not eof (f) do
+      readln(f,str);
+  pclose(f);
+  Edit_mtu.Text:=str;
+  //восстанавливаем mru
+  str:='';
+  popen (f,'cat /etc/ppp/peers/'+Edit_iface.Text+'|grep mru|awk '+chr(39)+'{print $2}'+chr(39),'R');
+  while not eof (f) do
+      readln(f,str);
+  pclose(f);
+  Edit_mru.Text:=str;
   //проверяем тип записи шифрования нестандартный
   mppe_notstandart:=false;
   popen (f,'cat /etc/ppp/peers/'+Edit_iface.Text+'|grep require-mppe','R');
@@ -1244,11 +1320,40 @@ begin
               end;
 end;
 
+procedure TMyForm.Edit_metricChange(Sender: TObject);
+  var i:integer;
+    str:string;
+begin
+    str:=Edit_metric.Text;
+    for i:=1 to length(str) do
+             if not (str[i] in ['0'..'9', #8 ]) then Delete(str,i,1);
+    Edit_metric.Text:=str;
+end;
+
+procedure TMyForm.Edit_mruChange(Sender: TObject);
+var i:integer;
+    str:string;
+begin
+    str:=Edit_mru.Text;
+    for i:=1 to length(str) do
+             if not (str[i] in ['0'..'9', #8 ]) then Delete(str,i,1);
+    Edit_mru.Text:=str;
+end;
+
+procedure TMyForm.Edit_mtuChange(Sender: TObject);
+var i:integer;
+    str:string;
+begin
+    str:=Edit_mtu.Text;
+    for i:=1 to length(str) do
+             if not (str[i] in ['0'..'9', #8 ]) then Delete(str,i,1);
+    Edit_mtu.Text:=str;
+end;
+
 procedure TMyForm.Edit_passwdChange(Sender: TObject);
 begin
   if not (Edit_passwd.Text='swissvpntest') then Edit_passwd.EchoMode:=emPassword else Edit_passwd.EchoMode:=emNormal;
 end;
-
 
 procedure TMyForm.FormCreate(Sender: TObject);
 var
@@ -1355,6 +1460,8 @@ case q of
              Label_metric.Hint:=MakeHint(message33ru+' '+message34ru,5);
              MyImage.Hint:=MakeHint(message33ru+' '+message34ru+' '+message73ru,5);
              CheckBox_pppd_log.Hint:=MakeHint(message50ru,6);
+             Edit_mtu.Hint:=MakeHint(message118ru+' '+message129ru,5);
+             Edit_mru.Hint:=MakeHint(message118ru+' '+message129ru,5);
         end;
     2:
     begin
@@ -1389,6 +1496,8 @@ case q of
          Label_metric.Hint:=MakeHint(message33uk+' '+message34uk,5);
          MyImage.Hint:=MakeHint(message33uk+' '+message34uk+' '+message73uk,5);
          CheckBox_pppd_log.Hint:=MakeHint(message50uk,6);
+         Edit_mtu.Hint:=MakeHint(message118uk+' '+message129uk,5);
+         Edit_mru.Hint:=MakeHint(message118uk+' '+message129uk,5);
     end;
 else
     begin
@@ -1423,6 +1532,8 @@ else
          Label_metric.Hint:=MakeHint(message33en+' '+message34en,5);
          MyImage.Hint:=MakeHint(message33en+' '+message34en+' '+message73en,5);
          CheckBox_pppd_log.Hint:=MakeHint(message50en,6);
+         Edit_mtu.Hint:=MakeHint(message118en+' '+message129en,5);
+         Edit_mru.Hint:=MakeHint(message118en+' '+message129en,5);
     end;
 end;
 //заполнение приложения текстом в соответствии с языком
@@ -1445,6 +1556,8 @@ case q of
              Button_create.Caption:=message47ru;
              CheckBox_pppd_log.Caption:=message49ru+' '+MyLogDir+'vpnmandriva.log';
              Label_wait.Caption:=message68ru;
+             Button_after_up.Caption:=message130ru;
+             Button_after_down.Caption:=message131ru;
         end;
     2:
         begin
@@ -1464,6 +1577,8 @@ case q of
              Button_create.Caption:=message47uk;
              CheckBox_pppd_log.Caption:=message49uk+' '+MyLogDir+'vpnmandriva.log';
              Label_wait.Caption:=message68uk;
+             Button_after_up.Caption:=message130uk;
+             Button_after_down.Caption:=message131uk;
         end;
 else
     begin
@@ -1483,6 +1598,8 @@ else
         Button_create.Caption:=message47en;
         CheckBox_pppd_log.Caption:=message49en+' '+MyLogDir+'vpnmandriva.log';
         Label_wait.Caption:=message68en;
+        Button_after_up.Caption:=message130en;
+        Button_after_down.Caption:=message131en;
     end;
 end;
 //масштабирование формы в зависимости от разрешения экрана
@@ -1518,7 +1635,7 @@ end;
                              MyForm.Height:=650;
                              MyForm.Width:=884;
                          end;
-If not FileExists(UsrSBinDir+'pptp') then
+  If not FileExists(UsrSBinDir+'pptp') then
                                         begin
                                             If FallbackLang='ru' then Application.MessageBox(PChar(message3ru),PChar(message0ru),0) else
                                                                  If FallbackLang='uk' then Application.MessageBox(PChar(message3uk),PChar(message0uk),0) else
@@ -1615,6 +1732,23 @@ If (not DirectoryExists(MyVpnDir)) or  (not DirectoryExists(UsrBinDir)) then
                                                                                                                               Application.MessageBox(PChar(message16en),PChar(message0en),0);
                                                            end;
 If not FileExists(UsrBinDir+'man') then If FileExists(BinDir+'man') then FpSystem('ln -s '+BinDir+'man'+' '+UsrBinDir+'man'); //создаем ссылку для man
+FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
+//поиск всех интерфейсов pppN, очистка удаленных интерфейсов
+for i:=0 to 100 do
+            begin
+                 If not FileExists(IfcfgDir+'ifcfg-ppp'+IntToStr(i)) then
+                                                                     begin
+                                                                        FpSystem('rm -f '+MyDataDir+'up-ppp'+IntToStr(i));
+                                                                        FpSystem('rm -f '+MyDataDir+'down-ppp'+IntToStr(i));
+                                                                        FpSystem('rm -f '+EtcPppPeersDir+'ppp'+IntToStr(i));
+                                                                     end;
+            end;
+If not FileExists(MyDataDir+'down-'+Edit_iface.Text) then
+    begin
+        If FileExists (SBinDir+'service') then FpSystem('echo '+SBinDir+'service network restart'+' > '+MyDataDir+'down-'+Edit_iface.Text);
+        If FileExists (UsrSBinDir+'service') then FpSystem('echo '+UsrSBinDir+'service network restart'+' > '+MyDataDir+'down-'+Edit_iface.Text);
+        If not FileExists (SBinDir+'service') then if not FileExists (UsrSBinDir+'service') then FpSystem('echo '+EtcInitDDir+' network restart'+' > '+MyDataDir+'down-'+Edit_iface.Text);
+    end;
 end;
 
 procedure TMyForm.MyImageMouseDown(Sender: TObject; Button: TMouseButton;
@@ -1636,6 +1770,17 @@ If Button=mbmiddle then if ButtonMiddle then
                              ButtonMiddle:=true;
                          end;
  MyForm.TabSheet1MouseDown(Sender,Button,Shift,X,Y);
+end;
+
+procedure TMyForm.MyPanelResize(Sender: TObject);
+begin
+   Edit_metric.Width:=Edit_passwd.Width div 5;
+   Edit_mtu.Width:=Edit_passwd.Width div 5;
+   Edit_mru.Width:=Edit_passwd.Width div 5;
+   Edit_mtu.Left:=Edit_metric.Left+Edit_metric.Width*2;
+   Edit_mru.Left:=Edit_mtu.Left+Edit_mru.Width*2;
+   Button_after_up.Width:=Edit_passwd.Width div 2-5;
+   Button_after_down.Width:=Edit_passwd.Width div 2-5;
 end;
 
 procedure TMyForm.TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -1677,7 +1822,15 @@ initialization
   {$I unit1.lrs}
 
   Gettext.GetLanguageIDs(Lang,FallbackLang);
-  If FallbackLang='be' then FallbackLang:='ru';
+  //Belarusian, Bashkir (Белорусский, Башкирский)
+  if (FallbackLang='be') or (FallbackLang='ba')
+  //Bulgarian, Chechen, Church Slavic (Болгарский, Чеченский, Церковнославянский)
+  or (FallbackLang='bg') or (FallbackLang='ce') or (FallbackLang='cu')
+  //Chuvash, Kazakh, Komi (Чувашский, Казахский, Коми)
+  or (FallbackLang='cv') or (FallbackLang='kk') or (FallbackLang='kv')
+  //Moldavian, Tatar (Молдавский, Татарский)
+  or (FallbackLang='mo') or (FallbackLang='tt')
+                                               then FallbackLang:='ru';
   //FallbackLang:='en'; //просто для проверки при отладке
 end.
 

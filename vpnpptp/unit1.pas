@@ -4894,7 +4894,15 @@ initialization
   If Paramcount>0 then ProfileName:=Paramstr(1);
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
-  If FallbackLang='be' then FallbackLang:='ru';
+  //Belarusian, Bashkir (Белорусский, Башкирский)
+  if (FallbackLang='be') or (FallbackLang='ba')
+  //Bulgarian, Chechen, Church Slavic (Болгарский, Чеченский, Церковнославянский)
+  or (FallbackLang='bg') or (FallbackLang='ce') or (FallbackLang='cu')
+  //Chuvash, Kazakh, Komi (Чувашский, Казахский, Коми)
+  or (FallbackLang='cv') or (FallbackLang='kk') or (FallbackLang='kv')
+  //Moldavian, Tatar (Молдавский, Татарский)
+  or (FallbackLang='mo') or (FallbackLang='tt')
+                                               then FallbackLang:='ru';
   //FallbackLang:='en'; //просто для проверки при отладке
   If FallbackLang='ru' then
                             begin
