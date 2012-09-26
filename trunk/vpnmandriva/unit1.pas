@@ -217,7 +217,7 @@ const
   message63ru='Проверить Интернет? Проверка Интернета может занять несколько секунд.';
   message64ru='Соединение VPN PPTP поднято, но Интернет не работает. Возможно необходимо настроить файервол или маршрутизацию.';
   message65ru='Соединение VPN PPTP не поднято, но Интернет работает.';
-  message66ru='Не удалось запустить net_applet.';
+  message66ru='Рекомендуется значение MTU/MRU 1460 или 1472 байт.';
   message67ru='Часто имеет смысл немного подождать, дав возможность установиться соединению.';
   message68ru='Минуточку... Ожидайте...';
   message69ru='Повторить проверку Интернета?';
@@ -234,11 +234,10 @@ const
   message80ru='Нельзя требовать шифрования mppe опцией required и при этом одновременно запретить все доступные типы шифрования.';
   message81ru='Иногда требуется добавить опцию stateless, но часто она уже используется по-умолчанию.';
   message82ru='Шифрование mppe может быть настроено неверно, так как не удалось свериться с man pppd и отсутствует';
-  message93ru='Не найден модуль ppp_mppe, необходимый для работы mppe.';
-  message118ru='Рекомендуется значение MTU/MRU 1460 или 1472 байт.';
-  message129ru='Значения MTU/MRU можно не вводить, тогда провайдер пришлет их сам (но не всегда).';
-  message130ru='Выполнить команды после поднятия VPN';
-  message131ru='Выполнить команды после опускания VPN';
+  message83ru='Не найден модуль ppp_mppe, необходимый для работы mppe.';
+  message84ru='Значения MTU/MRU можно не вводить, тогда провайдер пришлет их сам (но не всегда).';
+  message85ru='Выполнить команды после поднятия VPN';
+  message86ru='Выполнить команды после опускания VPN';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
@@ -306,7 +305,7 @@ const
   message63uk='Перевірити Інтернет? Перевірка Інтернету може зайняти кілька секунд.';
   message64uk='З''єднання VPN PPTP піднято, але Інтернет не працює. Можливо необхідно налаштувати файервол або маршрутизацію.';
   message65uk='З''єднання VPN PPTP не піднято, але Інтернет працює.';
-  message66uk='Не вдалося запустити net_applet.';
+  message66uk='Рекомендується значення MTU/MRU 1460 або 1472 байт.';
   message67uk='Часто має сенс трохи почекати, давши можливість встановитися з''єднанню.';
   message68uk='Хвилиночку... Чекайте...';
   message69uk='Повторити перевірку Інтернету?';
@@ -323,11 +322,10 @@ const
   message80uk='Неможно вимогати шифрування mppe опцією required та при цьюму одночасно заборонити усi доступнi типи шифрування.';
   message81uk='Iнодi потребується добавити опцію stateless, но часто вона вже iспользуеться за умовчанням.';
   message82uk='Шифрування mppe може бути налаштоване невiрно, так як не вдалося звіритися з man pppd та вiдсутнє';
-  message93uk='Не знайден модуль ppp_mppe, необхiдний для роботы mppe.';
-  message118uk='Рекомендується значення MTU/MRU 1460 або 1472 байт.';
-  message129uk='Значення MTU/MRU можна не вводити, тоді провайдер надішле їхній сам (але не завжди).';
-  message130uk='Виконати команди після підняття VPN';
-  message131uk='Виконати команди після опускання VPN';
+  message83uk='Не знайден модуль ppp_mppe, необхiдний для роботы mppe.';
+  message84uk='Значення MTU/MRU можна не вводити, тоді провайдер надішле їхній сам (але не завжди).';
+  message85uk='Виконати команди після підняття VPN';
+  message86uk='Виконати команди після опускання VPN';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -395,7 +393,7 @@ const
   message63en='Check the Internet? Check the Internet may take several seconds.';
   message64en='VPN PPTP Connection established, but the Internet does not work. Maybe you need to configure a firewall or routing.';
   message65en='VPN PPTP Connection not established, but the Internet works.';
-  message66en='Failed to start net_applet.';
+  message66en='It is recommended MTU/MRU of 1460 or 1472 bytes.';
   message67en='Often it makes sense to wait a little, giving the opportunity to establish the connection.';
   message68en='Wait a minute... Expect...';
   message69en='Repeat test of Internet?';
@@ -412,11 +410,10 @@ const
   message80en='You can not require encryption mppe when option required selected and at the same time to ban all available types of encryption.';
   message81en='Sometimes you must add the option stateless, but often it is used by default.';
   message82en='Encryption mppe may be configured incorrectly, because it is not able to consult with man pppd, and missing';
-  message93en='Module ppp_mppe can not be found, what is necessary for mppe.';
-  message118en='It is recommended MTU/MRU of 1460 or 1472 bytes.';
-  message129en='The values of the MTU/MRU can''t write, then the IPS will send them (but not always).';
-  message130en='Run commands after connecting VPN';
-  message131en='Run commands after disconnecting VPN';
+  message83en='Module ppp_mppe can not be found, what is necessary for mppe.';
+  message84en='The values of the MTU/MRU can''t write, then the IPS will send them (but not always).';
+  message85en='Run commands after connecting VPN';
+  message86en='Run commands after disconnecting VPN';
 
 implementation
 
@@ -504,8 +501,7 @@ procedure TMyForm.Button_createClick(Sender: TObject);
 var
   str,str1:string;
   mppe_string:string;
-  y,net_applet_root,found_net_applet:boolean;
-  StrUsers:string;
+  y:boolean;
   i,a:integer;
   NoInternet,FoundPpppd:boolean;
   AStringList: TStringList;
@@ -652,9 +648,9 @@ If CheckBox_required.Checked then
                                      popen(f,SBinDir+'lsmod | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39)+'|'+BinDir+'grep ppp_mppe','R');
                                      if eof(f) then
                                                    begin
-                                                        If FallbackLang='ru' then Application.MessageBox(PChar(message93ru),PChar(message0ru),0) else
-                                                                                                                                     If FallbackLang='uk' then Application.MessageBox(PChar(message93uk),PChar(message0uk),0)
-                                                                                                                                                                                                        else Application.MessageBox(PChar(message93en),PChar(message0en),0);
+                                                        If FallbackLang='ru' then Application.MessageBox(PChar(message83ru),PChar(message0ru),0) else
+                                                                                                                                     If FallbackLang='uk' then Application.MessageBox(PChar(message83uk),PChar(message0uk),0)
+                                                                                                                                                                                                        else Application.MessageBox(PChar(message83en),PChar(message0en),0);
                                                    end;
                                      pclose(f);
                                 end;
@@ -668,91 +664,8 @@ If Edit_mtu.Text <> '' then MyMemo.Lines.Add('mtu '+Edit_mtu.Text);
 If Edit_mru.Text <> '' then MyMemo.Lines.Add('mru '+Edit_mru.Text);
 MyMemo.Lines.SaveToFile(EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
 FpSystem (BinDir+'chmod 600 '+EtcPppPeersDir+'ppp'+IntToStr(Number_PPP_Iface));
-//применение изменений перезапуском net_applet
-popen(f,BinDir+'ps -u root|'+BinDir+'grep net_applet','R');
-if eof(f) then net_applet_root:=false else net_applet_root:=true;
-PClose(f);
-str:='';
-StrUsers:='';
-FpSystem (UsrBinDir+'killall net_applet');
-if not net_applet_root then
-                             begin
-                                  popen (f,UsrBinDir+'who | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
-                                  if eof(f) then popen (f,UsrBinDir+'who /var/log/wtmp | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R');
-                                  While not eof(f) do
-                                        begin
-                                             readln(f,str);
-                                             if str<>'' then if str<>'root' then if pos(str,StrUsers)=0 then
-                                                        begin
-                                                             AAsyncProcess := TAsyncProcess.Create(nil);
-                                                             AAsyncProcess.CommandLine :=BinDir+'su - '+str+' -c "'+UsrBinDir+'net_applet"';
-                                                             AAsyncProcess.Execute;
-                                                             while not AAsyncProcess.Running do
-                                                                                      MySleep(30);
-                                                             Sleep(2000);
-                                                             AAsyncProcess.Free;
-                                                        end;
-                                             StrUsers:=StrUsers+str;
-                                        end;
-                                  PClose(f);
-                                  //обработка результата перезапуска net_applet
-                                  found_net_applet:=false;
-                                  popen (f,BinDir+'ps -e |'+BinDir+'grep net_applet','R');
-                                  If not eof(f) then found_net_applet:=true;
-                                  PClose(f);
-                                  StrUsers:='';
-                                  if not found_net_applet then //пытаемся еще раз перезапустить net_applet другой командой
-                                             begin
-                                                  popen (f,UsrBinDir+'who | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R'); //получение списка пользователей, залогиненных в системе
-                                                  if eof(f) then popen (f,UsrBinDir+'who /var/log/wtmp | '+BinDir+'awk '+chr(39)+'{print $1}'+chr(39),'R');
-                                                  While not eof(f) do
-                                                        begin
-                                                             readln(f,str);
-                                                             if str<>'' then if str<>'root' then if pos(str,StrUsers)=0 then
-                                                                        begin
-                                                                             AAsyncProcess := TAsyncProcess.Create(nil);
-                                                                             AAsyncProcess.CommandLine :=BinDir+'su '+str+' -c "'+UsrBinDir+'net_applet"';
-                                                                             AAsyncProcess.Execute;
-                                                                             while not AAsyncProcess.Running do
-                                                                                                      MySleep(30);
-                                                                             Sleep(2000);
-                                                                             AAsyncProcess.Free;
-                                                                        end;
-                                                             StrUsers:=StrUsers+str;
-                                                        end;
-                                                  PClose(f);
-                                             end;
-                             end;
-if net_applet_root then
-                      begin
-                          AAsyncProcess := TAsyncProcess.Create(nil);
-                          AAsyncProcess.CommandLine :=UsrBinDir+'net_applet';
-                          AAsyncProcess.Execute;
-                          while not AAsyncProcess.Running do
-                                                   MySleep(30);
-                          Sleep(2000);
-                          AAsyncProcess.Free;
-                      end;
-if FallbackLang='ru' then Application.MessageBox(PChar(message11ru+' '+message12ru+' '+message13ru+' '+message52ru),PChar(message0ru),0) else
-                     If FallbackLang='uk' then Application.MessageBox(PChar(message11uk+' '+message12uk+' '+message13uk+' '+message52uk),PChar(message0uk),0) else
-                                                              Application.MessageBox(PChar(message11en+' '+message12en+' '+message13en+' '+message52en),PChar(message0en),0);
-//обработка результата перезапуска net_applet
-found_net_applet:=false;
-popen (f,BinDir+'ps -e |'+BinDir+'grep net_applet','R');
-If not eof(f) then found_net_applet:=true;
-PClose(f);
-str:='';
-if not found_net_applet then
-               begin
-                   If FallbackLang='ru' then str:=message66ru else If FallbackLang='uk' then str:=message66uk else str:=message66en;
-                   If not FileExists(UsrBinDir+'net_applet') then If FallbackLang='ru' then str:=str+' '+message57ru+' '+UsrBinDir+'net_applet.' else
-                                        if FallbackLang='uk' then str:=str+' '+message57uk+' '+UsrBinDir+'net_applet.' else str:=str+' '+message57en+' '+UsrBinDir+'net_applet.';
-                   If not FileExists(UsrBinDir+'net_applet') then If FileExists(UsrBinDir+'net_applet.old') then If FallbackLang='ru' then str:=str+' '+message58ru+' '+UsrBinDir+'net_applet.old.' else
-                                        if FallbackLang='uk' then str:=str+' '+message58uk+' '+UsrBinDir+'net_applet.old.' else str:=str+' '+message58en+' '+UsrBinDir+'net_applet.old.';
-                   If FallbackLang='ru' then If str<>'' then Application.MessageBox(PChar(str),PChar(message0ru),0);
-                   If FallbackLang='uk' then If str<>'' then Application.MessageBox(PChar(str),PChar(message0uk),0);
-                   If FallbackLang='en' then If str<>'' then Application.MessageBox(PChar(str),PChar(message0en),0);
-               end;
+//применение изменений для net_applet
+FpSystem('kill -s 1 `pidof -x net_applet`');
 If FallbackLang='ru' then i:=Application.MessageBox(PChar(message56ru),PChar(message0ru),1) else if FallbackLang='uk' then i:=Application.MessageBox(PChar(message56uk),PChar(message0uk),1)
                                                                                             else i:=Application.MessageBox(PChar(message56en),PChar(message0en),1);
 if i=1 then
@@ -940,11 +853,13 @@ begin
   Unit2.FormDop.Position:=poMainFormCenter;
   Unit2.FormDop.Width:=MyForm.Width div 2;
   Unit2.FormDop.Height:=MyForm.Height div 2;
+  Unit2.FormDop.ButtonOK.Width:=FormDop.Width div 6;
+  Unit2.FormDop.ButtonOK.Height:=FormDop.Height div 12;
   FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
   Unit2.FormDop.FileRoute:=MyDataDir+'up-'+Edit_iface.Text;
-  If FallbackLang='ru' then FormDop.Caption:=message130ru else
-                                    If FallbackLang='uk' then FormDop.Caption:=message130uk
-                                                                     else FormDop.Caption:=message130en;
+  If FallbackLang='ru' then FormDop.Caption:=message85ru else
+                                    If FallbackLang='uk' then FormDop.Caption:=message85uk
+                                                                     else FormDop.Caption:=message85en;
   Unit2.FormDop.ShowModal;
 end;
 
@@ -953,11 +868,13 @@ begin
   Unit2.FormDop.Position:=poMainFormCenter;
   Unit2.FormDop.Width:=MyForm.Width div 2;
   Unit2.FormDop.Height:=MyForm.Height div 2;
+  Unit2.FormDop.ButtonOK.Width:=FormDop.Width div 6;
+  Unit2.FormDop.ButtonOK.Height:=FormDop.Height div 12;
   FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
   Unit2.FormDop.FileRoute:=MyDataDir+'down-'+Edit_iface.Text;
-  If FallbackLang='ru' then FormDop.Caption:=message131ru else
-                                    If FallbackLang='uk' then FormDop.Caption:=message131uk
-                                                                     else FormDop.Caption:=message131en;
+  If FallbackLang='ru' then FormDop.Caption:=message86ru else
+                                    If FallbackLang='uk' then FormDop.Caption:=message86uk
+                                                                     else FormDop.Caption:=message86en;
   Unit2.FormDop.ShowModal;
 end;
 
@@ -1460,8 +1377,8 @@ case q of
              Label_metric.Hint:=MakeHint(message33ru+' '+message34ru,5);
              MyImage.Hint:=MakeHint(message33ru+' '+message34ru+' '+message73ru,5);
              CheckBox_pppd_log.Hint:=MakeHint(message50ru,6);
-             Edit_mtu.Hint:=MakeHint(message118ru+' '+message129ru,5);
-             Edit_mru.Hint:=MakeHint(message118ru+' '+message129ru,5);
+             Edit_mtu.Hint:=MakeHint(message66ru+' '+message84ru,5);
+             Edit_mru.Hint:=MakeHint(message66ru+' '+message84ru,5);
         end;
     2:
     begin
@@ -1496,8 +1413,8 @@ case q of
          Label_metric.Hint:=MakeHint(message33uk+' '+message34uk,5);
          MyImage.Hint:=MakeHint(message33uk+' '+message34uk+' '+message73uk,5);
          CheckBox_pppd_log.Hint:=MakeHint(message50uk,6);
-         Edit_mtu.Hint:=MakeHint(message118uk+' '+message129uk,5);
-         Edit_mru.Hint:=MakeHint(message118uk+' '+message129uk,5);
+         Edit_mtu.Hint:=MakeHint(message66uk+' '+message84uk,5);
+         Edit_mru.Hint:=MakeHint(message66uk+' '+message84uk,5);
     end;
 else
     begin
@@ -1532,8 +1449,8 @@ else
          Label_metric.Hint:=MakeHint(message33en+' '+message34en,5);
          MyImage.Hint:=MakeHint(message33en+' '+message34en+' '+message73en,5);
          CheckBox_pppd_log.Hint:=MakeHint(message50en,6);
-         Edit_mtu.Hint:=MakeHint(message118en+' '+message129en,5);
-         Edit_mru.Hint:=MakeHint(message118en+' '+message129en,5);
+         Edit_mtu.Hint:=MakeHint(message66en+' '+message84en,5);
+         Edit_mru.Hint:=MakeHint(message66en+' '+message84en,5);
     end;
 end;
 //заполнение приложения текстом в соответствии с языком
@@ -1556,8 +1473,8 @@ case q of
              Button_create.Caption:=message47ru;
              CheckBox_pppd_log.Caption:=message49ru+' '+MyLogDir+'vpnmandriva.log';
              Label_wait.Caption:=message68ru;
-             Button_after_up.Caption:=message130ru;
-             Button_after_down.Caption:=message131ru;
+             Button_after_up.Caption:=message85ru;
+             Button_after_down.Caption:=message86ru;
         end;
     2:
         begin
@@ -1577,8 +1494,8 @@ case q of
              Button_create.Caption:=message47uk;
              CheckBox_pppd_log.Caption:=message49uk+' '+MyLogDir+'vpnmandriva.log';
              Label_wait.Caption:=message68uk;
-             Button_after_up.Caption:=message130uk;
-             Button_after_down.Caption:=message131uk;
+             Button_after_up.Caption:=message85uk;
+             Button_after_down.Caption:=message86uk;
         end;
 else
     begin
@@ -1598,8 +1515,8 @@ else
         Button_create.Caption:=message47en;
         CheckBox_pppd_log.Caption:=message49en+' '+MyLogDir+'vpnmandriva.log';
         Label_wait.Caption:=message68en;
-        Button_after_up.Caption:=message130en;
-        Button_after_down.Caption:=message131en;
+        Button_after_up.Caption:=message85en;
+        Button_after_down.Caption:=message86en;
     end;
 end;
 //масштабирование формы в зависимости от разрешения экрана

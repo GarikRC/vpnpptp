@@ -1,7 +1,7 @@
 object MyForm: TMyForm
-  Left = 433
+  Left = 495
   Height = 580
-  Top = 83
+  Top = 49
   Width = 816
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
