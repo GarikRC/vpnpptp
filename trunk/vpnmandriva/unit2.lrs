@@ -1,0 +1,9 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TFormDop','FORMDATA',[
+  'TPF0'#8'TFormDop'#7'FormDop'#4'Left'#2'['#6'Height'#3#240#0#3'Top'#2'm'#5'Wi'
+  +'dth'#3'@'#1#7'Caption'#6#7'FormDop'#12'ClientHeight'#3#240#0#11'ClientWidth'
+  +#3'@'#1#7'OnClose'#7#9'FormClose'#6'OnShow'#7#8'FormShow'#10'LCLVersion'#6#8
+  +'0.9.30.4'#0#5'TMemo'#7'MemoDop'#4'Left'#2#0#6'Height'#3#240#0#3'Top'#2#0#5
+  +'Width'#3'@'#1#5'Align'#7#8'alClient'#8'TabOrder'#2#0#0#0#0
+]);
