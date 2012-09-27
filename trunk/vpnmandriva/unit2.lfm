@@ -1,5 +1,5 @@
 object FormDop: TFormDop
-  Left = 283
+  Left = 286
   Height = 240
   Top = 127
   Width = 320
@@ -25,6 +25,37 @@ object FormDop: TFormDop
   end
   object ButtonOK: TButton
     AnchorSideLeft.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 5
+    Height = 35
+    Top = 200
+    Width = 100
+    Anchors = [akLeft, akBottom]
+    BorderSpacing.Around = 5
+    Caption = 'OK'
+    OnClick = ButtonOKClick
+    TabOrder = 1
+  end
+  object ButtonNO: TButton
+    AnchorSideLeft.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 215
+    Height = 35
+    Top = 200
+    Width = 100
+    Anchors = [akRight, akBottom]
+    BorderSpacing.Around = 5
+    Caption = 'NO'
+    OnClick = ButtonNOClick
+    TabOrder = 2
+  end
+  object ButtonClear: TButton
+    AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
@@ -34,9 +65,9 @@ object FormDop: TFormDop
     Top = 200
     Width = 100
     Anchors = [akLeft, akBottom]
-    BorderSpacing.Bottom = 5
-    Caption = 'OK'
-    OnClick = ButtonOKClick
-    TabOrder = 1
+    BorderSpacing.Around = 5
+    Caption = 'Clear'
+    OnClick = ButtonClearClick
+    TabOrder = 3
   end
 end

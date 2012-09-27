@@ -1,7 +1,7 @@
 { This is an automatically generated lazarus resource file }
 
 LazarusResources.Add('TFormDop','FORMDATA',[
-  'TPF0'#8'TFormDop'#7'FormDop'#4'Left'#3#27#1#6'Height'#3#240#0#3'Top'#2#127#5
+  'TPF0'#8'TFormDop'#7'FormDop'#4'Left'#3#30#1#6'Height'#3#240#0#3'Top'#2#127#5
   +'Width'#3'@'#1#7'Caption'#6#7'FormDop'#12'ClientHeight'#3#240#0#11'ClientWid'
   +'th'#3'@'#1#6'OnShow'#7#8'FormShow'#10'LCLVersion'#6#8'0.9.30.4'#0#5'TMemo'#7
   +'MemoDop'#22'AnchorSideLeft.Control'#7#5'Owner'#21'AnchorSideTop.Control'#7#5
@@ -10,9 +10,20 @@ LazarusResources.Add('TFormDop','FORMDATA',[
   +#3#195#0#3'Top'#2#0#5'Width'#3'@'#1#5'Align'#7#8'alCustom'#7'Anchors'#11#5'a'
   +'kTop'#6'akLeft'#7'akRight'#8'akBottom'#0#20'BorderSpacing.Bottom'#2#5#8'Tab'
   +'Order'#2#0#0#0#7'TButton'#8'ButtonOK'#22'AnchorSideLeft.Control'#7#5'Owner'
-  +#19'AnchorSideLeft.Side'#7#9'asrCenter'#20'AnchorSideRight.Side'#7#9'asrBott'
+  +#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBottom.Control'#7#5'Ow'
+  +'ner'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2#5#6'Height'#2'#'#3
+  +'Top'#3#200#0#5'Width'#2'd'#7'Anchors'#11#6'akLeft'#8'akBottom'#0#20'BorderS'
+  +'pacing.Around'#2#5#7'Caption'#6#2'OK'#7'OnClick'#7#13'ButtonOKClick'#8'TabO'
+  +'rder'#2#1#0#0#7'TButton'#8'ButtonNO'#22'AnchorSideLeft.Control'#7#5'Owner'
+  +#23'AnchorSideRight.Control'#7#5'Owner'#20'AnchorSideRight.Side'#7#9'asrBott'
   +'om'#24'AnchorSideBottom.Control'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'a'
-  +'srBottom'#4'Left'#2'n'#6'Height'#2'#'#3'Top'#3#200#0#5'Width'#2'd'#7'Anchor'
-  +'s'#11#6'akLeft'#8'akBottom'#0#20'BorderSpacing.Bottom'#2#5#7'Caption'#6#2'O'
-  +'K'#7'OnClick'#7#13'ButtonOKClick'#8'TabOrder'#2#1#0#0#0
+  +'srBottom'#4'Left'#3#215#0#6'Height'#2'#'#3'Top'#3#200#0#5'Width'#2'd'#7'Anc'
+  +'hors'#11#7'akRight'#8'akBottom'#0#20'BorderSpacing.Around'#2#5#7'Caption'#6
+  +#2'NO'#7'OnClick'#7#13'ButtonNOClick'#8'TabOrder'#2#2#0#0#7'TButton'#11'Butt'
+  +'onClear'#22'AnchorSideLeft.Control'#7#5'Owner'#19'AnchorSideLeft.Side'#7#9
+  +'asrCenter'#20'AnchorSideRight.Side'#7#9'asrBottom'#24'AnchorSideBottom.Cont'
+  +'rol'#7#5'Owner'#21'AnchorSideBottom.Side'#7#9'asrBottom'#4'Left'#2'n'#6'Hei'
+  +'ght'#2'#'#3'Top'#3#200#0#5'Width'#2'd'#7'Anchors'#11#6'akLeft'#8'akBottom'#0
+  +#20'BorderSpacing.Around'#2#5#7'Caption'#6#5'Clear'#7'OnClick'#7#16'ButtonCl'
+  +'earClick'#8'TabOrder'#2#3#0#0#0
 ]);
