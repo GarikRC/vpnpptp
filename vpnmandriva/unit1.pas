@@ -156,7 +156,7 @@ const
   message2ru='Желательно установить метрику меньшую, чем у сетевого интерфейса, на котором будет поднято VPN PPTP.';
   message3ru='Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux.';
   message4ru='Выбор этой опции позволяет пользователям управлять подключением через net_applet без ввода пароля администратора.';
-  message5ru='Если выбрать эту опцию, то соединение установится при загрузке системы.';
+  message5ru='Если выбрать эту опцию, то соединение установится при загрузке системы, при рестарте сети.';
   message6ru='Если выбрать эту опцию, то для соединения будет вестись подсчет трафика, который можно наблюдать через net_monitor.';
   message7ru='В этом поле указывается адрес vpn-сервера.';
   message8ru='Не найдено ни одного свободного интерфейса pppN, где N в диапазоне [0..100]. Удалите неиспользуемые соединения в Центре Управления.';
@@ -165,7 +165,7 @@ const
   message11ru='Соединение было успешно создано.';
   message12ru='Управлять соединением можно через net_applet (пакет drakx-net/drakx-net-applet)';
   message13ru='или в консоли под администратором командами ifup, ifdown, передавая им интерфейс.';
-  message14ru='Соединение установится при загрузке системы без ввода пароля администратора.';
+  message14ru='Соединение установится при загрузке системы/при рестарте сети без ввода пароля администратора.';
   message15ru='При выборе опции nobuffer не будет буферизации, что желательно для быстрого соединения, но нежелательно для медленного, нестабильного.';
   message16ru='Программа не смогла установиться.';
   message17ru='Программа была успешно установлена.';
@@ -192,7 +192,7 @@ const
   message38ru='Пароль*:';
   message39ru='Метрика:';
   message40ru='Разрешить пользователям управлять подключением';
-  message41ru='Устанавливать соединение при загрузке';
+  message41ru='Устанавливать соединение при загрузке, рестарте сети';
   message42ru='Включить подсчет трафика';
   message43ru='Не буферизировать пакеты (nobuffer)';
   message44ru='Аутентификация:';
@@ -238,13 +238,16 @@ const
   message84ru='Значения MTU/MRU можно не вводить, тогда провайдер пришлет их сам (но не всегда).';
   message85ru='Выполнить команды после поднятия VPN';
   message86ru='Выполнить команды после опускания VPN';
+  message87ru='Отмена';
+  message88ru='Сохранить';
+  message89ru='Очистить';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
   message2uk='Бажано встановити метрику меншу, ніж у мережевого інтерфейсу, на якому буде піднято VPN PPTP.';
   message3uk='Неможливо налаштувати VPN PPTP у зв''язку з відсутністю пакету pptp-linux.';
   message4uk='Вибір цієї опції дозволяє користувачам керувати підключенням через net_applet без введення пароля адміністратора.';
-  message5uk='Якщо вибрати цю опцію, то з''єднання встановиться при завантаженні системи.';
+  message5uk='Якщо вибрати цю опцію, то з''єднання встановиться при завантаженні системи, при рестарті мережі.';
   message6uk='Якщо вибрати цю опцію, то для з''єднання буде вестися підрахунок трафіку, який можна спостерігати через net_monitor.';
   message7uk='У цьому полі вказується адреса vpn-сервера.';
   message8uk='Не знайдено жодного вільного інтерфейсу pppN, де N в діапазоні [0 .. 100]. Видаліть невикористовувані з''єднання в Центрі керування.';
@@ -253,7 +256,7 @@ const
   message11uk='З''єднання було успішно створено.';
   message12uk='Керувати з''єднанням можна через net_applet (пакет drakx-net/drakx-net-applet)';
   message13uk='або в консолі під адміністратором командами ifup, ifdown, передаючи їм інтерфейс.';
-  message14uk='З''єднання встановиться при завантаженні системи без введення пароля адміністратора.';
+  message14uk='З''єднання встановиться при завантаженні системи/при рестарті мережі без введення пароля адміністратора.';
   message15uk='При виборі опції nobuffer не буде буферизації, що бажано для швидкого з''єднання, але небажано для повільного, нестабільного.';
   message16uk='Програма не змогла встановитися.';
   message17uk='Програма була успішно встановлена.';
@@ -280,7 +283,7 @@ const
   message38uk='Пароль*:';
   message39uk='Метрика:';
   message40uk='Дозволити користувачам керувати підключенням';
-  message41uk='Встановлювати з''єднання при завантаженні';
+  message41uk='Встановлювати з''єднання при завантаженні, рестарті мережі';
   message42uk='Дозволити підрахунок трафіку';
   message43uk='Не буферізувати пакети (nobuffer)';
   message44uk='Аутентифікація:';
@@ -326,13 +329,16 @@ const
   message84uk='Значення MTU/MRU можна не вводити, тоді провайдер надішле їхній сам (але не завжди).';
   message85uk='Виконати команди після підняття VPN';
   message86uk='Виконати команди після опускання VPN';
+  message87uk='Відміна';
+  message88uk='Зберегти';
+  message89uk='Очистити';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
   message2en='It is desirable to set a metric less than for network interface, which will be to use for VPN PPTP.';
   message3en='Unable to configure VPN PPTP because of absence of package pptp-linux.';
   message4en='Choice of this option allows users to manage connections with help net_applet without entering the root''s password.';
-  message5en='If you choose this option, then the connection will be established when the system boots.';
+  message5en='If you choose this option, then the connection will be established when the system boots or the network restarts.';
   message6en='If you choose this option, then traffic will be to calculate for the connection, which you can watch with help net_monitor.';
   message7en='In this box you must enter address of vpn-server.';
   message8en='Did not match any of the free interface pppN, where N is in the range [0..100]. Remove unused connections in the Control Center.';
@@ -341,7 +347,7 @@ const
   message11en='The connection was successfully created.';
   message12en='You can manage the connection with help net_applet (package drakx-net/drakx-net-applet)';
   message13en='or in the root''s console by commands: ifup pppN, ifdown pppN.';
-  message14en='Connection will be established at boot without entering a root''s password.';
+  message14en='Connection will be established on boot/on network restart without entering a root''s password.';
   message15en='When you select nobuffer, then will not be buffering; it is desirable for fast connections, but not desirable for a unstable.';
   message16en='Program failed to install.';
   message17en='The program was successfully installed.';
@@ -368,7 +374,7 @@ const
   message38en='Password*:';
   message39en='Metric:';
   message40en='Let users operate the connection';
-  message41en='Connect the connection at boot';
+  message41en='Connect the connection on boot, on network restart';
   message42en='Enable to calculate traffic';
   message43en='Not buffered packets (nobuffer)';
   message44en='Authentication:';
@@ -414,6 +420,9 @@ const
   message84en='The values of the MTU/MRU can''t write, then the IPS will send them (but not always).';
   message85en='Run commands after connecting VPN';
   message86en='Run commands after disconnecting VPN';
+  message87en='Cancel';
+  message88en='Save';
+  message89en='Clear';
 
 implementation
 
@@ -850,32 +859,58 @@ end;
 
 procedure TMyForm.Button_after_upClick(Sender: TObject);
 begin
-  Unit2.FormDop.Position:=poMainFormCenter;
-  Unit2.FormDop.Width:=MyForm.Width div 2;
-  Unit2.FormDop.Height:=MyForm.Height div 2;
-  Unit2.FormDop.ButtonOK.Width:=FormDop.Width div 6;
-  Unit2.FormDop.ButtonOK.Height:=FormDop.Height div 12;
+  FormDop.Position:=poMainFormCenter;
+  FormDop.Width:=MyForm.Width div 2;
+  FormDop.Height:=MyForm.Height div 2;
+  FormDop.ButtonOK.Width:=FormDop.Width div 4;
+  FormDop.ButtonOK.Height:=FormDop.Height div 12;
+  FormDop.ButtonNO.Width:=FormDop.Width div 4;
+  FormDop.ButtonNO.Height:=FormDop.Height div 12;
+  FormDop.ButtonClear.Width:=FormDop.Width div 4;
+  FormDop.ButtonClear.Height:=FormDop.Height div 12;
   FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
-  Unit2.FormDop.FileRoute:=MyDataDir+'up-'+Edit_iface.Text;
+  FormDop.FileRoute:=MyDataDir+'up-'+Edit_iface.Text;
   If FallbackLang='ru' then FormDop.Caption:=message85ru else
                                     If FallbackLang='uk' then FormDop.Caption:=message85uk
                                                                      else FormDop.Caption:=message85en;
-  Unit2.FormDop.ShowModal;
+  If FallbackLang='ru' then FormDop.ButtonNO.Caption:=message87ru else
+                                    If FallbackLang='uk' then FormDop.ButtonNO.Caption:=message87uk
+                                                                     else FormDop.ButtonNO.Caption:=message87en;
+  If FallbackLang='ru' then FormDop.ButtonOK.Caption:=message88ru else
+                                    If FallbackLang='uk' then FormDop.ButtonOK.Caption:=message88uk
+                                                                     else FormDop.ButtonOK.Caption:=message88en;
+  If FallbackLang='ru' then FormDop.ButtonClear.Caption:=message89ru else
+                                    If FallbackLang='uk' then FormDop.ButtonClear.Caption:=message89uk
+                                                                     else FormDop.ButtonClear.Caption:=message89en;
+  FormDop.ShowModal;
 end;
 
 procedure TMyForm.Button_after_downClick(Sender: TObject);
 begin
-  Unit2.FormDop.Position:=poMainFormCenter;
-  Unit2.FormDop.Width:=MyForm.Width div 2;
-  Unit2.FormDop.Height:=MyForm.Height div 2;
-  Unit2.FormDop.ButtonOK.Width:=FormDop.Width div 6;
-  Unit2.FormDop.ButtonOK.Height:=FormDop.Height div 12;
+  FormDop.Position:=poMainFormCenter;
+  FormDop.Width:=MyForm.Width div 2;
+  FormDop.Height:=MyForm.Height div 2;
+  FormDop.ButtonOK.Width:=FormDop.Width div 4;
+  FormDop.ButtonOK.Height:=FormDop.Height div 12;
+  FormDop.ButtonNO.Width:=FormDop.Width div 4;
+  FormDop.ButtonNO.Height:=FormDop.Height div 12;
+  FormDop.ButtonClear.Width:=FormDop.Width div 4;
+  FormDop.ButtonClear.Height:=FormDop.Height div 12;
   FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
-  Unit2.FormDop.FileRoute:=MyDataDir+'down-'+Edit_iface.Text;
+  FormDop.FileRoute:=MyDataDir+'down-'+Edit_iface.Text;
   If FallbackLang='ru' then FormDop.Caption:=message86ru else
                                     If FallbackLang='uk' then FormDop.Caption:=message86uk
                                                                      else FormDop.Caption:=message86en;
-  Unit2.FormDop.ShowModal;
+  If FallbackLang='ru' then FormDop.ButtonNO.Caption:=message87ru else
+                                    If FallbackLang='uk' then FormDop.ButtonNO.Caption:=message87uk
+                                                                     else FormDop.ButtonNO.Caption:=message87en;
+  If FallbackLang='ru' then FormDop.ButtonOK.Caption:=message88ru else
+                                    If FallbackLang='uk' then FormDop.ButtonOK.Caption:=message88uk
+                                                                     else FormDop.ButtonOK.Caption:=message88en;
+  If FallbackLang='ru' then FormDop.ButtonClear.Caption:=message89ru else
+                                    If FallbackLang='uk' then FormDop.ButtonClear.Caption:=message89uk
+                                                                     else FormDop.ButtonClear.Caption:=message89en;
+  FormDop.ShowModal;
 end;
 
 procedure TMyForm.Button_exitClick(Sender: TObject);

@@ -1,5 +1,5 @@
 object MyForm: TMyForm
-  Left = 495
+  Left = 460
   Height = 580
   Top = 49
   Width = 816
