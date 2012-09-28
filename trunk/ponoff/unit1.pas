@@ -121,6 +121,8 @@ const
 
 var
   Form1: TForm1;
+  kostil_onse:boolean; //нужно для темы oxygen-gtk
+  kostil_window:THintWindow;
   Lang,FallbackLang:string; // язык системы
   Translate:boolean; // переведено или еще не переведено
   POFileName : string; //файл перевода
@@ -1219,6 +1221,7 @@ var
   str,stri,StrObnull:string;
   FileObnull:textfile;
 begin
+  kostil_onse:=false;
   Widget.IniPropStorage1.IniFileName:=MyLibDir+'ponoff.conf.ini';
   Widget.IniPropStorage1.IniSection:='TApplication.Widget';
   ErrorShowIcon:=false;
@@ -1906,6 +1909,11 @@ var
   DNS3,DNS4:string;
   error_proc_net_dev:boolean;
 begin
+If kostil_onse=false then
+  begin
+      kostil_window.ActivateHint(rect(0,0,1,1),'');
+      kostil_onse:=true;
+  end;
   If not FileExists (VarRunVpnpptp+ProfileName) then FpSystem (BinDir+'echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
   if EnablePseudoTray then

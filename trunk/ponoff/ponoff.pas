@@ -22,6 +22,7 @@ begin
   Application.CreateForm(TForm3, Form3);
   if HintBalloon=nil then HintBalloon:=THintWindow.Create(nil);
   if HintSimle=nil then HintSimle:=THintWindow.Create(nil);
+  if kostil_window=nil then kostil_window:=THintWindow.Create(nil);
   Application.CreateForm(TWidget, Widget);
   Application.CreateForm(TForm1, Form1);
   Application.Run;
