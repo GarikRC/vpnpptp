@@ -2,7 +2,7 @@
 
 Summary: Tools for setup and control VPN via PPTP/L2TP/OpenL2TP
 Name: vpnpptp-allde
-Version: 0.3.7
+Version: 0.3.8
 Release: %mkrel %{rel}
 License: GPL2
 Group: System/Configuration/Networking
@@ -13,7 +13,7 @@ Source1: vpnpptp.pm
 Source2: vpnmandriva.pm
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: fpc-src >= 2.4.4, fpc >= 2.4.4, lazarus >= 0.9.30
+BuildRequires: fpc-src >= 2.6.0, fpc >= 2.6.0, lazarus >= 1.0.1
 #раскомментировать при сборке в репозиторий
 #Requires: xroot, pptp-linux, xl2tpd >= 1.2.7, openl2tp
 
@@ -25,11 +25,7 @@ Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
 %setup -q -n vpnpptp-src-%{version}
 
 %build
-%ifarch x86_64
-./mandriva.compile.sh x86_64 lib64
-%else
-./mandriva.compile.sh i386 lib
-%endif
+./compile.sh
 
 %install
 rm -rf %{buildroot}
@@ -40,7 +36,7 @@ mkdir -p %{buildroot}%{_datadir}/vpnpptp/lang
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/applications
 mkdir -p %{buildroot}%{_datadir}/pixmaps
-mkdir -p %{buildroot}%/lib/libDrakX/network/connection
+mkdir -p %{buildroot}/lib/libDrakX/network/connection
 
 cp -f ./vpnpptp/vpnpptp %{buildroot}%{_bindir}
 cp -f ./ponoff/ponoff %{buildroot}%{_bindir}
