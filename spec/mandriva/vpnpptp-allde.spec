@@ -11,24 +11,21 @@ Url: http://code.google.com/p/vpnpptp
 Source0: vpnpptp-src-%{version}.tar.gz
 Source1: vpnpptp.pm
 Source2: vpnmandriva.pm
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: fpc-src >= 2.6.0, fpc >= 2.6.0, lazarus >= 1.0.1
-#раскомментировать при сборке в репозиторий
-#Requires: xroot, pptp-linux, xl2tpd >= 1.2.7, openl2tp
+BuildRequires: fpc-src >= 2.6.0, fpc >= 2.6.0, lazarus >= 0.9.30
+#закомментировать зависимости при сборке не в репозиторий
+Requires: xroot, pptp-linux, xl2tpd >= 1.2.7, openl2tp
 
 %description
 Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
 
 %prep
-
 %setup -q -n vpnpptp-src-%{version}
 
 %build
 ./compile.sh
 
 %install
-rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_datadir}/vpnpptp
 mkdir -p %{buildroot}%{_datadir}/vpnpptp/scripts
 mkdir -p %{buildroot}%{_datadir}/vpnpptp/wiki
@@ -103,12 +100,7 @@ install -m 0644 vpnpptp.desktop \
 install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp.pm
 install -pm0644 -D %SOURCE2 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnmandriva.pm
 
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root, root)
-
 %{_bindir}/vpnpptp
 %{_bindir}/ponoff
 %{_bindir}/vpnlinux
