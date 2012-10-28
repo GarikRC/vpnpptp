@@ -1,188 +1,188 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
-#: tform1.coloricon.caption
+#: TFORM1.COLORICON.CAPTION
 msgid "ColorIcon"
 msgstr ""
 
-#: tform1.form1.caption
+#: TFORM1.FORM1.CAPTION
 msgctxt "TFORM1.FORM1.CAPTION"
 msgid "ponoff"
 msgstr ""
 
-#: tform1.menuitem1.caption
+#: TFORM1.MENUITEM1.CAPTION
 msgid "On"
 msgstr ""
 
-#: tform1.menuitem2.caption
+#: TFORM1.MENUITEM2.CAPTION
 msgid "Off"
 msgstr ""
 
-#: tform1.menuitem3.caption
+#: TFORM1.MENUITEM3.CAPTION
 msgid "Exit_well"
 msgstr ""
 
-#: tform1.menuitem4.caption
+#: TFORM1.MENUITEM4.CAPTION
 msgid "Exit_bad"
 msgstr ""
 
-#: tform1.menuitem5.caption
+#: TFORM1.MENUITEM5.CAPTION
 msgid "Look"
 msgstr ""
 
-#: tform1.menuitem6.caption
+#: TFORM1.MENUITEM6.CAPTION
 msgid "Money"
 msgstr ""
 
-#: tform1.minus.caption
+#: TFORM1.MINUS.CAPTION
 msgid "Minus"
 msgstr ""
 
-#: tform1.plus.caption
+#: TFORM1.PLUS.CAPTION
 msgid "Plus"
 msgstr ""
 
-#: tform2.form2.caption
+#: TFORM2.FORM2.CAPTION
 msgctxt "TFORM2.FORM2.CAPTION"
 msgid "Form2"
 msgstr ""
 
-#: tform2.label1.caption
+#: TFORM2.LABEL1.CAPTION
 msgctxt "TFORM2.LABEL1.CAPTION"
 msgid "Label1"
 msgstr ""
 
-#: tform2.label2.caption
+#: TFORM2.LABEL2.CAPTION
 msgid "               Label2"
 msgstr ""
 
-#: tform2.label3.caption
+#: TFORM2.LABEL3.CAPTION
 msgid "                             Label3"
 msgstr ""
 
-#: tform2.label4.caption
+#: TFORM2.LABEL4.CAPTION
 msgid "                                          Label4"
 msgstr ""
 
-#: tform3.button4.caption
+#: TFORM3.BUTTON4.CAPTION
 msgid "Close"
 msgstr ""
 
-#: tform3.form3.caption
+#: TFORM3.FORM3.CAPTION
 msgctxt "TFORM3.FORM3.CAPTION"
 msgid "Form3"
 msgstr ""
 
-#: tformballoonmatrix.formballoonmatrix.caption
+#: TFORMBALLOONMATRIX.FORMBALLOONMATRIX.CAPTION
 msgid "FormBalloonMatrix"
 msgstr ""
 
-#: tformballoonmatrix.labeltext.caption
+#: TFORMBALLOONMATRIX.LABELTEXT.CAPTION
 msgid "LabelText"
 msgstr ""
 
-#: tformballoonmatrix.labeltitle.caption
+#: TFORMBALLOONMATRIX.LABELTITLE.CAPTION
 msgid "LabelTitle"
 msgstr ""
 
-#: tformhintmatrix.formhintmatrix.caption
+#: TFORMHINTMATRIX.FORMHINTMATRIX.CAPTION
 msgid "FormHintMatrix"
 msgstr ""
 
-#: tformhintmatrix.labelconnection.caption
+#: TFORMHINTMATRIX.LABELCONNECTION.CAPTION
 msgid "LabelConnection"
 msgstr ""
 
-#: tformhintmatrix.labelconnectioninfo.caption
+#: TFORMHINTMATRIX.LABELCONNECTIONINFO.CAPTION
 msgctxt "TFORMHINTMATRIX.LABELCONNECTIONINFO.CAPTION"
 msgid "LabelConnectionInfo"
 msgstr ""
 
-#: tformhintmatrix.labeldns1.caption
+#: TFORMHINTMATRIX.LABELDNS1.CAPTION
 msgid "LabelDNS1"
 msgstr ""
 
-#: tformhintmatrix.labeldns1info.caption
+#: TFORMHINTMATRIX.LABELDNS1INFO.CAPTION
 msgid "LabelDNS1Info"
 msgstr ""
 
-#: tformhintmatrix.labeldns2.caption
+#: TFORMHINTMATRIX.LABELDNS2.CAPTION
 msgid "LabelDNS2"
 msgstr ""
 
-#: tformhintmatrix.labeldns2info.caption
+#: TFORMHINTMATRIX.LABELDNS2INFO.CAPTION
 msgid "LabelDNS2Info"
 msgstr ""
 
-#: tformhintmatrix.labeldownload.caption
+#: TFORMHINTMATRIX.LABELDOWNLOAD.CAPTION
 msgid "LabelDownload"
 msgstr ""
 
-#: tformhintmatrix.labeldownloadinfo.caption
+#: TFORMHINTMATRIX.LABELDOWNLOADINFO.CAPTION
 msgid "LabelDownloadInfo"
 msgstr ""
 
-#: tformhintmatrix.labelgateway.caption
+#: TFORMHINTMATRIX.LABELGATEWAY.CAPTION
 msgid "LabelGateway"
 msgstr ""
 
-#: tformhintmatrix.labelgatewayinfo.caption
+#: TFORMHINTMATRIX.LABELGATEWAYINFO.CAPTION
 msgid "LabelGatewayInfo"
 msgstr ""
 
-#: tformhintmatrix.labelinterface.caption
+#: TFORMHINTMATRIX.LABELINTERFACE.CAPTION
 msgid "LabelInterface"
 msgstr ""
 
-#: tformhintmatrix.labelinterfaceinfo.caption
+#: TFORMHINTMATRIX.LABELINTERFACEINFO.CAPTION
 msgid "LabelInterfaceInfo"
 msgstr ""
 
-#: tformhintmatrix.labelipaddress.caption
+#: TFORMHINTMATRIX.LABELIPADDRESS.CAPTION
 msgid "LabelIPAddress"
 msgstr ""
 
-#: tformhintmatrix.labelipaddressinfo.caption
+#: TFORMHINTMATRIX.LABELIPADDRESSINFO.CAPTION
 msgid "LabelIPAddressInfo"
 msgstr ""
 
-#: tformhintmatrix.labelmtu.caption
+#: TFORMHINTMATRIX.LABELMTU.CAPTION
 msgid "LabelMTU"
 msgstr ""
 
-#: tformhintmatrix.labelmtuinfo.caption
+#: TFORMHINTMATRIX.LABELMTUINFO.CAPTION
 msgid "LabelMTUInfo"
 msgstr ""
 
-#: tformhintmatrix.labelstatus.caption
+#: TFORMHINTMATRIX.LABELSTATUS.CAPTION
 msgid "LabelStatus"
 msgstr ""
 
-#: tformhintmatrix.labelstatusinfo.caption
+#: TFORMHINTMATRIX.LABELSTATUSINFO.CAPTION
 msgid "LabelStatusInfo"
 msgstr ""
 
-#: tformhintmatrix.labeltimeinnet.caption
+#: TFORMHINTMATRIX.LABELTIMEINNET.CAPTION
 msgid "LabelTimeInNet"
 msgstr ""
 
-#: tformhintmatrix.labeltimeinnetinfo.caption
+#: TFORMHINTMATRIX.LABELTIMEINNETINFO.CAPTION
 msgid "LabelTimeInNetInfo"
 msgstr ""
 
-#: tformhintmatrix.labelupload.caption
+#: TFORMHINTMATRIX.LABELUPLOAD.CAPTION
 msgid "LabelUpload"
 msgstr ""
 
-#: tformhintmatrix.labeluploadinfo.caption
+#: TFORMHINTMATRIX.LABELUPLOADINFO.CAPTION
 msgid "LabelUploadInfo"
 msgstr ""
 
-#: tformpseudotray.formpseudotray.caption
+#: TFORMPSEUDOTRAY.FORMPSEUDOTRAY.CAPTION
 msgid "FormPseudoTray"
 msgstr ""
 
-#: twidget.widget.caption
+#: TWIDGET.WIDGET.CAPTION
 msgid "Widget"
 msgstr ""
 
@@ -191,15 +191,15 @@ msgid "Внимание!"
 msgstr ""
 
 #: unit1.message1
-msgid "Запуск этой п#209ог#209аммы возможен только под админист#209ато#209ом или с #209аз#209ешения админист#209ато#209а. Нажмите <ОК> для отказа от запуска."
+msgid "Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска."
 msgstr ""
 
 #: unit1.message10
-msgid "Выход без ава#209ии"
+msgid "Выход без аварии"
 msgstr ""
 
 #: unit1.message11
-msgid "Выход п#209и ава#209ии"
+msgid "Выход при аварии"
 msgstr ""
 
 #: unit1.message12
@@ -207,23 +207,23 @@ msgid "Устанавливается соединение "
 msgstr ""
 
 #: unit1.message13
-msgid "Получены ма#209ш#209уты че#209ез DHCP. "
+msgid "Получены маршруты через DHCP. "
 msgstr ""
 
 #: unit1.message14
-msgid "Обна#209ужен новый IP-ад#209ес VPN-се#209ве#209а. Соединение пе#209енаст#209аивается... "
+msgid "Обнаружен новый IP-адрес VPN-сервера. Соединение перенастраивается... "
 msgstr ""
 
 #: unit1.message15
-msgid "VPN-се#209ве#209 не пингуется. "
+msgid "VPN-сервер не пингуется. "
 msgstr ""
 
 #: unit1.message16
-msgid "Доступ в инте#209нет отсутствует..."
+msgid "Доступ в интернет отсутствует..."
 msgstr ""
 
 #: unit1.message17
-msgid "DNS-се#209ве#209 до поднятия VPN не отвечает или неко#209#209ектный ад#209ес VPN-се#209ве#209а. "
+msgid "DNS-сервер до поднятия VPN не отвечает или некорректный адрес VPN-сервера. "
 msgstr ""
 
 #: unit1.message18
@@ -231,19 +231,19 @@ msgid "Шлюз локальной сети не пингуется. "
 msgstr ""
 
 #: unit1.message19
-msgid "П#209ове#209ено! Инте#209нет #209аботает!"
+msgid "Проверено! Интернет работает!"
 msgstr ""
 
 #: unit1.message2
-msgid "Не обна#209ужено ни одного се#209виса, способного уп#209авлять сетью. Ко#209#209ектная #209абота п#209ог#209аммы невозможна!"
+msgid "Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!"
 msgstr ""
 
 #: unit1.message20
-msgid "Обна#209ужено совпадение remote ip address с IP-ад#209есом самого VPN-се#209ве#209а. Соединение было пе#209енаст#209оено."
+msgid "Обнаружено совпадение remote ip address с IP-адресом самого VPN-сервера. Соединение было перенастроено."
 msgstr ""
 
 #: unit1.message21
-msgid "Ошибка получения ма#209ш#209утов че#209ез DHCP. "
+msgid "Ошибка получения маршрутов через DHCP. "
 msgstr ""
 
 #: unit1.message22
@@ -251,23 +251,23 @@ msgid "Статус:"
 msgstr ""
 
 #: unit1.message23
-msgid "DNS1-се#209ве#209 до поднятия VPN не пингуется. "
+msgid "DNS1-сервер до поднятия VPN не пингуется. "
 msgstr ""
 
 #: unit1.message24
-msgid "DNS2-се#209ве#209 до поднятия VPN не пингуется. "
+msgid "DNS2-сервер до поднятия VPN не пингуется. "
 msgstr ""
 
 #: unit1.message25
-msgid "Вы можете в конфигу#209ато#209е VPN PPTP/L2TP/OpenL2TP выб#209ать опцию #209аз#209ешения пользователям уп#209авлять подключением."
+msgid "Вы можете в конфигураторе VPN PPTP/L2TP/OpenL2TP выбрать опцию разрешения пользователям управлять подключением."
 msgstr ""
 
 #: unit1.message26
-msgid "Вы также можете сконфигу#209и#209овать соединение из Цент#209а Уп#209авления->Сеть и инте#209нет->Наст#209ойка VPN-соединений->VPN PPTP/L2TP/OpenL2TP."
+msgid "Вы также можете сконфигурировать соединение из Центра Управления->Сеть и интернет->Настройка VPN-соединений->VPN PPTP/L2TP/OpenL2TP."
 msgstr ""
 
 #: unit1.message27
-msgid "Заг#209ужено:"
+msgid "Загружено:"
 msgstr ""
 
 #: unit1.message28
@@ -275,11 +275,11 @@ msgid "Отдано:"
 msgstr ""
 
 #: unit1.message29
-msgid "В#209емя в сети:"
+msgid "Время в сети:"
 msgstr ""
 
 #: unit1.message3
-msgid "Сначала сконфигу#209и#209уйте соединение: Меню->Утилиты->Системные(или Меню->Инте#209нет)->vpnpptp(Наст#209ойка соединения VPN PPTP/L2TP/OpenL2TP)."
+msgid "Сначала сконфигурируйте соединение: Меню->Утилиты->Системные(или Меню->Интернет)->vpnpptp(Настройка соединения VPN PPTP/L2TP/OpenL2TP)."
 msgstr ""
 
 #: unit1.message30
@@ -319,7 +319,7 @@ msgid "Минуточку..."
 msgstr ""
 
 #: unit1.message38
-msgid "Запускается п#209иложение ponoff..."
+msgid "Запускается приложение ponoff..."
 msgstr ""
 
 #: unit1.message39
@@ -327,24 +327,24 @@ msgid "Наблюдать"
 msgstr ""
 
 #: unit1.message4
-msgid "No ethernet. Cетевой инте#209фейс для VPN PPTP/L2TP/OpenL2TP недоступен."
+msgid "No ethernet. Cетевой интерфейс для VPN PPTP/L2TP/OpenL2TP недоступен."
 msgstr ""
 
 #: unit1.message40
 msgctxt "unit1.message40"
-msgid "DNS2-се#209ве#209 п#209и поднятом VPN не пингуется. "
+msgid "DNS2-сервер при поднятом VPN не пингуется. "
 msgstr ""
 
 #: unit1.message41
-msgid "Обна#209ужено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска."
+msgid "Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска."
 msgstr ""
 
 #: unit1.message42
-msgid "DNS1-се#209ве#209 п#209и поднятом VPN не пингуется. "
+msgid "DNS1-сервер при поднятом VPN не пингуется. "
 msgstr ""
 
 #: unit1.message43
-msgid "Рекомендуется в#209учную уменьшить MTU/MRU, так как используемое значение MTU ="
+msgid "Рекомендуется вручную уменьшить MTU/MRU, так как используемое значение MTU ="
 msgstr ""
 
 #: unit1.message44
@@ -352,25 +352,25 @@ msgid "байт слишком большое."
 msgstr ""
 
 #: unit1.message45
-msgid "Разме#209 файла-лога /var/log/syslog больше 1 GiB."
+msgid "Размер файла-лога /var/log/syslog больше 1 GiB."
 msgstr ""
 
 #: unit1.message46
-msgid "Возможны п#209облемы с установлением соединения..."
+msgid "Возможны проблемы с установлением соединения..."
 msgstr ""
 
 #: unit1.message47
-msgid "Если же он доступен, то установите \"Не конт#209оли#209овать state сетевого кабеля\" в Конфигу#209ато#209е."
+msgid "Если же он доступен, то установите \"Не контролировать state сетевого кабеля\" в Конфигураторе."
 msgstr ""
 
 #: unit1.message48
 msgctxt "unit1.message48"
-msgid "Отсутствуют нек#209итичные файлы: "
+msgid "Отсутствуют некритичные файлы: "
 msgstr ""
 
 #: unit1.message49
 msgctxt "unit1.message49"
-msgid "Отсутствуют к#209итичные файлы: "
+msgid "Отсутствуют критичные файлы: "
 msgstr ""
 
 #: unit1.message5
@@ -382,11 +382,11 @@ msgid "Не найдено соединение"
 msgstr ""
 
 #: unit1.message51
-msgid "Обна#209ужено активное соединение с именем"
+msgid "Обнаружено активное соединение с именем"
 msgstr ""
 
 #: unit1.message52
-msgid "Однов#209еменный запуск нескольких соединений с #209азными именами недопустим."
+msgid "Одновременный запуск нескольких соединений с разными именами недопустим."
 msgstr ""
 
 #: unit1.message53
@@ -394,11 +394,11 @@ msgid "Отсутствует дефолтное соединение."
 msgstr ""
 
 #: unit1.message54
-msgid "Выбе#209ите одно из доступных соединений, неявляющихся дефолтными, из выпадающего списка. Это соединение станет дефолтным."
+msgid "Выберите одно из доступных соединений, неявляющихся дефолтными, из выпадающего списка. Это соединение станет дефолтным."
 msgstr ""
 
 #: unit1.message55
-msgid "<ОК> - выб#209ать. <Отмена> - отказаться и выйти."
+msgid "<ОК> - выбрать. <Отмена> - отказаться и выйти."
 msgstr ""
 
 #: unit1.message56
@@ -406,7 +406,7 @@ msgid "Соединение с именем"
 msgstr ""
 
 #: unit1.message57
-msgid "не может существовать, так как это имя за#209езе#209ви#209овано п#209ог#209аммой."
+msgid "не может существовать, так как это имя зарезервировано программой."
 msgstr ""
 
 #: unit1.message58
@@ -416,7 +416,7 @@ msgstr ""
 
 #: unit1.message59
 msgctxt "unit1.message59"
-msgid "IP-ад#209ес: "
+msgid "IP-адрес: "
 msgstr ""
 
 #: unit1.message6
@@ -424,27 +424,27 @@ msgid "Соединение"
 msgstr ""
 
 #: unit1.message60
-msgid "Инте#209фейс: "
+msgid "Интерфейс: "
 msgstr ""
 
 #: unit1.message61
-msgid "Поже#209твования"
+msgid "Пожертвования"
 msgstr ""
 
 #: unit1.message62
-msgid "Инфо#209мация о возможности поже#209твований на #209аз#209аботку!"
+msgid "Информация о возможности пожертвований на разработку!"
 msgstr ""
 
 #: unit1.message63
-msgid "Ско#209ость отдачи т#209и #209аза под#209яд в течение т#209ех секунд п#209евысила п#209опускную способность сети. Сеть не#209аботоспособна."
+msgid "Скорость отдачи три раза подряд в течение трех секунд превысила пропускную способность сети. Сеть неработоспособна."
 msgstr ""
 
 #: unit1.message64
-msgid "Ско#209ость заг#209узки т#209и #209аза под#209яд в течение т#209ех секунд п#209евысила п#209опускную способность сети."
+msgid "Скорость загрузки три раза подряд в течение трех секунд превысила пропускную способность сети."
 msgstr ""
 
 #: unit1.message65
-msgid "Разме#209 файла-лога /var/log/vpnlog больше 1 GiB."
+msgid "Размер файла-лога /var/log/vpnlog больше 1 GiB."
 msgstr ""
 
 #: unit1.message66
@@ -460,7 +460,7 @@ msgid "Цветная иконка"
 msgstr ""
 
 #: unit1.message69
-msgid "Че#209но-белая иконка"
+msgid "Черно-белая иконка"
 msgstr ""
 
 #: unit1.message7
@@ -468,15 +468,15 @@ msgid "установлено"
 msgstr ""
 
 #: unit1.message70
-msgid "Введите па#209оль root:"
+msgid "Введите пароль root:"
 msgstr ""
 
 #: unit1.message71
-msgid "Ошибка отоб#209ажения иконки в т#209ее. Используйте вместо ponoff ск#209ипт /usr/bin/vpnlinux. Автоматическое пе#209еключение на виджет."
+msgid "Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux. Автоматическое переключение на виджет."
 msgstr ""
 
 #: unit1.message72
-msgid "Для запуска с п#209авами root т#209ебуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot."
+msgid "Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot."
 msgstr ""
 
 #: unit1.message8
@@ -484,6 +484,6 @@ msgid "отсутствует"
 msgstr ""
 
 #: unit1.message9
-msgid "No link. Сетевой кабель для VPN PPTP/L2TP/OpenL2TP неподключен. А #209еконнект не включен."
+msgid "No link. Сетевой кабель для VPN PPTP/L2TP/OpenL2TP неподключен. А реконнект не включен."
 msgstr ""
 

@@ -15,7 +15,7 @@
     </i18n>
     <VersionInfo>
       <AutoIncrementBuild Value="True"/>
-      <BuildNr Value="2023"/>
+      <BuildNr Value="2021"/>
       <Language Value="0419"/>
       <StringTable ProductVersion="0.0.0.667"/>
     </VersionInfo>
@@ -31,7 +31,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="beeline"/>
+        <CommandLineParams Value="tvoynet"/>
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
@@ -45,7 +45,6 @@
         <Filename Value="ponoff.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ponoff"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
@@ -58,13 +57,13 @@
         <Filename Value="unit1.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
-        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2187"/>
-        <CursorPos X="3" Y="2200"/>
+        <TopLine Value="1"/>
+        <CursorPos X="60" Y="2385"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -298,7 +297,6 @@
         <Filename Value="balloon_matrix.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormBalloonMatrix"/>
-        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="balloon_matrix"/>
         <EditorIndex Value="4"/>
@@ -328,7 +326,6 @@
         <Filename Value="hint_matrix.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormHintMatrix"/>
-        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="hint_matrix"/>
         <EditorIndex Value="5"/>
@@ -392,12 +389,11 @@
         <Filename Value="unitpseudotray.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Widget"/>
-        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unitpseudotray"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
+        <TopLine Value="12"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="88"/>
         <Loaded Value="True"/>
@@ -436,7 +432,7 @@
         <UsageCount Value="11"/>
       </Unit47>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="unit1.pas"/>
         <Caret Line="1635" Column="74" TopLine="1604"/>
@@ -553,14 +549,10 @@
         <Filename Value="unit1.pas"/>
         <Caret Line="2382" Column="5" TopLine="2351"/>
       </Position29>
-      <Position30>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="2385" Column="87" TopLine="2356"/>
-      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="11"/>
+    <Version Value="9"/>
     <Target>
       <Filename Value="ponoff"/>
     </Target>
