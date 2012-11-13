@@ -2006,6 +2006,8 @@ If kostil_onse=false then
                                                     if LimitTX=3 then
                                                                      begin
                                                                           BalloonMessage(3000,message0,message63,AFont);
+                                                                          FpSystem('killall pppd');
+                                                                          MakeDefaultGW;
                                                                           LimitTX:=0;
                                                                      end;
                                                end else LimitTX:=0;

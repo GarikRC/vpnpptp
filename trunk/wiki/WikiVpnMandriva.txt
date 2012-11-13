@@ -486,8 +486,8 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
 Всё вышеизложенное справедливо для настройки VPN L2TP - это и не удивительно, ведь это один из типов VPN, впитавший в себя всё лучшее от VPN PPTP, у них много общего. Рассмотрим лишь отличия в настройке. Сначала настроим файлы конфигурации VPN PPTP как то написано выше. Плюсом ко всему нам потребуется еще установить пакет '''xl2tpd'''.
 
 Описание опций VPN L2TP в интернете:
-  http://manpages.ylsoftware.com/dokuwiki/man/xl2tpd.conf_5
-  http://manpages.ylsoftware.com/dokuwiki/man/xl2tpd_8
+  http://manpages.ylsoftware.com/ru/xl2tpd.conf.5.html
+  http://manpages.ylsoftware.com/ru/xl2tpd.8.html
 Обратите внимание: в официальной документации ошибочно указано max redial, а на самом деле используется max redials.
 
 Приступим к настройке VPN L2TP без IPSec.
