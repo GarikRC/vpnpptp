@@ -1,26 +1,29 @@
-%define rel 1
+%define _enable_debug_packages %{nil}
+%define debug_package %{nil}
 
 Summary: Tools for setup and control VPN via PPTP/L2TP/OpenL2TP
 Name: vpnpptp-allde
 Version: 0.3.8
-Release: %mkrel %{rel}
-License: GPL2
+Release: %mkrel 1
+License: GPL2+
 Group: System/Configuration/Networking
 Url: http://code.google.com/p/vpnpptp
 
 Source0: vpnpptp-src-%{version}.tar.gz
 Source1: vpnpptp.pm
 Source2: vpnmandriva.pm
+Patch1: oxygen-gtk.patch
 
 BuildRequires: fpc-src >= 2.6.0, fpc >= 2.6.0, lazarus >= 0.9.30
 #закомментировать зависимости при сборке не в репозиторий
 Requires: xroot, pptp-linux, xl2tpd >= 1.2.7, openl2tp
 
 %description
-Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
+Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP.
 
 %prep
 %setup -q -n vpnpptp-src-%{version}
+%apply_patches
 
 %build
 ./compile.sh
@@ -50,7 +53,6 @@ cp -rf ./lang %{buildroot}%{_datadir}/vpnpptp/
 
 install -dm 755 %{buildroot}%{_datadir}/applications
 cat > ponoff.desktop << EOF
-#!/usr/bin/env xdg-open
 
 [Desktop Entry]
 Encoding=UTF-8
@@ -66,16 +68,14 @@ Comment[ru]=Управление соединением VPN через PPTP/L2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/ponoff.png
 Type=Application
-Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
+Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop;
 X-KDE-autostart-after=kdesktop
 StartupNotify=false
 EOF
 install -m 0644 ponoff.desktop \
 %{buildroot}%{_datadir}/applications/ponoff.desktop
 
-install -dm 755 %{buildroot}%{_datadir}/applications
 cat > vpnpptp.desktop << EOF
-#!/usr/bin/env xdg-open
 
 [Desktop Entry]
 Encoding=UTF-8
@@ -91,14 +91,14 @@ Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
 Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Icon=/usr/share/pixmaps/vpnpptp.png
 Type=Application
-Categories=GTK;System;Network;Monitor;X-MandrivaLinux-CrossDesktop;
+Categories=GTK;System;Monitor;X-MandrivaLinux-CrossDesktop;
 StartupNotify=false
 EOF
 install -m 0644 vpnpptp.desktop \
 %{buildroot}%{_datadir}/applications/vpnpptp.desktop
 
-install -pm0644 -D %SOURCE1 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp.pm
-install -pm0644 -D %SOURCE2 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnmandriva.pm
+install -pm0644 -D %{SOURCE1} %{buildroot}/usr/lib/libDrakX/network/vpn/vpnpptp.pm
+install -pm0644 -D %{SOURCE2} %{buildroot}/usr/lib/libDrakX/network/vpn/vpnmandriva.pm
 
 %files
 %{_bindir}/vpnpptp
@@ -113,7 +113,7 @@ install -pm0644 -D %SOURCE2 %{buildroot}/usr/lib/libDrakX/network/vpn/vpnmandriv
 %{_datadir}/vpnpptp/wiki
 %{_datadir}/applications/ponoff.desktop
 %{_datadir}/applications/vpnpptp.desktop
-/usr/lib/libDrakX/network/vpn/vpnpptp.pm
-/usr/lib/libDrakX/network/vpn/vpnmandriva.pm
+%{_prefix}/lib/libDrakX/network/vpn/vpnpptp.pm
+%{_prefix}/lib/libDrakX/network/vpn/vpnmandriva.pm
 
 %changelog
