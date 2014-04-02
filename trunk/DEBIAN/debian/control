@@ -1,0 +1,10 @@
+Source: vpnpptp
+Section: net
+Priority: optional
+Maintainer: Alex Loginov <loginov.alex.valer@gmail.com>
+Build-Depends: fpc-source >= 2.6.2, fpc >= 2.6.2, lazarus = 0.9.34
+Package: vpnpptp
+Version: 0.4.0
+Description: Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP
+Homepage: http://code.google.com/p/vpnpptp
+Installed-Size: 15000
