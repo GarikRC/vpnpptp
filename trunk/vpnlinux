@@ -260,7 +260,12 @@ then
    echo $MES6EN $TYPE
    echo $MES6RU $TYPE
    total_kill_process_with_control
-   service xl2tpd restart
+   if [ -f "/sbin/service" ]
+   then
+      service xl2tpd restart
+   else
+      systemctl restart xl2tpd.service
+   fi
    sleep 1
    echo "c $NAME" > /var/run/xl2tpd/l2tp-control && connection_control
 fi

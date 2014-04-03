@@ -194,7 +194,6 @@ type
     procedure DeleteClick(Sender: TObject);
     procedure Edit_peerChange(Sender: TObject);
     procedure etc_hostsChange(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure GroupBox2MouseDown(Sender: TObject; Button: TMouseButton;
@@ -292,8 +291,6 @@ const
   EtcPppIpUpDDir='/etc/ppp/ip-up.d/';
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
-//  SBinDir='/sbin/';
-//  BinDir='/bin/';
   EtcDir='/etc/';
   VarLogDir='/var/log/ppp/';
   UsrSBinDir='/usr/sbin/';
@@ -319,7 +316,7 @@ resourcestring
   message2='Не найдено офисное приложение для вывода справки, читающее формат doc. Вы можете самостоятельно прочитать справку, которая находится:';
   message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd/xl2tpd/openl2tp/openl2tpd реконнекта проигнорирован.';
   message4='Модуль ponoff еще не завершил свою работу. Дождитесь завершения работы модуля ponoff и повторно запустите конфигуратор vpnpptp.';
-//  message5='Не изменять дефолтный шлюз, запустив VPN L2TP в фоне';
+  //message5='';
   message6='Для того, чтобы разрешить пользователям конфигурировать соединение сначала установите пакет sudo.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
@@ -417,7 +414,7 @@ resourcestring
   message100='(например, tp.internet.beeline.ru)';
   message101='Отсутствуют некритичные файлы: ';
   message102='Шифрование mppe может быть настроено неверно, так как отсутствуют: ';
-  //message103='Настройка VPN PPTP/L2TP/OpenL2TP';
+  //message103='';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message105='Обнаружено, что VPN PPTP/L2TP/OpenL2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP/OpenL2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
   message106='Встроенный в демон xl2tpd механизм реконнекта будет работать корректно, только если Вы используете пропатченный xl2tpd.';
@@ -452,7 +449,7 @@ resourcestring
   message135='Эта кнопка настраивает (перенастраивает) соединение';
   message136='Эта кнопка позволяет изменить предложенные по умолчанию или дополнить опции демона pppd';
   message137='Эта кнопка позволяет проверить правильно ли было настроено соединение';
-//  message138='Для VPN L2TP/OpenL2TP шифрование mppe как правило не используется, оно используется только для VPN PPTP, но запрета нет.';
+ //message138='';
   message139='Иногда может помочь принудительный рестарт сети.';
   message140='В Вашем дистрибутиве не используется shorewall, поэтому его настройка не требуется.';
   message141='В Вашем дистрибутиве получение маршрутов через DHCP настроено по-умолчанию, или оно настраивается средствами Вашего дистрибутива.';
@@ -521,14 +518,14 @@ resourcestring
   message204='<ОК> - продолжить, <Отмена> - исправить вручную сейчас.';
   message205='<ОК> - включить опцию usepeerdns автоматически и продолжить (рекомендуется), <Отмена> - оставить всё как есть и продолжить (не рекомендуется).';
   message206='Опция usepeerdns не выбрана.';
-//  message207='Сетевой интерфейс программе не известен. Либо он введён не верно, либо верно, но тогда он не поддерживается программой на 100%.';
+  //message207='';
   message208='<ОК> - оставить как есть и продолжить. <Отмена> - исправить.';
-//  message209='Программе известны: ethN, wlanN, brN, emN, где N в диапазоне [0..9].';
+  //message209='';
   message210='Одновременная работа интернета и лок. сети не настроена или не требует настройки.';
   message211='Google Public DNS: 8.8.8.8 и 8.8.4.4. OpenDNS: 208.67.222.222 и 208.67.220.220.';
   message212='поэтому он не желателен к использованию.';
   message213='Невозможно выбрать VPN OpenL2TP, так как не установлен пакет openl2tp.';
-//  message214='Не изменять дефолтный шлюз, запустив VPN OpenL2TP в фоне';
+  //message214='';
   message215='Отсутствует файл /etc/resolv.conf. Файл /etc/resolv.conf был создан автоматически. Правильность дальнейшей настройки VPN не гарантируется.';
   message216='Автозапуск интернета при старте системы демоном openl2tp/openl2tpd без графики (не рекомендуется использовать)';
   message217='Использовать встроенный в демон openl2tp/openl2tpd механизм реконнекта (не рекомендуется если несколько сетевых карт)';
@@ -537,7 +534,7 @@ resourcestring
   message220='Не найден модуль ядра';
   message221='Не найден плагин';
   message222='Пакет ppp версии 2.4.5 и выше может содержать плагины pppol2tp.so, openl2tp.so; также они могут быть в пакете openl2tp.';
-//  message223='Не найден скрипт';
+  //message223='';
   message224='<ОК> - игнорировать это предупреждение и продолжить (рекомендуется). <Отмена> - поправить.';
   message225='В Fedora если не работает, то может потребоваться настройка SELinux. SELinux можно также отключить.';
   message226='Введите пароль root:';
@@ -1168,7 +1165,6 @@ Application.ShowHint:=false;
 If EditDNSdop3.Text='' then EditDNSdop3.Text:='none';
 If FileExists (EtcDir+'hosts.old') then FpSystem ('cp -f '+EtcDir+'hosts.old '+EtcDir+'hosts');
 FpSystem('rm -f '+MyLibDir+Edit_peer.Text+'/hosts');
-//FpSystem('rm -rf /opt/vpnpptp');
 if FileExists(EtcPppDir+'options.pptp.old') then //для совместимости с пред.версиями
                                    begin
                                       FpSystem('cp -f '+EtcPppDir+'options.pptp.old '+EtcPppDir+'options.pptp');
@@ -1890,7 +1886,7 @@ If not FileExists (EtcRcDDir+'rc.local') then If FileExists (EtcDir+'rc.local') 
                                  FpSystem ('chmod +x '+EtcDir+'rc.local');
                               end;
 //настройка /etc/init.d/after.local
-{If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN PPTP' then
+If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN PPTP' then
                 begin
                    If FileExists (EtcInitDDir+'after.local') then If not FileExists (EtcInitDDir+'after.local.old') then
                                                              begin
@@ -1912,6 +1908,8 @@ If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN L2TP' then
                    FpSystem ('touch '+EtcInitDDir+'after.local');
                    FpSystem ('printf "#!/bin/bash\n" >> '+EtcInitDDir+'after.local');
                    FpSystem ('printf "'+ServiceCommand+'xl2tpd restart\n" >> '+EtcInitDDir+'after.local');
+                   If ServiceCommand='systemctl ' then FpSystem('printf "'+ServiceCommand+'restart xl2tpd.service\n" >> '+EtcInitDDir+'after.local')
+                                                                                    else FpSystem('printf "'+ServiceCommand+'xl2tpd restart\n" >> '+EtcInitDDir+'after.local');
                    FpSystem ('chmod +x '+EtcInitDDir+'after.local');
                 end;
 If suse then If Autostartpppd.Checked then If ComboBoxVPN.Text='VPN OpenL2TP' then
@@ -1931,7 +1929,7 @@ If suse then if not Autostartpppd.Checked then
                    If FileExists (EtcInitDDir+'after.local') then If not FileExists (EtcInitDDir+'after.local.old') then
                                                                   FpSystem ('cp -f '+EtcInitDDir+'after.local '+EtcInitDDir+'after.local.old');
                    FpSystem ('rm -f '+EtcInitDDir+'after.local');
-                end;}
+                end;
 //настраиваем resolv.conf.after
  endprint:=false;
  i:=0;
@@ -2085,28 +2083,14 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem('cp -f '+EtcXl2tpdDi
                                           Memo2.Lines.Add('echo "call '+Edit_peer.Text+'" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('killall xl2tpd');
                                           Memo2.Lines.Add('cp -f '+MyLibDir+Edit_peer.Text+'/openl2tpd.conf '+EtcDir+'openl2tpd.conf');
-                                          //If FileExists(EtcInitDDir+'portmap') then
-                                          If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'restart portmap.service') else Memo2.Lines.Add(ServiceCommand+'portmap restart');
-                                          //Memo2.Lines.Add(ServiceCommand+'portmap restart');
-                                          //If FileExists(EtcInitDDir+'rpcbind') then
-                                          //Memo2.Lines.Add(ServiceCommand+'rpcbind restart');
-                                          If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'restart rpcbind.service') else Memo2.Lines.Add(ServiceCommand+'rpcbind restart');
-                                          //If FileExists(EtcInitDDir+'openl2tp') then
-                                            //                                        begin
-                                                                                         //Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
-                                                                                         If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'stop openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
-                                                                                         Memo2.Lines.Add('killall openl2tp');
-                                                                                         Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
-                                                                                         //Memo2.Lines.Add(ServiceCommand+'openl2tp start');
-                                                                                         If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'start openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp start');
-                                              //                                      end;
-                                          {If FileExists(EtcInitDDir+'openl2tpd') then
-                                                                                    begin
-                                                                                         Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
-                                                                                         Memo2.Lines.Add('killall openl2tpd');
-                                                                                         Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
-                                                                                         Memo2.Lines.Add(ServiceCommand+'openl2tpd start');
-                                                                                    end;}
+                                          If FileExistsBin('portmap') then
+                                                              If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'restart portmap.service') else Memo2.Lines.Add(ServiceCommand+'portmap restart');
+                                          If FileExistsBin('rpcbind') then
+                                                              If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'restart rpcbind.service') else Memo2.Lines.Add(ServiceCommand+'rpcbind restart');
+                                          If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'stop openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
+                                          Memo2.Lines.Add('killall openl2tp');
+                                          Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
+                                          If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'start openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp start');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           FpSystem('chmod a+x '+MyLibDir+Edit_peer.Text+'/openl2tp-start');
                                           //создание скрипта отключения для VPN OpenL2TP
@@ -2114,17 +2098,8 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem('cp -f '+EtcXl2tpdDi
                                           Memo2.Lines.Add('#!/bin/bash');
                                           Memo2.Lines.Add('echo "#Clear config file" > '+EtcPppDir+'options');
                                           Memo2.Lines.Add('rm -f '+EtcDir+'openl2tpd.conf');
-                                          //If FileExists(EtcInitDDir+'openl2tp') then
-                                            //                                        begin
-                                                                                       //Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
-                                                                                       If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'stop openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
-                                                                                       Memo2.Lines.Add('killall openl2tp');
-                                              //                                    end;
-                                          {If FileExists(EtcInitDDir+'openl2tpd') then
-                                                                                    begin
-                                                                                       Memo2.Lines.Add(ServiceCommand+'openl2tpd stop');
-                                                                                       Memo2.Lines.Add('killall openl2tp');
-                                                                                  end;}
+                                          If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'stop openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
+                                          Memo2.Lines.Add('killall openl2tp');
                                           Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-stop');
                                           Memo2.Lines.SaveToFile(MyLibDir+'default/openl2tp-stop');
@@ -2205,9 +2180,12 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem('cp -f '+EtcXl2tpdDi
         end;
  FpSystem('chmod 666 '+MyLibDir+'ponoff.conf.ini');
  //настройка /etc/sysconfig/network (нужно для xl2tpd)
- if not FileExists('/etc/sysconfig/network') then FpSystem ('touch /etc/sysconfig/network');
- FpSystem('sed -i "/NETWORKING/d" /etc/sysconfig/network');
- FpSystem('echo "NETWORKING=yes" >> /etc/sysconfig/network');
+ if DirectoryExists ('/etc/sysconfig') then
+       begin
+           if not FileExists('/etc/sysconfig/network') then FpSystem ('touch /etc/sysconfig/network');
+           FpSystem('sed -i "/NETWORKING/d" /etc/sysconfig/network');
+           FpSystem('echo "NETWORKING=yes" >> /etc/sysconfig/network');
+       end;
  //добавляем сервисы в автозагрузку
  If ComboBoxVPN.Text='VPN OpenL2TP' then
                        begin
@@ -2521,7 +2499,6 @@ DoIconDesktopForAll('vpnpptp');
  Application.ShowHint:=true;
  Application.ProcessMessages;
  Form1.Repaint;
-// if not(FileExists(BinDir+'ip')) then FpSystem(BinDir+'ln -s '+SBinDir+'ip /bin/ip');
  FpSystem('rm -f '+EtcDir+'resolv.conf.old');
 end;
 
@@ -2636,8 +2613,8 @@ end;
 
 procedure TForm1.ButtonRestartClick(Sender: TObject);
 //рестарт сети
-var i:integer;
-    a,b,c:boolean;
+var
+  a,b,c:boolean;
 begin
 a:=ButtonHelp.Enabled;
 b:=ComboBoxDistr.Enabled;
@@ -2669,21 +2646,7 @@ If suse then
                                  FpSystem ('rm -f '+EtcDir+'resolv.conf.netconfig');
                               end;
             end;
-{    For i:=0 to 9 do
-        begin
-          Ifdown('eth'+IntToStr(i));
-          Ifdown('wlan'+IntToStr(i));
-          Ifdown('br'+IntToStr(i));
-          Ifdown('em'+IntToStr(i));
-        end;}
 If ServiceCommand='systemctl' then FpSystem (ServiceCommand+' restart '+NetServiceStr) else FpSystem (ServiceCommand+NetServiceStr+' restart');
-{    For i:=0 to 9 do
-        begin
-          Ifup('eth'+IntToStr(i));
-          Ifup('wlan'+IntToStr(i));
-          Ifup('br'+IntToStr(i));
-          Ifup('em'+IntToStr(i));
-        end;}
 Ifup('lo');
 ButtonRestart.Caption:=message93;
 Button_exit.Enabled:=true;
@@ -2754,7 +2717,6 @@ begin
                                        If not Pppd_log.Checked then if Form3.Tag=2 then
                                              If ServiceCommand='systemctl ' then Memo_create.Lines.Add(message111+ServiceCommand+'restart xl2tpd.service')
                                                       else Memo_create.Lines.Add(message111+ServiceCommand+'xl2tpd restart');
-//                                       Memo_create.Lines.Add (message111+ServiceCommand+'xl2tpd restart');
                                        if Form3.Tag=2 then
                                                                  begin
                                                                       //проверка xl2tpd в процессах
@@ -2766,8 +2728,6 @@ begin
                                                                                         Form1.Repaint;
                                                                                         If ServiceCommand='systemctl ' then FpSystem(ServiceCommand+'stop xl2tpd.service') else FpSystem(ServiceCommand+'xl2tpd stop');
                                                                                         If ServiceCommand='systemctl ' then FpSystem(ServiceCommand+'start xl2tpd.service') else FpSystem(ServiceCommand+'xl2tpd start');
-                                                                                        //FpSystem (ServiceCommand+'xl2tpd stop');
-                                                                                        //FpSystem (ServiceCommand+'xl2tpd start');
                                                                                         Sleep (5000);
                                                                                    end;
                                                                       FpSystem ('rm -f '+MyTmpDir+'tmpnostart1');
@@ -2903,8 +2863,6 @@ end;
 procedure TForm1.Button_exitClick(Sender: TObject);
 begin
   Timer1.Enabled:=false;
-//  CheckVPN;
-//  If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message122,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
   halt;
 end;
 
@@ -2978,11 +2936,6 @@ begin
                                                                                               str:=str+message213+' ';
                                                                                               Problem:=true;
                                                                                          end;
-{  If ComboBoxVPN.Text='VPN OpenL2TP' then if not FileExists (SystemdDir+'openl2tp.service') then
-                                                                                                begin
-                                                                                                  str:=str+message223+' '+SystemdDir+'openl2tp.service.'+' ';
-                                                                                                  Problem:=true;
-                                                                                                end;}
   If ComboBoxVPN.Text='VPN OpenL2TP' then If DirectoryExists(UsrLib64PppdDir) then
                                                                                   begin
                                                                                        popen(f,'find '+UsrLib64PppdDir+' -name pppol2tp.so','R');
@@ -3185,12 +3138,6 @@ begin
                           Application.ProcessMessages;
                           Form1.Repaint;
                        end;
-end;
-
-procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-//     CheckVPN;
-//     If Code_up_ppp then Form3.MyMessageBox(message0+' '+message196,'','','',message122,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
 end;
 
 procedure TForm1.GroupBox1MouseDown(Sender: TObject; Button: TMouseButton;
@@ -3471,8 +3418,6 @@ If ComboBoxVPN.Text='VPN L2TP' then Reconnect_pptp.Caption:=message96;
 If ComboBoxVPN.Text='VPN OpenL2TP' then Reconnect_pptp.Caption:=message217;
 If ComboBoxVPN.Text='VPN L2TP' then Autostartpppd.Caption:=message98;
 If ComboBoxVPN.Text='VPN OpenL2TP' then Autostartpppd.Caption:=message216;
-//If ComboBoxVPN.Text='VPN L2TP' then pppnotdefault.Caption:=message5;
-//If ComboBoxVPN.Text='VPN OpenL2TP' then pppnotdefault.Caption:=message214;
 If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then
                begin
                   CheckBox_required.Hint:=MakeHint(message79+' '+message88+' '+message233,5);
@@ -3538,7 +3483,6 @@ If not y then IPS:=true else IPS:=false;
   Memo_gate.Clear;
   If FileExists(MyTmpDir+'gate') then Memo_gate.Lines.LoadFromFile(MyTmpDir+'gate');
   Edit_gate.Text:=Memo_gate.Lines[0];
-  //If (LeftStr(Edit_gate.Text,3)='eth') or (LeftStr(Edit_gate.Text,4)='wlan') or (LeftStr(Edit_gate.Text,2)='br') or (LeftStr(Edit_gate.Text,2)='em') then Edit_gate.Text:='none';
   FpSystem('rm -f '+MyTmpDir+'gate');
 //определяем сетевой интерфейс по умолчанию
   FpSystem('ip r|'+'grep default| '+'awk '+chr(39)+'{print $5}'+chr(39)+' > '+MyTmpDir+'eth');
@@ -3548,9 +3492,6 @@ If not y then IPS:=true else IPS:=false;
   FpSystem('rm -f '+MyTmpDir+'eth');
   Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
   If Edit_eth.Text='link' then Edit_eth.Text:='none';
-{  If LeftStr(Edit_eth.Text,4)='wlan' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],5);
-  If LeftStr(Edit_eth.Text,2)='br' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);
-  If LeftStr(Edit_eth.Text,2)='em' then Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],3);}
   If Edit_eth.Text='none' then
                            begin
                              Edit_gate.Text:='none';
@@ -3671,18 +3612,6 @@ If (Edit_eth.Text='') or (Edit_eth.Text='none') then
                          Form1.Repaint;
                          exit;
                     end;
-{if Length(Edit_eth.Text)=4 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='t') then if (Edit_eth.Text[3]='h') then if (Edit_eth.Text[4] in ['0'..'9']) then y:=false;
-if Length(Edit_eth.Text)=5 then if (Edit_eth.Text[1]='w') then if (Edit_eth.Text[2]='l') then if (Edit_eth.Text[3]='a') then if (Edit_eth.Text[4]='n') then if (Edit_eth.Text[5] in ['0'..'9']) then y:=false;
-if Length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='b') then if (Edit_eth.Text[2]='r') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
-if Length(Edit_eth.Text)=3 then if (Edit_eth.Text[1]='e') then if (Edit_eth.Text[2]='m') then if (Edit_eth.Text[3] in ['0'..'9']) then y:=false;
-if y then
-                    begin
-                          Form3.MyMessageBox(message0,message207+' '+message209+' '+message208,'',message122,message125,MyPixmapsDir+'vpnpptp.png',false,true,true,AFont,Form1.Icon,false,MyLibDir);
-                          TabSheet2.TabVisible:= True;
-                          Application.ProcessMessages;
-                          Form1.Repaint;
-                          if (Form3.Tag=3) or (Form3.Tag=0) then exit;
-                    end;}
 //проверка поддержки mii-tool
 If not FileExists(MyLibDir+Edit_peer.Text+'/config') then
                  begin
@@ -3700,12 +3629,14 @@ IniPropStorage1.IniFileName:=MyLibDir+'ponoff.conf.ini';
 IniPropStorage1.IniSection:='TApplication.Widget';
 If FileExists(MyLibDir+'ponoff.conf.ini') then If IniPropStorage1.ReadString ('Widget','null')='true' then  Widget.Checked:=true else Widget.Checked:=false;
 //wlanN не поддерживается mii-tool
-{If not FileExists(MyLibDir+Edit_peer.Text+'/config') then if LeftStr(Edit_eth.Text,4)='wlan' then
-                                                                                 begin
-                                                                                   StartMessage:=false;
-                                                                                   Mii_tool_no.Checked:=true;
-                                                                                   StartMessage:=true;
-                                                                                 end;}
+popen(f,'iwconfig '+Edit_eth.Text+'|grep "no wireless extensions"','R');
+If not FileExists(MyLibDir+Edit_peer.Text+'/config') then if not eof(f) then
+                                                                           begin
+                                                                              StartMessage:=false;
+                                                                              Mii_tool_no.Checked:=true;
+                                                                              StartMessage:=true;
+                                                                           end;
+pclose(f);
 //VmWare не поддерживает mii-tool, получение маршрутов через dhcp при использовании NAT
 If not FileExists(MyLibDir+Edit_peer.Text+'/config') then if (Edit_gate.Text=EditDNS3.Text) then
                                                                                  begin
@@ -4143,14 +4074,9 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var i,N, CountGateway:integer;
+var i:integer;
     len:integer;
-    FileFind:textfile;
-    strIface, strGateway, str, str1:string;
-//    ethCount:array[0..9] of integer;
-//    wlanCount:array[0..9] of integer;
-//    brCount:array[0..9] of integer;
-//    emCount:array[0..9] of integer;
+    str, str1:string;
     nostart:boolean;
     PeabodyIpUp, PeabodyIpDown:boolean;
     DopParam:string;
@@ -4245,9 +4171,6 @@ begin
                     Form1.Repaint;
                     halt;
                 end;
-//If not FileExists(BinDir+'awk') then If FileExists(UsrBinDir+'awk') then FpSystem('ln -s '+UsrBinDir+'awk'+' '+BinDir+'awk'); //создаем ссылку для awk
-//If not FileExists(BinDir+'find') then If FileExists(UsrBinDir+'find') then FpSystem('ln -s '+UsrBinDir+'find'+' '+BinDir+'find'); //создаем ссылку для find
-//If not FileExists(UsrBinDir+'man') then If FileExists(BinDir+'man') then FpSystem('ln -s '+BinDir+'man'+' '+UsrBinDir+'man'); //создаем ссылку для man
 Screen.HintFont.Size:=30;
 Screen.MenuFont.Size:=30;
 if FileSize(MyLibDir+'profiles')=0 then FpSystem ('rm -f '+MyLibDir+'profiles');
@@ -4260,9 +4183,7 @@ mageia:=false;
 ProfileForDelete:='';
 Delete.Caption:=message182;
 Delete.Enabled:=false;
-If FileExistsBin ('service') then ServiceCommand:='service ';
-//If FileExistsBin ('service') then ServiceCommand:='service ';
-If not FileExistsBin ('service') then ServiceCommand:='systemctl ';
+If FileExistsBin ('service') then ServiceCommand:='service ' else ServiceCommand:='systemctl ';
 //определение дистрибутива
 popen (f,'cat '+EtcDir+'issue|'+'grep Ubuntu','R');
 If not eof(f) then ubuntu:=true;
@@ -4416,7 +4337,6 @@ Delete.Hint:=MakeHint(message183,5);
 GroupBox3.Hint:=MakeHint(message51,5);
 GroupBox2.Hint:=MakeHint(message188,5);
 GroupBox1.Hint:=MakeHint(message189,5);
-//Form1.Caption:=message103;
 ButtonHidePass.Caption:=message86;
 ButtonRestart.Caption:=message93;
 StartMessage:=false;
@@ -4576,7 +4496,6 @@ PageControl1.ShowTabs:=false;
  FpSystem ('killall ponoff');
  If FileExists(MyLibDir+'default/openl2tp-stop') then FpSystem('bash '+MyLibDir+'default/openl2tp-stop');
  FpSystem ('killall pppd');
- //FpSystem (ServiceCommand+'xl2tpd stop');
  If ServiceCommand='systemctl ' then FpSystem(ServiceCommand+'stop xl2tpd.service') else FpSystem(ServiceCommand+'xl2tpd stop');
  FpSystem ('killall xl2tpd');
  FpSystem ('killall openl2tpd');
@@ -4739,14 +4658,9 @@ If not Translate then Label25.Caption:='              '+Label25.Caption;
 NetServiceStr:='none';
 If FileExists (EtcInitDDir+'network') then NetServiceStr:='network';
 If FileExists (EtcInitDDir+'networking') then NetServiceStr:='networking';
-//If FileExists (EtcInitDDir+'network-manager') then NetServiceStr:='network-manager';
-//If FileExists (EtcInitDDir+'NetworkManager') then NetServiceStr:='NetworkManager';
-//If FileExists (EtcInitDDir+'networkmanager') then NetServiceStr:='networkmanager';
 If FileExists (SystemdDir+'network-manager.service') then NetServiceStr:='network-manager.service';
 If FileExists (SystemdDir+'NetworkManager.service') then NetServiceStr:='NetworkManager.service';
 If FileExists (SystemdDir+'networkmanager.service') then NetServiceStr:='networkmanager.service';
-//для отладки
-//NetServiceStr:='network';
 If NetServiceStr='none' then
                             begin
                                Form3.MyMessageBox(message0,message160,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -4792,7 +4706,6 @@ If NetServiceStr='none' then
                                     Application.ProcessMessages;
                                     Form1.Repaint;
                                     If ServiceCommand='systemctl' then FpSystem (ServiceCommand+' restart '+NetServiceStr) else FpSystem (ServiceCommand+NetServiceStr+' restart');
-//                                    FpSystem (ServiceCommand+NetServiceStr+' restart');
                                end;
   FpSystem ('rm -f '+MyTmpDir+'gate');
 //повторная проверка дефолтного шлюза
@@ -4802,75 +4715,6 @@ If NetServiceStr='none' then
   FpSystem('printf "none" >> '+MyTmpDir+'gate');
   Memo_gate.Clear;
   If FileExists(MyTmpDir+'gate') then Memo_gate.Lines.LoadFromFile(MyTmpDir+'gate');
-  {If Memo_gate.Lines[0]='none' then //рестарт сети не помог
-                                   begin
-                                        for i:=0 to 9 do
-                                                 begin
-                                                    ethCount[i]:=0;
-                                                    wlanCount[i]:=0;
-                                                    brCount[i]:=0;
-                                                    emCount[i]:=0;
-                                                 end;
-                                        FpSystem('route -n |'+'awk '+ chr(39)+'{print $8}'+chr(39)+' > '+MyTmpDir+'gate');
-                                        If FileExists (MyTmpDir+'gate') then
-                                        begin
-                                             AssignFile (FileFind,MyTmpDir+'gate');
-                                             reset (FileFind);
-                                             While not eof (FileFind) do
-                                             begin
-                                                  readln(FileFind, str);
-                                                  for i:=0 to 9 do
-                                                  begin
-                                                      If str<>'' then If str<>'Iface' then if leftstr(str,4)='eth'+IntToStr(i) then ethCount[i]:=ethCount[i]+1;
-                                                      If str<>'' then If str<>'Iface' then if leftstr(str,5)='wlan'+IntToStr(i) then wlanCount[i]:=wlanCount[i]+1;
-                                                      If str<>'' then If str<>'Iface' then if leftstr(str,3)='br'+IntToStr(i) then brCount[i]:=brCount[i]+1;
-                                                      If str<>'' then If str<>'Iface' then if leftstr(str,3)='em'+IntToStr(i) then emCount[i]:=emCount[i]+1;
-                                                  end;
-                                             end;
-                                             closefile(FileFind);
-                                        end;
-                                        strIface:='';
-                                        for i:=0 to 9 do
-                                                 begin
-                                                      If ethCount[i]>=1 then begin ethCount[i]:=1;strIface:='eth'+IntToStr(i);end;
-                                                      If wlanCount[i]>=1 then begin wlanCount[i]:=1;strIface:='wlan'+IntToStr(i);end;
-                                                      If brCount[i]>=1 then begin brCount[i]:=1;strIface:='br'+IntToStr(i);end;
-                                                      If emCount[i]>=1 then begin emCount[i]:=1;strIface:='em'+IntToStr(i);end;
-                                                 end;
-                                        N:=0;
-                                        for i:=0 to 9 do
-                                               N:=N+ethCount[i]+wlanCount[i]+brCount[i]+emCount[i];
-                                        If N=1 then If strIface<>'' then //в системе всего один интерфейс - это strIface, ищем шлюз strGateway
-                                                                        begin
-                                                                             FpSystem('route -n |'+'grep '+strIface+'|'+'awk '+ chr(39)+'{print $2}'+chr(39)+' > '+MyTmpDir+'gate');
-                                                                             If FileExists (MyTmpDir+'gate') then
-                                                                             begin
-                                                                                  AssignFile (FileFind,MyTmpDir+'gate');
-                                                                                  reset (FileFind);
-                                                                                  strGateway:='';
-                                                                                  CountGateway:=0;
-                                                                                  While not eof (FileFind) do
-                                                                                  begin
-                                                                                       readln(FileFind, str);
-                                                                                       If str<>'' then If str<>'0.0.0.0' then If str<>strGateway then
-                                                                                                                                                 begin
-                                                                                                                                                      strGateway:=str;
-                                                                                                                                                      CountGateway:=CountGateway+1;
-                                                                                                                                                 end;
-                                                                                  end;
-                                                                                  closefile(FileFind);
-                                                                                  If strGateway<>'' then If CountGateway=1 then FpSystem ('route add default gw '+strGateway+' dev '+strIface);
-                                                                             end;
-                                                                         end;
-                                        Sleep(5000);
-                                   end;
-//повторная проверка дефолтного шлюза
-  Memo_gate.Lines.Clear;
-  FpSystem ('rm -f '+MyTmpDir+'gate');
-  FpSystem('ip r|'+'grep default|'+'awk '+ chr(39)+'{print $3}'+chr(39)+' > '+MyTmpDir+'gate');
-  FpSystem('printf "none" >> '+MyTmpDir+'gate');
-  Memo_gate.Clear;
-  If FileExists(MyTmpDir+'gate') then Memo_gate.Lines.LoadFromFile(MyTmpDir+'gate'); }
   If Memo_gate.Lines[0]='none' then //ничего не помогло
                                    begin
                                         Form3.MyMessageBox(message0,message144+' '+message145+' '+message139,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);

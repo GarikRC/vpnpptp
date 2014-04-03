@@ -140,12 +140,8 @@ const
   EtcPppIpUpDDir='/etc/ppp/ip-up.d/';
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
   UsrBinDir='/usr/bin/';
-//  SBinDir='/sbin/';
- // BinDir='/bin/';
-  //UsrSBinDir='/usr/sbin/';
   EtcPppPeersDir='/etc/ppp/peers/';
   IfcfgDir='/etc/sysconfig/network-scripts/';
-  //EtcInitDDir='/etc/init.d/';
   MyVpnDir='/usr/lib/libDrakX/network/vpn/';
   EtcDir='/etc/';
   VarRunDir='/var/run/';
@@ -1705,8 +1701,6 @@ for i:=0 to 100 do
 If not FileExists(MyDataDir+'down-'+Edit_iface.Text) then
     begin
         If FileExistsBin ('service') then FpSystem('echo '+'service network restart'+' > '+MyDataDir+'down-'+Edit_iface.Text);
-        //If FileExistsBin ('service') then FpSystem('echo '+'service network restart'+' > '+MyDataDir+'down-'+Edit_iface.Text);
-        //If not FileExistsBin ('service') then if not FileExistsBin ('service') then FpSystem('echo '+EtcInitDDir+' network restart'+' > '+MyDataDir+'down-'+Edit_iface.Text);
         If not FileExistsBin ('service') then if FileExistsBin ('systemctl') then FpSystem('echo '+'systemctl restart network.service'+' > '+MyDataDir+'down-'+Edit_iface.Text);
     end;
 end;
