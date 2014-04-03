@@ -62,7 +62,6 @@ type
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
-    //procedure MenuItem6Click(Sender: TObject);
     procedure MinusClick(Sender: TObject);
     procedure PlusClick(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
@@ -99,12 +98,8 @@ const
   MyPixmapsDir='/usr/share/pixmaps/'; //директория для значков программы
   EtcPppIpUpDDir='/etc/ppp/ip-up.d/';
   EtcPppIpDownDDir='/etc/ppp/ip-down.d/';
- // UsrBinDir='/usr/bin/';
-  //SBinDir='/sbin/';
-  //BinDir='/bin/';
   EtcDir='/etc/';
   VarLogDir='/var/log/';
-  //UsrSBinDir='/usr/sbin/';
   VarRunXl2tpdDir='/var/run/xl2tpd/';
   EtcInitDDir='/etc/init.d/';
   SystemdDir='/usr/lib/systemd/system/';
@@ -113,7 +108,6 @@ const
   EtcPppDir='/etc/ppp/';
   EtcShorewallDir='/etc/shorewall/';
   UsrShareApplicationsDir='/usr/share/applications/';
-  //EtcRcDDir='/etc/rc.d/';
   EtcXl2tpdDir='/etc/xl2tpd/';
   EtcPppIpDownLDir='/etc/ppp/ip-down.l/';
   VarRunVpnpptp='/var/run/vpnpptp/';
@@ -238,8 +232,8 @@ resourcestring
   message58='Шлюз: ';
   message59='IP-адрес: ';
   message60='Интерфейс: ';
-  //message61='Пожертвования';
-//  message62='Информация о возможности пожертвований на разработку!';
+  //message61='';
+  //message62='';
   message63='Скорость отдачи три раза подряд в течение трёх секунд превысила пропускную способность сети. Сеть неработоспособна.';
   message64='Скорость загрузки три раза подряд в течение трёх секунд превысила пропускную способность сети.';
   message65='Размер файла-лога /var/log/vpnlog больше 1 GiB.';
@@ -427,49 +421,6 @@ begin
    if i=0 then i:=1;
    CountInterface:=i;
 end;
-
-{Procedure DoCountInterface;
-//считает максимальное кол-во default
-var
-   str:string;
-   i:integer;
-begin
-  i:=0;
-  str:='';
-  popen (f,'ifconfig |'+'grep '+chr(39)+'eth'+chr(39),'R');
-  While not eof(f) do
-     begin
-       Readln (f,str);
-       i:=i+1;
-     end;
-  PClose(f);
-  str:='';
-  popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+chr(39)+'wlan'+chr(39),'R');
-  While not eof(f) do
-     begin
-       Readln (f,str);
-       i:=i+1;
-     end;
-  PClose(f);
-  str:='';
-  popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+chr(39)+'br'+chr(39),'R');
-  While not eof(f) do
-     begin
-       Readln (f,str);
-       i:=i+1;
-     end;
-  PClose(f);
-  str:='';
-  popen (f,SBinDir+'ifconfig |'+BinDir+'grep '+chr(39)+'em'+chr(39),'R');
-  While not eof(f) do
-     begin
-       Readln (f,str);
-       i:=i+1;
-     end;
-  PClose(f);
-  if i=0 then i:=1;
-  CountInterface:=i;
-end;}
 
 procedure TForm1.Ifdown (Iface:string);
 //опускает интерфейс
@@ -854,7 +805,6 @@ begin
     FlagLengthVpnlog:=true;
 //Проверяем поднялось ли соединение
 CheckVPN;
-//If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
 //проверяем поднялось ли соединение на pppN и если нет, то поднимаем на pppN; переводим pppN в фон
 If Memo_Config.Lines[29]='pppnotdefault-yes' then NoInternet:=true;
 If Code_up_ppp then
@@ -1307,8 +1257,7 @@ begin
   Timer2.Enabled:=true;
   if FileSize(MyLibDir+'profiles')=0 then FpSystem ('rm -f '+MyLibDir+'profiles');
   if FileSize(MyLibDir+'default/default')=0 then FpSystem ('rm -f '+MyLibDir+'default/default');
-  If FileExistsBin ('service') then ServiceCommand:='service ';
-  If not FileExistsBin ('service') then ServiceCommand:='systemctl ';
+  If FileExistsBin ('service') then ServiceCommand:='service ' else ServiceCommand:='systemctl ';
   DoubleRunPonoff:=false;
   StartMessage:=true;
   ubuntu:=false;
@@ -1370,7 +1319,6 @@ begin
   MenuItem3.Caption:=message10;
   MenuItem4.Caption:=message11;
   MenuItem5.Caption:=message39;
-  //MenuItem6.Caption:=message61;
   If Screen.Height<440 then AFont:=6;
   If Screen.Height<=480 then AFont:=6;
   If Screen.Height<550 then If not (Screen.Height<=480) then AFont:=6;
@@ -1556,7 +1504,6 @@ If i>1 then
             end;
 //Проверяем поднялось ли соединение
 CheckVPN;
-//If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
 If Code_up_ppp then LoadIconForTray(MyDataDir,'on.ico');
 If not Code_up_ppp then LoadIconForTray(MyDataDir,'off.ico');
 Application.ProcessMessages;
@@ -1802,8 +1749,6 @@ end;
 
 procedure TForm1.MenuItem4Click(Sender: TObject);
 //выход при аварии
-//var
-// i:integer;
 begin
   DoubleRunPonoff:=false;
   Timer1.Enabled:=False;
@@ -1817,13 +1762,6 @@ begin
   If Memo_Config.Lines[39]='l2tp' then FpSystem ('echo "d '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
   LoadIconForTray(MyDataDir,'off.ico');
   Application.ProcessMessages;
-{  For i:=0 to 9 do
-      begin
-        Ifdown('eth'+IntToStr(i));
-        Ifdown('wlan'+IntToStr(i));
-        Ifdown('br'+IntToStr(i));
-        Ifdown('em'+IntToStr(i));
-      end;}
   // организация конкурса интерфейсов
   If ServiceCommand='systemctl ' then FpSystem(ServiceCommand+'restart '+NetServiceStr) else FpSystem(ServiceCommand+NetServiceStr+' restart');
   If (NetServiceStr='network-manager.service') or (NetServiceStr='NetworkManager.service') or (NetServiceStr='networkmanager.service') then Mysleep(3000);
@@ -1833,23 +1771,8 @@ begin
   popen(f,'ip r|'+'grep default|'+'awk '+ chr(39)+'{print $3}'+chr(39),'R');
   If eof(f) then
      begin
-{         For i:=0 to 9 do
-             begin
-              Ifdown('eth'+IntToStr(i));
-              Ifdown('wlan'+IntToStr(i));
-              Ifdown('br'+IntToStr(i));
-              Ifdown('em'+IntToStr(i));
-             end;}
-            If ServiceCommand='systemctl' then FpSystem (ServiceCommand+' restart '+NetServiceStr) else FpSystem (ServiceCommand+NetServiceStr+' restart');
-    //        FpSystem (ServiceCommand+NetServiceStr+' restart');
-            {For i:=0 to 9 do
-                 begin
-                    Ifup('eth'+IntToStr(i));
-                    Ifup('wlan'+IntToStr(i));
-                    Ifup('br'+IntToStr(i));
-                    Ifup('em'+IntToStr(i));
-                 end;}
-           Ifup('lo');
+         If ServiceCommand='systemctl' then FpSystem (ServiceCommand+' restart '+NetServiceStr) else FpSystem (ServiceCommand+NetServiceStr+' restart');
+         Ifup('lo');
      end;
   PClose(f);
   FpSystem ('rm -f '+MyTmpDir+'DateStart');
@@ -1874,12 +1797,6 @@ begin
                 AProcessNet_Monitor.Execute;
              end;
 end;
-
-{procedure TForm1.MenuItem6Click(Sender: TObject);
-begin
-  If Form3.Visible then exit;
-  Form3.MyMessageBox(message0+' '+message62,'','','',message33,'',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-end;}
 
 procedure TForm1.MinusClick(Sender: TObject);
 begin
@@ -1908,7 +1825,6 @@ begin
  Application.ProcessMessages;
  //Проверяем поднялось ли соединение
  CheckVPN;
-// If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
  find_net_monitor:=false;
  If Code_up_ppp then If FileExistsBin ('net_monitor') then if FileExistsBin ('vnstat') then
                    begin
@@ -1953,7 +1869,6 @@ begin
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
-//  If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
   //определяем скорость, время
   error_proc_net_dev:=false;
   error_rx_tx:=false;
@@ -2246,7 +2161,6 @@ begin
   Application.ProcessMessages;
   //Проверяем поднялось ли соединение
   CheckVPN;
-//  If Code_up_ppp then MenuItem6.Enabled:=true else MenuItem6.Enabled:=false;
   StrObnull:='';
   If FileExists(MyTmpDir+'ObnullRX') then
                                      begin

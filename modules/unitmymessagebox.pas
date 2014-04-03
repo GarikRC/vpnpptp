@@ -95,13 +95,8 @@ begin
                                                    begin
                                                         Image1.Visible:=true;
                                                         Image1.Picture.LoadFromFile(filepic);
-//                                                        Image2.Visible:=false;
                                                    end;
-   If filepic='' then
-                       begin
-//                            Image2.Visible:=true;
-                            Image1.Visible:=false;
-                       end;
+   If filepic='' then Image1.Visible:=false;
    Form3.BorderStyle:=bsSingle;
    Button1.Caption:=mess2;
    Button2.Caption:=mess3;
@@ -129,9 +124,6 @@ begin
    Form3.Constraints.MinHeight:=Form3.Height;
    Form3.Constraints.MaxWidth:=Form3.Width;
    Form3.Constraints.MinWidth:=Form3.Width;
-//   Form3.Image2.Align:=alClient;
-//   Form3.Image2.BorderSpacing.Right:=0;
-//   Form3.Image2.Anchors:=[akLeft,akRight,akBottom];
 end;
 
 procedure TForm3.Button1Click(Sender: TObject);
