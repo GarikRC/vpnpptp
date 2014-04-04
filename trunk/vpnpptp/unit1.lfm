@@ -2145,11 +2145,11 @@ object Form1: TForm1
     Height = 534
     Top = 1
     Width = 828
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 10
     BorderSpacing.Around = 1
-    TabIndex = 1
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -2746,7 +2746,7 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrCenter
-        Left = 607
+        Left = 568
         Height = 12
         Top = 162
         Width = 71
@@ -2776,10 +2776,10 @@ object Form1: TForm1
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrCenter
-        Left = 610
+        Left = 571
         Height = 64
         Top = 177
-        Width = 209
+        Width = 248
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Left = 3
         BorderSpacing.Top = 3
@@ -2796,10 +2796,10 @@ object Form1: TForm1
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Side = asrCenter
-        Left = 610
-        Height = 77
+        Left = 571
+        Height = 64
         Top = 244
-        Width = 209
+        Width = 248
         Anchors = [akTop, akLeft, akRight]
         BorderSpacing.Left = 3
         BorderSpacing.Top = 3
@@ -2817,10 +2817,10 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Memo_route
         AnchorSideBottom.Side = asrBottom
-        Left = 610
-        Height = 164
-        Top = 324
-        Width = 209
+        Left = 571
+        Height = 177
+        Top = 311
+        Width = 248
         Anchors = [akTop, akLeft, akRight, akBottom]
         AutoSize = False
         BorderSpacing.Left = 3
@@ -2907,7 +2907,7 @@ object Form1: TForm1
         AnchorSideTop.Control = Edit_eth
         AnchorSideTop.Side = asrCenter
         AnchorSideBottom.Control = CheckBox_rchap
-        Left = 610
+        Left = 571
         Height = 12
         Top = 13
         Width = 100
@@ -2921,7 +2921,7 @@ object Form1: TForm1
         AnchorSideLeft.Control = CheckBox_rmschapv2
         AnchorSideTop.Control = CheckBox_rmschapv2
         AnchorSideTop.Side = asrBottom
-        Left = 607
+        Left = 568
         Height = 12
         Top = 98
         Width = 106
@@ -2953,7 +2953,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 10
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -2969,7 +2969,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 39
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -2983,10 +2983,10 @@ object Form1: TForm1
         AnchorSideRight.Control = CheckBox_rmschap
         AnchorSideBottom.Control = CheckBox_rmschap
         AnchorSideBottom.Side = asrCenter
-        Left = 607
+        Left = 568
         Height = 21
         Top = 25
-        Width = 81
+        Width = 99
         Caption = 'refuse-chap'
         OnChange = CheckBox_rchapChange
         TabOrder = 8
@@ -2999,10 +2999,10 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = CheckBox_desktop
         AnchorSideBottom.Side = asrCenter
-        Left = 693
+        Left = 672
         Height = 21
         Top = 25
-        Width = 76
+        Width = 92
         BorderSpacing.Left = 5
         Caption = 'refuse-eap'
         OnChange = CheckBox_reapChange
@@ -3015,10 +3015,10 @@ object Form1: TForm1
         AnchorSideRight.Control = CheckBox_rpap
         AnchorSideBottom.Control = CheckBox_desktop
         AnchorSideBottom.Side = asrCenter
-        Left = 607
+        Left = 568
         Height = 21
         Top = 46
-        Width = 96
+        Width = 119
         Anchors = [akTop, akRight]
         BorderSpacing.Right = 5
         Caption = 'refuse-mschap'
@@ -3030,10 +3030,10 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_required
         AnchorSideBottom.Side = asrBottom
-        Left = 670
+        Left = 644
         Height = 21
         Top = 110
-        Width = 66
+        Width = 81
         Caption = 'stateless'
         OnChange = CheckBox_statelessChange
         TabOrder = 14
@@ -3043,10 +3043,10 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_required
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
-        Left = 607
+        Left = 568
         Height = 21
         Top = 131
-        Width = 47
+        Width = 55
         Caption = 'no40'
         OnChange = CheckBox_no40Change
         TabOrder = 15
@@ -3056,10 +3056,10 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_no40
         AnchorSideBottom.Side = asrBottom
-        Left = 654
+        Left = 623
         Height = 21
         Top = 131
-        Width = 47
+        Width = 55
         Caption = 'no56'
         OnChange = CheckBox_no56Change
         TabOrder = 16
@@ -3073,7 +3073,7 @@ object Form1: TForm1
         Left = 5
         Height = 230
         Top = 258
-        Width = 600
+        Width = 561
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Left = 5
         BorderSpacing.Right = 5
@@ -3090,7 +3090,7 @@ object Form1: TForm1
         Left = 5
         Height = 21
         Top = 488
-        Width = 205
+        Width = 253
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
         Caption = 'Создать ярлык на Рабочем столе'
@@ -3108,7 +3108,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 64
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -3126,7 +3126,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 93
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -3144,7 +3144,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 168
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -3161,7 +3161,7 @@ object Form1: TForm1
         Left = 374
         Height = 19
         Top = 227
-        Width = 231
+        Width = 192
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Left = 10
@@ -3179,7 +3179,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 118
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -3196,7 +3196,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 143
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -3208,10 +3208,10 @@ object Form1: TForm1
         AnchorSideTop.Control = Label13
         AnchorSideTop.Side = asrBottom
         AnchorSideBottom.Side = asrBottom
-        Left = 607
+        Left = 568
         Height = 21
         Top = 110
-        Width = 63
+        Width = 76
         Caption = 'required'
         OnChange = CheckBox_requiredChange
         TabOrder = 13
@@ -3221,10 +3221,10 @@ object Form1: TForm1
         AnchorSideLeft.Side = asrBottom
         AnchorSideTop.Control = CheckBox_no56
         AnchorSideBottom.Side = asrBottom
-        Left = 701
+        Left = 678
         Height = 21
         Top = 131
-        Width = 53
+        Width = 63
         Caption = 'no128'
         OnChange = CheckBox_no128Change
         TabOrder = 17
@@ -3235,10 +3235,10 @@ object Form1: TForm1
         AnchorSideTop.Control = CheckBox_rmschap
         AnchorSideRight.Control = TabSheet2
         AnchorSideRight.Side = asrBottom
-        Left = 708
+        Left = 692
         Height = 21
         Top = 46
-        Width = 76
+        Width = 92
         Anchors = [akTop, akRight]
         BorderSpacing.Right = 40
         Caption = 'refuse-pap'
@@ -3249,10 +3249,10 @@ object Form1: TForm1
         AnchorSideLeft.Control = CheckBox_rmschap
         AnchorSideTop.Control = CheckBox_rmschap
         AnchorSideTop.Side = asrBottom
-        Left = 607
+        Left = 568
         Height = 21
         Top = 67
-        Width = 112
+        Width = 139
         Caption = 'refuse-mschap-v2'
         OnChange = CheckBox_rmschapv2Change
         TabOrder = 12
@@ -3267,7 +3267,7 @@ object Form1: TForm1
         Left = 372
         Height = 19
         Top = 197
-        Width = 233
+        Width = 194
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
@@ -3546,10 +3546,11 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 5
-          Width = 315
+          Width = 249
           BorderSpacing.Left = 4
           BorderSpacing.Top = 5
           Caption = 'Не контролировать state сетевого кабеля'
+          OnChange = Mii_tool_noChange
           TabOrder = 0
         end
         object Reconnect_pptp: TCheckBox
@@ -3559,7 +3560,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 26
-          Width = 802
+          Width = 635
           BorderSpacing.Left = 4
           Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
           TabOrder = 1
@@ -3571,7 +3572,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 47
-          Width = 344
+          Width = 273
           BorderSpacing.Left = 4
           Caption = 'Вести подробный лог pppd в /var/log/ppp/vpnlog'
           Checked = True
@@ -3585,7 +3586,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 68
-          Width = 246
+          Width = 201
           BorderSpacing.Left = 4
           Caption = 'Получать маршруты через DHCP'
           Checked = True
@@ -3600,7 +3601,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 89
-          Width = 350
+          Width = 282
           BorderSpacing.Left = 4
           Caption = 'Программно добавлять маршрут к VPN-серверу'
           Checked = True
@@ -3615,7 +3616,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 110
-          Width = 807
+          Width = 638
           BorderSpacing.Left = 4
           Caption = 'Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)'
           Checked = True
@@ -3630,7 +3631,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 131
-          Width = 443
+          Width = 354
           BorderSpacing.Left = 4
           Caption = 'Маршрутизировать remote IP address в шлюз локальной сети'
           TabOrder = 6
@@ -3642,7 +3643,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 152
-          Width = 334
+          Width = 269
           BorderSpacing.Left = 4
           Caption = 'Программно маршрутизировать DNS-сервера'
           TabOrder = 7
@@ -3654,7 +3655,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 173
-          Width = 508
+          Width = 404
           BorderSpacing.Left = 4
           Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
           OnChange = networktestChange
@@ -3667,7 +3668,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 194
-          Width = 442
+          Width = 352
           BorderSpacing.Left = 4
           Caption = 'Блокировать все всплывающие сообщения из трея/виджета'
           OnChange = balloonChange
@@ -3680,7 +3681,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 215
-          Width = 387
+          Width = 316
           BorderSpacing.Left = 4
           Caption = 'Не изменять дефолтный шлюз, запустив VPN в фоне'
           OnChange = pppnotdefaultChange
@@ -3695,7 +3696,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 236
-          Width = 350
+          Width = 281
           BorderSpacing.Left = 4
           Caption = 'Средне- или высокоскоростная линия (nobuffer)'
           Checked = True
@@ -3728,7 +3729,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 5
-            Width = 505
+            Width = 400
             BorderSpacing.Left = 2
             BorderSpacing.Top = 5
             Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
@@ -3744,7 +3745,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 26
-            Width = 389
+            Width = 316
             BorderSpacing.Left = 2
             Caption = 'Разрешить пользователям управлять подключением'
             OnChange = Sudo_ponoffChange
@@ -3759,7 +3760,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 47
-            Width = 418
+            Width = 338
             BorderSpacing.Left = 2
             Caption = 'Разрешить пользователям конфигурировать соединение'
             OnChange = Sudo_configureChange
@@ -3790,7 +3791,7 @@ object Form1: TForm1
               Left = 0
               Height = 21
               Top = 5
-              Width = 426
+              Width = 341
               BorderSpacing.Top = 5
               Caption = 'Автозапуск интернета при старте системы (графический)'
               OnChange = Autostart_ponoffChange
@@ -3804,7 +3805,7 @@ object Form1: TForm1
               Left = 0
               Height = 21
               Top = 26
-              Width = 751
+              Width = 598
               Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
               OnChange = AutostartpppdChange
               TabOrder = 1
@@ -3819,7 +3820,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 68
-            Width = 269
+            Width = 214
             BorderSpacing.Left = 2
             Caption = 'Использовать виджет вместо трея'
             OnChange = Sudo_configureChange

@@ -378,6 +378,10 @@ msgstr "Use the widget instead of the tray"
 msgid "OK"
 msgstr "OK"
 
+#: tform2.caption
+msgid "Опции демона pppd (для"
+msgstr "Options daemon pppd (for"
+
 #: tform2.checkboxauth.caption
 msgid "auth"
 msgstr "auth"
@@ -474,10 +478,6 @@ msgstr "replacedefaultroute"
 msgid "usepeerdns"
 msgstr "usepeerdns"
 
-#: tform2.form2.caption
-msgid "Опции демона pppd (для"
-msgstr "Options daemon pppd (for"
-
 #: tform2.label1.caption
 msgid "www.opennet.ru/man.shtml?topic=pppd&&category=8"
 msgstr "http://www.manpages.info/freebsd/pppd.8.html"
@@ -513,6 +513,10 @@ msgstr "Missing uncritical files: "
 #: unit1.message102
 msgid "Шифрование mppe может быть настроено неверно, так как отсутствуют: "
 msgstr "Mppe encryption can be configured incorrectly, because there are no: "
+
+#: unit1.message103
+msgid "Время реконнекта было возвращено на значение по умолчанию:"
+msgstr "Time for reconnect was returned to the default value:"
 
 #: unit1.message104
 msgid "Поле \"MRU\" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500]."
@@ -1199,8 +1203,8 @@ msgid "Сеть подготовлена для проверки приходя�
 msgstr "The network is ready for testing of route-comings via DHCP. dhclient is starting. Please, wait..."
 
 #: unit1.message5
-msgid "Невозможно одновременно не контролировать state сетевого кабеля и задать время реконнекта 0. Время реконнекта было возвращено на значение по умолчанию:"
-msgstr "Impossible simultaneously to not control the state of network cable and to set time for reconnect 0. Time for reconnect was returned to the default value:"
+msgid "Невозможно одновременно не контролировать state сетевого кабеля и задать время реконнекта 0."
+msgstr "Impossible simultaneously to not control the state of network cable and to set time for reconnect 0."
 
 #: unit1.message50
 msgid "Определяются IP-адреса VPN-сервера через команду host из пакета bind-utils. Ожидайте..."

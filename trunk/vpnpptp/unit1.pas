@@ -200,6 +200,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure GroupBox3MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure Mii_tool_noChange(Sender: TObject);
     procedure networktestChange(Sender: TObject);
     procedure pppnotdefaultChange(Sender: TObject);
     procedure routevpnautoChange(Sender: TObject);
@@ -316,7 +317,7 @@ resourcestring
   message2='Не найдено офисное приложение для вывода справки, читающее формат doc. Вы можете самостоятельно прочитать справку, которая находится:';
   message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd/xl2tpd/openl2tp/openl2tpd реконнекта проигнорирован.';
   message4='Модуль ponoff еще не завершил свою работу. Дождитесь завершения работы модуля ponoff и повторно запустите конфигуратор vpnpptp.';
-  message5='Невозможно одновременно не контролировать state сетевого кабеля и задать время реконнекта 0. Время реконнекта было возвращено на значение по умолчанию:';
+  message5='Невозможно одновременно не контролировать state сетевого кабеля и задать время реконнекта 0.';
   message6='Для того, чтобы разрешить пользователям конфигурировать соединение сначала установите пакет sudo.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
@@ -414,7 +415,7 @@ resourcestring
   message100='(например, tp.internet.beeline.ru)';
   message101='Отсутствуют некритичные файлы: ';
   message102='Шифрование mppe может быть настроено неверно, так как отсутствуют: ';
-  //message103='';
+  message103='Время реконнекта было возвращено на значение по умолчанию:';
   message104='Поле "MRU" заполнено неверно. Разрешен лишь диапазон [576..1460..1492..1500].';
   message105='Обнаружено, что VPN PPTP/L2TP/OpenL2TP поднято. <ОК> - продолжить, убив VPN PPTP/L2TP/OpenL2TP и перезапустив сеть. <Отмена> - отмена запуска конфигуратора.';
   message106='Встроенный в демон xl2tpd механизм реконнекта будет работать корректно, только если Вы используете пропатченный xl2tpd.';
@@ -1013,7 +1014,7 @@ If (((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83')) and (Edit
 If (Mii_tool_no.Checked) and (Edit_MinTime.Text='0') then
                                          begin //нулевое время реконнекта невозможно
                                             Edit_MinTime.Text:='3';
-                                            Form3.MyMessageBox(message0,message5+' '+Edit_MinTime.Text+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                            Form3.MyMessageBox(message0,message5+' '+message103+' '+Edit_MinTime.Text+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                          end;
@@ -3237,6 +3238,17 @@ begin
    Form1.Repaint;
    Application.ProcessMessages;
    Form1.Repaint;
+end;
+
+procedure TForm1.Mii_tool_noChange(Sender: TObject);
+begin
+   If (Mii_tool_no.Checked) and (Edit_MinTime.Text='0') then
+                                            begin //нулевое время реконнекта
+                                               Form3.MyMessageBox(message0,message5,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                               Mii_tool_no.Checked:=false;
+                                               Application.ProcessMessages;
+                                               Form1.Repaint;
+                                            end;
 end;
 
 procedure TForm1.networktestChange(Sender: TObject);
