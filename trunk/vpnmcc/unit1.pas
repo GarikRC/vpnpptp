@@ -35,6 +35,7 @@ type
   TMyForm = class(TForm)
     Button_after_up: TButton;
     Button_after_down: TButton;
+    ButtonHelp: TButton;
     Button_create: TBitBtn;
     Button_exit: TBitBtn;
     CheckBox_autostart: TCheckBox;
@@ -76,6 +77,7 @@ type
     MyMemo: TMemo;
     MyPanel: TPanel;
     MyTimer: TTimer;
+    procedure ButtonHelpClick(Sender: TObject);
     procedure Button_after_upClick(Sender: TObject);
     procedure Button_after_downClick(Sender: TObject);
     procedure Button_createClick(Sender: TObject);
@@ -125,7 +127,7 @@ var
   Number_PPP_Iface:integer; //номер ближайшего доступного для настройки интерфейса pppN
   AAsyncProcess:TAsyncProcess; //для запуска внешних приложений
   AFont:integer; //шрифт приложения
-  f, f0: text;//текстовый поток
+  f, f0, f_bin: text;//текстовый поток
   Code_up_ppp:boolean;//поднято ли VPN на настраиваемом интерфейсе
   PppIface:string;//интерфейс, на котором поднято VPN
   ButtonMiddle:boolean;//отслеживает нажатие средней кнопки мыши на пингвине
@@ -133,6 +135,7 @@ var
   TV:timeval;//время
   error_man_pppd:boolean; //если нет в man про pppd
   default_mppe:boolean; //настройка mppe опциями по-умолчанию
+  AProcess: TAsyncProcess; //для запуска внешних приложений
 
 const
 
@@ -145,7 +148,9 @@ const
   MyVpnDir='/usr/lib/libDrakX/network/vpn/';
   EtcDir='/etc/';
   VarRunDir='/var/run/';
-  MyDataDir='/usr/share/vpnmcc/';
+  UsrSBinDir='/usr/sbin/';
+  MyWikiDir='/usr/share/vpnpptp/wiki/';
+  MyLibDir='/var/lib/vpnmcc/';
 
   message0ru='Внимание!';
   message1ru='Поля "Провайдер (IP или имя)", "Пользователь (логин)", "Пароль" обязательны к заполнению.';
@@ -237,6 +242,8 @@ const
   message87ru='Отмена';
   message88ru='Сохранить';
   message89ru='Очистить';
+  message90ru='Справка';
+  message91ru='Не найдено офисное приложение для вывода справки, читающее формат doc. Вы можете самостоятельно прочитать справку, которая находится:';
 
   message0uk='Увага!';
   message1uk='Поля "Провайдер (IP або ім’я)", "Користувач (логін)", "Пароль" обов’язкові до заповнення.';
@@ -328,6 +335,8 @@ const
   message87uk='Відміна';
   message88uk='Зберегти';
   message89uk='Очистити';
+  message90uk='Довідка';
+  message91uk='Не знайдено офісний додаток для виведення довідки, що читає формат doc. Ви можете самостійно прочитати довідку, яка знаходиться:';
 
   message0en='Attention!';
   message1en='Fields "ISP (IP or Name)", "User name (login)", "Password" is required.';
@@ -419,6 +428,8 @@ const
   message87en='Cancel';
   message88en='Save';
   message89en='Clear';
+  message90en='Help';
+  message91en='Not found Office application to display Help that read the doc. You can to read help, which is:';
 
 implementation
 
@@ -459,10 +470,14 @@ end;
 
 Function FileExistsBin (s:string):boolean;
 //Существует ли исполняемый файл
+var
+  fbin:boolean;
 begin
-  popen (f,'which '+s,'R');
-  if eof(f) then Result:=false else Result:=true;
-  PClose(f);
+  fbin:=false;
+  popen (f_bin,'which '+s,'R');
+  if eof(f_bin) then fbin:=false else fbin:=true;
+  PClose(f_bin);
+  Result:=fbin;
 end;
 
 Function MakeHint(str:string;n:byte):string;
@@ -575,8 +590,8 @@ MyMemo.Lines.Add('fi');
 MyMemo.Lines.SaveToFile(EtcPppIpUpDDir+'vpnmcc-ip-up');
 FpSystem('chmod a+x '+EtcPppIpUpDDir+'vpnmcc-ip-up');
 //дописываем
-If FileExists (MyDataDir+'up-'+Edit_iface.Text) then
-                                  FpSystem('cat '+MyDataDir+'up-'+Edit_iface.Text+' >> '+EtcPppIpUpDDir+'vpnmcc-ip-up');
+If FileExists (MyLibDir+'up-'+Edit_iface.Text) then
+                                  FpSystem('cat '+MyLibDir+'up-'+Edit_iface.Text+' >> '+EtcPppIpUpDDir+'vpnmcc-ip-up');
 //запись файла /etc/ppp/ip-down.d/vpnmcc-ip-down
 If not DirectoryExists (EtcPppIpDownDDir) then FpSystem ('mkdir -p '+LeftStr(EtcPppIpDownDDir,Length(EtcPppIpDownDDir)-1));
 MyMemo.Lines.Clear;
@@ -588,8 +603,8 @@ MyMemo.Lines.Add('fi');
 MyMemo.Lines.SaveToFile(EtcPppIpDownDDir+'vpnmcc-ip-down');
 FpSystem('chmod a+x '+EtcPppIpDownDDir+'vpnmcc-ip-down');
 //дописываем
-If FileExists (MyDataDir+'down-'+Edit_iface.Text) then
-                                  FpSystem('cat '+MyDataDir+'down-'+Edit_iface.Text+' >> '+EtcPppIpDownDDir+'vpnmcc-ip-down');
+If FileExists (MyLibDir+'down-'+Edit_iface.Text) then
+                                  FpSystem('cat '+MyLibDir+'down-'+Edit_iface.Text+' >> '+EtcPppIpDownDDir+'vpnmcc-ip-down');
 //запись файла /etc/ppp/peers/pppN
 If not DirectoryExists (EtcPppPeersDir) then FpSystem ('mkdir -p '+LeftStr(EtcPppPeersDir,Length(EtcPppPeersDir)-1));
 MyMemo.Lines.Clear;
@@ -872,8 +887,8 @@ begin
   FormDop.ButtonNO.Height:=FormDop.Height div 12;
   FormDop.ButtonClear.Width:=FormDop.Width div 4;
   FormDop.ButtonClear.Height:=FormDop.Height div 12;
-  FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
-  FormDop.FileRoute:=MyDataDir+'up-'+Edit_iface.Text;
+  FpSystem('mkdir -p '+LeftStr(MyLibDir,Length(MyLibDir)-1));
+  FormDop.FileRoute:=MyLibDir+'up-'+Edit_iface.Text;
   If FallbackLang='ru' then FormDop.Caption:=message85ru else
                                     If FallbackLang='uk' then FormDop.Caption:=message85uk
                                                                      else FormDop.Caption:=message85en;
@@ -889,6 +904,47 @@ begin
   FormDop.ShowModal;
 end;
 
+procedure TMyForm.ButtonHelpClick(Sender: TObject);
+var
+   a:boolean;
+   StrOffice:string;
+begin
+     a:=ButtonHelp.Enabled;
+     ButtonHelp.Enabled:=false;
+     Application.ProcessMessages;
+     MyForm.Repaint;
+     StrOffice:='';
+     popen (f,'for i in {,/usr,/usr/local}{/bin,/lib} /opt /home;  do   '+'find  $i  -name oowriter -type f 2>/dev/null; done;','R');
+     While not eof(f) do
+            Readln (f,StrOffice);
+     PClose(f);
+     If StrOffice='' then
+        begin
+             popen (f,'for i in {,/usr,/usr/local}{/bin,/lib} /opt /home;  do   '+'find  $i  -name soffice -type f 2>/dev/null; done;','R');
+             While not eof(f) do
+                   Readln (f,StrOffice);
+             PClose(f);
+        end;
+     If StrOffice='' then
+                         begin
+                              If FallbackLang='ru' then Application.MessageBox(PChar(message91ru+' '+MyWikiDir+'Help_vpnmcc_ru.doc'),PChar(message0ru),0);
+                              //If FallbackLang='uk' then Application.MessageBox(PChar(message91uk+' '+MyWikiDir+'Help_vpnmcc_uk.doc'),PChar(message0uk),0);
+                         end;
+     If StrOffice<>'' then
+                          begin
+                               AProcess := TAsyncProcess.Create(nil);
+                               If FallbackLang='ru' then AProcess.CommandLine :=StrOffice+' '+MyWikiDir+'Help_vpnmcc_ru.doc';
+                               //If FallbackLang='uk' then AProcess.CommandLine :=StrOffice+' '+MyWikiDir+'Help_vpnmcc_uk.doc';
+                               AProcess.Options:=AProcess.Options+[poWaitOnExit];
+                               AProcess.Execute;
+                               sleep(100);
+                               AProcess.Free;
+                          end;
+     ButtonHelp.Enabled:=a;
+     Application.ProcessMessages;
+     MyForm.Repaint;
+end;
+
 procedure TMyForm.Button_after_downClick(Sender: TObject);
 begin
   FormDop.Position:=poMainFormCenter;
@@ -900,8 +956,8 @@ begin
   FormDop.ButtonNO.Height:=FormDop.Height div 12;
   FormDop.ButtonClear.Width:=FormDop.Width div 4;
   FormDop.ButtonClear.Height:=FormDop.Height div 12;
-  FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
-  FormDop.FileRoute:=MyDataDir+'down-'+Edit_iface.Text;
+  FpSystem('mkdir -p '+LeftStr(MyLibDir,Length(MyLibDir)-1));
+  FormDop.FileRoute:=MyLibDir+'down-'+Edit_iface.Text;
   If FallbackLang='ru' then FormDop.Caption:=message86ru else
                                     If FallbackLang='uk' then FormDop.Caption:=message86uk
                                                                      else FormDop.Caption:=message86en;
@@ -1319,9 +1375,12 @@ var
     q:byte;
     ProgramInstalled:boolean;
 begin
+ButtonHelp.Enabled:=false;
+If FallbackLang='ru' then If FileExists(MyWikiDir+'Help_vpnmcc_ru.doc') then ButtonHelp.Enabled:=true;
+//If FallbackLang='uk' then If FileExists(MyWikiDir+'Help_vpnmcc_uk.doc') then ButtonHelp.Enabled:=true;
 default_mppe:=true;
 error_man_pppd:=false;
-If FileExistsBin('strings') then popen (f,'strings '+'pppd | '+'grep require-mppe','R');
+If FileExistsBin('strings') then popen (f,'strings '+UsrSbinDir+'pppd | '+'grep require-mppe','R');
 If not FileExistsBin('strings') then If FileExistsBin('man') then
                                                                               begin
                                                                                    popen (f0,'man pppd','R');
@@ -1514,6 +1573,7 @@ case q of
              Label_wait.Caption:=message68ru;
              Button_after_up.Caption:=message85ru;
              Button_after_down.Caption:=message86ru;
+             ButtonHelp.Caption:=message90ru;
         end;
     2:
         begin
@@ -1535,6 +1595,7 @@ case q of
              Label_wait.Caption:=message68uk;
              Button_after_up.Caption:=message85uk;
              Button_after_down.Caption:=message86uk;
+             ButtonHelp.Caption:=message90uk;
         end;
 else
     begin
@@ -1556,6 +1617,7 @@ else
         Label_wait.Caption:=message68en;
         Button_after_up.Caption:=message85en;
         Button_after_down.Caption:=message86en;
+        ButtonHelp.Caption:=message90en;
     end;
 end;
 //масштабирование формы в зависимости от разрешения экрана
@@ -1591,15 +1653,6 @@ end;
                              MyForm.Height:=650;
                              MyForm.Width:=884;
                          end;
-  If not FileExistsBin('pptp') then
-                                        begin
-                                            If FallbackLang='ru' then Application.MessageBox(PChar(message3ru),PChar(message0ru),0) else
-                                                                 If FallbackLang='uk' then Application.MessageBox(PChar(message3uk),PChar(message0uk),0) else
-                                                                                                          Application.MessageBox(PChar(message3en),PChar(message0en),0);
-                                            Application.ProcessMessages;
-                                            MyForm.Repaint;
-                                            halt;
-                                        end;
 //проверка vpnmcc в процессах root, исключение запуска под иными пользователями
   Apid:=FpGetpid;
   Apidroot:=0;
@@ -1634,11 +1687,19 @@ end;
                     MyForm.Repaint;
                     halt;
                 end;
+If not FileExistsBin('pptp') then
+                                        begin
+                                            If FallbackLang='ru' then Application.MessageBox(PChar(message3ru),PChar(message0ru),0) else
+                                                                 If FallbackLang='uk' then Application.MessageBox(PChar(message3uk),PChar(message0uk),0) else
+                                                                                                          Application.MessageBox(PChar(message3en),PChar(message0en),0);
+                                            Application.ProcessMessages;
+                                            MyForm.Repaint;
+                                            halt;
+                                        end;
 //программа устанавливает саму же себя
 If DirectoryExists(UsrBinDir) then
      If ParamStr(0)<>UsrBinDir+'vpnmcc' then
         If DirectoryExists(MyVpnDir) then
-            If ParamStr(0)<>'/opt/vpnpptp/trunk/vpnmcc/vpnmcc' then
                                                                   begin
                                                                       If FileExistsBin('vpnmcc') and FileExists (MyVpnDir+'vpnmcc.pm') then ProgramInstalled:=true else ProgramInstalled:=false;
                                                                       FpSystem ('cp -f '+chr(39)+ParamStr(0)+chr(39)+' '+UsrBinDir);
@@ -1687,21 +1748,21 @@ If (not DirectoryExists(MyVpnDir)) or (not DirectoryExists(UsrBinDir)) then
                                                                                      If FallbackLang='uk' then Application.MessageBox(PChar(message16uk),PChar(message0uk),0) else
                                                                                                                               Application.MessageBox(PChar(message16en),PChar(message0en),0);
                                                            end;
-FpSystem('mkdir -p '+LeftStr(MyDataDir,Length(MyDataDir)-1));
+FpSystem('mkdir -p '+LeftStr(MyLibDir,Length(MyLibDir)-1));
 //поиск всех интерфейсов pppN, очистка удаленных интерфейсов
 for i:=0 to 100 do
             begin
                  If not FileExists(IfcfgDir+'ifcfg-ppp'+IntToStr(i)) then
                                                                      begin
-                                                                        FpSystem('rm -f '+MyDataDir+'up-ppp'+IntToStr(i));
-                                                                        FpSystem('rm -f '+MyDataDir+'down-ppp'+IntToStr(i));
+                                                                        FpSystem('rm -f '+MyLibDir+'up-ppp'+IntToStr(i));
+                                                                        FpSystem('rm -f '+MyLibDir+'down-ppp'+IntToStr(i));
                                                                         FpSystem('rm -f '+EtcPppPeersDir+'ppp'+IntToStr(i));
                                                                      end;
             end;
-If not FileExists(MyDataDir+'down-'+Edit_iface.Text) then
+If not FileExists(MyLibDir+'down-'+Edit_iface.Text) then
     begin
-        If FileExistsBin ('service') then FpSystem('echo '+'service network restart'+' > '+MyDataDir+'down-'+Edit_iface.Text);
-        If not FileExistsBin ('service') then if FileExistsBin ('systemctl') then FpSystem('echo '+'systemctl restart network.service'+' > '+MyDataDir+'down-'+Edit_iface.Text);
+        If FileExistsBin ('service') then FpSystem('echo '+'service network restart'+' > '+MyLibDir+'down-'+Edit_iface.Text);
+        If not FileExistsBin ('service') then if FileExistsBin ('systemctl') then FpSystem('echo '+'systemctl restart network.service'+' > '+MyLibDir+'down-'+Edit_iface.Text);
     end;
 end;
 
@@ -1733,8 +1794,9 @@ begin
    Edit_mru.Width:=Edit_passwd.Width div 5;
    Edit_mtu.Left:=Edit_metric.Left+Edit_metric.Width*2;
    Edit_mru.Left:=Edit_mtu.Left+Edit_mru.Width*2;
-   Button_after_up.Width:=Edit_passwd.Width div 2-5;
-   Button_after_down.Width:=Edit_passwd.Width div 2-5;
+   Button_after_up.Width:=MyForm.Width div 3-8;
+   Button_after_down.Width:=MyForm.Width div 3-8;
+   ButtonHelp.Width:=MyForm.Width div 3-8;
 end;
 
 procedure TMyForm.TabSheet1MouseDown(Sender: TObject; Button: TMouseButton;

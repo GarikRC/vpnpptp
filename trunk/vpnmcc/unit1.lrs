@@ -11989,16 +11989,25 @@ LazarusResources.Add('TMyForm','FORMDATA',[
   +'Top'#3#196#0#5'Width'#2'L'#7'Anchors'#11#5'akTop'#0#20'BorderSpacing.Around'
   +#2#8#9'MaxLength'#2#4#8'OnChange'#7#14'Edit_mruChange'#8'TabOrder'#2#7#4'Tex'
   +'t'#6#4'1460'#0#0#7'TButton'#15'Button_after_up'#22'AnchorSideLeft.Control'#7
-  +#11'Edit_metric'#21'AnchorSideTop.Control'#7#11'Edit_metric'#18'AnchorSideTo'
-  +'p.Side'#7#9'asrBottom'#4'Left'#2'\'#6'Height'#2#25#3'Top'#3#245#0#5'Width'#2
-  +'`'#17'BorderSpacing.Top'#2#30#7'OnClick'#7#20'Button_after_upClick'#8'TabOr'
-  +'der'#2#26#0#0#7'TButton'#17'Button_after_down'#22'AnchorSideLeft.Control'#7
-  +#11'Edit_metric'#21'AnchorSideTop.Control'#7#11'Edit_metric'#18'AnchorSideTo'
-  +'p.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#7'MyPanel'#20'AnchorSi'
-  +'deRight.Side'#7#9'asrBottom'#4'Left'#3#199#2#6'Height'#2#25#3'Top'#3#245#0#5
-  +'Width'#2'`'#7'Anchors'#11#5'akTop'#7'akRight'#0#17'BorderSpacing.Top'#2#30
-  +#19'BorderSpacing.Right'#2#8#7'OnClick'#7#22'Button_after_downClick'#8'TabOr'
-  +'der'#2#27#0#0#0#6'TTimer'#7'MyTimer'#7'Enabled'#8#8'Interval'#2'd'#7'OnTime'
-  +'r'#7#12'MyTimerTimer'#12'OnStartTimer'#7#17'MyTimerStartTimer'#11'OnStopTim'
-  +'er'#7#16'MyTimerStopTimer'#4'left'#3#184#0#3'top'#3#2#2#0#0#0
+  +#7'MyPanel'#21'AnchorSideTop.Control'#7#11'Edit_metric'#18'AnchorSideTop.Sid'
+  +'e'#7#9'asrBottom'#4'Left'#2#9#6'Height'#2#25#3'Top'#3#245#0#5'Width'#2'`'#18
+  +'BorderSpacing.Left'#2#8#17'BorderSpacing.Top'#2#30#7'OnClick'#7#20'Button_a'
+  +'fter_upClick'#8'TabOrder'#2#26#0#0#7'TButton'#17'Button_after_down'#22'Anch'
+  +'orSideLeft.Control'#7#11'Edit_metric'#21'AnchorSideTop.Control'#7#11'Edit_m'
+  +'etric'#18'AnchorSideTop.Side'#7#9'asrBottom'#23'AnchorSideRight.Control'#7#7
+  +'MyPanel'#20'AnchorSideRight.Side'#7#9'asrBottom'#4'Left'#3#199#2#6'Height'#2
+  +#25#3'Top'#3#245#0#5'Width'#2'`'#7'Anchors'#11#5'akTop'#7'akRight'#0#17'Bord'
+  +'erSpacing.Top'#2#30#19'BorderSpacing.Right'#2#8#7'OnClick'#7#22'Button_afte'
+  +'r_downClick'#8'TabOrder'#2#27#0#0#7'TButton'#10'ButtonHelp'#22'AnchorSideLe'
+  +'ft.Control'#7#15'Button_after_up'#19'AnchorSideLeft.Side'#7#9'asrBottom'#21
+  +'AnchorSideTop.Control'#7#15'Button_after_up'#18'AnchorSideTop.Side'#7#9'asr'
+  +'Center'#23'AnchorSideRight.Control'#7#17'Button_after_down'#24'AnchorSideBo'
+  +'ttom.Control'#7#17'Button_after_down'#21'AnchorSideBottom.Side'#7#9'asrBott'
+  +'om'#4'Left'#2'q'#6'Height'#2#25#3'Top'#3#245#0#5'Width'#3'N'#2#7'Anchors'#11
+  +#5'akTop'#6'akLeft'#7'akRight'#8'akBottom'#0#18'BorderSpacing.Left'#2#8#17'B'
+  +'orderSpacing.Top'#2#30#19'BorderSpacing.Right'#2#8#7'OnClick'#7#15'ButtonHe'
+  +'lpClick'#8'TabOrder'#2#28#0#0#0#6'TTimer'#7'MyTimer'#7'Enabled'#8#8'Interva'
+  +'l'#2'd'#7'OnTimer'#7#12'MyTimerTimer'#12'OnStartTimer'#7#17'MyTimerStartTim'
+  +'er'#11'OnStopTimer'#7#16'MyTimerStopTimer'#4'left'#3#184#0#3'top'#3#2#2#0#0
+  +#0
 ]);

@@ -12,10 +12,9 @@ Url: http://code.google.com/p/vpnpptp
 Source0: vpnpptp-src-%{version}.tar.gz
 Source1: vpnpptp.pm
 Source2: vpnmcc.pm
-#Patch1: oxygen-gtk.patch
 
-BuildRequires: fpc-src >= 2.6.2, fpc >= 2.6.2, lazarus = 0.9.34
-#закомментировать зависимости при сборке не в репозиторий
+BuildRequires: fpc-src >= 2.6.2, fpc >= 2.6.2, lazarus >= 1.0.12
+#Please comment all dependencies if you builds not for repo
 #You can use xroot/kdesu/gksu/beesu
 Requires: xroot
 Requires: pptp-linux
@@ -29,13 +28,17 @@ Suggests: bind-utils
 Suggests: xsudo
 #For dhclient
 Suggests: dhcp-client
+Suggests: net_monitor
+Suggests: vnstat
+
+Provides: vpnpptp-allde
+Provides: vpnpptp-kde
 
 %description
 Tools for easy and quick setup and control VPN via PPTP/L2TP/OpenL2TP.
 
 %prep
 %setup -q -n vpnpptp-src-%{version}
-#%apply_patches
 
 %build
 ./compile.sh
@@ -74,7 +77,7 @@ GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP/OpenL2TP
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
-Exec=/usr/bin/ponoff
+Exec=ponoff
 Comment=Control VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP/OpenL2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/OpenL2TP
@@ -97,7 +100,7 @@ GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
-Exec=/usr/bin/vpnpptp
+Exec=vpnpptp
 Comment=Setup VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
 Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP

@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 398
+  Left = 552
   Height = 580
-  Top = 141
+  Top = 144
   Width = 830
   HorzScrollBar.Page = 793
   HorzScrollBar.Visible = False
@@ -2145,11 +2145,11 @@ object Form1: TForm1
     Height = 534
     Top = 1
     Width = 828
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 10
     BorderSpacing.Around = 1
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       AnchorSideTop.Side = asrCenter
@@ -2647,10 +2647,10 @@ object Form1: TForm1
         AnchorSideRight.Side = asrBottom
         AnchorSideBottom.Control = Edit_MaxTime
         AnchorSideBottom.Side = asrCenter
-        Left = 467
+        Left = 468
         Height = 17
         Top = 221
-        Width = 352
+        Width = 351
         Anchors = [akTop, akLeft, akRight, akBottom]
         AutoSelect = False
         BorderSpacing.Right = 5
@@ -2957,7 +2957,6 @@ object Form1: TForm1
         Anchors = [akTop, akLeft, akRight]
         AutoSelect = False
         BorderSpacing.Top = 10
-        MaxLength = 10
         TabOrder = 0
       end
       object Edit_gate: TEdit
@@ -3091,10 +3090,10 @@ object Form1: TForm1
         Left = 5
         Height = 21
         Top = 488
-        Width = 204
+        Width = 253
         Anchors = [akLeft, akBottom]
         BorderSpacing.Left = 5
-        Caption = 'Создать ярлык на рабочем столе'
+        Caption = 'Создать ярлык на Рабочем столе'
         Checked = True
         OnMouseDown = TabSheet1MouseDown
         State = cbChecked
@@ -3548,7 +3547,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 5
-          Width = 249
+          Width = 315
           BorderSpacing.Left = 4
           BorderSpacing.Top = 5
           Caption = 'Не контролировать state сетевого кабеля'
@@ -3561,7 +3560,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 26
-          Width = 635
+          Width = 802
           BorderSpacing.Left = 4
           Caption = 'Использовать встроенный в демон pppd механизм реконнекта (не рекомендуется если несколько сетевых карт)'
           TabOrder = 1
@@ -3573,7 +3572,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 47
-          Width = 273
+          Width = 344
           BorderSpacing.Left = 4
           Caption = 'Вести подробный лог pppd в /var/log/ppp/vpnlog'
           Checked = True
@@ -3587,7 +3586,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 68
-          Width = 201
+          Width = 246
           BorderSpacing.Left = 4
           Caption = 'Получать маршруты через DHCP'
           Checked = True
@@ -3602,7 +3601,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 89
-          Width = 282
+          Width = 350
           BorderSpacing.Left = 4
           Caption = 'Программно добавлять маршрут к VPN-серверу'
           Checked = True
@@ -3617,7 +3616,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 110
-          Width = 638
+          Width = 807
           BorderSpacing.Left = 4
           Caption = 'Использовать /etc/hosts динамически для адреса VPN-сервера, заданного по имени (работает только в графике)'
           Checked = True
@@ -3632,7 +3631,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 131
-          Width = 354
+          Width = 443
           BorderSpacing.Left = 4
           Caption = 'Маршрутизировать remote IP address в шлюз локальной сети'
           TabOrder = 6
@@ -3644,7 +3643,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 152
-          Width = 269
+          Width = 334
           BorderSpacing.Left = 4
           Caption = 'Программно маршрутизировать DNS-сервера'
           TabOrder = 7
@@ -3656,7 +3655,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 173
-          Width = 404
+          Width = 508
           BorderSpacing.Left = 4
           Caption = 'Проверять VPN-сервер, DNS-сервер, шлюз локальной сети и интернет'
           OnChange = networktestChange
@@ -3669,9 +3668,9 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 194
-          Width = 300
+          Width = 442
           BorderSpacing.Left = 4
-          Caption = 'Блокировать все всплывающие сообщения из трея'
+          Caption = 'Блокировать все всплывающие сообщения из трея/виджета'
           OnChange = balloonChange
           TabOrder = 9
         end
@@ -3697,7 +3696,7 @@ object Form1: TForm1
           Left = 4
           Height = 21
           Top = 236
-          Width = 281
+          Width = 350
           BorderSpacing.Left = 4
           Caption = 'Средне- или высокоскоростная линия (nobuffer)'
           Checked = True
@@ -3730,7 +3729,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 5
-            Width = 400
+            Width = 505
             BorderSpacing.Left = 2
             BorderSpacing.Top = 5
             Caption = 'Добавить сетевые интерфейсы [ppp0..ppp9] в исключения файервола'
@@ -3746,7 +3745,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 26
-            Width = 316
+            Width = 389
             BorderSpacing.Left = 2
             Caption = 'Разрешить пользователям управлять подключением'
             OnChange = Sudo_ponoffChange
@@ -3761,7 +3760,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 47
-            Width = 338
+            Width = 418
             BorderSpacing.Left = 2
             Caption = 'Разрешить пользователям конфигурировать соединение'
             OnChange = Sudo_configureChange
@@ -3792,7 +3791,7 @@ object Form1: TForm1
               Left = 0
               Height = 21
               Top = 5
-              Width = 341
+              Width = 426
               BorderSpacing.Top = 5
               Caption = 'Автозапуск интернета при старте системы (графический)'
               OnChange = Autostart_ponoffChange
@@ -3806,7 +3805,7 @@ object Form1: TForm1
               Left = 0
               Height = 21
               Top = 26
-              Width = 598
+              Width = 751
               Caption = 'Автозапуск интернета при старте системы демоном pppd без графики (не рекомендуется использовать)'
               OnChange = AutostartpppdChange
               TabOrder = 1
@@ -3821,7 +3820,7 @@ object Form1: TForm1
             Left = 2
             Height = 21
             Top = 68
-            Width = 214
+            Width = 269
             BorderSpacing.Left = 2
             Caption = 'Использовать виджет вместо трея'
             OnChange = Sudo_configureChange

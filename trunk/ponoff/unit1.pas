@@ -102,7 +102,7 @@ const
   VarLogDir='/var/log/';
   VarRunXl2tpdDir='/var/run/xl2tpd/';
   EtcInitDDir='/etc/init.d/';
-  SystemdDir='/usr/lib/systemd/system/';
+  SystemdDir='/lib/systemd/system/';
   EtcPppPeersDir='/etc/ppp/peers/';
   EtcDhcpDir='/etc/dhcp/';
   EtcPppDir='/etc/ppp/';
@@ -127,7 +127,7 @@ var
   Filenetworktest, FileRemoteIPaddress, FileEtc_hosts, FileDoubleRun, FileDateStart, FileResolv_conf:textfile;//текстовые файлы
   DhclientStart:boolean; //стартанул ли dhclient
   RemoteIPaddress:string;
-  f,f1: text;//текстовый поток
+  f,f1,f_bin: text;//текстовый поток
   RX,TX:string;//объём загруженного/отданного для вывода
   RXbyte0,TXbyte0:string;//объём загруженного/отданного в байтах на предыдущем шаге
   RXbyte1,TXbyte1:string;//объём загруженного/отданного в байтах на текущем шаге
@@ -251,10 +251,14 @@ uses balloon_matrix, hint_matrix, Unitpseudotray;
 
 Function FileExistsBin (s:string):boolean;
 //Существует ли исполняемый файл
+var
+  fbin:boolean;
 begin
-  popen (f,'which '+s,'R');
-  if eof(f) then Result:=false else Result:=true;
-  PClose(f);
+  fbin:=false;
+  popen (f_bin,'which '+s,'R');
+  if eof(f_bin) then fbin:=false else fbin:=true;
+  PClose(f_bin);
+  Result:=fbin;
 end;
 
 function MyStrToInt(Str:string):integer;
@@ -298,6 +302,8 @@ end;
 procedure RestartPonoff;
 //проверка ponoff в процессах root, исключение запуска под иными пользователями
 begin
+    Form1.Timer1.Enabled:=False;
+    Form1.Timer2.Enabled:=False;
     If not ProgrammRoot('ponoff',false) then nostart:=true else nostart:=false;
     DopParam:=' ';
     If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
@@ -394,9 +400,12 @@ begin
                        Widget.Hide;
                        Form1.TrayIcon1.Hide;
                        Form3.MyMessageBox(message0,message1+' '+message25,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                       FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                       if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                        halt;
                   end;
+    Form1.Timer1.Enabled:=true;
+    Form1.Timer2.Enabled:=true;
+    Application.ProcessMessages;
 end;
 
 procedure DoCountInterface;
@@ -407,17 +416,23 @@ var
    FileInterface:textfile;
 begin
    i:=0;
-   FpSystem ('rm -f '+MyTmpDir+'CountInterface');
-   FpSystem ('cat /proc/net/dev | awk -F : '+chr(39)+'{if (NR>2) print $1}'+chr(39)+' >>'+MyTmpDir+'CountInterface');
-   AssignFile (FileInterface,MyTmpDir+'CountInterface');
-   reset (FileInterface);
-   While not eof (FileInterface) do
-   begin
-        readln(FileInterface, str);
-        i:=i+1;
-   end;
-   closefile(FileInterface);
-   FpSystem ('rm -f '+MyTmpDir+'CountInterface');
+   if FileExists('/proc/net/dev') then
+         begin
+           FpSystem ('rm -f '+MyTmpDir+'CountInterface');
+           FpSystem ('cat /proc/net/dev | awk -F : '+chr(39)+'{if (NR>2) print $1}'+chr(39)+' >>'+MyTmpDir+'CountInterface');
+           if FileExists (MyTmpDir+'CountInterface') then
+                           begin
+                                AssignFile (FileInterface,MyTmpDir+'CountInterface');
+                                reset (FileInterface);
+                                While not eof (FileInterface) do
+                                begin
+                                     readln(FileInterface, str);
+                                     i:=i+1;
+                                end;
+                                closefile(FileInterface);
+                                FpSystem ('rm -f '+MyTmpDir+'CountInterface');
+                           end;
+         end;
    if i=0 then i:=1;
    CountInterface:=i;
 end;
@@ -669,7 +684,7 @@ begin
                           if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                           str:=LeftStr(str,Length(str)-2);
                           Form3.MyMessageBox(message0,str,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                          FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                          if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                           halt;
                      end;
     //некритичные файлы
@@ -1075,7 +1090,7 @@ If not Code_up_ppp then If link=3 then
                                                                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                                 MenuItem2Click(Self);
-                                                                FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                                                                if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
                                                               end;
                                   end;
@@ -1090,7 +1105,7 @@ If not Code_up_ppp then If link=2 then
                                                                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                                                 Form3.MyMessageBox(message0,message9,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                                 MenuItem2Click(Self);
-                                                                FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                                                                if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                                                                 halt;
                                                               end;
                                   end;
@@ -1222,7 +1237,7 @@ begin
                                                    Widget.Height:=40;
                                                 end;
   RestartPonoff;
-  If not DirectoryExists(MyLibDir) then FpSystem ('mkdir -p '+MyLibDir);
+  If not DirectoryExists(MyLibDir) then begin FpSystem ('mkdir -p '+MyLibDir); FpSystem ('chmod 777 '+MyLibDir);end;
   with Widget.IniPropStorage1 do
   begin
     // Если значение в конфиге пустое, то заполняем по умолчанию
@@ -1334,7 +1349,7 @@ If str='DEFAULT' then
                               Form1.Hide;
                               if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                               Form3.MyMessageBox(message0,message56+' '+ProfileName+' '+message57,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                              FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                              if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                               halt;
                            end;
   If ProfileName<>'' then if not DirectoryExists(MyLibDir+ProfileName) then
@@ -1344,7 +1359,7 @@ If str='DEFAULT' then
                                                      Form1.Hide;
                                                      if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                                      Form3.MyMessageBox(message0,message50+' '+ProfileName+'. ','','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                                                     FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                                                     if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                                                      halt;
                                                    end;
   If ProfileName='' then if FileExists(MyLibDir+'profiles') then if not FileExists(MyLibDir+'default/default') then
@@ -1358,18 +1373,19 @@ If str='DEFAULT' then
                                                                                                   begin
                                                                                                         ProfileName:=Form3.ComboBoxProfile.Text;
                                                                                                         FpSystem ('mkdir -p '+MyLibDir+'default');
+                                                                                                        FpSystem ('chmod 777 '+MyLibDir+'default');
                                                                                                         FpSystem ('echo "'+ProfileName+'" > '+MyLibDir+'default/default');
                                                                                                   end;
                                                                 If (Form3.Tag=0) or (Form3.Tag=3) or (Form3.ComboBoxProfile.Text='') then
                                                                                                                                      begin
-                                                                                                                                          FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                                                                                                                                          if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                                                                                                                                           halt;
                                                                                                                                      end;
                                                                 Timer1.Enabled:=true;
                                                                 Timer2.Enabled:=true;
                                                                 if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
                                                             end;
-  If not FileExists(MyTmpDir) then FpSystem ('mkdir -p '+MyTmpDir);
+  If not FileExists(MyTmpDir) then begin FpSystem ('mkdir -p '+MyTmpDir); FpSystem ('chmod 777 '+MyTmpDir);end;
   //обеспечение совместимости старого config с новым
   If FileExists(MyLibDir+ProfileName+'/config') then
      begin
@@ -1398,7 +1414,7 @@ If str='DEFAULT' then
             Form1.Hide;
             if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
             Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-            FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+            if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
             halt;
            end;
   If FileExists(MyLibDir+ProfileName+'/config') then begin Memo_Config.Lines.LoadFromFile(MyLibDir+ProfileName+'/config');end
@@ -1409,7 +1425,7 @@ If str='DEFAULT' then
     Form1.Hide;
     if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
     Form3.MyMessageBox(message0,message3+' '+message26,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-    FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+    if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
     halt;
    end;
    if Memo_General_conf.Lines[3]<>'none' then AFont:=MyStrToInt(Memo_General_conf.Lines[3]);
@@ -1464,8 +1480,9 @@ end;
 PClose(f);
 If i=1 then
      begin
-        FpSystem('rm -rf '+VarRunVpnpptp);
+        FpSystem('rm -rf '+VarRunVpnpptp+'*');
         FpSystem('mkdir -p '+VarRunVpnpptp);
+        FpSystem('chmod 777 '+VarRunVpnpptp);
         FpSystem('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
      end;
 If i>1 then
@@ -1490,7 +1507,7 @@ If i>1 then
                                 Form1.Hide;
                                 if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                 Form3.MyMessageBox(message0,message51+' '+stri+'. '+message52,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                                FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                                if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                                 halt;
                              end;
                popen(f,'ps -e|'+'grep ponoff|'+'awk '+chr(39)+'{print$1}'+chr(39),'R');
@@ -1523,7 +1540,7 @@ If Xa=0 then if Yb=0 then
           Timer2.Enabled:=False;
           Form1.Hide;
           Form3.MyMessageBox(message0,message71,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-          FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+          if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
           ErrorShowIcon:=true;
           Widget.IniPropStorage1.StoredValue['Widget']:='true';
           Widget.IniPropStorage1.Save;
@@ -1555,7 +1572,7 @@ If suse then
                                            if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                                            Form3.MyMessageBox(message0,message41,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                            PClose(f);
-                                           FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                                           if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                                            halt;
                                          end;
              PClose(f);
@@ -1619,7 +1636,7 @@ If suse then
                  Timer2.Enabled:=False;
                  if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
                  Form3.MyMessageBox(message0,message4+' '+message47,'','',message33,MyPixmapsDir+'ponoff.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                 FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                 if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
    if link=2 then
@@ -1628,7 +1645,7 @@ If suse then
                  Timer1.Enabled:=False;
                  Timer2.Enabled:=False;
                  if EnablePseudoTray then if Widget.Showing then Widget.Hide else if Form1.TrayIcon1.Visible then Form1.TrayIcon1.Hide;
-                 FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+                 if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                  halt;
                 end;
   Timer1.Interval:=MyStrToInt64(Memo_Config.Lines[5]);
@@ -1668,12 +1685,12 @@ begin
   Widget.IniPropStorage1.Save;
   If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then
   begin
-    PopupMenu1.Items[1].Caption:=message68;
+    ColorIcon.Caption:=message68;
     tray_status:=bw_on;
   end
   else
   begin
-    PopupMenu1.Items[1].Caption:=message69;
+    ColorIcon.Caption:=message69;
     tray_status:=bw_off;
   end;
 end;
@@ -1743,12 +1760,15 @@ begin
   FpSystem ('rm -f '+MyTmpDir+'ObnullTX');
   FpSystem ('rm -f '+MyTmpDir+'mtu.checked');
   MakeDefaultGW;
-  FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
+  if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
   halt;
 end;
 
 procedure TForm1.MenuItem4Click(Sender: TObject);
 //выход при аварии
+var
+  str:string;
+  FileInterface:textfile;
 begin
   DoubleRunPonoff:=false;
   Timer1.Enabled:=False;
@@ -1772,6 +1792,24 @@ begin
   If eof(f) then
      begin
          If ServiceCommand='systemctl' then FpSystem (ServiceCommand+' restart '+NetServiceStr) else FpSystem (ServiceCommand+NetServiceStr+' restart');
+         FpSystem ('rm -f '+MyTmpDir+'Interfaces');
+         if FileExists ('/proc/net/dev') then
+              begin
+                FpSystem ('cat /proc/net/dev | awk -F : '+chr(39)+'{if (NR>2) print $1}'+chr(39)+' >>'+MyTmpDir+'Interfaces');
+                if FileExists(MyTmpDir+'Interfaces') then
+                    begin
+                         AssignFile (FileInterface,MyTmpDir+'Interfaces');
+                         reset (FileInterface);
+                         While not eof (FileInterface) do
+                         begin
+                              readln(FileInterface, str);
+                              Ifdown(DeleteSym (' ',str));
+                              Ifup(DeleteSym (' ',str));
+                         end;
+                         closefile(FileInterface);
+                         FpSystem ('rm -f '+MyTmpDir+'Interfaces');
+                    end;
+              end;
          Ifup('lo');
      end;
   PClose(f);
@@ -1779,7 +1817,7 @@ begin
   FpSystem ('rm -f '+MyTmpDir+'ObnullRX');
   FpSystem ('rm -f '+MyTmpDir+'ObnullTX');
   FpSystem ('rm -f '+MyTmpDir+'mtu.checked');
-  FpSystem ('rm -f '+VarRunVpnpptp+ProfileName);
+  if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
   halt;
 end;
 
@@ -1817,16 +1855,15 @@ begin
                                                         ColorIcon.Enabled:=false
                                                                               else
                                                                                  ColorIcon.Enabled:=true;
- If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then PopupMenu1.Items[1].Caption:=message68 else PopupMenu1.Items[1].Caption:=message69;
+ If Widget.IniPropStorage1.ReadString ('black_and_white_icon','null')=true_str then ColorIcon.Caption:=message68 else ColorIcon.Caption:=message69;
  If not FileExistsBin ('net_monitor') then begin MenuItem5.Visible:=false; exit;end;
- If not FileExistsBin ('vnstat') then begin MenuItem5.Visible:=false; exit;end;
  Application.ProcessMessages;
  if EnablePseudoTray then  begin if not Widget.Showing then Widget.Show; end else if not Form1.TrayIcon1.Visible then Form1.TrayIcon1.Show;
  Application.ProcessMessages;
  //Проверяем поднялось ли соединение
  CheckVPN;
  find_net_monitor:=false;
- If Code_up_ppp then If FileExistsBin ('net_monitor') then if FileExistsBin ('vnstat') then
+ If Code_up_ppp then If FileExistsBin ('net_monitor') then
                    begin
                         //проверка net_monitor в процессах root, игнорируя зомби
                         popen(f,'ps -u root | '+'grep net_monitor | '+'awk '+chr(39)+'{print $4$5}'+chr(39),'R');
@@ -1856,7 +1893,8 @@ var
   DNS3,DNS4:string;
   error_proc_net_dev:boolean;
 begin
-  If not FileExists (VarRunVpnpptp+ProfileName) then FpSystem ('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
+  if ProfileName='' then exit;
+  If not FileExists (VarRunVpnpptp+ProfileName) then if ProfileName<>'' then FpSystem ('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
   Application.ProcessMessages;
   if EnablePseudoTray then
              begin
@@ -2312,7 +2350,12 @@ initialization
                               end;
   If Paramcount>0 then ProfileName:=Paramstr(1);
   FpSystem('mkdir -p '+VarRunVpnpptp);
-  FpSystem('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
+  FpSystem('chmod 777 '+VarRunVpnpptp);
+  if ProfileName<>'' then
+          begin
+               if FileExists(VarRunVpnpptp+ProfileName) then
+                       FpSystem('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
+          end;
   Gettext.GetLanguageIDs(Lang,FallbackLang);
   Translate:=false;
   //Belarusian, Bashkir (Белорусский, Башкирский)

@@ -2128,7 +2128,7 @@ object Form2: TForm2
   OnCreate = FormCreate
   Position = poMainFormCenter
   ShowHint = True
-  LCLVersion = '0.9.30.4'
+  LCLVersion = '1.0.12.0'
   object Label1: TLabel
     AnchorSideLeft.Control = Owner
     AnchorSideLeft.Side = asrCenter
@@ -2137,10 +2137,10 @@ object Form2: TForm2
     AnchorSideRight.Side = asrCenter
     AnchorSideBottom.Control = Button1
     Cursor = crHandPoint
-    Left = 49
-    Height = 18
-    Top = 255
-    Width = 358
+    Left = 58
+    Height = 16
+    Top = 257
+    Width = 341
     Anchors = [akLeft, akBottom]
     BorderSpacing.Bottom = 3
     Caption = 'www.opennet.ru/man.shtml?topic=pppd&&category=8'
@@ -2172,7 +2172,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 8
-    Width = 49
+    Width = 48
     Caption = 'lock'
     TabOrder = 1
   end
@@ -2180,7 +2180,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 32
-    Width = 101
+    Width = 98
     Caption = 'usepeerdns'
     TabOrder = 2
   end
@@ -2188,7 +2188,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 56
-    Width = 89
+    Width = 83
     Caption = 'nodeflate'
     TabOrder = 3
   end
@@ -2196,7 +2196,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 80
-    Width = 99
+    Width = 98
     Caption = 'nobsdcomp'
     TabOrder = 4
   end
@@ -2204,7 +2204,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 104
-    Width = 70
+    Width = 68
     Caption = 'noauth'
     OnChange = CheckBoxnoauthChange
     TabOrder = 5
@@ -2213,7 +2213,7 @@ object Form2: TForm2
     Left = 280
     Height = 21
     Top = 104
-    Width = 98
+    Width = 94
     Caption = 'noipdefault'
     TabOrder = 21
   end
@@ -2221,7 +2221,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 152
-    Width = 77
+    Width = 76
     Caption = 'nomppe'
     TabOrder = 7
   end
@@ -2229,7 +2229,7 @@ object Form2: TForm2
     Left = 280
     Height = 21
     Top = 56
-    Width = 76
+    Width = 75
     Caption = 'nomppc'
     TabOrder = 19
   end
@@ -2237,7 +2237,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 176
-    Width = 108
+    Width = 101
     Caption = 'defaultroute'
     OnChange = CheckBoxdefaultrouteChange
     TabOrder = 8
@@ -2246,7 +2246,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 8
-    Width = 84
+    Width = 83
     Caption = 'nopcomp'
     TabOrder = 9
   end
@@ -2254,7 +2254,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 32
-    Width = 63
+    Width = 61
     Caption = 'noccp'
     TabOrder = 10
   end
@@ -2262,7 +2262,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 56
-    Width = 51
+    Width = 49
     Caption = 'novj'
     TabOrder = 11
   end
@@ -2270,7 +2270,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 80
-    Width = 96
+    Width = 92
     Caption = 'novjccomp'
     TabOrder = 12
   end
@@ -2278,7 +2278,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 104
-    Width = 92
+    Width = 90
     Caption = 'noaccomp'
     TabOrder = 13
   end
@@ -2286,7 +2286,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 128
-    Width = 66
+    Width = 65
     Caption = 'noipv6'
     TabOrder = 14
   end
@@ -2294,7 +2294,7 @@ object Form2: TForm2
     Left = 280
     Height = 21
     Top = 128
-    Width = 94
+    Width = 88
     Caption = 'receive-all'
     TabOrder = 22
   end
@@ -2302,7 +2302,7 @@ object Form2: TForm2
     Left = 280
     Height = 21
     Top = 80
-    Width = 87
+    Width = 83
     Caption = 'nodetach'
     TabOrder = 20
   end
@@ -2310,7 +2310,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 176
-    Width = 158
+    Width = 148
     Caption = 'replacedefaultroute'
     TabOrder = 16
   end
@@ -2319,7 +2319,7 @@ object Form2: TForm2
     Left = 280
     Height = 21
     Top = 8
-    Width = 54
+    Width = 52
     Caption = 'auth'
     OnChange = CheckBoxauthChange
     TabOrder = 17
@@ -2328,7 +2328,7 @@ object Form2: TForm2
     Left = 280
     Height = 21
     Top = 32
-    Width = 73
+    Width = 71
     Caption = 'passive'
     TabOrder = 18
   end
@@ -2336,7 +2336,7 @@ object Form2: TForm2
     Left = 8
     Height = 21
     Top = 128
-    Width = 69
+    Width = 66
     Caption = 'persist'
     TabOrder = 6
   end
@@ -2344,7 +2344,7 @@ object Form2: TForm2
     Left = 120
     Height = 21
     Top = 152
-    Width = 124
+    Width = 117
     Caption = 'nodefaultroute'
     OnChange = CheckBoxnodefaultrouteChange
     TabOrder = 15
@@ -2353,7 +2353,7 @@ object Form2: TForm2
     Left = 280
     Height = 21
     Top = 152
-    Width = 103
+    Width = 98
     Caption = 'default-mru'
     TabOrder = 23
   end
