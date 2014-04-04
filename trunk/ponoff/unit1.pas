@@ -1195,7 +1195,21 @@ If not Code_up_ppp then If link=1 then
                                                                                                PClose(f);
                                                                                                FpSystem ('echo "c '+Memo_Config.Lines[0]+'" > '+VarRunXl2tpdDir+'l2tp-control');
                                                                                           end;
-                                                       If Memo_Config.Lines[39]='openl2tp' then FpSystem('bash '+MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start');
+                                                       If Memo_Config.Lines[39]='openl2tp' then
+                                                                                            begin
+                                                                                                //проверка openl2tpd в процессах
+                                                                                                popen(f,'ps -A | '+'grep openl2tpd','R');
+                                                                                                If eof(f) then
+                                                                                                              begin
+                                                                                                                   If ServiceCommand='systemctl ' then FpSystem (ServiceCommand+'stop '+'openl2tp.service') else FpSystem (ServiceCommand+'openl2tp'+' stop');
+                                                                                                                   A_Process.Active:=false;
+                                                                                                                   A_Process.CommandLine :=MyLibDir+Memo_Config.Lines[0]+'/openl2tp-start';
+                                                                                                                   A_Process.Execute;
+                                                                                                                   while A_Process.Running do
+                                                                                                                                           MySleep(30);
+                                                                                                               end;
+                                                                                                 PClose(f);
+                                                                                            end;
                                                    end;
                                   If Memo_Config.Lines[9]='dhcp-route-yes' then
                                                 begin
