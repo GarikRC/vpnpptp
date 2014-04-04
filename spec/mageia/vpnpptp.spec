@@ -3,7 +3,7 @@
 
 Summary: Tools for setup and control VPN via PPTP/L2TP/OpenL2TP
 Name: vpnpptp
-Version: 0.4.0
+Version: 0.3.9
 Release: %mkrel 1
 License: GPL2+
 Group: System/Configuration/Networking
