@@ -200,7 +200,6 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure GroupBox3MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure Mii_tool_noChange(Sender: TObject);
     procedure networktestChange(Sender: TObject);
     procedure pppnotdefaultChange(Sender: TObject);
     procedure routevpnautoChange(Sender: TObject);
@@ -3238,17 +3237,6 @@ begin
    Form1.Repaint;
    Application.ProcessMessages;
    Form1.Repaint;
-end;
-
-procedure TForm1.Mii_tool_noChange(Sender: TObject);
-begin
-   If (Mii_tool_no.Checked) and (Edit_MinTime.Text='0') then
-                                            begin //нулевое время реконнекта
-                                               Form3.MyMessageBox(message0,message5,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
-                                               Mii_tool_no.Checked:=false;
-                                               Application.ProcessMessages;
-                                               Form1.Repaint;
-                                            end;
 end;
 
 procedure TForm1.networktestChange(Sender: TObject);
