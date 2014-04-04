@@ -263,7 +263,7 @@ var
   NetServiceStr:string; //какой сервис управляет сетью
   ServiceCommand:string; //команда service или systemctl, или другая команда
   DhclientStartGood:boolean; //false если dhclient стартанул неудачно или не стартовал вообще
-  f,f0: text;//текстовый поток
+  f,f0,f_bin: text;//текстовый поток
   Code_up_ppp:boolean; //существует ли интерфейс pppN
   PppIface:string; //точный интерфейс pppN
   ProfileName:string; //определяет какое имя соединения использовать
@@ -296,7 +296,7 @@ const
   UsrSBinDir='/usr/sbin/';
   VarRunXl2tpdDir='/var/run/xl2tpd/';
   EtcInitDDir='/etc/init.d/';
-  SystemdDir='/usr/lib/systemd/system/';
+  SystemdDir='/lib/systemd/system/';
   EtcPppPeersDir='/etc/ppp/peers/';
   EtcDhcpDir='/etc/dhcp/';
   EtcPppDir='/etc/ppp/';
@@ -316,7 +316,7 @@ resourcestring
   message2='Не найдено офисное приложение для вывода справки, читающее формат doc. Вы можете самостоятельно прочитать справку, которая находится:';
   message3='Так как Вы не выбрали реконнект, то выбор встроенного в демон pppd/xl2tpd/openl2tp/openl2tpd реконнекта проигнорирован.';
   message4='Модуль ponoff еще не завершил свою работу. Дождитесь завершения работы модуля ponoff и повторно запустите конфигуратор vpnpptp.';
-  //message5='';
+  message5='Невозможно одновременно не контролировать state сетевого кабеля и задать время реконнекта 0. Время реконнекта было возвращено на значение по умолчанию:';
   message6='Для того, чтобы разрешить пользователям конфигурировать соединение сначала установите пакет sudo.';
   message7='Рабочий стол';//папка (директория) пользователя
   message8='В поле "Время дозвона" можно ввести лишь число в пределах от 5 до 255 сек.';
@@ -351,7 +351,7 @@ resourcestring
   message37='Маршрутизируйте VPN-сервер всегда, кроме случаев если его маршрутизация в силу различных причин не требуется.';
   message38='При выборе этой опции проверяется пинг VPN-, DNS-сервера, пинг шлюза локальной сети, пинг yandex.ru, выявляются основные проблемы, выводя сообщения.';
   message39='Отменить эту опцию стоит только если у Вас стабильные локальная сеть и интернет, и они никогда не падают.';
-  message40='Эта опция блокирует все всплывающие сообщения из трея, а также отключает проверку DNS-, VPN-сервера, шлюза локальной сети и есть ли интернет.';
+  message40='Эта опция блокирует все всплывающие сообщения из трея/виджета, а также отключает проверку DNS-, VPN-сервера, шлюза локальной сети и есть ли интернет.';
   message41='Проверка показала, что маршруты через DHCP не приходят, или настройка не требуется.';
   message42='Получение маршрутов через DHCP будет отменено, так как маршруты через DHCP не приходят, или настройка не требуется.';
   message43='VPN-сервер не пингуется. Устраните проблему и заново запустите конфигуратор.';
@@ -656,10 +656,14 @@ End;
 
 Function FileExistsBin (s:string):boolean;
 //Существует ли исполняемый файл
+var
+  fbin:boolean;
 begin
-  popen (f,'which '+s,'R');
-  if eof(f) then Result:=false else Result:=true;
-  PClose(f);
+  fbin:=false;
+  popen (f_bin,'which '+s,'R');
+  if eof(f_bin) then fbin:=false else fbin:=true;
+  PClose(f_bin);
+  Result:=fbin;
 end;
 
 procedure DoCountInterface;
@@ -670,17 +674,23 @@ var
    FileInterface:textfile;
 begin
    i:=0;
-   FpSystem ('rm -f '+MyTmpDir+'CountInterface');
-   FpSystem ('cat /proc/net/dev | awk -F : '+chr(39)+'{if (NR>2) print $1}'+chr(39)+' >>'+MyTmpDir+'CountInterface');
-   AssignFile (FileInterface,MyTmpDir+'CountInterface');
-   reset (FileInterface);
-   While not eof (FileInterface) do
-   begin
-        readln(FileInterface, str);
-        i:=i+1;
-   end;
-   closefile(FileInterface);
-   FpSystem ('rm -f '+MyTmpDir+'CountInterface');
+   if FileExists('/proc/net/dev') then
+         begin
+           FpSystem ('rm -f '+MyTmpDir+'CountInterface');
+           FpSystem ('cat /proc/net/dev | awk -F : '+chr(39)+'{if (NR>2) print $1}'+chr(39)+' >>'+MyTmpDir+'CountInterface');
+           if FileExists (MyTmpDir+'CountInterface') then
+                           begin
+                                AssignFile (FileInterface,MyTmpDir+'CountInterface');
+                                reset (FileInterface);
+                                While not eof (FileInterface) do
+                                begin
+                                     readln(FileInterface, str);
+                                     i:=i+1;
+                                end;
+                                closefile(FileInterface);
+                                FpSystem ('rm -f '+MyTmpDir+'CountInterface');
+                           end;
+         end;
    if i=0 then i:=1;
    CountInterface:=i;
 end;
@@ -1000,6 +1010,13 @@ If (((EditDNS3.Text='81.176.72.82') or (EditDNS3.Text='81.176.72.83')) and (Edit
                                             Application.ProcessMessages;
                                             Form1.Repaint;
                                          end;
+If (Mii_tool_no.Checked) and (Edit_MinTime.Text='0') then
+                                         begin //нулевое время реконнекта невозможно
+                                            Edit_MinTime.Text:='3';
+                                            Form3.MyMessageBox(message0,message5+' '+Edit_MinTime.Text+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                            Application.ProcessMessages;
+                                            Form1.Repaint;
+                                         end;
 //сообщения, которые могут привести к выходу из Создания подключения
 If ((Edit_mtu.Text='') or (Edit_mru.Text='')) then If Unit2.Form2.CheckBoxdefaultmru.Checked then
                                       begin
@@ -1047,12 +1064,14 @@ Form1.Repaint;
 DoCountInterface;
 PressCreate:=true;
 FpSystem('mkdir -p '+MyLibDir+'default');
+FpSystem('chmod 777 '+MyLibDir+'default');
 FpSystem('mkdir -p '+MyLibDir+Edit_peer.Text);
+FpSystem('chmod 777 '+MyLibDir+Edit_peer.Text);
 FpSystem ('rm -f '+MyLibDir+Edit_peer.Text+'/resolv.conf.before');
 FpSystem ('rm -f '+MyLibDir+Edit_peer.Text+'/resolv.conf.after');
-If not DirectoryExists(MyTmpDir) then FpSystem ('mkdir -p '+MyTmpDir);
+If not DirectoryExists(MyTmpDir) then begin FpSystem ('mkdir -p '+MyTmpDir); FpSystem ('chmod 777 '+MyTmpDir);end;
 If not DirectoryExists(EtcPppPeersDir) then FpSystem ('mkdir -p '+EtcPppPeersDir);
-If not DirectoryExists(MyLibDir) then FpSystem ('mkdir -p '+MyLibDir);
+If not DirectoryExists(MyLibDir) then begin FpSystem ('mkdir -p '+MyLibDir); FpSystem ('chmod 777 '+MyLibDir);end;
 If fedora then If not DirectoryExists(EtcDhcpDir) then FpSystem ('mkdir -p '+EtcDhcpDir);
 For i:=1 to CountInterface do
                            FpSystem('route del default');
@@ -1526,11 +1545,11 @@ If fedora then
              Memo_ip_up.Lines.Add('fi');
         end;
  Memo_ip_up.Lines.Add('cp -f '+MyLibDir+'$LINKNAME/resolv.conf.after '+EtcDir+'resolv.conf');
- If FileExistsBin ('net_monitor') then If FileExistsBin ('vnstat') then
-                                        begin
-                                              Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
-                                              If ServiceCommand='systemctl ' then Memo_ip_up.Lines.Add(ServiceCommand+' restart vnstat.service') else Memo_ip_up.Lines.Add(ServiceCommand+'vnstat restart');
-                                        end;
+ If FileExistsBin ('vnstat') then
+                                begin
+                                   Memo_ip_up.Lines.Add('vnstat -u -i $IFNAME');
+                                   If ServiceCommand='systemctl ' then Memo_ip_up.Lines.Add(ServiceCommand+' restart vnstat.service') else Memo_ip_up.Lines.Add(ServiceCommand+'vnstat restart');
+                                end;
  If route_IP_remote.Checked then
                                 Memo_ip_up.Lines.Add ('route add -host $IPREMOTE gw '+Edit_gate.Text+ ' dev '+Edit_eth.Text);
  Memo_ip_up.Lines.Add('echo "#!/bin/bash" > '+EtcPppIpDownDDir+'$LINKNAME-ip-down');
@@ -1731,14 +1750,14 @@ If FileExists (EtcDir+'sudoers') then If ((Sudo_ponoff.Checked) or (Sudo_configu
                                      readln(FileSudoers, str);
                                      If (Sudo_ponoff.Checked) or (Sudo_configure.Checked) then //очистка от старых записей
                                            begin
-                                             If ((str<>'ALL ALL=NOPASSWD:'+'ponoff') and (str<>'ALL ALL=NOPASSWD:'+'vpnpptp')) then
+                                             If ((str<>'ALL ALL=NOPASSWD:'+UsrBinDir+'ponoff') and (str<>'ALL ALL=NOPASSWD:'+UsrBinDir+'vpnpptp')) then
                                              If (RightStr(str,10)<>'requiretty') then Memo_sudo.Lines.Add(str);
                                              If (RightStr(str,10)='requiretty') then Memo_sudo.Lines.Add('# Defaults requiretty');
                                            end;
                                    end;
                                  If not FileExistsBin('xsudo') then Memo_sudo.Lines.Add('Defaults env_keep += "DISPLAY XAUTHORITY XAUTHLOCALHOSTNAME"');
-                                 If Sudo_ponoff.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:'+'ponoff');
-                                 If Sudo_configure.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:'+'vpnpptp');
+                                 If Sudo_ponoff.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:'+UsrBinDir+'ponoff');
+                                 If Sudo_configure.Checked then Memo_sudo.Lines.Add('ALL ALL=NOPASSWD:'+UsrBinDir+'vpnpptp');
                                  closefile(FileSudoers);
                                  FpSystem('rm -f '+EtcDir+'sudoers');
                                  Memo_sudo.Lines.SaveToFile(EtcDir+'sudoers');
@@ -1752,7 +1771,7 @@ If FileExists (EtcDir+'sudoers') then If (not(Sudo_ponoff.Checked) and (not Sudo
                                 While not eof (FileSudoers) do
                                    begin
                                      readln(FileSudoers, str);
-                                     If ((str<>'ALL ALL=NOPASSWD:'+'ponoff') and (str<>'ALL ALL=NOPASSWD:'+'vpnpptp')) then
+                                     If ((str<>'ALL ALL=NOPASSWD:'+UsrBinDir+'ponoff') and (str<>'ALL ALL=NOPASSWD:'+UsrBinDir+'vpnpptp')) then
                                           Memo_sudo.Lines.Add(str);
                                    end;
                                  closefile(FileSudoers);
@@ -1804,6 +1823,16 @@ If FileExists (EtcDir+'sudoers') then If ((Sudo_ponoff.Checked) or (Sudo_configu
                                  FpSystem ('chmod a+x '+UsrBinDir+'xsudo');
                               end;
 //настройка /etc/rc.d/rc.local
+If mageia then If (Autostartpppd.Checked) then If not suse then
+            If (not FileExists (EtcRcDDir+'rc.local'))
+               then
+                  begin
+                    FpSystem ('echo "#!/bin/bash" > '+EtcRcDDir+'rc.local');
+                    FpSystem ('chmod +x '+EtcRcDDir+'rc.local');
+                    if (not FileExists (EtcDir+'rc.local'))
+                                    then FpSystem ('ln -s '+EtcRcDDir+'rc.local'+' '+EtcDir+'rc.local');
+                    FpSystem ('systemctl enable rc-local.service');
+                  end;
 If FileExists (EtcRcDDir+'rc.local') then If (Autostartpppd.Checked) then If not suse then
                               begin
                                 AssignFile (FileAutostartpppd,EtcRcDDir+'rc.local');
@@ -2089,6 +2118,7 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem('cp -f '+EtcXl2tpdDi
                                                               If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'restart rpcbind.service') else Memo2.Lines.Add(ServiceCommand+'rpcbind restart');
                                           If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'stop openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
                                           Memo2.Lines.Add('killall openl2tp');
+                                          Memo2.Lines.Add('killall openl2tpd');
                                           Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                           If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'start openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp start');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-start');
@@ -2100,6 +2130,7 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem('cp -f '+EtcXl2tpdDi
                                           Memo2.Lines.Add('rm -f '+EtcDir+'openl2tpd.conf');
                                           If ServiceCommand='systemctl ' then Memo2.Lines.Add(ServiceCommand+'stop openl2tp.service') else Memo2.Lines.Add(ServiceCommand+'openl2tp stop');
                                           Memo2.Lines.Add('killall openl2tp');
+                                          Memo2.Lines.Add('killall openl2tpd');
                                           Memo2.Lines.Add('rm -f '+VarRunDir+'openl2tpd.pid');
                                           Memo2.Lines.SaveToFile(MyLibDir+Edit_peer.Text+'/openl2tp-stop');
                                           Memo2.Lines.SaveToFile(MyLibDir+'default/openl2tp-stop');
@@ -2186,16 +2217,10 @@ If not FileExists(EtcXl2tpdDir+'xl2tpd.conf') then FpSystem('cp -f '+EtcXl2tpdDi
            FpSystem('sed -i "/NETWORKING/d" /etc/sysconfig/network');
            FpSystem('echo "NETWORKING=yes" >> /etc/sysconfig/network');
        end;
- //добавляем сервисы в автозагрузку
- If ComboBoxVPN.Text='VPN OpenL2TP' then
-                       begin
-                            FpSystem ('systemctl enable openl2tp');
-                       end;
- If ComboBoxVPN.Text='VPN L2TP' then
-                       begin
-                            FpSystem ('systemctl enable xl2tpd');
-                       end;
- FpSystem ('systemctl enable vnstat');
+ //убираем сервисы из автозагрузки
+ FpSystem ('systemctl disable openl2tp.service');
+ FpSystem ('systemctl disable openl2tpd.service');
+ FpSystem ('systemctl disable xl2tpd.service');
  //проверка технической возможности поднятия соединения
  EditDNS1ping:=true;
  EditDNS2ping:=true;
@@ -2345,7 +2370,7 @@ DoIconDesktopForAll('vpnpptp');
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
-      if not DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then FpSystem ('mkdir /home/'+Memo_users.Lines[i]+'/.config/autostart/');
+      if not DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then begin FpSystem ('mkdir -p /home/'+Memo_users.Lines[i]+'/.config/autostart/'); FpSystem ('chmod -R 777 /home/'+Memo_users.Lines[i]+'/.config/autostart/');end;
       if DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then
       begin
        FlagAutostartPonoff:=true;
@@ -2370,7 +2395,7 @@ DoIconDesktopForAll('vpnpptp');
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
-      if not DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then FpSystem ('mkdir /home/'+Memo_users.Lines[i]+'/.config/autostart/');
+      if not DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then begin FpSystem ('mkdir /home/'+Memo_users.Lines[i]+'/.config/autostart/'); FpSystem ('chmod -R 777 /home/'+Memo_users.Lines[i]+'/.config/autostart/');end;
       if DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then
       begin
        FlagAutostartPonoff:=true;
@@ -2615,6 +2640,8 @@ procedure TForm1.ButtonRestartClick(Sender: TObject);
 //рестарт сети
 var
   a,b,c:boolean;
+  str:string;
+  FileInterface:textfile;
 begin
 a:=ButtonHelp.Enabled;
 b:=ComboBoxDistr.Enabled;
@@ -2647,6 +2674,18 @@ If suse then
                               end;
             end;
 If ServiceCommand='systemctl' then FpSystem (ServiceCommand+' restart '+NetServiceStr) else FpSystem (ServiceCommand+NetServiceStr+' restart');
+FpSystem ('rm -f '+MyTmpDir+'Interfaces');
+FpSystem ('cat /proc/net/dev | awk -F : '+chr(39)+'{if (NR>2) print $1}'+chr(39)+' >>'+MyTmpDir+'Interfaces');
+AssignFile (FileInterface,MyTmpDir+'Interfaces');
+reset (FileInterface);
+While not eof (FileInterface) do
+   begin
+        readln(FileInterface, str);
+        Ifdown(DeleteSym (' ',str));
+        Ifup(DeleteSym (' ',str));
+   end;
+closefile(FileInterface);
+FpSystem ('rm -f '+MyTmpDir+'Interfaces');
 Ifup('lo');
 ButtonRestart.Caption:=message93;
 Button_exit.Enabled:=true;
@@ -2877,7 +2916,7 @@ end;
 
 procedure TForm1.CheckBox_shorewallChange(Sender: TObject);
 begin
-   If StartMessage then If CheckBox_shorewall.Checked then if not FileExists(SystemdDir+'shorewall.service') then
+   If StartMessage then If CheckBox_shorewall.Checked then if not FileExistsBin('shorewall') then
                                              begin
                                                 Form3.MyMessageBox(message0,message140,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                 CheckBox_shorewall.Checked:=false;
@@ -3369,7 +3408,7 @@ If ComboBoxVPN.Text='VPN L2TP' then
                                     Val(str0,x,code);
                                     if code=0 then if x<136 then
                                                    begin
-                                                       Form3.MyMessageBox(message0,message146+str+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
+                                                       Form3.MyMessageBox(message0,message146+' '+str+'.','','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                                        Application.ProcessMessages;
                                                        Form1.Repaint;
                                                        exit;
@@ -3490,7 +3529,7 @@ If not y then IPS:=true else IPS:=false;
   Memo_eth.Clear;
   If FileExists(MyTmpDir+'eth') then Memo_eth.Lines.LoadFromFile(MyTmpDir+'eth');
   FpSystem('rm -f '+MyTmpDir+'eth');
-  Edit_eth.Text:=LeftStr(Memo_eth.Lines[0],4);
+  Edit_eth.Text:=Memo_eth.Lines[0];
   If Edit_eth.Text='link' then Edit_eth.Text:='none';
   If Edit_eth.Text='none' then
                            begin
@@ -3563,7 +3602,7 @@ If not y then IPS:=true else IPS:=false;
   EditDNS3.Text:=DNSA;
   EditDNS4.Text:=DNSB;
   If not FileExists (MyLibDir+Edit_peer.Text+'/route') then Memo_route.Clear;
-  if not FileExists(SystemdDir+'shorewall.service') then
+  if not FileExistsBin('shorewall') then
                                              begin
                                                 StartMessage:=false;
                                                 CheckBox_shorewall.Checked:=false;
@@ -3891,13 +3930,6 @@ If (ComboBoxVPN.Text='VPN L2TP') or (ComboBoxVPN.Text='VPN OpenL2TP') then
                                begin
                                    nobuffer.Enabled:=false;
                                    nobuffer.Checked:=true;
-                               end;
-If (ComboBoxVPN.Text='VPN OpenL2TP') then
-                               begin
-                                   StartMessage:=false;
-                                   Autostartpppd.Enabled:=false;
-                                   Autostartpppd.Checked:=false;
-                                   StartMessage:=true;
                                end;
 If Edit_mtu.Text<>'' then if (MyStrToInt(Edit_mtu.Text)>1472) then
                                       begin
@@ -4430,7 +4462,7 @@ PageControl1.ShowTabs:=false;
                                        Form3.MyMessageBox(message0,message95,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
                                        halt;
                                     end;
-  If not FileExists(MyTmpDir) then FpSystem ('mkdir -p '+MyTmpDir);
+  If not FileExists(MyTmpDir) then begin FpSystem ('mkdir -p '+MyTmpDir);FpSystem ('chmod 777 '+MyTmpDir);end;
  CountInterface:=1;
  DoCountInterface;
  //обеспечение совместимости старого general.conf с новым

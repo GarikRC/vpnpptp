@@ -181,7 +181,7 @@ begin
    try
      v.FindDefaultBrowser(BrowserPath,BrowserParams);
      debugln(['Path=',BrowserPath,' Params=',BrowserParams]);
-     URL:='www.opennet.ru/man.shtml?topic=pppd&category=8';
+     URL:='http://'+Label1.Caption;
      p:=System.Pos('%s', BrowserParams);
      System.Delete(BrowserParams,p,2);
      System.Insert(URL,BrowserParams,p);

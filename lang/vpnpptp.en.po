@@ -19,8 +19,8 @@ msgid "Автозапуск интернета при старте систем�
 msgstr "Autostart the Internet at startup (graphical)"
 
 #: tform1.balloon.caption
-msgid "Блокировать все всплывающие сообщения из трея"
-msgstr "Block all pop-up messages from tray"
+msgid "Блокировать все всплывающие сообщения из трея/виджета"
+msgstr "Block all pop-up messages from tray/widget"
 
 #: tform1.buttonhelp.caption
 msgid "Справка"
@@ -69,7 +69,7 @@ msgid "Настройка VPN PPTP/L2TP/OpenL2TP"
 msgstr "Configure VPN PPTP/L2TP/OpenL2TP"
 
 #: tform1.checkbox_desktop.caption
-msgid "Создать ярлык на рабочем столе"
+msgid "Создать ярлык на Рабочем столе"
 msgstr "Create link on Desktop"
 
 #: tform1.checkbox_no128.caption
@@ -932,7 +932,7 @@ msgstr "Set the address of VPN-server by IP or get automatically determine DNS1 
 
 #: unit1.message2
 msgid "Не найдено офисное приложение для вывода справки, читающее формат doc. Вы можете самостоятельно прочитать справку, которая находится:"
-msgstr "Does not found Office application to display Help that read the doc. You can to read help, which is:"
+msgstr "Not found Office application to display Help that read the doc. You can to read help, which is:"
 
 #: unit1.message20
 msgid "Невозможно настроить VPN PPTP в связи с отсутствием пакета pptp-linux или пакета pptp."
@@ -1159,8 +1159,8 @@ msgid "Модуль ponoff еще не завершил свою работу. �
 msgstr "Program ponoff not yet completed its work. Wait for the program ponoff quits and re-run the program vpnpptp."
 
 #: unit1.message40
-msgid "Эта опция блокирует все всплывающие сообщения из трея, а также отключает проверку DNS-, VPN-сервера, шлюза локальной сети и есть ли интернет."
-msgstr "This option blocks all pop-up messages from tray, besides switches off checking DNS-, VPN-server, local network gateway and the Internet availability."
+msgid "Эта опция блокирует все всплывающие сообщения из трея/виджета, а также отключает проверку DNS-, VPN-сервера, шлюза локальной сети и есть ли интернет."
+msgstr "This option blocks all pop-up messages from tray/widget, besides switches off checking DNS-, VPN-server, local network gateway and the Internet availability."
 
 #: unit1.message41
 msgid "Проверка показала, что маршруты через DHCP не приходят, или настройка не требуется."
@@ -1197,6 +1197,10 @@ msgstr "The preparation of the network is implementing for testing of routes-com
 #: unit1.message49
 msgid "Сеть подготовлена для проверки приходят ли маршруты через DHCP. Вызывается dhclient. Ожидайте..."
 msgstr "The network is ready for testing of route-comings via DHCP. dhclient is starting. Please, wait..."
+
+#: unit1.message5
+msgid "Невозможно одновременно не контролировать state сетевого кабеля и задать время реконнекта 0. Время реконнекта было возвращено на значение по умолчанию:"
+msgstr "Impossible simultaneously to not control the state of network cable and to set time for reconnect 0. Time for reconnect was returned to the default value:"
 
 #: unit1.message50
 msgid "Определяются IP-адреса VPN-сервера через команду host из пакета bind-utils. Ожидайте..."
@@ -1413,3 +1417,4 @@ msgstr "Autostart the Internet at startup with help xl2tpd-daemon whithout graph
 #: unit1.message99
 msgid "(например, vpn.internet.beeline.ru)"
 msgstr "(for example vpn.internet.beeline.ru)"
+

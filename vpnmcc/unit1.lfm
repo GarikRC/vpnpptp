@@ -9373,13 +9373,14 @@ object MyForm: TMyForm
       Text = '1460'
     end
     object Button_after_up: TButton
-      AnchorSideLeft.Control = Edit_metric
+      AnchorSideLeft.Control = MyPanel
       AnchorSideTop.Control = Edit_metric
       AnchorSideTop.Side = asrBottom
-      Left = 92
+      Left = 9
       Height = 25
       Top = 245
       Width = 96
+      BorderSpacing.Left = 8
       BorderSpacing.Top = 30
       OnClick = Button_after_upClick
       TabOrder = 26
@@ -9399,6 +9400,25 @@ object MyForm: TMyForm
       BorderSpacing.Right = 8
       OnClick = Button_after_downClick
       TabOrder = 27
+    end
+    object ButtonHelp: TButton
+      AnchorSideLeft.Control = Button_after_up
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Button_after_up
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = Button_after_down
+      AnchorSideBottom.Control = Button_after_down
+      AnchorSideBottom.Side = asrBottom
+      Left = 113
+      Height = 25
+      Top = 245
+      Width = 590
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 30
+      BorderSpacing.Right = 8
+      OnClick = ButtonHelpClick
+      TabOrder = 28
     end
   end
   object MyTimer: TTimer
