@@ -595,12 +595,12 @@ var
 begin
      If DoHalt then
                 begin
-                  popen (f,'ps -u root |'+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+'grep -x '+Name,'R');
+                  popen (f,'ps -u root |grep -v pkexec|'+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+'grep -x '+Name,'R');
                   If not eof(f) then halt;
                   PClose(f);
                 end;
      Apid:=FpGetpid;
-     popen (f,'ps -u root |'+'grep '+Name+'| '+'grep '+IntToStr(Apid),'R');
+     popen (f,'ps -u root |grep -v pkexec|'+'grep '+Name+'| '+'grep '+IntToStr(Apid),'R');
      If eof(f) then Result:=false else Result:=true;
      PClose(f);
 end;
@@ -4124,12 +4124,11 @@ begin
   If DopParam=' ' then DopParam:='';
   If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
   If nostart then If FileExistsBin('pkexec') then If FileExists(Paramstr(0)) then
-             If FileExists(PolkitDir+'com.google.code.vpnpptp.policy') then //запускаем vpnpptp с правами root через polkit
+      If FileExists(PolkitDir+'com.google.code.vpnpptp.policy') then
+            If FileExists(MyScriptsDir+'pkexec.vpnpptp') then//запускаем vpnpptp с правами root через polkit
          begin
               AProcess := TAsyncProcess.Create(nil);
-              AProcess.Executable :='pkexec';
-              AProcess.Parameters.Add('vpnpptp');
-              AProcess.Parameters.Add(Trim(DopParam));
+              AProcess.CommandLine :=MyScriptsDir+'pkexec.vpnpptp '+Trim(DopParam);
               AProcess.Execute;
               while AProcess.Running do
               begin
@@ -4554,7 +4553,7 @@ PageControl1.ShowTabs:=false;
  FpSystem ('rm -f '+MyTmpDir+'DateStart');
  FpSystem ('rm -f '+MyTmpDir+'gate');
  //проверка vpnpptp в процессах root, исключение двойного запуска программы
- FpSystem('ps -u root | '+'grep vpnpptp | '+'awk '+chr(39)+'{print $4}'+chr(39)+' > '+MyTmpDir+'tmpnostart');
+ FpSystem('ps -u root | '+'grep vpnpptp |grep -v pkexec |'+'awk '+chr(39)+'{print $4}'+chr(39)+' > '+MyTmpDir+'tmpnostart');
  FpSystem('printf "none" >> '+MyTmpDir+'tmpnostart');
  Form1.tmpnostart.Clear;
  If FileExists(MyTmpDir+'tmpnostart') then tmpnostart.Lines.LoadFromFile(MyTmpDir+'tmpnostart');
@@ -4690,7 +4689,7 @@ If FallbackLang='uk' then If FileExists(MyWikiDir+'Help_uk.doc') then ButtonHelp
 DNS_auto:=true; //полагается, что EditDNS1 и EditDNS2 получаются автоматически пока не будет доказано обратного
 If not Translate then Label25.Caption:='              '+Label25.Caption;
 //проверка ponoff в процессах root
-   FpSystem('ps -u root | '+'grep ponoff | '+'awk '+chr(39)+'{print $4}'+chr(39)+' > '+MyTmpDir+'tmpnostart');
+   FpSystem('ps -u root | grep -v pkexec|'+'grep ponoff | '+'awk '+chr(39)+'{print $4}'+chr(39)+' > '+MyTmpDir+'tmpnostart');
    FpSystem('printf "none" >> '+MyTmpDir+'tmpnostart');
    Form1.tmpnostart.Clear;
    If FileExists(MyTmpDir+'tmpnostart') then tmpnostart.Lines.LoadFromFile(MyTmpDir+'tmpnostart');

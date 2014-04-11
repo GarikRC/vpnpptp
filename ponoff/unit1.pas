@@ -290,12 +290,12 @@ var
 begin
      If DoHalt then
                 begin
-                  popen (f,'ps -u root |'+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+'grep -x '+Name,'R');
+                  popen (f,'ps -u root |grep -v pkexec|'+'awk '+ chr(39)+'{print $4}'+chr(39)+'|'+'grep -x '+Name,'R');
                   If not eof(f) then halt;
                   PClose(f);
                 end;
      Apid:=FpGetpid;
-     popen (f,'ps -u root |'+'grep '+Name+'| '+'grep '+IntToStr(Apid),'R');
+     popen (f,'ps -u root |grep -v pkexec|'+'grep '+Name+'| '+'grep '+IntToStr(Apid),'R');
      If eof(f) then Result:=false else Result:=true;
      PClose(f);
 end;
@@ -323,12 +323,11 @@ begin
                     Application.ProcessMessages;
                end;
     If nostart then If FileExistsBin('pkexec') then If FileExists(Paramstr(0)) then
-               If FileExists(PolkitDir+'com.google.code.ponoff.policy') then //запускаем ponoff с правами root через polkit
+        If FileExists(PolkitDir+'com.google.code.ponoff.policy') then
+              If FileExists(MyScriptsDir+'pkexec.ponoff') then//запускаем ponoff с правами root через polkit
            begin
                 AProcess := TAsyncProcess.Create(nil);
-                AProcess.Executable :='pkexec';
-                AProcess.Parameters.Add('ponoff');
-                AProcess.Parameters.Add(Trim(DopParam));
+                AProcess.CommandLine :=MyScriptsDir+'pkexec.ponoff '+Trim(DopParam);
                 AProcess.Execute;
                 while AProcess.Running do
                 begin
@@ -1501,7 +1500,7 @@ If str='DEFAULT' then
                                Application.ProcessMessages;
                             end;
 //проверка ponoff в процессах root, обработка двойного запуска программы
-popen (f,'ps -u root | '+'grep ponoff | '+'awk '+chr(39)+'{print $4}'+chr(39),'R');
+popen (f,'ps -u root | '+'grep ponoff |grep -v pkexec |'+'awk '+chr(39)+'{print $4}'+chr(39),'R');
 i:=0;
 while not eof(f) do
 begin
@@ -1541,7 +1540,7 @@ If i>1 then
                                 if FileExists (VarRunVpnpptp+ProfileName) then FpSystem('rm -f '+VarRunVpnpptp+ProfileName);
                                 halt;
                              end;
-               popen(f,'ps -e|'+'grep ponoff|'+'awk '+chr(39)+'{print$1}'+chr(39),'R');
+               popen(f,'ps -e|'+'grep ponoff|grep -v pkexec|'+'awk '+chr(39)+'{print$1}'+chr(39),'R');
                str:='';
                     While not eof(f) do
                         begin
@@ -2384,7 +2383,7 @@ initialization
   FpSystem('chmod 777 '+VarRunVpnpptp);
   if ProfileName<>'' then
           begin
-               if FileExists(VarRunVpnpptp+ProfileName) then
+               if DirectoryExists(VarRunVpnpptp) then
                        FpSystem('echo "'+ProfileName+'" > '+VarRunVpnpptp+ProfileName);
           end;
   Gettext.GetLanguageIDs(Lang,FallbackLang);
