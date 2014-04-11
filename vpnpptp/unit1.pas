@@ -309,6 +309,7 @@ const
   VarRunDir='/var/run/';
   UsrLibPppdDir='/usr/lib/pppd/';
   UsrLib64PppdDir='/usr/lib64/pppd/';
+  PolkitDir='/usr/share/polkit-1/actions/';
 
 resourcestring
   message0='Внимание!';
@@ -863,10 +864,10 @@ begin
   Memo_create.Lines.Add('Comment=Control VPN via PPTP/L2TP/OpenL2TP');
   If not Sudo_ponoff.Checked then Memo_create.Lines.Add('Exec=ponoff '+Profile);
   If Sudo_ponoff.Checked then Memo_create.Lines.Add('Exec=xsudo '+'ponoff '+Profile);
-  Memo_create.Lines.Add('GenericName[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP');
-  Memo_create.Lines.Add('GenericName[uk]=Управління з'' єднанням VPN PPTP/L2TP/OpenL2TP');
-  Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP/OpenL2TP Control');
-  Memo_create.Lines.Add('Icon='+MyPixmapsDir+'ponoff.png');
+  Memo_create.Lines.Add('GenericName[ru]=Подключение '+Profile);
+  Memo_create.Lines.Add('GenericName[uk]=Підключення '+Profile);
+  Memo_create.Lines.Add('GenericName=Connect '+Profile);
+  Memo_create.Lines.Add('Icon=ponoff');
   Memo_create.Lines.Add('Name[ru]=Подключение '+Profile);
   Memo_create.Lines.Add('Name[uk]=Підключення '+Profile);
   Memo_create.Lines.Add('Name=Connect '+Profile);
@@ -889,10 +890,10 @@ If prilozh='vpnpptp' then
      Memo_create.Lines.Add('Comment=Setup VPN via PPTP/L2TP/OpenL2TP');
      If not Sudo_configure.Checked then Memo_create.Lines.Add('Exec=vpnpptp '+Profile);
      If Sudo_configure.Checked then Memo_create.Lines.Add('Exec=xsudo '+'vpnpptp '+Profile);
-     Memo_create.Lines.Add('GenericName[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP');
-     Memo_create.Lines.Add('GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP');
-     Memo_create.Lines.Add('GenericName=VPN PPTP/L2TP/OpenL2TP Setup');
-     Memo_create.Lines.Add('Icon='+MyPixmapsDir+'vpnpptp.png');
+     Memo_create.Lines.Add('GenericName[ru]=Настройка '+Profile);
+     Memo_create.Lines.Add('GenericName[uk]=Налаштування '+Profile);
+     Memo_create.Lines.Add('GenericName=Setup '+Profile);
+     Memo_create.Lines.Add('Icon=vpnpptp');
      Memo_create.Lines.Add('Name[ru]=Настройка '+Profile);
      Memo_create.Lines.Add('Name[uk]=Налаштування '+Profile);
      Memo_create.Lines.Add('Name=Setup '+Profile);
@@ -2370,7 +2371,7 @@ DoIconDesktopForAll('vpnpptp');
   i:=0;
    while Memo_users.Lines.Count > i do
     begin
-      if not DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then begin FpSystem ('mkdir -p /home/'+Memo_users.Lines[i]+'/.config/autostart/'); FpSystem ('chmod -R 777 /home/'+Memo_users.Lines[i]+'/.config/autostart/');end;
+      if not DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then begin FpSystem ('mkdir /home/'+Memo_users.Lines[i]+'/.config/autostart/'); FpSystem ('chmod -R 777 /home/'+Memo_users.Lines[i]+'/.config/autostart/');end;
       if DirectoryExists('/home/'+Memo_users.Lines[i]+'/.config/autostart/') then
       begin
        FlagAutostartPonoff:=true;
@@ -4122,10 +4123,26 @@ begin
   If ParamStr(1)<>'' then DopParam:=DopParam+ParamStr(1)+' ';
   If DopParam=' ' then DopParam:='';
   If DopParam<>'' then DopParam:=LeftStr(DopParam,Length(DopParam)-1);
-  If nostart then If FileExists('/usr/bin/xroot') then If FileExists(Paramstr(0)) then //запускаем vpnpptp с правами root через xroot
+  If nostart then If FileExistsBin('pkexec') then If FileExists(Paramstr(0)) then
+             If FileExists(PolkitDir+'com.google.code.vpnpptp.policy') then //запускаем vpnpptp с правами root через polkit
+         begin
+              AProcess := TAsyncProcess.Create(nil);
+              AProcess.Executable :='pkexec';
+              AProcess.Parameters.Add('vpnpptp');
+              AProcess.Parameters.Add(Trim(DopParam));
+              AProcess.Execute;
+              while AProcess.Running do
+              begin
+                  ProgrammRoot('vpnpptp',true);
+                  sleep(100);
+              end;
+              Application.ProcessMessages;
+              AProcess.Free;
+         end;
+  If nostart then If FileExistsBin('xroot') then If FileExists(Paramstr(0)) then //запускаем vpnpptp с правами root через xroot
           begin
                AProcess := TAsyncProcess.Create(nil);
-               AProcess.CommandLine :='/usr/bin/xroot '+'"'+Paramstr(0)+DopParam+'" auto_su_sudo';
+               AProcess.CommandLine :='xroot '+'"'+Paramstr(0)+DopParam+'" auto_su_sudo';
                AProcess.Execute;
                while AProcess.Running do
                begin
@@ -4188,7 +4205,7 @@ begin
                   AProcess.Free;
              end;
   If not ProgrammRoot('vpnpptp',false) then
-     If (not FileExists('/usr/bin/xroot')) and (not FileExists('/usr/lib64/kde4/libexec/kdesu')) and (not FileExists('/usr/lib/kde4/libexec/kdesu'))
+     If (not FileExistsBin('xroot')) and (not FileExists('/usr/lib64/kde4/libexec/kdesu')) and (not FileExists('/usr/lib/kde4/libexec/kdesu'))
           and (not FileExistsBin('beesu')) and (not FileExistsBin('gksu')) then
                 begin
                     Form3.MyMessageBox(message0,message228,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
@@ -4394,8 +4411,7 @@ PageControl1.ShowTabs:=false;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
-                             Form1.Height:=Screen.Height-50;
-                             Form1.Width:=Screen.Width;
+                             WindowState:=wsMaximized;
                             end;
    If Screen.Height<=480 then
                         begin
@@ -4403,24 +4419,23 @@ PageControl1.ShowTabs:=false;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
-                             Form1.Height:=Screen.Height-45;
-                             Form1.Width:=Screen.Width;
+                             WindowState:=wsMaximized;
                         end;
    If Screen.Height<550 then If not (Screen.Height<=480) then
                          begin
-                             AFont:=6;
-                             Form1.Font.Size:=AFont;
-                             ComboBoxVPN.Font.Size:=AFont;
-                             ComboBoxDistr.Font.Size:=AFont;
-                         end;
-   If Screen.Height>550 then   //разрешение в основном нетбуков
-                        begin
                              AFont:=8;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
-                             Form1.Height:=550;
-                             Form1.Width:=794;
+                             WindowState:=wsMaximized;
+                         end;
+   If Screen.Height>550 then   //разрешение в основном нетбуков
+                        begin
+                             AFont:=6;
+                             Form1.Font.Size:=AFont;
+                             ComboBoxVPN.Font.Size:=AFont;
+                             ComboBoxDistr.Font.Size:=AFont;
+                             WindowState:=wsMaximized;
                         end;
    If Screen.Height>1000 then
                         begin
@@ -4428,8 +4443,9 @@ PageControl1.ShowTabs:=false;
                              Form1.Font.Size:=AFont;
                              ComboBoxVPN.Font.Size:=AFont;
                              ComboBoxDistr.Font.Size:=AFont;
-                             Form1.Height:=700;
-                             Form1.Width:=1020;
+                             Form1.Height:=Screen.Height-200;
+                             Form1.Width:=Screen.Width-200;
+                             WindowState:=wsNormal;
                          end;
  CheckFiles;//проверка наличия необходимых программе файлов
  //проверка использовался ли скрипт mr. Peabody

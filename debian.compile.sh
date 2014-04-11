@@ -27,9 +27,9 @@ cat > ./build/usr/share/applications/ponoff.desktop << EOF
 
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP/L2TP/OpenL2TP Control
-GenericName[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP
-GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP/OpenL2TP
+GenericName=ponoff
+GenericName[ru]=ponoff
+GenericName[uk]=ponoff
 Name=ponoff
 Name[ru]=ponoff
 Name[uk]=ponoff
@@ -37,7 +37,7 @@ Exec=ponoff
 Comment=Control VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP/OpenL2TP
 Comment[uk]=Керування з'єднанням VPN через PPTP/L2TP/OpenL2TP
-Icon=/usr/share/pixmaps/ponoff.png
+Icon=ponoff
 Type=Application
 Categories=GTK;System;Monitor;X-MageiaLinux-CrossDesktop;
 X-KDE-autostart-after=kdesktop
@@ -50,9 +50,9 @@ cat > ./build/usr/share/applications/vpnpptp.desktop << EOF
 
 [Desktop Entry]
 Encoding=UTF-8
-GenericName=VPN PPTP/L2TP/OpenL2TP Setup
-GenericName[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
-GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
+GenericName=vpnpptp
+GenericName[ru]=vpnpptp
+GenericName[uk]=vpnpptp
 Name=vpnpptp
 Name[ru]=vpnpptp
 Name[uk]=vpnpptp
@@ -60,7 +60,7 @@ Exec=vpnpptp
 Comment=Setup VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
 Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
-Icon=/usr/share/pixmaps/vpnpptp.png
+Icon=vpnpptp
 Type=Application
 Categories=GTK;System;Monitor;X-MageiaLinux-CrossDesktop;
 StartupNotify=false
@@ -115,6 +115,10 @@ cp -rf ./vpnpptp-src-$NUM_VERSION/wiki ./build/usr/share/vpnpptp/
 cp -rf ./vpnpptp-src-$NUM_VERSION/lang ./build/usr/share/vpnpptp/
 cp -f ./vpnpptp-src-$NUM_VERSION/on.ico ./build/usr/share/vpnpptp/
 cp -f ./vpnpptp-src-$NUM_VERSION/off.ico ./build/usr/share/vpnpptp/
+
+mkdir -p ./build/usr/share/polkit-1/actions
+
+cp -f ./vpnpptp-src-$NUM_VERSION/polkit/* ./build/usr/share/polkit-1/actions/
 
 mkdir -p ./build/DEBIAN/
 

@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 400
+  Left = 819
   Height = 307
-  Top = 261
+  Top = 650
   Width = 457
   ActiveControl = CheckBoxlock
   BorderIcons = [biSystemMenu, biMaximize]
