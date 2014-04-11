@@ -112,6 +112,7 @@ const
   EtcPppIpDownLDir='/etc/ppp/ip-down.l/';
   VarRunVpnpptp='/var/run/vpnpptp/';
   VarRunDir='/var/run/';
+  PolkitDir='/usr/share/polkit-1/actions/';
 
 var
   Form1: TForm1;
@@ -321,10 +322,26 @@ begin
                     end;
                     Application.ProcessMessages;
                end;
-    If nostart then If FileExists('/usr/bin/xroot') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через xroot
+    If nostart then If FileExistsBin('pkexec') then If FileExists(Paramstr(0)) then
+               If FileExists(PolkitDir+'com.google.code.ponoff.policy') then //запускаем ponoff с правами root через polkit
+           begin
+                AProcess := TAsyncProcess.Create(nil);
+                AProcess.Executable :='pkexec';
+                AProcess.Parameters.Add('ponoff');
+                AProcess.Parameters.Add(Trim(DopParam));
+                AProcess.Execute;
+                while AProcess.Running do
+                begin
+                    ProgrammRoot('ponoff',true);
+                    sleep(100);
+                end;
+                Application.ProcessMessages;
+                AProcess.Free;
+           end;
+    If nostart then If FileExistsBin('xroot') then If FileExists(Paramstr(0)) then //запускаем ponoff с правами root через xroot
             begin
                  A_Process.Active:=false;
-                 A_Process.CommandLine :='/usr/bin/xroot '+'"'+Paramstr(0)+DopParam+'" auto_su_sudo';
+                 A_Process.CommandLine :='xroot '+'"'+Paramstr(0)+DopParam+'" auto_su_sudo';
                  A_Process.Execute;
                  while A_Process.Running do
                  begin
@@ -382,7 +399,7 @@ begin
                     Application.ProcessMessages;
                end;
     If not ProgrammRoot('ponoff',false) then
-       If (not FileExists('/usr/bin/xroot')) and (not FileExists('/usr/lib64/kde4/libexec/kdesu')) and (not FileExists('/usr/lib/kde4/libexec/kdesu'))
+       If (not FileExistsBin('xroot')) and (not FileExists('/usr/lib64/kde4/libexec/kdesu')) and (not FileExists('/usr/lib/kde4/libexec/kdesu'))
             and (not FileExistsBin('beesu')) and (not FileExistsBin('gksu')) then
                   begin
                       Form1.Timer1.Enabled:=False;
