@@ -4260,6 +4260,12 @@ PClose(f);
 popen (f,'cat '+EtcDir+'issue|'+'grep ROSA','R');
 If not eof(f) then mageia:=true;
 PClose(f);
+popen (f,'cat '+EtcDir+'issue|'+'grep MagicOS','R');
+If not eof(f) then mageia:=true;
+PClose(f);
+popen (f,'cat '+EtcDir+'issue|'+'grep EduMagic','R');
+If not eof(f) then mageia:=true;
+PClose(f);
 popen (f,'cat '+EtcDir+'issue|'+'grep Kubuntu','R');
 If not eof(f) then ubuntu:=true;
 PClose(f);
@@ -4704,10 +4710,10 @@ If not Translate then Label25.Caption:='              '+Label25.Caption;
 //определение управляющего сетью сервиса
 NetServiceStr:='none';
 If FileExists (EtcInitDDir+'network') then NetServiceStr:='network';
-If FileExists (EtcInitDDir+'networking') then NetServiceStr:='networking';
 If FileExists (SystemdDir+'network-manager.service') then NetServiceStr:='network-manager.service';
 If FileExists (SystemdDir+'NetworkManager.service') then NetServiceStr:='NetworkManager.service';
 If FileExists (SystemdDir+'networkmanager.service') then NetServiceStr:='networkmanager.service';
+If FileExists (EtcInitDDir+'networking') then NetServiceStr:='networking';
 If NetServiceStr='none' then
                             begin
                                Form3.MyMessageBox(message0,message160,'','',message122,MyPixmapsDir+'vpnpptp.png',false,false,true,AFont,Form1.Icon,false,MyLibDir);
