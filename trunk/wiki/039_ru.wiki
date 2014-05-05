@@ -6,7 +6,7 @@
 
 2) внесена поправка для oxygen-gtk в ponoff.
 
-3) утилита vpmmandiva переименована в vpnmcc.
+3) утилита vpnmandriva переименована в vpnmcc.
 
 4) пакеты vpnpptp-allde, vpnpptp-kde упразднены, используются только пакеты vpnpptp.
 

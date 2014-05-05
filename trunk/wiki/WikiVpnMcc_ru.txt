@@ -480,6 +480,10 @@ DNS3, DNS4 - это такие DNS, которые по умолчанию не 
 Для автозагрузки интернета при старте системы добавьте в конец файла '''/etc/rc.d/rc.local''' (или если его не существует, то в конец файла '''/etc/rc.local''') строчку:
  pppd call beeline
 
+Или если Вы хотите использовать скрипт vpnlinux, то впишите строчку:
+
+ vpnlinux beeline >/dev/null 2>&1 &
+
 ==Использование терминальной программы pptp-command для настройки VPN PPTP==
 http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
 
@@ -528,9 +532,13 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
 Шифрование mppe используется нечасто, нечасто используется и IPSec.
 
 Запускается соединение командой:
- /etc/init.d/xl2tpd restart
+ service xl2tpd restart
 Для автозагрузки интернета при старте системы впишите в конец файла '''/etc/rc.d/rc.local''' (или если его не существует, то в конец файла '''/etc/rc.local''') строчку:
- /etc/init.d/xl2tpd restart
+ service xl2tpd restart
+
+Или если Вы хотите использовать скрипт vpnlinux, то впишите строчку:
+
+ vpnlinux beeline >/dev/null 2>&1 &
 
 Если не указывать опцию autodial = yes, то запускайте xl2tpd как сервис, а поднимайте и опускайте соединение командами:
  echo "c beeline" > /var/run/xl2tpd/l2tp-control #соединение
@@ -606,7 +614,7 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
  killall openl2tpd
  rm -f /var/run/openl2tpd.pid
 
-Сервис может быть '''openl2tpd''' или '''openl2tp''' (проверяем в '''/etc/init.d/'''). Вместо '''rpcbind''' можно, но нежелательно, использовать '''portmap'''. В некоторых дистрибутивах команда '''service''' может не работать.
+Сервис может быть '''openl2tpd''' или '''openl2tp'''. Вместо '''rpcbind''' можно, но нежелательно, использовать '''portmap'''. В некоторых дистрибутивах команда '''service''' может не работать.
 
 Устанавливается соединение VPN OpenL2TP командой:
  bash /var/lib/vpnpptp/beeline/openl2tp-start
@@ -614,7 +622,12 @@ http://linux.yaroslavl.ru/docs/altlinux/master22_u/ch08s04.html
  bash /var/lib/vpnpptp/beeline/openl2tp-stop
 Не забывайте маршрутизировать VPN-сервер, иначе система может зависнуть для VPN OpenL2TP (аналогично для ядерного xl2tpd).
 
-Алгоритма автозагрузки интернета при старте системы для VPN OpenL2TP пока никем не предложено.
+Для автозагрузки интернета при старте системы добавьте в конец файла '''/etc/rc.d/rc.local''' (или если его не существует, то в конец файла '''/etc/rc.local''') строчку:
+ bash /var/lib/vpnpptp/beeline/openl2tp-start
+
+Или если Вы хотите использовать скрипт vpnlinux, то впишите строчку:
+
+ vpnlinux beeline >/dev/null 2>&1 &
 
 ==Особенности настройки VPN в различных дистрибутивах Linux==
 Рассмотрим лишь отличия в настройке от настоящей инструкции.

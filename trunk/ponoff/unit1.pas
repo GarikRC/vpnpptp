@@ -1468,7 +1468,6 @@ If str='DEFAULT' then
   //определение управляющего сетью сервиса
   NetServiceStr:='none';
   If FileExists (EtcInitDDir+'network') then NetServiceStr:='network';
-  If FileExists (EtcInitDDir+'networking') then NetServiceStr:='networking';
   If FileExists (SystemdDir+'network-manager.service') then
                                                     begin
                                                        popen (f,'ps -e |'+'grep NetworkManager','R');
@@ -1487,6 +1486,7 @@ If str='DEFAULT' then
                                                        if not eof(f) then NetServiceStr:='networkmanager.service';
                                                        PClose(f);
                                                     end;
+  If FileExists (EtcInitDDir+'networking') then NetServiceStr:='networking';
   If NetServiceStr='none' then
                             begin
                                Form1.Timer1.Enabled:=False;
