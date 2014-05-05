@@ -1,0 +1,439 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: tform1.caption
+msgid "ponoff"
+msgstr ""
+
+#: tform1.coloricon.caption
+msgid "ColorIcon"
+msgstr ""
+
+#: tform1.menuitem1.caption
+msgid "On"
+msgstr ""
+
+#: tform1.menuitem2.caption
+msgid "Off"
+msgstr ""
+
+#: tform1.menuitem3.caption
+msgid "Exit_well"
+msgstr ""
+
+#: tform1.menuitem4.caption
+msgid "Exit_bad"
+msgstr ""
+
+#: tform1.menuitem5.caption
+msgid "Look"
+msgstr ""
+
+#: tform1.minus.caption
+msgid "Minus"
+msgstr ""
+
+#: tform1.plus.caption
+msgid "Plus"
+msgstr ""
+
+#: tform3.button4.caption
+msgid "Close"
+msgstr ""
+
+#: tform3.form3.caption
+msgid "Form3"
+msgstr ""
+
+#: tformballoonmatrix.formballoonmatrix.caption
+msgid "FormBalloonMatrix"
+msgstr ""
+
+#: tformballoonmatrix.labeltext.caption
+msgid "LabelText"
+msgstr ""
+
+#: tformballoonmatrix.labeltitle.caption
+msgid "LabelTitle"
+msgstr ""
+
+#: tformhintmatrix.formhintmatrix.caption
+msgid "FormHintMatrix"
+msgstr ""
+
+#: tformhintmatrix.labelconnection.caption
+msgid "LabelConnection"
+msgstr ""
+
+#: tformhintmatrix.labelconnectioninfo.caption
+msgid "LabelConnectionInfo"
+msgstr ""
+
+#: tformhintmatrix.labeldns1.caption
+msgid "LabelDNS1"
+msgstr ""
+
+#: tformhintmatrix.labeldns1info.caption
+msgid "LabelDNS1Info"
+msgstr ""
+
+#: tformhintmatrix.labeldns2.caption
+msgid "LabelDNS2"
+msgstr ""
+
+#: tformhintmatrix.labeldns2info.caption
+msgid "LabelDNS2Info"
+msgstr ""
+
+#: tformhintmatrix.labeldownload.caption
+msgid "LabelDownload"
+msgstr ""
+
+#: tformhintmatrix.labeldownloadinfo.caption
+msgid "LabelDownloadInfo"
+msgstr ""
+
+#: tformhintmatrix.labelgateway.caption
+msgid "LabelGateway"
+msgstr ""
+
+#: tformhintmatrix.labelgatewayinfo.caption
+msgid "LabelGatewayInfo"
+msgstr ""
+
+#: tformhintmatrix.labelinterface.caption
+msgid "LabelInterface"
+msgstr ""
+
+#: tformhintmatrix.labelinterfaceinfo.caption
+msgid "LabelInterfaceInfo"
+msgstr ""
+
+#: tformhintmatrix.labelipaddress.caption
+msgid "LabelIPAddress"
+msgstr ""
+
+#: tformhintmatrix.labelipaddressinfo.caption
+msgid "LabelIPAddressInfo"
+msgstr ""
+
+#: tformhintmatrix.labelmtu.caption
+msgid "LabelMTU"
+msgstr ""
+
+#: tformhintmatrix.labelmtuinfo.caption
+msgid "LabelMTUInfo"
+msgstr ""
+
+#: tformhintmatrix.labelstatus.caption
+msgid "LabelStatus"
+msgstr ""
+
+#: tformhintmatrix.labelstatusinfo.caption
+msgid "LabelStatusInfo"
+msgstr ""
+
+#: tformhintmatrix.labeltimeinnet.caption
+msgid "LabelTimeInNet"
+msgstr ""
+
+#: tformhintmatrix.labeltimeinnetinfo.caption
+msgid "LabelTimeInNetInfo"
+msgstr ""
+
+#: tformhintmatrix.labelupload.caption
+msgid "LabelUpload"
+msgstr ""
+
+#: tformhintmatrix.labeluploadinfo.caption
+msgid "LabelUploadInfo"
+msgstr ""
+
+#: twidget.widget.caption
+msgid "Widget"
+msgstr ""
+
+#: unit1.message0
+msgid "Внимание!"
+msgstr ""
+
+#: unit1.message1
+msgid "Запуск этой программы возможен только под администратором или с разрешения администратора. Нажмите <ОК> для отказа от запуска."
+msgstr ""
+
+#: unit1.message10
+msgid "Выход без аварии"
+msgstr ""
+
+#: unit1.message11
+msgid "Выход при аварии"
+msgstr ""
+
+#: unit1.message12
+msgid "Устанавливается соединение "
+msgstr ""
+
+#: unit1.message13
+msgid "Получены маршруты через DHCP. "
+msgstr ""
+
+#: unit1.message14
+msgid "Обнаружен новый IP-адрес VPN-сервера. Соединение перенастраивается... "
+msgstr ""
+
+#: unit1.message15
+msgid "VPN-сервер не пингуется. "
+msgstr ""
+
+#: unit1.message16
+msgid "Доступ в интернет отсутствует..."
+msgstr ""
+
+#: unit1.message17
+msgid "DNS-сервер до поднятия VPN не отвечает или некорректный адрес VPN-сервера. "
+msgstr ""
+
+#: unit1.message18
+msgid "Шлюз локальной сети не пингуется. "
+msgstr ""
+
+#: unit1.message19
+msgid "Проверено! Интернет работает!"
+msgstr ""
+
+#: unit1.message2
+msgid "Не обнаружено ни одного сервиса, способного управлять сетью. Корректная работа программы невозможна!"
+msgstr ""
+
+#: unit1.message20
+msgid "Обнаружено совпадение remote ip address с IP-адресом самого VPN-сервера. Соединение было перенастроено."
+msgstr ""
+
+#: unit1.message21
+msgid "Ошибка получения маршрутов через DHCP. "
+msgstr ""
+
+#: unit1.message22
+msgid "Статус:"
+msgstr ""
+
+#: unit1.message23
+msgid "DNS1-сервер до поднятия VPN не пингуется. "
+msgstr ""
+
+#: unit1.message24
+msgid "DNS2-сервер до поднятия VPN не пингуется. "
+msgstr ""
+
+#: unit1.message25
+msgid "Вы можете в конфигураторе VPN PPTP/L2TP/OpenL2TP выбрать опцию разрешения пользователям управлять подключением."
+msgstr ""
+
+#: unit1.message26
+msgid "Вы также можете сконфигурировать соединение из Центра Управления->Сеть и интернет->Настройка VPN-соединений->VPN PPTP/L2TP/OpenL2TP."
+msgstr ""
+
+#: unit1.message27
+msgid "Загружено:"
+msgstr ""
+
+#: unit1.message28
+msgid "Отдано:"
+msgstr ""
+
+#: unit1.message29
+msgid "Время в сети:"
+msgstr ""
+
+#: unit1.message3
+msgid "Сначала сконфигурируйте соединение: Меню->Утилиты->Системные(или Меню->Интернет)->vpnpptp(Настройка соединения VPN PPTP/L2TP/OpenL2TP)."
+msgstr ""
+
+#: unit1.message30
+msgid "ч."
+msgstr ""
+
+#: unit1.message31
+msgid "м."
+msgstr ""
+
+#: unit1.message32
+msgid "с."
+msgstr ""
+
+#: unit1.message33
+msgid "ОК"
+msgstr ""
+
+#: unit1.message34
+msgid "Да"
+msgstr ""
+
+#: unit1.message35
+msgid "Нет"
+msgstr ""
+
+#: unit1.message36
+msgid "Отмена"
+msgstr ""
+
+#: unit1.message37
+msgid "Минуточку..."
+msgstr ""
+
+#: unit1.message38
+msgid "Запускается приложение ponoff..."
+msgstr ""
+
+#: unit1.message39
+msgid "Наблюдать"
+msgstr ""
+
+#: unit1.message4
+msgid "No ethernet. Cетевой интерфейс для VPN PPTP/L2TP/OpenL2TP недоступен."
+msgstr ""
+
+#: unit1.message40
+msgid "DNS2-сервер при поднятом VPN не пингуется. "
+msgstr ""
+
+#: unit1.message41
+msgid "Обнаружено активное соединение dsl. Отключите его командой ifdown dsl0. Нажмите <ОК> для отказа от запуска."
+msgstr ""
+
+#: unit1.message42
+msgid "DNS1-сервер при поднятом VPN не пингуется. "
+msgstr ""
+
+#: unit1.message43
+msgid "Рекомендуется вручную уменьшить MTU/MRU, так как используемое значение MTU ="
+msgstr ""
+
+#: unit1.message44
+msgid "байт слишком большое."
+msgstr ""
+
+#: unit1.message45
+msgid "Размер файла-лога /var/log/syslog больше 1 GiB."
+msgstr ""
+
+#: unit1.message46
+msgid "Возможны проблемы с установлением соединения..."
+msgstr ""
+
+#: unit1.message47
+msgid "Если же он доступен, то установите \"Не контролировать state сетевого кабеля\" в Конфигураторе."
+msgstr ""
+
+#: unit1.message48
+msgid "Отсутствуют некритичные файлы: "
+msgstr ""
+
+#: unit1.message49
+msgid "Отсутствуют критичные файлы: "
+msgstr ""
+
+#: unit1.message5
+msgid "No link. Сетевой кабель для VPN PPTP/L2TP/OpenL2TP неподключен."
+msgstr ""
+
+#: unit1.message50
+msgid "Не найдено соединение"
+msgstr ""
+
+#: unit1.message51
+msgid "Обнаружено активное соединение с именем"
+msgstr ""
+
+#: unit1.message52
+msgid "Одновременный запуск нескольких соединений с разными именами недопустим."
+msgstr ""
+
+#: unit1.message53
+msgid "Отсутствует дефолтное соединение."
+msgstr ""
+
+#: unit1.message54
+msgid "Выберите одно из доступных соединений, неявляющихся дефолтными, из выпадающего списка. Это соединение станет дефолтным."
+msgstr ""
+
+#: unit1.message55
+msgid "<ОК> - выбрать. <Отмена> - отказаться и выйти."
+msgstr ""
+
+#: unit1.message56
+msgid "Соединение с именем"
+msgstr ""
+
+#: unit1.message57
+msgid "не может существовать, так как это имя зарезервировано программой."
+msgstr ""
+
+#: unit1.message58
+msgid "Шлюз: "
+msgstr ""
+
+#: unit1.message59
+msgid "IP-адрес: "
+msgstr ""
+
+#: unit1.message6
+msgid "Соединение"
+msgstr ""
+
+#: unit1.message60
+msgid "Интерфейс: "
+msgstr ""
+
+#: unit1.message63
+msgid "Скорость отдачи три раза подряд в течение трёх секунд превысила пропускную способность сети. Сеть неработоспособна."
+msgstr ""
+
+#: unit1.message64
+msgid "Скорость загрузки три раза подряд в течение трёх секунд превысила пропускную способность сети."
+msgstr ""
+
+#: unit1.message65
+msgid "Размер файла-лога /var/log/vpnlog больше 1 GiB."
+msgstr ""
+
+#: unit1.message66
+msgid "Увеличить иконку"
+msgstr ""
+
+#: unit1.message67
+msgid "Уменьшить иконку"
+msgstr ""
+
+#: unit1.message68
+msgid "Цветная иконка"
+msgstr ""
+
+#: unit1.message69
+msgid "Чёрно-белая иконка"
+msgstr ""
+
+#: unit1.message7
+msgid "установлено"
+msgstr ""
+
+#: unit1.message70
+msgid "Введите пароль root:"
+msgstr ""
+
+#: unit1.message71
+msgid "Ошибка отображения иконки в трее. Используйте вместо ponoff скрипт /usr/bin/vpnlinux. Автоматическое переключение на виджет."
+msgstr ""
+
+#: unit1.message72
+msgid "Для запуска с правами root требуется что-нибудь: xroot/kdesu/gksu/beesu. Рекомендуется установить пакет xroot."
+msgstr ""
+
+#: unit1.message8
+msgid "отсутствует"
+msgstr ""
+
+#: unit1.message9
+msgid "No link. Сетевой кабель для VPN PPTP/L2TP/OpenL2TP неподключен. А реконнект не включен."
+msgstr ""
+

@@ -1,0 +1,17 @@
+1) установить пакет rpm-build или для openSUSE пакет rpm,
+2) создать в папке ~/ (в домашней директории пользователя) папку rpmbuild, в которой создать папки BUILD, BUILDROOT, RPMS, SOURCES, SPECS, SRPMS
+(в PCLinuxOS они уже созданы и находятся в /usr/src/rpm;
+в openSUSE они уже созданы и находятся в /usr/src/packages),
+3) в папку ~/rpmbuild/SPECS скопировать файлы из папки spec в исходниках,
+4) в папку ~/rpmbuild/SOURCES скопировать файлы из папки patch в исходниках,
+5) в папку ~/rpmbuild/SOURCES скопировать всю папку trunk из исходников, переименовав ее в vpnpptp-src-0.3.9, где 0.3.9 - номер версии,
+6) сжать получившуюся папку ~/rpmbuild/SOURCES/vpnpptp-src-0.3.9 в .tar.gz (команда tar -czvf vpnpptp-src-0.3.9.tar.gz vpnpptp-src-0.3.9/),
+7) перейти в папку SPECS командой cd ~/rpmbuild/SPECS,
+8) выполнить команду:
+rpmbuild -ba ./vpnpptp.spec
+9) собранные пакеты будут в ~/rpmbuild/RPMS, сурсы в ~/rpmbuild/SRPMS
+
+Исходники имеют вид: vpnpptp-src-0.3.9.tar.gz, где 0.3.9 - версия.
+При сборке пакетов можно исключить включение в пакет файлов on.ico, off.ico - тогда иконка модуля ponoff в трее станет черно-белой,
+но в новых версиях имеется функционал и без этого.
+Для дистрибутивов, в которых нет mcc и net_applet исполняемый файл vpnmcc в пакет можно не включать.

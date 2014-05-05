@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+"-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+"http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+
+ <vendor>VPNPPTP</vendor>
+ <vendor_url>http://code.google.com/p/vpnpptp</vendor_url>
+
+ <action id="com.google.code.vpnpptp.pkexec.run">
+    <description>VPN PPTP/L2TP/OpenL2TP Setup</description>
+    <description xml:lang="ru">Настройка соединения VPN PPTP/L2TP/OpenL2TP</description>
+    <description xml:lang="uk">Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP</description>
+    <message>VPN PPTP/L2TP/OpenL2TP Setup</message>
+    <message xml:lang="ru">Настройка соединения VPN PPTP/L2TP/OpenL2TP</message>
+    <message xml:lang="uk">Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP</message>
+    <icon_name>vpnpptp</icon_name>
+    <defaults>
+     <allow_any>no</allow_any>
+     <allow_inactive>no</allow_inactive>
+     <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/vpnpptp</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+ </action>
+</policyconfig>
