@@ -1,2 +1,2 @@
 #!/bin/bash
-pkexec vpnpptp "$@"
+pkexec /usr/bin/vpnpptp "$@"
