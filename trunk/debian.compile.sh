@@ -26,13 +26,10 @@ cat > ./build/usr/share/applications/ponoff.desktop << EOF
 #!/usr/bin/env xdg-open
 
 [Desktop Entry]
-Encoding=UTF-8
-GenericName=ponoff
-GenericName[ru]=ponoff
-GenericName[uk]=ponoff
+GenericName=Control VPN PPTP/L2TP/OpenL2TP
+GenericName[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP/OpenL2TP
 Name=ponoff
-Name[ru]=ponoff
-Name[uk]=ponoff
 Exec=ponoff
 Comment=Control VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP/OpenL2TP
@@ -46,20 +43,15 @@ EOF
 chmod 0644 ./build/usr/share/applications/ponoff.desktop
 
 cat > ./build/usr/share/applications/vpnpptp.desktop << EOF
-#!/usr/bin/env xdg-open
-
 [Desktop Entry]
-Encoding=UTF-8
-GenericName=vpnpptp
-GenericName[ru]=vpnpptp
-GenericName[uk]=vpnpptp
+GenericName=Setup VPN PPTP/L2TP/OpenL2TP
+GenericName[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Name=vpnpptp
-Name[ru]=vpnpptp
-Name[uk]=vpnpptp
 Exec=vpnpptp
 Comment=Setup VPN via PPTP/L2TP/OpenL2TP
-Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
-Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
+Comment[ru]=Настройка соединения VPN через PPTP/L2TP/OpenL2TP
+Comment[uk]=Налаштування з’єднання VPN через PPTP/L2TP/OpenL2TP
 Icon=vpnpptp
 Type=Application
 Categories=GTK;System;Monitor;X-MageiaLinux-CrossDesktop;
