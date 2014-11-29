@@ -24,15 +24,15 @@ Requires: pptp-linux
 Requires: xl2tpd >= 1.3.6
 Requires: openl2tp
 #For mii-tool
-Suggests: net-tools
+Recommends: net-tools
 #For host
-Suggests: bind-utils
+Recommends: bind-utils
 #For sudo and xsudo
-Suggests: xsudo
+Recommends: xsudo
 #For dhclient
-Suggests: dhcp-client
-Suggests: net_monitor
-Suggests: vnstat
+Recommends: dhcp-client
+Recommends: net_monitor
+Recommends: vnstat
 
 Provides: %{name}-allde = %{version}
 Provides: %{name}-kde = %{version}
@@ -70,13 +70,10 @@ cp -rf ./lang %{buildroot}%{_datadir}/%{name}/
 install -dm 755 %{buildroot}%{_datadir}/applications
 cat > ponoff.desktop << EOF
 [Desktop Entry]
-Encoding=UTF-8
-GenericName=ponoff
-GenericName[ru]=ponoff
-GenericName[uk]=ponoff
+GenericName=Control VPN PPTP/L2TP/OpenL2TP
+GenericName[ru]=Управление соединением VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Керування з'єднанням VPN PPTP/L2TP/OpenL2TP
 Name=ponoff
-Name[ru]=ponoff
-Name[uk]=ponoff
 Exec=ponoff
 Comment=Control VPN via PPTP/L2TP/OpenL2TP
 Comment[ru]=Управление соединением VPN через PPTP/L2TP/OpenL2TP
@@ -92,17 +89,14 @@ install -m 0644 ponoff.desktop \
 
 cat > %{name}.desktop << EOF
 [Desktop Entry]
-Encoding=UTF-8
-GenericName=%{name}
-GenericName[ru]=%{name}
-GenericName[uk]=%{name}
+GenericName=Setup VPN PPTP/L2TP/OpenL2TP
+GenericName[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
+GenericName[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
 Name=%{name}
-Name[ru]=%{name}
-Name[uk]=%{name}
 Exec=%{name}
 Comment=Setup VPN via PPTP/L2TP/OpenL2TP
-Comment[ru]=Настройка соединения VPN PPTP/L2TP/OpenL2TP
-Comment[uk]=Налаштування з’єднання VPN PPTP/L2TP/OpenL2TP
+Comment[ru]=Настройка соединения VPN через PPTP/L2TP/OpenL2TP
+Comment[uk]=Налаштування з’єднання VPN через PPTP/L2TP/OpenL2TP
 Icon=%{name}
 Type=Application
 Categories=GTK;System;Monitor;X-MageiaLinux-CrossDesktop;
